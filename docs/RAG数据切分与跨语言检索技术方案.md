@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.5\
+> **文档版本**：1.6\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2080,11 +2080,11 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D05 | B01 | ✅ **已完成（2026-11-02）** 统一 Token 计数（BGE-M3 tokenizer 口径） | `python -m src.rag.ingestion.tokenizer count "文本"` 输出整数；`verify --n 8` 返回 `aligned: true`（实测逐条中位误差 0%、最大绝对差 0）；17 个单测覆盖空串/未知词/批量一致/`truncate` 边界/词表缺失提示。**原「与 FlagEmbedding 计数差 0」已作废**（B01 决定不引入 FlagEmbedding），改为「与 Ollama `prompt_eval_count` 逐条对齐」 |
 | D06 | D05 | ✅ **已完成（2026-11-02）** Recursive Splitter（分隔符优先级 + `split_preserving_separator` + `merge_small_parts` + token 窗口兜底） | `python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real`（35 用例）全绿，6 类边界（超长段落/超长句/无分隔符/超长单词/代码块/表格）逐类断言；`python -m src.rag.ingestion.recursive_chunker check --n 2000` → **超限率 0.00%、还原失败 0**；不变量 `"".join(pieces) == text` 在 300 条真实 chunk + 100 篇拼长文档上全部成立 |
 | D07 | D06 | Overlap（句子边界回退 + `source_start/end`） | 抽样 100 对相邻 chunk：overlap token ∈ [50, 70] 占比 ≥95%；任意重叠文本可在原文定位 |
-| D08 | D06 | Parent Builder（章节边界优先，≤2000 token） | `chunk→parent` 关联成功率 == 100%；parent token ≤ 2000 超限数 == 0 |
+| D08 | D06 | ✅ **已完成（2026-11-02）** Parent Builder（标题/章节边界分组 → block 边界累积 → 单块超限用 D06 递归切分 → 短块并进同一父章节） | `python -m unittest tests.test_parent_builder`（23 用例）全绿；40 篇真实 md：**parent 194 / child 292，超限 0，孤儿 child 0（关联成功率 100.00%）**；parent token p50 256 / p90 1044 / max 2000，child p50 308 / p90 441 / max 499 |
 | D09 | D06,D08 | Chunk Validator（长度/空/重复/边界/元数据） | 校验报告含四项数字：空 chunk 0、超限 0、重复文本占比、边界完整率；失败样例落 `*.invalid.jsonl` |
-| D10 | D01,D08,D09 | 稳定 ID 与元数据（方案 §3.4 的 hash 规则） | 同一输入连跑两次，`sha256sum chunks.jsonl` 完全一致；改 `chunker_version` 后全量 ID 变化（负向测试） |
+| D10 | D01,D08,D09 | ✅ **已完成（2026-11-02）** 稳定 ID（`ids.py`：document 认来源路径、parent/chunk 认内容+版本，`` 分隔防拼接撞车） | `python -m unittest tests.test_stable_ids`（7 用例）全绿；40 篇语料两次运行 **三个 JSONL 的 sha256 完全一致**；chunker_version 变更后 **ID 复用数 0** |
 | D11 | D09,D10 | Chunking 质量报告 + A–E 五种切分对照（方案 §11.1） | 30–50 篇 × 8 项人工抽查表 + A–E 的 chunk 数/token 分布/人工评分对照表 |
-| D12 | D10 | JSONL 输出与目录约定（`data/chunks/`） | `jq -c . data/chunks/*.jsonl` 逐行可解析；字段与方案 §3.3 完全一致（缺一字段即失败） |
+| D12 | D10 | ✅ **已完成（2026-11-02）** JSONL 输出（`jsonl_store.py`：严格字段契约，多一个字段也报错；UTF-8 无 BOM / LF / 一行一 JSON；manifest 记 sha256） | `python -m unittest tests.test_jsonl_writer`（11 用例）全绿；40 篇语料写出 documents 40 / parents 194 / children 292 行，**逐行可解析且字段集与 §3.1–3.3 完全一致**；`jq` 存在时用例会真跑 `jq -c .`（本机无 jq 时跳过并注明） |
 
 **Phase 1 出厂标准（DoD）**：D01–D12 全部通过 → 交付"可运行的解析+切分程序 + 示例输入 + JSONL + 单测 + 质量报告"，即方案 §16 要求的第一项交付物。
 
@@ -2328,6 +2328,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D02 | ✅ 2026-11-02 | `src/rag/ingestion/parser/markdown_parser.py`：ATX/setext 标题、fenced code（先于标题识别）、GFM 表格、列表、引用、图注；`section_path` 栈式继承，无标题时回退文件名 | `check data/md` → section_path 非空率 **100.00%**、空 block **0**；陷阱统计：代码块内 `#` 行 4,295 处未误判为标题、表格紧跟标题 454 处仍为 table |
 | D03 | ✅ 2026-11-02 | `src/rag/ingestion/parser/txt_parser.py`：空行分段、软换行原样保留、`n_sentences` 统计、BOM/CRLF 归一；不做启发式标题猜测 | `python -m unittest tests.test_txt_parser` 16 用例全绿；段落数 == 空行分隔段数 |
 | D04 | ✅ 2026-11-02 | `src/rag/ingestion/parser/pdf_parser.py`：pymupdf 版面块 → 行 → span；按字号相对比定标题层级；`block` 内按字号再切 run（pymupdf 会把标题和正文聚进一个 block）；重复页眉页脚归一化识别并记入 `stats` | `check data` → PDF 页码覆盖率 **100.00%**；30 页字符数去空白后与 pypdf 差 **0.47%**；`report` 子命令产出人工抽查 CSV |
+| D08 | ✅ 2026-11-02 | `src/rag/ingestion/parent_builder.py`：`ParentConfig`(1500/2000/200)、三段式构建（分组 → 切长 → 并短）、`build_children` 回填 `parent_id`；超长单块用 D06 递归切分并按 piece 长度累加偏移 | 40 篇真实 md：parent 超限 **0**、孤儿 child **0**；`tests.test_parent_builder` 23 用例 |
+| D10 | ✅ 2026-11-02 | `src/rag/ingestion/ids.py`：`make_document_id`（按 source_uri）、`document_version`（归一化后内容哈希）、`make_parent_id`/`make_chunk_id`（按 §3.4 公式，`` 拼接） | 两次运行 JSONL sha256 完全一致；chunker_version 变更后 ID 复用 **0**；`tests.test_stable_ids` 7 用例 |
+| D12 | ✅ 2026-11-02 | `src/rag/ingestion/jsonl_store.py`：`PARENT_FIELDS`/`CHILD_FIELDS`/`DOCUMENT_FIELDS` 严格字段契约、`write_jsonl`（先全量校验再开文件）、`write_chunks`（`data/chunks/` + manifest 记 sha256） | `tests.test_jsonl_writer` 11 用例；40 篇语料 3 个 JSONL 逐行解析 + 字段集完全一致 |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2366,6 +2369,22 @@ PDF 那 4.6% 的差不是丢内容，而是 pypdf 会给每个 span 补空白：
 
 **pymupdf 的一个坑**：它按版面把行聚成 block，但标题和正文**可能落在同一个 block 里**（排版紧、行距一致时）。只按 block 首行字号判标题会整段漏掉标题——实测合成 PDF 里 `1.1 向量检索` 就这样消失了。修法是 block 内部再按「是否标题 + 字号是否变化」切 run，逐 run 判类型。
 
+**D08/D10/D12 实测（40 篇真实 md）**
+
+| 测量 | 结果 |
+|---|---|
+| 规模 | document 40 → **parent 194 → child 292** |
+| parent token ≤ 2000 超限数 | **0**（p50 256 / p90 1044 / max 2000） |
+| child token ≤ 500 超限数 | **0**（p50 308 / p90 441 / max 499） |
+| chunk→parent 关联成功率 | **100.00%**（孤儿 child 0） |
+| 两次运行 JSONL sha256 | **完全一致**（documents / parents / children 三个文件） |
+| chunker_version 变更后 ID 复用 | **0** |
+| 字段契约 | 三个 JSONL 逐行可解析，字段集与 §3.1–3.3 **完全一致** |
+
+**一个必须记下来的信号**：parent p50 只有 256 token，child p50 308 token——**292 child / 194 parent ≈ 1.5**，也就是说大量 parent 只切出 1 个 child，Child 粒度并没有比 Parent 更细。原因是 `min_tokens=200` 把短章节合并后，剩下的章节本身就不长。这不是 bug，但它意味着「Parent 提供上下文、Child 负责召回」的设计在当前语料上没完全成立，**配置该在 D11 里用 A–E 对照表调**（调 `target_tokens`/`min_tokens`，看 child/parent 比与召回效果），不要凭手感改。
+
+**为什么 document_id 不含内容**：`document_id` 由 `source_uri` 派生，`document_version` 才是内容哈希。这样同一篇文档改一个错别字不会变成「另一篇文档」，增量导入可以按 `document_id` 清旧版本（§3.4 最后一条）；反过来若把内容塞进 `document_id`，每次改字都会留下永远删不掉的孤儿向量。
+
 **与方案伪代码的一处差异**：伪代码在递归每一层都调 `merge_small_parts`，实现改为**只在最后合并一次**。原因：内层已按 target 拼好的片段到外层还会被再拼一次，既重复 token 计数（最坏 O(n²)），又让「按哪一级目标切」不可预测；末尾合并结果等价、成本更低。
 
 
@@ -2400,4 +2419,8 @@ PDF 那 4.6% 的差不是丢内容，而是 pypdf 会给每个 span 补空白：
                                                   补解析层实测（217,950 block、section_path 100%、
                                                   PDF 页码 100%、去空白字符差 0.47%）；
                                                   目录命名对齐 §6（parser/、recursive_chunker.py）
+  1.6                     2026-11-02              D08/D10/D12 落地：Parent Builder（三段式）、稳定 ID、
+                                                  JSONL 严格字段契约 + manifest；补实测（parent 超限 0、
+                                                  关联 100%、两次运行 sha256 一致、ID 复用 0），
+                                                  并记录「child/parent ≈ 1.5」这个待 D11 调的信号
   ------------------------------------------------------------------------------------

@@ -104,6 +104,9 @@ local-rag-agentic-lab/
 │       ├── errors.py           # IngestionError / UnsupportedFormatError / TokenizerUnavailable
 │       ├── tokenizer.py        # TokenCounter：token 计数 + Ollama 抽样校验（D05）
 │       ├── recursive_chunker.py  # Recursive Splitter：分隔符优先级 + token 窗口兜底（D06）
+│       ├── parent_builder.py     # Parent Builder（章节边界 → 切长 → 并短）+ Child 关联（D08）
+│       ├── ids.py                # 稳定 ID 与内容哈希（document/parent/chunk，D10）
+│       ├── jsonl_store.py        # JSONL 字段契约 + manifest（D12）
 │       └── parser/
 │           ├── base.py            # BaseParser 抽象基类 + read_text_file（D01）
 │           ├── markdown_parser.py # 标题/列表/表格/代码块/引用/图注（D02）
@@ -409,6 +412,43 @@ python -m src.rag.ingestion.parser.pdf_parser report data/AI-Agents-in-Depth-zh-
 PDF 字符数对比（30 页）：pypdf 62,779 vs pymupdf 59,874 —— 差的 4.6% 全是空白，**去掉空白后 47,687 vs 47,464（差 0.47%）**。pypdf 会给每个 span 补空格，所以比字符数一定要先去空白。
 
 **验收：** 能解释「为什么标题必须和正文分块但又要能关联」，并能用 `check` 输出证明 `section_path` 非空率 100%。
+
+### 实验 11：Parent / Child 两层 + 稳定 ID + JSONL 落盘
+
+检索用 Child（细），回答时给 Parent（全）——所以两层各自要有边界规则、ID 规则和字段契约。
+
+```powershell
+python -m unittest tests.test_parent_builder tests.test_stable_ids tests.test_jsonl_writer -v
+```
+
+**Parent 构建三段式**（对应方案 §2.3 的 6 条规则）：
+
+1. **分组**：遇到 `heading` 块或 `section_path` 变化就开新组；标题块留在组内，所以 Parent 内容以标题开头。
+2. **切长**：组内按 block 边界累积，超 `max_tokens` 就另起；单个 block 自己超限时用 D06 递归切分，并按下标累加 `source_start/end`。
+3. **并短**：短于 `min_tokens` 的块并进**同一父章节**的前一块，合并后 `section_path` 取共同前缀；`section_path[0]` 不同绝不合并。
+
+实测（40 篇真实 md）：
+
+| 指标 | 结果 |
+|---|---|
+| 规模 | 40 document → **194 parent → 292 child** |
+| parent token ≤ 2000 超限 | **0**（p50 256 / p90 1044 / max 2000） |
+| child token ≤ 500 超限 | **0**（p50 308 / p90 441 / max 499） |
+| chunk→parent 关联成功率 | **100.00%**（孤儿 0） |
+| 两次运行 JSONL sha256 | **完全一致** |
+| chunker_version 变更后 ID 复用 | **0** |
+
+**一个值得注意的读数**：`292 child / 194 parent ≈ 1.5`，大量 Parent 只切出 1 个 Child，说明 Child 并没有比 Parent 更细。原因是 `min_tokens=200` 合并后剩下的章节本身就短。这不是 bug，是**配置该调**的信号——用 A–E 对照表（D11）验证，不要凭手感改。
+
+**ID 的三条规矩**：
+
+- `document_id` 认**来源路径**：改一个错别字不会变成「另一篇文档」，增量导入才能按 `document_id` 清旧版本；
+- `document_version` 才是**内容哈希**（先归一 BOM/CRLF，否则 Windows 与仓库里的同一文件会得出两个版本）；
+- `parent_id`/`chunk_id` 认**内容 + 版本**，任一段变化 ID 必变，用 `` 拼接防撞车（`a|b`+`c` 与 `a`+`b|c` 用可见字符拼会撞）。
+
+**JSONL 字段契约**：`parents.jsonl` / `children.jsonl` / `documents.jsonl` 的字段集与方案 §3.1–3.3 完全一致，**多一个字段也报错**——这三个文件是 Qdrant payload、SQLite、评估脚本的共同输入，字段漂移没人发现比报错更贵。`manifest.json` 记录每个文件的 sha256，两次运行直接对比即可，不用手工 `sha256sum`。
+
+**验收：** 能解释为什么 `document_id` 不含内容，并能用两次运行的 manifest sha256 证明输出可复现。
 
 
 ## 重要说明
