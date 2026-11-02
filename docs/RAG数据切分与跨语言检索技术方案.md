@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.6\
+> **文档版本**：1.7\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2079,11 +2079,11 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D04 | D01 | ✅ **已完成（2026-11-02）** PDF Parser（pymupdf `get_text("dict")`：页码 + bbox + 字号；按字号相对比识别标题；重复页眉页脚剔除并留痕） | `python -m unittest tests.test_pdf_parser`（22 用例）全绿；`check data` → **PDF 页码覆盖率 100.00%**；30 页字符数：pypdf 62,779 vs pymupdf 59,874（0.954），**去空白后 47,687 vs 47,464（0.995）**——差异来自 pypdf 给每个 span 补空白（其空白占比 24.0% vs 20.7%），非内容丢失；人工抽查表用 `python -m src.rag.ingestion.parser.pdf_parser report <pdf> --pages 1-30 --out report.csv` 生成 |
 | D05 | B01 | ✅ **已完成（2026-11-02）** 统一 Token 计数（BGE-M3 tokenizer 口径） | `python -m src.rag.ingestion.tokenizer count "文本"` 输出整数；`verify --n 8` 返回 `aligned: true`（实测逐条中位误差 0%、最大绝对差 0）；17 个单测覆盖空串/未知词/批量一致/`truncate` 边界/词表缺失提示。**原「与 FlagEmbedding 计数差 0」已作废**（B01 决定不引入 FlagEmbedding），改为「与 Ollama `prompt_eval_count` 逐条对齐」 |
 | D06 | D05 | ✅ **已完成（2026-11-02）** Recursive Splitter（分隔符优先级 + `split_preserving_separator` + `merge_small_parts` + token 窗口兜底） | `python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real`（35 用例）全绿，6 类边界（超长段落/超长句/无分隔符/超长单词/代码块/表格）逐类断言；`python -m src.rag.ingestion.recursive_chunker check --n 2000` → **超限率 0.00%、还原失败 0**；不变量 `"".join(pieces) == text` 在 300 条真实 chunk + 100 篇拼长文档上全部成立 |
-| D07 | D06 | Overlap（句子边界回退 + `source_start/end`） | 抽样 100 对相邻 chunk：overlap token ∈ [50, 70] 占比 ≥95%；任意重叠文本可在原文定位 |
+| D07 | D06 | ✅ **已完成（2026-11-02）** Overlap（`overlap.py`：句子/行边界优先挑重叠起点，越界退回 token 窗口；`TokenCounter.truncate_tail` 保证后缀是原文子串） | `python -m unittest tests.test_overlap`（16 用例）全绿；真实语料 **前 100 对相邻 chunk：overlap ∈ [50,70] 占比 100.0%**（min 50 / p50 60 / max 70）；**69.5%** 的重叠起点落在句子或行边界之后；child token ≤ 500 超限 0 |
 | D08 | D06 | ✅ **已完成（2026-11-02）** Parent Builder（标题/章节边界分组 → block 边界累积 → 单块超限用 D06 递归切分 → 短块并进同一父章节） | `python -m unittest tests.test_parent_builder`（23 用例）全绿；40 篇真实 md：**parent 194 / child 292，超限 0，孤儿 child 0（关联成功率 100.00%）**；parent token p50 256 / p90 1044 / max 2000，child p50 308 / p90 441 / max 499 |
-| D09 | D06,D08 | Chunk Validator（长度/空/重复/边界/元数据） | 校验报告含四项数字：空 chunk 0、超限 0、重复文本占比、边界完整率；失败样例落 `*.invalid.jsonl` |
+| D09 | D06,D08 | ✅ **已完成（2026-11-02）** Chunk Validator（`validator.py`：空/超限/重复/边界/元数据/孤儿 + 父块主键重复自检；报告四项数字 + `*.invalid.jsonl`） | `python -m unittest tests.test_validator`（23 用例）全绿；40 篇真实 md：**空 0、超限 0、重复占比 0.31%、边界完整率 100.00%**；gold 收敛统计输出 0/1/2/3+ 直方图与 `converged_ratio` |
 | D10 | D01,D08,D09 | ✅ **已完成（2026-11-02）** 稳定 ID（`ids.py`：document 认来源路径、parent/chunk 认内容+版本，`` 分隔防拼接撞车） | `python -m unittest tests.test_stable_ids`（7 用例）全绿；40 篇语料两次运行 **三个 JSONL 的 sha256 完全一致**；chunker_version 变更后 **ID 复用数 0** |
-| D11 | D09,D10 | Chunking 质量报告 + A–E 五种切分对照（方案 §11.1） | 30–50 篇 × 8 项人工抽查表 + A–E 的 chunk 数/token 分布/人工评分对照表 |
+| D11 | D09,D10 | ✅ **已完成（2026-11-02）** 质量报告（`quality_report.py`：A–E 方案对照 + 8 项抽查自动指标 + 人工评分列 + 逐文档明细，E 显式标 not_implemented） | `python -m src.rag.ingestion.quality_report --dir data/md --limit 40 --out <md> --json <json>`；`tests.test_quality_report`（25 用例）全绿；40 篇真实语料报告：A 断句 97.53% / B 0% / C 0% / D 0%，D 的碎块率 **14.76%**、重复 1.81%、heading 关联 87.65%、overlap 合规 99.24% |
 | D12 | D10 | ✅ **已完成（2026-11-02）** JSONL 输出（`jsonl_store.py`：严格字段契约，多一个字段也报错；UTF-8 无 BOM / LF / 一行一 JSON；manifest 记 sha256） | `python -m unittest tests.test_jsonl_writer`（11 用例）全绿；40 篇语料写出 documents 40 / parents 194 / children 292 行，**逐行可解析且字段集与 §3.1–3.3 完全一致**；`jq` 存在时用例会真跑 `jq -c .`（本机无 jq 时跳过并注明） |
 
 **Phase 1 出厂标准（DoD）**：D01–D12 全部通过 → 交付"可运行的解析+切分程序 + 示例输入 + JSONL + 单测 + 质量报告"，即方案 §16 要求的第一项交付物。
@@ -2206,6 +2206,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | B04 | Qdrant 引入时机 | ⏳ 未定。建议：定义 `VectorStore` 接口先接 Qdrant，numpy 精确实现兜底（D19 的 ANN 口径必须在 Qdrant 上测） | D15、D19、D36 |
 | B05 | 中文 BM25 是否保留（当前 jieba BM25 对 1,783 条中文 chunk 有效，方案只要英文 lexical） | ⏳ 未定。建议：两套并存，消融单列一路 | D25、D26、D28 |
 | **B06** | 评估集重建成本与方式 | ✅ **已定（2026-11-02）：复用 `experiments/build_questions.py`**，新增 `query_en` 字段，不重写工具链。细则见 17.11.3 | D27、D28、E05 |
+| **B07** | Parent `min_tokens` 是否从 200 提到 400 | ⏳ **待定（D11 数据已出）**。40 篇实测：碎块率 14.3% → **7.0%**、重复 0.31% → **0**、child/parent 1.66 → 2.20；代价是合并后 `section_path` 变粗。**必须等 D28 检索级消融确认收益后再改默认值** | D08 默认配置、D20 端到端门槛、D28 消融 |
 
 ---
 
@@ -2331,6 +2332,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D08 | ✅ 2026-11-02 | `src/rag/ingestion/parent_builder.py`：`ParentConfig`(1500/2000/200)、三段式构建（分组 → 切长 → 并短）、`build_children` 回填 `parent_id`；超长单块用 D06 递归切分并按 piece 长度累加偏移 | 40 篇真实 md：parent 超限 **0**、孤儿 child **0**；`tests.test_parent_builder` 23 用例 |
 | D10 | ✅ 2026-11-02 | `src/rag/ingestion/ids.py`：`make_document_id`（按 source_uri）、`document_version`（归一化后内容哈希）、`make_parent_id`/`make_chunk_id`（按 §3.4 公式，`` 拼接） | 两次运行 JSONL sha256 完全一致；chunker_version 变更后 ID 复用 **0**；`tests.test_stable_ids` 7 用例 |
 | D12 | ✅ 2026-11-02 | `src/rag/ingestion/jsonl_store.py`：`PARENT_FIELDS`/`CHILD_FIELDS`/`DOCUMENT_FIELDS` 严格字段契约、`write_jsonl`（先全量校验再开文件）、`write_chunks`（`data/chunks/` + manifest 记 sha256） | `tests.test_jsonl_writer` 11 用例；40 篇语料 3 个 JSONL 逐行解析 + 字段集完全一致 |
+| D07 | ✅ 2026-11-02 | `src/rag/ingestion/overlap.py`：`apply_overlap` 在上一块里挑句子/行起点作为重叠起点，找不到合适长度就退回 token 窗口；`TokenCounter.truncate_tail` 按 token offset 回切原文后缀 | 100 对相邻 chunk 的 overlap 100% 落在 [50,70]；双测（`tests.test_overlap`） |
+| D09 | ✅ 2026-11-02 | `src/rag/ingestion/validator.py`：六类检查 + `(document_id, parent_index)` 关联键 + 父块主键重复自检 + `gold_convergence` 直方图；`write_invalid` 无问题时**不生成**文件 | 40 篇真实语料：空 0 / 超限 0 / 重复 0.31% / 边界 100%；`tests.test_validator` 23 用例 |
+| D11 | ✅ 2026-11-02 | `src/rag/ingestion/quality_report.py`：A–E 五方案（E 标 not_implemented）+ 8 项抽查自动指标 + 人工评分列 + 逐文档明细 + CLI（`--out`/`--json`） | 40 篇真实语料报告见 §17.12 实测表；`tests.test_quality_report` 25 用例 |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2385,6 +2389,41 @@ PDF 那 4.6% 的差不是丢内容，而是 pypdf 会给每个 span 补空白：
 
 **为什么 document_id 不含内容**：`document_id` 由 `source_uri` 派生，`document_version` 才是内容哈希。这样同一篇文档改一个错别字不会变成「另一篇文档」，增量导入可以按 `document_id` 清旧版本（§3.4 最后一条）；反过来若把内容塞进 `document_id`，每次改字都会留下永远删不掉的孤儿向量。
 
+**D07/D09/D11 实测（40 篇真实 md）**
+
+A–E 方案对照（`python -m src.rag.ingestion.quality_report --dir data/md --limit 40`）：
+
+| 方案 | chunk 数 | token p50 | p90 | max | 重复占比 | 句子被切断 | 碎块(<80) | Parent | child/parent |
+|---|---|---|---|---|---|---|---|---|---|
+| A 固定长度 | 594 | 133 | 186 | 260 | 0.00% | **97.53%** | 4.71% | — | — |
+| B Recursive | 209 | 412 | 454 | 499 | 0.00% | 0.00% | 1.91% | — | — |
+| C Recursive+Overlap | 247 | 408 | 446 | 489 | 0.00% | 0.00% | 0.81% | — | — |
+| D Parent-Child+Overlap | 332 | 314 | 420 | 475 | **1.81%** | 0.00% | **14.76%** | 202 | 1.64 |
+| E Semantic+Parent-Child | — | — | — | — | — | — | — | — | — |
+
+D 的其余七项：heading 关联 **87.65%**、Parent 章节纯度 **100.00%**、Child 可回溯 **100.00%**、overlap 合规 **99.24%**、表格完整 **72.73%**（B 81.82% 最好）、代码完整 **95.28%**、空 chunk **0**。
+
+Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p50 60），其中 **69.5%** 的起点落在句子或行边界上——说明「句子边界优先、越界退窗口」确实在工作，不是全靠窗口兜底。
+
+**参数敏感性（D 方案，40 篇）**
+
+| `min_tokens` | parent | child | child/parent | child p50 | 碎块率 | 重复占比 |
+|---|---|---|---|---|---|---|
+| 0 | 338 | 449 | 1.33 | 159 | 33.0% | 8.46% |
+| 100 | 278 | 389 | 1.40 | 199 | 21.6% | 4.37% |
+| **200（当前默认）** | 194 | 322 | 1.66 | 316 | 14.3% | 0.31% |
+| **400（建议）** | 129 | 284 | 2.20 | 353 | **7.0%** | **0.00%** |
+| 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
+
+结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**三个指标定义上的坑（都会让结论反向）**
+
+1. **句子切断只能在散文区统计**。第一版把代码块和 URL 的内部结尾也算进去，D 方案虚高到 77%，反而比不做结构的 B 还差——代码/表格完整性该由 `code_intact_ratio` / `table_intact_ratio` 单独负责。
+2. **`rstrip()` 之后判 `endswith("
+")` 永远为假**。以换行结尾的列表项全被误算成切断，指标虚高 40 个百分点。判据要先只去掉行尾空格/制表符。
+3. **跨 Parent 的接缝不是句子切断**。§2.3 规定 Child 不跨 Parent，章节边界处的"没写完"是结构边界的正常现象；按 parent 分组统计后 D 从 40.10% 归到 0.00%。
+
 **与方案伪代码的一处差异**：伪代码在递归每一层都调 `merge_small_parts`，实现改为**只在最后合并一次**。原因：内层已按 target 拼好的片段到外层还会被再拼一次，既重复 token 计数（最坏 O(n²)），又让「按哪一级目标切」不可预测；末尾合并结果等价、成本更低。
 
 
@@ -2423,4 +2462,8 @@ PDF 那 4.6% 的差不是丢内容，而是 pypdf 会给每个 span 补空白：
                                                   JSONL 严格字段契约 + manifest；补实测（parent 超限 0、
                                                   关联 100%、两次运行 sha256 一致、ID 复用 0），
                                                   并记录「child/parent ≈ 1.5」这个待 D11 调的信号
+  1.7                     2026-11-02              D07/D09/D11 落地：Overlap（句子边界回退）、Chunk
+                                                  Validator（六类检查 + gold 收敛）、质量报告与 A–E
+                                                  对照；补 40 篇实测与参数敏感性（建议 min_tokens
+                                                  200→400，记作 B07 待定），记录三个指标定义坑
   ------------------------------------------------------------------------------------

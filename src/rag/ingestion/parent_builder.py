@@ -23,6 +23,7 @@ from typing import Iterable, Sequence
 
 from .block import DocumentBlock
 from .ids import content_hash, make_chunk_id, make_parent_id
+from .overlap import DEFAULT_OVERLAP_TOKENS, apply_overlap
 from .recursive_chunker import recursive_split
 from .tokenizer import TokenCounter
 
@@ -43,6 +44,7 @@ class ParentConfig:
     min_tokens: int = 200
     child_target_tokens: int = 400
     child_max_tokens: int = 500
+    child_overlap_tokens: int = DEFAULT_OVERLAP_TOKENS
 
     def __post_init__(self) -> None:
         if self.max_tokens <= 0:
@@ -51,6 +53,13 @@ class ParentConfig:
             raise ValueError(f"min_tokens 不能为负，收到 {self.min_tokens}")
         if self.child_max_tokens <= 0:
             raise ValueError(f"child_max_tokens 必须为正数，收到 {self.child_max_tokens}")
+        if self.child_overlap_tokens < 0:
+            raise ValueError(f"child_overlap_tokens 不能为负，收到 {self.child_overlap_tokens}")
+        if self.child_overlap_tokens >= self.child_max_tokens:
+            raise ValueError(
+                f"child_overlap_tokens({self.child_overlap_tokens}) 必须小于 "
+                f"child_max_tokens({self.child_max_tokens})，否则切不出内容"
+            )
 
 
 @dataclass
@@ -353,6 +362,7 @@ def build_children(
     counter: TokenCounter,
     child_target_tokens: int = ParentConfig.child_target_tokens,
     child_max_tokens: int = ParentConfig.child_max_tokens,
+    overlap_tokens: int = DEFAULT_OVERLAP_TOKENS,
     embedding_model: str = "",
     embedding_version: str = "",
 ) -> list[Child]:
@@ -362,26 +372,34 @@ def build_children(
     保证 `"".join(pieces) == parent.content`，所以既能用 `in parent.content`
     校验归属，也能据此换算偏移。
     """
+    if overlap_tokens >= child_max_tokens:
+        raise ValueError(
+            f"overlap_tokens({overlap_tokens}) 必须小于 child_max_tokens({child_max_tokens})"
+        )
+
+    # 先按「max - overlap」切，贴上重叠后仍然不超 max（否则 overlap 会把上限顶破）
+    split_max = child_max_tokens - overlap_tokens
+    split_target = max(1, child_target_tokens - overlap_tokens)
+
     children: list[Child] = []
     for parent in parents:
-        pieces = recursive_split(
+        raw_pieces = recursive_split(
             parent.content,
             counter=counter,
-            max_tokens=child_max_tokens,
-            target_tokens=child_target_tokens,
+            max_tokens=split_max,
+            target_tokens=split_target,
         )
-        offset = 0
+        pieces = apply_overlap(raw_pieces, counter, overlap_tokens=overlap_tokens)
         for child_index, piece in enumerate(pieces):
-            if not piece.strip():
-                offset += len(piece)
+            if not piece.content.strip():
                 continue
-            start = None if parent.source_start is None else parent.source_start + offset
-            end = None if parent.source_start is None else parent.source_start + offset + len(piece)
+            start = None if parent.source_start is None else parent.source_start + piece.char_start
+            end = None if parent.source_start is None else parent.source_start + piece.char_end
             child = Child(
                 parent_index=parent.parent_index,
                 child_index=child_index,
-                content=piece,
-                token_count=counter.count(piece),
+                content=piece.content,
+                token_count=counter.count(piece.content),
                 section_path=list(parent.section_path),
                 source_start=start,
                 source_end=end,
@@ -396,10 +414,9 @@ def build_children(
             )
             if parent.parent_id:
                 child.chunk_id = make_chunk_id(
-                    parent.parent_id, child_index, content_hash(piece), CHILD_CHUNKER_VERSION
+                    parent.parent_id, child_index, content_hash(piece.content), CHILD_CHUNKER_VERSION
                 )
             children.append(child)
-            offset += len(piece)
     return children
 
 

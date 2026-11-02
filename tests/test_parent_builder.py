@@ -95,6 +95,9 @@ class _FakeCounter:
     def truncate(self, text, max_tokens):
         return text[:max_tokens]
 
+    def truncate_tail(self, text, max_tokens):
+        return text[-max_tokens:] if max_tokens > 0 else ""
+
 
 class SectionBoundaryTest(unittest.TestCase):
     def test_one_section_becomes_one_parent(self):

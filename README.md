@@ -105,6 +105,9 @@ local-rag-agentic-lab/
 │       ├── tokenizer.py        # TokenCounter：token 计数 + Ollama 抽样校验（D05）
 │       ├── recursive_chunker.py  # Recursive Splitter：分隔符优先级 + token 窗口兜底（D06）
 │       ├── parent_builder.py     # Parent Builder（章节边界 → 切长 → 并短）+ Child 关联（D08）
+│       ├── overlap.py            # Child 间重叠：句子边界优先 + token 窗口兜底（D07）
+│       ├── validator.py          # 六类校验 + gold 收敛统计 + *.invalid.jsonl（D09）
+│       ├── quality_report.py     # A–E 方案对照 + 8 项抽查指标报告（D11）
 │       ├── ids.py                # 稳定 ID 与内容哈希（document/parent/chunk，D10）
 │       ├── jsonl_store.py        # JSONL 字段契约 + manifest（D12）
 │       └── parser/
@@ -449,6 +452,46 @@ python -m unittest tests.test_parent_builder tests.test_stable_ids tests.test_js
 **JSONL 字段契约**：`parents.jsonl` / `children.jsonl` / `documents.jsonl` 的字段集与方案 §3.1–3.3 完全一致，**多一个字段也报错**——这三个文件是 Qdrant payload、SQLite、评估脚本的共同输入，字段漂移没人发现比报错更贵。`manifest.json` 记录每个文件的 sha256，两次运行直接对比即可，不用手工 `sha256sum`。
 
 **验收：** 能解释为什么 `document_id` 不含内容，并能用两次运行的 manifest sha256 证明输出可复现。
+
+### 实验 12：Overlap 与质量报告——先量出问题，再谈调参
+
+```powershell
+python -m unittest tests.test_overlap tests.test_validator tests.test_quality_report -v
+
+# 40 篇语料的 A–E 对照 + 8 项抽查（30–50 篇是 D11 的要求）
+python -m src.rag.ingestion.quality_report --dir data/md --limit 40 --out experiments/reports/chunking_quality.md --json experiments/reports/chunking_quality.json
+```
+
+实测（40 篇真实 md）：
+
+| 方案 | chunk 数 | token p50 | 重复 | 句子被切断 | 碎块(<80) | child/parent |
+|---|---|---|---|---|---|---|
+| A 固定长度 | 594 | 133 | 0.00% | **97.53%** | 4.71% | — |
+| B Recursive | 209 | 412 | 0.00% | 0.00% | 1.91% | — |
+| C Recursive+Overlap | 247 | 408 | 0.00% | 0.00% | 0.81% | — |
+| D Parent-Child+Overlap | 332 | 314 | **1.81%** | 0.00% | **14.76%** | 1.64 |
+| E Semantic | 未实现（语义切分第一版关闭） | | | | | |
+
+Overlap：100 对相邻 chunk 的 overlap **100% 落在 [50,70]**，其中 **69.5%** 的起点在句子或行边界上——「句子边界优先」不是摆设。
+
+**D 方案的短板在碎块率，不在断句**：`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child，很多 Child 就是整个 Parent。参数扫描：
+
+| `min_tokens` | child/parent | child p50 | 碎块率 | 重复 |
+|---|---|---|---|---|
+| 0 | 1.33 | 159 | 33.0% | 8.46% |
+| **200（默认）** | 1.66 | 316 | 14.3% | 0.31% |
+| **400（建议）** | 2.20 | 353 | **7.0%** | **0.00%** |
+
+所以「Child 的粒度被 Parent 大小卡住」。这条写成了待定决策 B07：**必须等检索级消融确认收益再改默认值**，不能拿 chunking 指标拍板。
+
+**三个会让你结论反向的指标坑**（都是实测踩出来的）：
+
+1. 句子切断只能在**散文区**统计——把代码块/URL 的结尾算进去，D 会虚高到 77%，比不做结构的 B 还差；
+2. `rstrip()` 之后判 `endswith("
+")` 永远为假——以换行结尾的列表项全被误算成切断，虚高 40 个百分点；
+3. 跨 Parent 的接缝不是句子切断——§2.3 规定 Child 不跨 Parent，按 parent 分组后 D 从 40.10% 归到 0.00%。
+
+**验收：** 能解释「碎块率」为什么是 Parent 大小的问题，并说清为什么不能只凭 chunking 指标改默认参数。
 
 
 ## 重要说明

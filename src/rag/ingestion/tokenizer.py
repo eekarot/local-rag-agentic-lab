@@ -91,6 +91,25 @@ class TokenCounter:
         cut = encoding.offsets[max_tokens - 1][1]
         return text[:cut]
 
+    def truncate_tail(self, text: str, max_tokens: int) -> str:
+        """取文本末尾 ≤ max_tokens 个 token，返回值必须是原文的逐字符**后缀**。
+
+        与 ``truncate`` 相反的方向——D07 的 overlap 要从上一块的尾部取内容，
+        而且取出来的必须是原文子串，否则重叠区域没法在原文里定位。
+        """
+        if max_tokens <= 0 or not text:
+            return ""
+        encoding = self._tokenizer.encode(text, add_special_tokens=False)
+        total = len(encoding.ids)
+        if total <= max_tokens:
+            return text
+        start = encoding.offsets[total - max_tokens][0]
+        tail = text[start:]
+        # 从 left 再收一刀：重新 tokenize 后缀时开头可能多吃出 token
+        while tail and self.count(tail) > max_tokens:
+            tail = tail[1:]
+        return tail
+
     def verify_against_ollama(
         self,
         texts: Sequence[str],

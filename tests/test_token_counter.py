@@ -149,6 +149,36 @@ class OllamaCalibrationTest(unittest.TestCase):
             self.counter.verify_against_ollama([], embed_fn=self.fake_api())
 
 
+class TruncateTailTest(unittest.TestCase):
+    """D07 overlap 需要「从尾部按 token 截断」，且结果必须是原文的逐字符**后缀**。"""
+
+    def setUp(self):
+        self.counter = TokenCounter()
+
+    def test_returns_suffix_of_original(self):
+        text = "alpha beta gamma delta epsilon"
+        tail = self.counter.truncate_tail(text, 2)
+        self.assertTrue(text.endswith(tail), f"{tail!r} 不是原文后缀")
+        self.assertLessEqual(self.counter.count(tail), 2)
+
+    def test_tail_shorter_than_limit_returns_whole_text(self):
+        text = "alpha beta"
+        self.assertEqual(self.counter.truncate_tail(text, 99), text)
+
+    def test_zero_or_negative_returns_empty(self):
+        self.assertEqual(self.counter.truncate_tail("alpha beta", 0), "")
+        self.assertEqual(self.counter.truncate_tail("alpha beta", -3), "")
+
+    def test_empty_text_returns_empty(self):
+        self.assertEqual(self.counter.truncate_tail("", 5), "")
+
+    def test_tail_of_n_tokens_only_includes_last_tokens(self):
+        text = "one two three four five six seven eight"
+        tail = self.counter.truncate_tail(text, 3)
+        self.assertTrue(text.endswith(tail))
+        self.assertNotIn("one", tail, "尾部截断不应带回开头的内容")
+
+
 class UnavailableTokenizerTest(unittest.TestCase):
     def test_missing_file_raises_with_download_hint(self):
         with self.assertRaises(TokenizerUnavailable) as ctx:
