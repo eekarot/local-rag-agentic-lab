@@ -108,6 +108,9 @@ local-rag-agentic-lab/
 │       ├── overlap.py            # Child 间重叠：句子边界优先 + token 窗口兜底（D07）
 │       ├── validator.py          # 六类校验 + gold 收敛统计 + *.invalid.jsonl（D09）
 │       ├── quality_report.py     # A–E 方案对照 + 8 项抽查指标报告（D11）
+│   └── store/                    # 向量库层（Phase 2）
+│       ├── qdrant_store.py       # collection 配置 / 6 个 payload index / CLI（D15）
+│       └── errors.py             # VectorStoreError / CollectionMismatchError
 │       ├── ids.py                # 稳定 ID 与内容哈希（document/parent/chunk，D10）
 │       ├── jsonl_store.py        # JSONL 字段契约 + manifest（D12）
 │       └── parser/
@@ -492,6 +495,41 @@ Overlap：100 对相邻 chunk 的 overlap **100% 落在 [50,70]**，其中 **69.
 3. 跨 Parent 的接缝不是句子切断——§2.3 规定 Child 不跨 Parent，按 parent 分组后 D 从 40.10% 归到 0.00%。
 
 **验收：** 能解释「碎块率」为什么是 Parent 大小的问题，并说清为什么不能只凭 chunking 指标改默认参数。
+
+### 实验 13：Qdrant——把向量检索变成带过滤的数据库
+
+```powershell
+docker compose up -d qdrant                                   # qdrant/qdrant:v1.15.0，内存限 2 GB
+python -m src.rag.store.qdrant_store ping                     # {"ok": true, "collections": [...]}
+python -m src.rag.store.qdrant_store create                   # rag_chunks_v1 + 6 个 payload index
+python -m src.rag.store.qdrant_store info --json
+curl -s localhost:6333/collections/rag_chunks_v1
+```
+
+验收读数（实测）：
+
+```
+size=1024  distance=Cosine  hnsw m=16  ef_construct=200
+payload_schema: document_id / document_type / language / status / subject / tenant_id
+```
+
+**为什么不用 numpy 兜底**（决策 B04）：实测同一 query 的 Top-50 来自 **23 个文件、最大单文件仅 6 条**，
+「只在这份文档内检索」用 post-filter 几乎捞不到东西（k=5 时常为 0 条）。
+Qdrant 的 filter 是**先过滤再在子集里 ANN**，不会坍缩。numpy 精确检索保留下来只当 D19/D36 的
+「标准答案」，不进产品路径。
+
+**四个静默出错的坑**：
+
+1. **本地模式 payload index 空转**：`QdrantClient(":memory:")` 建索引会"成功"，但客户端自己警告索引无效。
+   验收必须连服务端。
+2. **point id 只收 UUID 或整数**：`chk_<32 hex>` 直接写入被 400 拒绝 → 用 `point_id_for()`（UUID5）映射，
+   这也是 D16 幂等的前提。
+3. **`ef_construct` 是 collection 级**：写进 `VectorParams(hnsw_config=...)` 会被静默忽略成 100（实测）。
+4. **枚举名与值不一致**：`Distance.COSINE` 的值是 `"Cosine"`，`models.Distance["COSINE"]` 才对。
+5. **同名 collection 删了立刻重建会 400**（目录残留）：`recreate=True` 路径必须等名字真正消失，
+   测试则改成每用例独占随机 collection 名。
+
+**验收：** 能说出「payload index 为什么必须建在导入前」，并能解释 point id 为什么不能用行号。
 
 
 ## 重要说明

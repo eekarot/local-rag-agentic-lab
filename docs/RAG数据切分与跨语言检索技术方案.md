@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.7\
+> **文档版本**：1.8\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2096,7 +2096,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | D13 | D05,B01 | Embedding 服务抽象（`encode_documents` / `encode_queries`、维度与 NaN 校验、内容 hash 缓存、批量） | 同一文本二次调用命中缓存（缓存命中率 ≥95%，P95 延迟降 ≥10×）；维度 ≠1024 时抛错；NaN/Inf 检测单测 |
 | D14 | D13 | `embedding_text`（Document/Section 前缀）与 `content` 分离 | 库中两个字段同时存在；前缀缺失计数可统计；小样本 A/B（有/无前缀）Recall@10 差异写入报告 |
-| D15 | B04 | Qdrant 部署 + Collection + Payload Index（6 个过滤字段） | `curl -s localhost:6333/collections/rag_chunks_v1` 中 `size=1024`、`distance=Cosine`、`hnsw_config.m=16`、`ef_construct=200`；6 个 payload index 均存在 |
+| D15 | B04 | ✅ **已完成（2026-11-02）** Qdrant 部署 + Collection + Payload Index（6 个过滤字段）；`docker-compose.yml` 固定 `qdrant/qdrant:v1.15.0`，`src/rag/store/qdrant_store.py` 管建/读/删 + CLI | `docker compose up -d qdrant && python -m src.rag.store.qdrant_store create`；`curl -s localhost:6333/collections/rag_chunks_v1` → **size=1024、distance=Cosine、hnsw m=16、ef_construct=200、payload_schema 6 个**（实测已核对）；`python -m unittest tests.test_qdrant_store` 18 用例全绿 |
 | D16 | D10,D15 | 幂等 Upsert + 文档版本管理 + 按文档删除/重建 | 同一文档导入两次后 collection 点数不变（重复点 == 0）；删除后按 `document_id` 过滤计数 == 0 |
 | D17 | D08 | SQLite Document Store（Parent 原文 + 文档元数据） | 任意 `chunk_id` 可查到 parent 原文与来源路径；`SELECT count(*) FROM parents` == JSONL 中 parent 数 |
 | D18 | D16,D17 | 导入状态机 + 失败清单 + 断点恢复（PENDING→…→COMPLETED / FAILED_*） | 人为 kill 后重启：已完成批次不重算（日志可证）；失败文档进 failure 清单并可单条重试成功 |
@@ -2203,7 +2203,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **B01** | Embedding 走 Ollama API 还是 FlagEmbedding 本地 | ✅ **已定（2026-11-02）：走 Ollama API**（保持现状，不引入 FlagEmbedding / torch 依赖）。细则见 17.11.1 | D05、D13、D39 |
 | **B02** | 是否按方案重切分（500 字符 → Child 400–500 token） | ✅ **已定（2026-11-02）：按方案重切分**（Parent-Child + Token 口径）。影响评估见 17.11.2 | D05–D12、D27、E05 |
 | B03 | 测试框架 pytest 还是 stdlib unittest（现状环境无 pytest） | ⏳ 未定。建议：不阻塞交付，先用 unittest 保持目录分层 | E03 |
-| B04 | Qdrant 引入时机 | ⏳ 未定。建议：定义 `VectorStore` 接口先接 Qdrant，numpy 精确实现兜底（D19 的 ANN 口径必须在 Qdrant 上测） | D15、D19、D36 |
+| B04 | Qdrant 引入时机 | ✅ **已定（2026-11-02，用户拍板）：Phase 2 起直接用 Qdrant**，不做「先 numpy 后切换」。理由见 §17.11.4：过滤能力是硬需求（实测 Top-50 分散在 23 个文件、单文件最多 6 条）、numpy 兜底等于做两套、本机 Docker + `qdrant/qdrant:v1.15.0` 已验通 | D15–D21、D25、D36（**解开 24 项**） |
 | B05 | 中文 BM25 是否保留（当前 jieba BM25 对 1,783 条中文 chunk 有效，方案只要英文 lexical） | ⏳ 未定。建议：两套并存，消融单列一路 | D25、D26、D28 |
 | **B06** | 评估集重建成本与方式 | ✅ **已定（2026-11-02）：复用 `experiments/build_questions.py`**，新增 `query_en` 字段，不重写工具链。细则见 17.11.3 | D27、D28、E05 |
 | **B07** | Parent `min_tokens` 是否从 200 提到 400 | ⏳ **待定（D11 数据已出）**。40 篇实测：碎块率 14.3% → **7.0%**、重复 0.31% → **0**、child/parent 1.66 → 2.20；代价是合并后 `section_path` 变粗。**必须等 D28 检索级消融确认收益后再改默认值** | D08 默认配置、D20 端到端门槛、D28 消融 |
@@ -2319,6 +2319,33 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 ---
 
 
+### 17.11.4 B04：直接使用 Qdrant（不做「先 numpy 后切换」）
+
+**决策（2026-11-02，用户拍板）**：Phase 2 起向量库直接用 Qdrant，不保留 numpy 全矩阵作为产品路径。
+
+**为什么放弃原方案的「接口先行 + numpy 兜底」**
+
+1. **过滤能力是硬需求，不是优化**。现有 `retrieve.py` 只有 `matrix @ qvec` 全库打分，
+   连 `filter` 这个概念都没有。实测同一 query 的 **Top-50 来自 23 个文件、最大单文件仅 6 条**，
+   意味着「只在这份文档内检索」用 post-filter 几乎捞不到东西（k=5 时大概率 0 条）。
+   D29 语言过滤、D25 英文 lexical、单文档问答全卡在这。
+2. **numpy「兜底」的价值很低**：没有持久化、没有并发写、没有版本管理，
+   D16/D18/D21 都要重写一遍，等于维护两套。
+3. **本机可落地性已验通**：Docker 29.8.2 + `qdrant/qdrant:v1.15.0`（292 MB）+ 内存限 2 GB，
+   `docker compose up -d` 一条命令起停，数据卷 `./storage/qdrant`。
+
+**numpy 精确检索没有取消，只是换了角色**：D19/D36 算 ANN Recall@K 必须有「精确 Top-K 标准答案」，
+所以保留 `np` 暴力实现作为**评估工具**，不进产品路径。
+
+**影响**
+
+- D13 编码后直接 upsert 进 Qdrant，**不再产出 `embeddings.npy`**（旧索引保留用于回归对照）。
+- D16 幂等靠 `point_id_for(chunk_id)`（UUID5）保证，不靠行号对齐。
+- D19 的「精确基准」= 同一批向量在内存里暴力算，与 Qdrant ANN 结果求交集。
+- 版本纪律：镜像 minor 与 `qdrant-client` minor 必须对齐（实测 client 1.20 连 server 1.15 会告警不兼容）。
+
+---
+
 ## 17.12 执行记录（滚动更新）
 
 | 条目 | 状态 | 落地内容 | 验证 |
@@ -2335,6 +2362,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D07 | ✅ 2026-11-02 | `src/rag/ingestion/overlap.py`：`apply_overlap` 在上一块里挑句子/行起点作为重叠起点，找不到合适长度就退回 token 窗口；`TokenCounter.truncate_tail` 按 token offset 回切原文后缀 | 100 对相邻 chunk 的 overlap 100% 落在 [50,70]；双测（`tests.test_overlap`） |
 | D09 | ✅ 2026-11-02 | `src/rag/ingestion/validator.py`：六类检查 + `(document_id, parent_index)` 关联键 + 父块主键重复自检 + `gold_convergence` 直方图；`write_invalid` 无问题时**不生成**文件 | 40 篇真实语料：空 0 / 超限 0 / 重复 0.31% / 边界 100%；`tests.test_validator` 23 用例 |
 | D11 | ✅ 2026-11-02 | `src/rag/ingestion/quality_report.py`：A–E 五方案（E 标 not_implemented）+ 8 项抽查自动指标 + 人工评分列 + 逐文档明细 + CLI（`--out`/`--json`） | 40 篇真实语料报告见 §17.12 实测表；`tests.test_quality_report` 25 用例 |
+| D15 | ✅ 2026-11-02 | `src/rag/store/qdrant_store.py`（`ensure_collection` / `collection_config` / `point_id_for` / `payload_from_child` + CLI create/info/drop/ping）+ `docker-compose.yml`（镜像钉 v1.15.0，内存限 2 GB）+ `errors.py`（`CollectionMismatchError` 为 D21 铺路） | `curl -s localhost:6333/collections/rag_chunks_v1`：size=1024 / Cosine / m=16 / ef_construct=200 / payload index 6 个；`tests.test_qdrant_store` 18 用例 |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2417,6 +2445,29 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
 
+**D15 实测（Qdrant 1.15.0 / Docker 29.8.2）**
+
+```
+docker compose up -d qdrant                 # 镜像 qdrant/qdrant:v1.15.0，数据卷 ./storage/qdrant，内存限 2 GB
+python -m src.rag.store.qdrant_store create # rag_chunks_v1 + 6 个 payload index
+curl -s localhost:6333/collections/rag_chunks_v1
+  → size=1024  distance=Cosine  hnsw m=16  ef_construct=200
+  → payload_schema 6 个：document_id / document_type / language / status / subject / tenant_id
+```
+
+`tests.test_qdrant_store` 18 用例：4 个纯单测（UUID5 确定性、payload 映射、常量对齐方案）+ 7 个服务端用例（配置、6 索引、幂等、recreate 清点、维度不一致报错、过滤检索命中）。服务端不可达时自动 skip。
+
+**五个实测坑（每个都会让"看起来对"的代码静默出错）**
+
+1. **本地模式的 payload index 是空转**。`QdrantClient(":memory:")` 下 `create_payload_index` 会成功返回，但 client 自己警告 "Payload indexes have no effect in the local Qdrant"。所以「6 个索引存在」只能在服务端验；拿本地模式当验收环境等于自欺。
+2. **point id 只收 UUID 或整数**。我们的 `chunk_id = chk_<32 hex>` 直接塞进去被 400 拒绝。必须用 `point_id_for()`（带命名空间的 UUID5）映射——这同时是 D16「同一 chunk 重复导入不增点」的前提，不能用行号或自增 id。
+3. **`ef_construct` 是 collection 级参数**。写进 `VectorParams(hnsw_config=...)` 会被**静默忽略**，读回来仍是默认 `100`（实测）。要满足验收必须放在 `create_collection(hnsw_config=...)`。
+4. **枚举的名字和值不一致**。`Distance.COSINE` 的值是 `"Cosine"`、`PayloadSchemaType.KEYWORD` 的值是 `"keyword"`——所以 `models.Distance(name.upper())` 抛 `'COSINE' is not a valid Distance`，正确写法是下标 `models.Distance[name.upper()]`。
+
+5. **同名 collection 删除后立刻重建会 400**。`delete_collection` 返回后，服务端目录 `./storage/collections/<name>` 可能还在，此时 `create_collection` 同名会报 `Collection data already exists at ./storage/collections/<name>`。这条正好打在 `recreate=True` 的产品路径上（`rag_chunks_v1` 删了重建），所以 `ensure_collection` 里加了 `_wait_collection_gone()`（轮询到名字消失）+ `_create_with_retry()`（只对这一种竞态重试）。测试侧则改成**每个用例独占一个随机后缀的 collection 名**，不跟竞态较劲。
+
+**版本纪律**：镜像 `v1.15.0` 配 `qdrant-client==1.15.1`。实测 client 1.20 连 server 1.15 会告警 "client version is incompatible with server version（major 相同、minor 差 ≤1）"，所以两侧 minor 必须对齐并写进 `requirements.txt` 与 `docker-compose.yml`。
+
 **三个指标定义上的坑（都会让结论反向）**
 
 1. **句子切断只能在散文区统计**。第一版把代码块和 URL 的内部结尾也算进去，D 方案虚高到 77%，反而比不做结构的 B 还差——代码/表格完整性该由 `code_intact_ratio` / `table_intact_ratio` 单独负责。
@@ -2463,6 +2514,11 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
                                                   关联 100%、两次运行 sha256 一致、ID 复用 0），
                                                   并记录「child/parent ≈ 1.5」这个待 D11 调的信号
   1.7                     2026-11-02              D07/D09/D11 落地：Overlap（句子边界回退）、Chunk
+  1.8                     2026-11-02              B04 定案：直接使用 Qdrant（ADR §17.11.4）；D15 落地
+                                                  （compose + collection + 6 payload index + CLI，
+                                                  验收 curl 对齐）；记四个实测坑（本地模式索引空转、
+                                                  point id 只收 UUID、ef_construct 是 collection 级、
+                                                  枚举名与值不同）
                                                   Validator（六类检查 + gold 收敛）、质量报告与 A–E
                                                   对照；补 40 篇实测与参数敏感性（建议 min_tokens
                                                   200→400，记作 B07 待定），记录三个指标定义坑

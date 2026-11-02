@@ -1,0 +1,20 @@
+# D15：Qdrant 单节点（开发与验收环境）
+#
+#   docker compose up -d qdrant     启动
+#   docker compose ps              看状态
+#   curl -s localhost:6333         探活
+#   docker compose down            停止（数据留在 ./storage/qdrant）
+#
+# 版本纪律：镜像 minor 必须与 requirements.txt 里 qdrant-client 的 minor 对齐，
+# 否则客户端会告警 "client version 1.xx is incompatible with server version"。
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.15.0
+    container_name: rag-qdrant
+    ports:
+      - "6333:6333"   # REST
+      - "6334:6334"   # gRPC
+    volumes:
+      - ./storage/qdrant:/qdrant/storage
+    mem_limit: 2g     # 与 D39 的 16GB 预算对齐，先按 2GB 起
+    restart: unless-stopped
