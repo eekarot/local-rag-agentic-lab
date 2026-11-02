@@ -108,6 +108,10 @@ local-rag-agentic-lab/
 │       ├── overlap.py            # Child 间重叠：句子边界优先 + token 窗口兜底（D07）
 │       ├── validator.py          # 六类校验 + gold 收敛统计 + *.invalid.jsonl（D09）
 │       ├── quality_report.py     # A–E 方案对照 + 8 项抽查指标报告（D11）
+│   ├── embedding/                # Embedding 服务（Phase 2）
+│   │   ├── service.py            # 批量编码 / 校验 / 进程内 LRU / CLI（D13）
+│   │   ├── cache.py              # SQLite 内容 hash 缓存（4 KB/行）
+│   │   └── errors.py             # 输入/后端/维度/数值 四类错误
 │   └── store/                    # 向量库层（Phase 2）
 │       ├── qdrant_store.py       # collection 配置 / 6 个 payload index / CLI（D15）
 │       └── errors.py             # VectorStoreError / CollectionMismatchError
@@ -530,6 +534,39 @@ Qdrant 的 filter 是**先过滤再在子集里 ANN**，不会坍缩。numpy 精
    测试则改成每用例独占随机 collection 名。
 
 **验收：** 能说出「payload index 为什么必须建在导入前」，并能解释 point id 为什么不能用行号。
+
+### 实验 14：Embedding 服务——缓存不是优化，是硬需求
+
+```powershell
+python -m unittest tests.test_embedding_service -v          # 31 用例，全用假后端，不碰网络
+RAG_OLLAMA_CHECK=1 python -m unittest tests.test_embedding_integration -v   # 3 用例，真 bge-m3
+
+python -m src.rag.embedding.service stats                   # 缓存行数/体积/命中
+python -m src.rag.embedding.service encode "HNSW 的 ef 参数"   # 看维度、耗时、是否命中
+```
+
+真实 24 条 chunk 实测（逐条调用，体现 Ollama 单次固定开销）：
+
+| 场景 | p50 | p95 | 提速 |
+|---|---|---|---|
+| 冷启动 | 2,192 ms | 2,212 ms | 1× |
+| 进程内 LRU 命中 | 0.007 ms | **0.019 ms** | **113,489×** |
+| SQLite 命中 | 2.5 ms | **3.1 ms** | **713×** |
+
+单条 query：冷 2176 ms → 命中 **6.78 ms**（ADR 要求 <10 ms）。缓存 4 KB/行（1024 × float32）。
+
+**三个新坑**
+
+1. **`with sqlite3.connect(...) as conn` 不关连接**，只提交事务。Windows 上锁住 db 文件 → 临时目录清理
+   `PermissionError`。用 `@contextmanager` 显式 `close()`。
+2. **`np.frombuffer` 遇到截断 blob 直接抛 ValueError**：先按字节数校验，坏行按 miss 重算。
+3. **命中率验收要看「每次调用」**：100 条跑两遍，累计命中率是 49.8%，永远不达标也不反映缓存是否生效。
+   `stats()["last_pass"]` 才是验收看的值。
+
+还有一处与方案 §7.2 的偏差：签名是 `list[list[float]]`，实现返回 `np.ndarray(float32)`——
+8 万 × 1024 个 Python float 的对象开销就是几百 MB，下游也全要数组。
+
+**验收：** 能解释为什么"缓存命中率"必须按每次调用算，以及为什么全零向量要报错而不是静默返回。
 
 
 ## 重要说明

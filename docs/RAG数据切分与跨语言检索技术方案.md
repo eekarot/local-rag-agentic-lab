@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.8\
+> **文档版本**：1.9\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2094,7 +2094,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | 编号 | 依赖 | 任务 | 验收方式 |
 |---|---|---|---|
-| D13 | D05,B01 | Embedding 服务抽象（`encode_documents` / `encode_queries`、维度与 NaN 校验、内容 hash 缓存、批量） | 同一文本二次调用命中缓存（缓存命中率 ≥95%，P95 延迟降 ≥10×）；维度 ≠1024 时抛错；NaN/Inf 检测单测 |
+| D13 | D05,B01 | ✅ **已完成（2026-11-02）** Embedding 服务抽象（`src/rag/embedding/`：`encode_documents` / `encode_queries`、批量与二分重试、维度/NaN/Inf/全零校验、内容 hash 缓存（SQLite + 进程内 LRU）、`stats` 与 CLI） | `python -m unittest tests.test_embedding_service`（31 用例）全绿；真实 24 条 chunk：**冷启 p95 2212 ms → 内存命中 p95 0.019 ms（113,489×）、SQLite 命中 p95 3.1 ms（713×）**，二次调用命中率 **100%**；单条 query 冷 2176 ms → 命中 6.78 ms（<10 ms）；维度≠1024 / NaN / Inf / 全零各自抛错 |
 | D14 | D13 | `embedding_text`（Document/Section 前缀）与 `content` 分离 | 库中两个字段同时存在；前缀缺失计数可统计；小样本 A/B（有/无前缀）Recall@10 差异写入报告 |
 | D15 | B04 | ✅ **已完成（2026-11-02）** Qdrant 部署 + Collection + Payload Index（6 个过滤字段）；`docker-compose.yml` 固定 `qdrant/qdrant:v1.15.0`，`src/rag/store/qdrant_store.py` 管建/读/删 + CLI | `docker compose up -d qdrant && python -m src.rag.store.qdrant_store create`；`curl -s localhost:6333/collections/rag_chunks_v1` → **size=1024、distance=Cosine、hnsw m=16、ef_construct=200、payload_schema 6 个**（实测已核对）；`python -m unittest tests.test_qdrant_store` 18 用例全绿 |
 | D16 | D10,D15 | 幂等 Upsert + 文档版本管理 + 按文档删除/重建 | 同一文档导入两次后 collection 点数不变（重复点 == 0）；删除后按 `document_id` 过滤计数 == 0 |
@@ -2363,6 +2363,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D09 | ✅ 2026-11-02 | `src/rag/ingestion/validator.py`：六类检查 + `(document_id, parent_index)` 关联键 + 父块主键重复自检 + `gold_convergence` 直方图；`write_invalid` 无问题时**不生成**文件 | 40 篇真实语料：空 0 / 超限 0 / 重复 0.31% / 边界 100%；`tests.test_validator` 23 用例 |
 | D11 | ✅ 2026-11-02 | `src/rag/ingestion/quality_report.py`：A–E 五方案（E 标 not_implemented）+ 8 项抽查自动指标 + 人工评分列 + 逐文档明细 + CLI（`--out`/`--json`） | 40 篇真实语料报告见 §17.12 实测表；`tests.test_quality_report` 25 用例 |
 | D15 | ✅ 2026-11-02 | `src/rag/store/qdrant_store.py`（`ensure_collection` / `collection_config` / `point_id_for` / `payload_from_child` + CLI create/info/drop/ping）+ `docker-compose.yml`（镜像钉 v1.15.0，内存限 2 GB）+ `errors.py`（`CollectionMismatchError` 为 D21 铺路） | `curl -s localhost:6333/collections/rag_chunks_v1`：size=1024 / Cosine / m=16 / ef_construct=200 / payload index 6 个；`tests.test_qdrant_store` 18 用例 |
+| D13 | ✅ 2026-11-02 | `src/rag/embedding/`：`service.py`（EmbeddingService：批量、400 原地重试 + 二分、维度/NaN/Inf/全零校验、进程内 LRU、stats、CLI encode/stats/purge）、`cache.py`（SQLite 内容 hash 缓存，4 KB/行）、`errors.py`；`tests/test_embedding_integration.py` 真模型用例挂 `RAG_OLLAMA_CHECK=1` | `python -m unittest tests.test_embedding_service` 31 用例；`RAG_OLLAMA_CHECK=1 python -m unittest tests.test_embedding_integration` 3 用例；实测冷 p95 2212 ms → 内存命中 0.019 ms、SQLite 命中 3.1 ms |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2445,6 +2446,28 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
 
+**D13 实测（bge-m3 / Ollama 0.40.5）**
+
+真实 24 条 chunk（取自 `data/md`，逐条调用以体现 Ollama 的单次固定开销约 2.1 s）：
+
+| 场景 | p50 | p95 | 相对冷启动 |
+|---|---|---|---|
+| 冷启动（调模型） | 2,192 ms | 2,212 ms | 1× |
+| 进程内 LRU 命中 | 0.007 ms | **0.019 ms** | **113,489×** |
+| SQLite 命中（新实例/新进程） | 2.5 ms | **3.1 ms** | **713×** |
+
+二次调用命中率 **100%**；单条 query 冷 2176 ms → 命中 **6.78 ms**（ADR 要求 <10 ms）。缓存占用 1024 维 × float32 = **4 KB/行**（25 行 = 100 KB）。
+
+**与方案 §7.2 的一处偏差（已记 changelog）**：签名写的是 `list[list[float]]`，实现返回 `np.ndarray(float32)`。8 万 chunk × 1024 维 = 8.3e7 个 Python float，光对象开销就是几百 MB，且下游（Qdrant upsert / numpy 基准）全要数组。需要 list 时 `.tolist()`。
+
+**三个新坑**
+
+1. **`with sqlite3.connect(...) as conn` 不关闭连接**——它只提交事务。Windows 上会一直锁住 `.sqlite3` 文件，临时目录清理直接 `PermissionError`，长跑脚本里则是句柄泄漏。缓存层用 `@contextmanager` 显式 `close()`。
+2. **`np.frombuffer` 遇到被截断的 blob 会抛 `ValueError("buffer size must be a multiple of element size")`**，缓存坏行不该让整条摄取链挂掉。改为**先按字节数校验**（`len(blob) == dim*4`）再解析，坏行按 miss 处理、重算覆盖。
+3. **命中率验收必须看「每次调用」而不是累计**：100 条跑两遍，累计命中率是 100/201 = **49.8%**，拿它当验收指标永远不达标也不反映缓存是否生效。`stats()` 同时给累计值与 `last_pass`，D13 验收看后者。
+
+另外 SQLite 命中实测 3.1–6.8 ms，离 ADR 的 10 ms 只剩 30% 余量（换块慢盘就破），所以在 SQLite 之上加了**进程内 LRU**（默认 1024 条 ≈ 4 MB，`memo_size` 可调），命中打到 0.019 ms。
+
 **D15 实测（Qdrant 1.15.0 / Docker 29.8.2）**
 
 ```
@@ -2515,6 +2538,10 @@ curl -s localhost:6333/collections/rag_chunks_v1
                                                   并记录「child/parent ≈ 1.5」这个待 D11 调的信号
   1.7                     2026-11-02              D07/D09/D11 落地：Overlap（句子边界回退）、Chunk
   1.8                     2026-11-02              B04 定案：直接使用 Qdrant（ADR §17.11.4）；D15 落地
+  1.9                     2026-11-02              D13 落地：Embedding 服务（批量 + 二分重试、维度/NaN/Inf/
+                                                  全零校验、内容 hash 缓存 SQLite + 进程内 LRU、stats/CLI）；
+                                                  记签名偏差（返回 ndarray）与三个新坑（连接不关锁文件、
+                                                  frombuffer 遇截断 blob、命中率要看每次调用）
                                                   （compose + collection + 6 payload index + CLI，
                                                   验收 curl 对齐）；记四个实测坑（本地模式索引空转、
                                                   point id 只收 UUID、ef_construct 是 collection 级、

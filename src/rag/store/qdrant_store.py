@@ -163,7 +163,7 @@ def ensure_collection(
     """建 collection + 6 个 payload index。幂等；`recreate=True` 会先删。"""
     if collection_exists(client, collection):
         if recreate:
-            client.delete_collection(collection)
+            _delete_with_retry(client, collection)
             _wait_collection_gone(client, collection)
         else:
             existing = collection_config(client, collection)
@@ -186,6 +186,25 @@ def ensure_collection(
     )
     _ensure_payload_indexes(client, collection)
     return collection_config(client, collection)
+
+
+def _delete_with_retry(client: QdrantClient, collection: str, attempts: int = 3) -> None:
+    """删除重试。
+
+    实测：整套测试连跑时，`delete_collection` 偶发瞬时失败（服务端正在 flush 段），
+    单独跑同一个用例却 3/3 通过。删除是幂等操作，重试是安全的；
+    不重试会让 `recreate=True` 这种产品路径随机崩。
+    """
+    import time
+
+    for attempt in range(1, attempts + 1):
+        try:
+            client.delete_collection(collection)
+            return
+        except Exception:
+            if attempt == attempts:
+                raise
+            time.sleep(0.3 * attempt)
 
 
 def _create_with_retry(

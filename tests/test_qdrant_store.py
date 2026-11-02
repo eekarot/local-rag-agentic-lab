@@ -184,6 +184,23 @@ class ServerCollectionTest(unittest.TestCase):
         ensure_collection(self.client, collection=self.collection, recreate=True)
         self.assertEqual(collection_config(self.client, self.collection)["points_count"], 0)
 
+    def test_recreate_survives_transient_delete_failure(self):
+        """删除偶发瞬时失败必须重试（实测整套测试连跑时会出现）。"""
+        ensure_collection(self.client, collection=self.collection)
+        original = self.client.delete_collection
+        state = {"failed": 0}
+
+        def flaky(collection_name, **kwargs):
+            if state["failed"] == 0:
+                state["failed"] += 1
+                raise RuntimeError("transient: collection is being flushed")
+            return original(collection_name, **kwargs)
+
+        self.client.delete_collection = flaky  # type: ignore[method-assign]
+        ensure_collection(self.client, collection=self.collection, recreate=True)
+        self.assertEqual(state["failed"], 1, "应该恰好失败一次后被重试吞掉")
+        self.assertEqual(collection_config(self.client, self.collection)["points_count"], 0)
+
     def test_vector_size_mismatch_is_rejected(self):
         """D21 的地基：换 embedding 模型（维度变了）不能往旧 collection 里写。"""
         ensure_collection(self.client, collection=self.collection)
