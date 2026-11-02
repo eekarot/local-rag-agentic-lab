@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.4\
+> **文档版本**：1.5\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2074,11 +2074,11 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | 编号 | 依赖 | 任务 | 验收方式 |
 |---|---|---|---|
 | D01 | — | ✅ **已完成（2026-11-02）** `DocumentBlock` 数据结构 + Parser 基类接口（方案 §2.2） | `python -m unittest tests.test_document_block tests.test_parser_base`（14 个用例）全绿：7 种 `block_type` 均可构造、未知类型报错且列出合法值、heading 缺 level 报错、`source_start>source_end` 报错、`to_dict/from_dict` 往返一致、缺省容器不共享、注册表大小写不敏感分派、未知后缀报错并列出已注册后缀。（原计划用 pytest + md 样本计数，改为 unittest；「heading 数 == `^#+ ` 行数」移入 D02，因为那需要真实 Markdown 解析器） |
-| D02 | D01 | Markdown Parser（标题层级、列表、表格、代码块，标题不脱离正文） | 解析 `docs/*.md`：代码块/表格不被拆成 paragraph；`section_path` 非空率 100%；单测覆盖"表格紧跟标题""代码块内含 `#`"两个陷阱 |
-| D03 | D01 | TXT Parser（段落/句子边界） | 输出 block 数 ≥ 空行分隔段数；空 block 数 == 0 |
-| D04 | D01 | PDF Parser 升级（pymupdf，保留页码与版面块） | 抽样 30 页人工表：`page_number` 有值率 100%；抽取字符数与 pypdf 对比 ±5% 内，或写明差异原因 |
+| D02 | D01 | ✅ **已完成（2026-11-02）** Markdown Parser（标题层级、列表、表格、代码块、引用、图注、setext 标题；标题不脱离正文） | `python -m unittest tests.test_markdown_parser`（32 用例）全绿，含「表格紧跟标题」「代码块内含 `#`」两个陷阱；`python -m src.rag.ingestion.parser check data/md` → **section_path 非空率 100.00%、空 block 0**（1,227 文件 / 99,479 block）；heading 块 31,446 == 文内 `^#+ ` 行 35,741 − 代码块内 `#` 行 4,295 |
+| D03 | D01 | ✅ **已完成（2026-11-02）** TXT Parser（空行分段、软换行保留、句子数统计、BOM/CRLF 归一） | `python -m unittest tests.test_txt_parser`（16 用例）全绿；段落数 == 空行分隔段数、空 block 0；`check` 命令在混合语料上回报空 block 0 |
+| D04 | D01 | ✅ **已完成（2026-11-02）** PDF Parser（pymupdf `get_text("dict")`：页码 + bbox + 字号；按字号相对比识别标题；重复页眉页脚剔除并留痕） | `python -m unittest tests.test_pdf_parser`（22 用例）全绿；`check data` → **PDF 页码覆盖率 100.00%**；30 页字符数：pypdf 62,779 vs pymupdf 59,874（0.954），**去空白后 47,687 vs 47,464（0.995）**——差异来自 pypdf 给每个 span 补空白（其空白占比 24.0% vs 20.7%），非内容丢失；人工抽查表用 `python -m src.rag.ingestion.parser.pdf_parser report <pdf> --pages 1-30 --out report.csv` 生成 |
 | D05 | B01 | ✅ **已完成（2026-11-02）** 统一 Token 计数（BGE-M3 tokenizer 口径） | `python -m src.rag.ingestion.tokenizer count "文本"` 输出整数；`verify --n 8` 返回 `aligned: true`（实测逐条中位误差 0%、最大绝对差 0）；17 个单测覆盖空串/未知词/批量一致/`truncate` 边界/词表缺失提示。**原「与 FlagEmbedding 计数差 0」已作废**（B01 决定不引入 FlagEmbedding），改为「与 Ollama `prompt_eval_count` 逐条对齐」 |
-| D06 | D05 | ✅ **已完成（2026-11-02）** Recursive Splitter（分隔符优先级 + `split_preserving_separator` + `merge_small_parts` + token 窗口兜底） | `python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real`（35 用例）全绿，6 类边界（超长段落/超长句/无分隔符/超长单词/代码块/表格）逐类断言；`python -m src.rag.ingestion.splitter check --n 2000` → **超限率 0.00%、还原失败 0**；不变量 `"".join(pieces) == text` 在 300 条真实 chunk + 100 篇拼长文档上全部成立 |
+| D06 | D05 | ✅ **已完成（2026-11-02）** Recursive Splitter（分隔符优先级 + `split_preserving_separator` + `merge_small_parts` + token 窗口兜底） | `python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real`（35 用例）全绿，6 类边界（超长段落/超长句/无分隔符/超长单词/代码块/表格）逐类断言；`python -m src.rag.ingestion.recursive_chunker check --n 2000` → **超限率 0.00%、还原失败 0**；不变量 `"".join(pieces) == text` 在 300 条真实 chunk + 100 篇拼长文档上全部成立 |
 | D07 | D06 | Overlap（句子边界回退 + `source_start/end`） | 抽样 100 对相邻 chunk：overlap token ∈ [50, 70] 占比 ≥95%；任意重叠文本可在原文定位 |
 | D08 | D06 | Parent Builder（章节边界优先，≤2000 token） | `chunk→parent` 关联成功率 == 100%；parent token ≤ 2000 超限数 == 0 |
 | D09 | D06,D08 | Chunk Validator（长度/空/重复/边界/元数据） | 校验报告含四项数字：空 chunk 0、超限 0、重复文本占比、边界完整率；失败样例落 `*.invalid.jsonl` |
@@ -2322,9 +2322,13 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | 条目 | 状态 | 落地内容 | 验证 |
 |---|---|---|---|
-| D01 | ✅ 2026-11-02 | `src/rag/ingestion/block.py`（`DocumentBlock` + `BLOCK_TYPES` + 字段校验 + `to_dict/from_dict`）、`src/rag/ingestion/parsers/base.py`（`BaseParser` 抽象基类 + `can_parse` + `describe`）、`src/rag/ingestion/parsers/__init__.py`（后缀注册表，冲突显式报错）、`src/rag/ingestion/errors.py` | `python -m unittest tests.test_document_block tests.test_parser_base` → 21 用例全绿 |
+| D01 | ✅ 2026-11-02 | `src/rag/ingestion/block.py`（`DocumentBlock` + `BLOCK_TYPES` + 字段校验 + `to_dict/from_dict`）、`src/rag/ingestion/parser/base.py`（`BaseParser` 抽象基类 + `can_parse` + `describe`）、`src/rag/ingestion/parser/__init__.py`（后缀注册表，冲突显式报错）、`src/rag/ingestion/errors.py` | `python -m unittest tests.test_document_block tests.test_parser_base` → 21 用例全绿 |
 | D05 | ✅ 2026-11-02 | `src/rag/ingestion/tokenizer.py`：`TokenCounter`（`count` / `count_batch` / `truncate` / `verify_against_ollama` / `default_counter`）+ CLI（`count` / `verify`）；词表落 `storage/tokenizer/bge-m3/tokenizer.json`（ModelScope 镜像，17.1 MB，不入库） | `python -m src.rag.ingestion.tokenizer verify --n 6` → `aligned: true`、`median_rel_diff: 0.0`、`max_abs_diff: 0`；集成测试含 nomic 负向对照 |
-| D06 | ✅ 2026-11-02 | `src/rag/ingestion/splitter.py`：`SEPARATORS`（照抄 §2.4）、`recursive_split`、`split_preserving_separator`（分隔符留在前段末尾）、`split_by_token_window`（token 窗口兜底，收缩到硬上限内）、`merge_small_parts`（只在最后做一次合并）；CLI：`split` / `check` | `python -m src.rag.ingestion.splitter check --n 2000` → 超限率 0.00%、还原失败 0、碎块率 3.95%；`python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real` → 35 用例全绿 |
+| D06 | ✅ 2026-11-02 | `src/rag/ingestion/recursive_chunker.py`：`SEPARATORS`（照抄 §2.4）、`recursive_split`、`split_preserving_separator`（分隔符留在前段末尾）、`split_by_token_window`（token 窗口兜底，收缩到硬上限内）、`merge_small_parts`（只在最后做一次合并）；CLI：`split` / `check` | `python -m src.rag.ingestion.recursive_chunker check --n 2000` → 超限率 0.00%、还原失败 0、碎块率 3.95%；`python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real` → 35 用例全绿 |
+| D02 | ✅ 2026-11-02 | `src/rag/ingestion/parser/markdown_parser.py`：ATX/setext 标题、fenced code（先于标题识别）、GFM 表格、列表、引用、图注；`section_path` 栈式继承，无标题时回退文件名 | `check data/md` → section_path 非空率 **100.00%**、空 block **0**；陷阱统计：代码块内 `#` 行 4,295 处未误判为标题、表格紧跟标题 454 处仍为 table |
+| D03 | ✅ 2026-11-02 | `src/rag/ingestion/parser/txt_parser.py`：空行分段、软换行原样保留、`n_sentences` 统计、BOM/CRLF 归一；不做启发式标题猜测 | `python -m unittest tests.test_txt_parser` 16 用例全绿；段落数 == 空行分隔段数 |
+| D04 | ✅ 2026-11-02 | `src/rag/ingestion/parser/pdf_parser.py`：pymupdf 版面块 → 行 → span；按字号相对比定标题层级；`block` 内按字号再切 run（pymupdf 会把标题和正文聚进一个 block）；重复页眉页脚归一化识别并记入 `stats` | `check data` → PDF 页码覆盖率 **100.00%**；30 页字符数去空白后与 pypdf 差 **0.47%**；`report` 子命令产出人工抽查 CSV |
+
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
 - `count(text)` = BGE-M3 tokenizer 的**内容 token**（不含 BOS/EOS），空白文本为 0；
@@ -2345,6 +2349,22 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | 现有索引 chunk 的 token 分布（300 条抽样） | p50 **128**、max **434** —— **全部低于 500 token 上限** |
 
 最后一行是 B02 的直接证据：旧切分是「500 **字符**」，实际只用到 500 token 预算的 1/4，最长的 chunk 也只有 434 token。「按 token 重切分」不是把块变碎，而是让块真正达到设计粒度——每块塞进更多上下文，Child 数从 81,027 降到约 3 万。
+
+**D02–D04 实测（解析层）**
+
+| 测量 | 结果 |
+|---|---|
+| 全语料 `check data`（md + pdf + txt） | 1,467 文件 → **217,950 block**；section_path 非空率 **100.00%**；空 block **0**；PDF 页码覆盖率 **100.00%** |
+| `check data/md` | 1,227 文件 → **99,479 block**：paragraph 37,557 / list 36,754 / heading 13,430 / code 8,783 / table 2,442 / caption 513 |
+| 陷阱 1：代码块内含 `#` | 真实语料里 **4,295** 处，全部留在 `code` 块内，未被当成标题 |
+| 陷阱 2：表格紧跟标题 | **454** 处，全部仍是 `table` |
+| PDF 30 页字符数 | pypdf 62,779 / pymupdf 59,874（0.954）；**去空白后 47,687 / 47,464（0.995）** |
+
+PDF 那 4.6% 的差不是丢内容，而是 pypdf 会给每个 span 补空白：它的空白字符占比 24.0%，pymupdf 20.7%。去掉空白后两边差 0.47%（223 字符 / 30 页），来源是重复页眉页脚被剔除（306 字符）与个别连字符断行，属预期。
+
+**实现与 §6 目录的对齐**：`src/rag/ingestion/parser/`（单数，按 §6）、`recursive_chunker.py`（§6 命名，D06 的实现文件）。§6 未列出但必需的三个文件：`block.py`（D01 数据结构）、`errors.py`（异常层）、`tokenizer.py`（D05 token 口径）。
+
+**pymupdf 的一个坑**：它按版面把行聚成 block，但标题和正文**可能落在同一个 block 里**（排版紧、行距一致时）。只按 block 首行字号判标题会整段漏掉标题——实测合成 PDF 里 `1.1 向量检索` 就这样消失了。修法是 block 内部再按「是否标题 + 字号是否变化」切 run，逐 run 判类型。
 
 **与方案伪代码的一处差异**：伪代码在递归每一层都调 `merge_small_parts`，实现改为**只在最后合并一次**。原因：内层已按 target 拼好的片段到外层还会被再拼一次，既重复 token 计数（最坏 O(n²)），又让「按哪一级目标切」不可预测；末尾合并结果等价、成本更低。
 
@@ -2375,4 +2395,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
                                                   分隔符保留、token 窗口兜底、单次合并）+ check CLI；
                                                   补 D06 实测（超限率 0、碎块率 3.95%、3k chunk/s）
                                                   与「现有 chunk 全部 <500 token」这一 B02 证据
+  1.5                     2026-11-02              D02/D03/D04 落地：Markdown/TXT/PDF 解析器 + 语料级
+                                                  验收命令 `python -m src.rag.ingestion.parser`；
+                                                  补解析层实测（217,950 block、section_path 100%、
+                                                  PDF 页码 100%、去空白字符差 0.47%）；
+                                                  目录命名对齐 §6（parser/、recursive_chunker.py）
   ------------------------------------------------------------------------------------

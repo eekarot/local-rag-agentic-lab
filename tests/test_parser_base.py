@@ -4,7 +4,7 @@ import unittest
 
 from src.rag.ingestion.block import DocumentBlock
 from src.rag.ingestion.errors import UnsupportedFormatError
-from src.rag.ingestion.parsers import (
+from src.rag.ingestion.parser import (
     BaseParser,
     available_suffixes,
     get_parser,

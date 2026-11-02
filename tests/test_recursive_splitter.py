@@ -13,7 +13,7 @@ tests/test_recursive_splitter_real.py 里单独验。
 
 import unittest
 
-from src.rag.ingestion.splitter import (
+from src.rag.ingestion.recursive_chunker import (
     SEPARATORS,
     merge_small_parts,
     recursive_split,

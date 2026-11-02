@@ -5,6 +5,7 @@
 """
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 from src.rag.ingestion.block import DocumentBlock
@@ -42,3 +43,17 @@ class BaseParser(ABC):
             "parser_version": self.parser_version,
             "supported_suffixes": list(self.supported_suffixes),
         }
+
+
+def read_text_file(path: str, *, encodings: tuple[str, ...] = ("utf-8-sig", "utf-8", "gb18030")) -> str:
+    """读文本文件：先按 BOM/UTF-8，再退回 GB18030（Windows 常见）。
+
+    BOM 由 ``utf-8-sig`` 吃掉——不处理的话第一个标题会变成 ``\ufeff# 标题``，
+    标题正则匹配不上，整篇文档就少了一层章节。
+    """
+    for encoding in encodings:
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except UnicodeDecodeError:
+            continue
+    return Path(path).read_text(encoding="utf-8", errors="replace")

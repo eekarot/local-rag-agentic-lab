@@ -103,10 +103,14 @@ local-rag-agentic-lab/
 │       ├── block.py            # DocumentBlock：统一中间结构（D01）
 │       ├── errors.py           # IngestionError / UnsupportedFormatError / TokenizerUnavailable
 │       ├── tokenizer.py        # TokenCounter：token 计数 + Ollama 抽样校验（D05）
-│       ├── splitter.py         # Recursive Splitter：分隔符优先级 + token 窗口兜底（D06）
-│       └── parsers/
-│           ├── base.py         # BaseParser 抽象基类（D01）
-│           └── __init__.py     # 按后缀分派的解析器注册表
+│       ├── recursive_chunker.py  # Recursive Splitter：分隔符优先级 + token 窗口兜底（D06）
+│       └── parser/
+│           ├── base.py            # BaseParser 抽象基类 + read_text_file（D01）
+│           ├── markdown_parser.py # 标题/列表/表格/代码块/引用/图注（D02）
+│           ├── txt_parser.py      # 空行分段 + 句子数统计（D03）
+│           ├── pdf_parser.py      # pymupdf 版面块：页码/字号/页眉页脚（D04）
+│           ├── cli.py             # python -m src.rag.ingestion.parser check|dump
+│           └── __init__.py        # 按后缀分派的解析器注册表
 ├── src/
 │   ├── __init__.py
 │   ├── config.py               # 模型、切分与检索参数
@@ -345,9 +349,9 @@ python -m src.rag.ingestion.tokenizer verify --n 8
 有了 token 计数器就能按方案 §2.3 的口径切：Child 目标 400 token、硬上限 500、Parent 1500/2000。
 
 ```powershell
-python -m src.rag.ingestion.splitter check --n 2000          # 期望：超限率 0.00%、还原失败 0
-python -m src.rag.ingestion.splitter split "长文本..." --max-tokens 500 --target-tokens 400
-Get-Content data/rag_basics.md -Raw | python -m src.rag.ingestion.splitter split - --max-tokens 200
+python -m src.rag.ingestion.recursive_chunker check --n 2000          # 期望：超限率 0.00%、还原失败 0
+python -m src.rag.ingestion.recursive_chunker split "长文本..." --max-tokens 500 --target-tokens 400
+Get-Content data/rag_basics.md -Raw | python -m src.rag.ingestion.recursive_chunker split - --max-tokens 200
 ```
 
 切分有三条必须成立的不变式（`tests/test_recursive_splitter.py` 逐条断言）：
@@ -369,6 +373,42 @@ Get-Content data/rag_basics.md -Raw | python -m src.rag.ingestion.splitter split
 顺便得到一个关键事实：现有索引（500 **字符**切的）chunk token 数是 p50 128、max 434 —— **全部低于 500 token 上限**。所以「按 token 重切分」不是把块变碎，而是让每块真正装满设计的上下文预算。
 
 **验收：** 能解释「超限率」和「碎块率」分别在防什么，并说明为什么切分必须保证逐字符可还原。
+
+### 实验 10：解析成统一 Block——结构丢了，后面再好的切分也救不回来
+
+三个格式各一个解析器，统一输出 `DocumentBlock`（`heading` / `paragraph` / `list` / `table` / `code` / `quote` / `caption`）。
+
+```powershell
+# 整份语料的质量比率（D02/D03 验收）
+python -m src.rag.ingestion.parser check data/md
+python -m src.rag.ingestion.parser check data          # 含 PDF 页码覆盖率
+
+# 看单个文件解析成什么样
+python -m src.rag.ingestion.parser dump data/rag_basics.md
+
+# D04 验收要的「30 页人工抽查表」
+python -m src.rag.ingestion.parser.pdf_parser report data/AI-Agents-in-Depth-zh-CN.pdf --pages 1-30 --out report.csv
+```
+
+实测（全语料 1,467 个文件）：
+
+| 指标 | 结果 |
+|---|---|
+| block 总数 | **217,950** |
+| `section_path` 非空率 | **100.00%** |
+| 空 block | **0** |
+| PDF 页码覆盖率 | **100.00%** |
+| md 语料 block 构成 | paragraph 37,557 / list 36,754 / heading 13,430 / code 8,783 / table 2,442 / caption 513 |
+
+三个必须牢记的坑：
+
+1. **代码块要先于标题识别**。真实语料里有 4,295 行 `# 注释` 出现在 fenced code 里，先切 code 才不会被当成标题。
+2. **pymupdf 会把标题和正文聚进同一个 block**。只按 block 首行字号判标题，实测会整段漏掉标题（`1.1 向量检索` 就这样消失过）。要在 block 内部再按字号切 run。
+3. **不要用绝对字号阈值判标题**。不同排版的正文基准差一倍，用「相对正文正文字号的比值」（≥2.0 → h1、≥1.5 → h2、≥1.15 → h3）才可移植。
+
+PDF 字符数对比（30 页）：pypdf 62,779 vs pymupdf 59,874 —— 差的 4.6% 全是空白，**去掉空白后 47,687 vs 47,464（差 0.47%）**。pypdf 会给每个 span 补空格，所以比字符数一定要先去空白。
+
+**验收：** 能解释「为什么标题必须和正文分块但又要能关联」，并能用 `check` 输出证明 `section_path` 非空率 100%。
 
 
 ## 重要说明

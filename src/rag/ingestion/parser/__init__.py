@@ -7,7 +7,7 @@
 from pathlib import Path
 
 from src.rag.ingestion.errors import UnsupportedFormatError
-from src.rag.ingestion.parsers.base import BaseParser
+from src.rag.ingestion.parser.base import BaseParser
 
 __all__ = [
     "BaseParser",
@@ -57,3 +57,18 @@ def available_suffixes() -> list[str]:
 def reset_registry() -> None:
     """清空注册表（测试用，也用于「只加载需要的解析器」的批处理场景）。"""
     _REGISTRY.clear()
+
+
+def register_builtin_parsers(*, replace: bool = False) -> list[str]:
+    """注册内置解析器（Markdown / TXT / PDF），返回可用后缀列表。
+
+    刻意做成显式函数而不是 import 时自动注册：注册表被测试反复 reset，
+    副作用式注册只会让 bug 表现为「跑单个测试能过、跑全量就挂」。
+    """
+    from .markdown_parser import MarkdownParser
+    from .pdf_parser import PdfParser
+    from .txt_parser import TxtParser
+
+    for parser_cls in (MarkdownParser, TxtParser, PdfParser):
+        register_parser(parser_cls, replace=replace)
+    return available_suffixes()

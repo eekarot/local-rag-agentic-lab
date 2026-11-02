@@ -13,7 +13,7 @@ import unittest
 from contextlib import redirect_stdout
 
 from src.config import STORAGE_DIR
-from src.rag.ingestion.splitter import cli_main, recursive_split
+from src.rag.ingestion.recursive_chunker import cli_main, recursive_split
 from src.rag.ingestion.tokenizer import DEFAULT_TOKENIZER_PATH, TokenCounter
 
 VOCAB_AVAILABLE = DEFAULT_TOKENIZER_PATH.exists()

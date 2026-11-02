@@ -219,14 +219,14 @@ __all__ = [
 def cli_main(argv: Sequence[str] | None = None) -> int:
     """D06 的可执行验收：``split`` 看切分结果，``check`` 算超限率。
 
-    ``python -m src.rag.ingestion.splitter split "文本" --max-tokens 200``
-    ``python -m src.rag.ingestion.splitter check --n 2000``（期望：超限率 0.00%）
+    ``python -m src.rag.ingestion.recursive_chunker split "文本" --max-tokens 200``
+    ``python -m src.rag.ingestion.recursive_chunker check --n 2000``（期望：超限率 0.00%）
     """
     import argparse
     import sys
     from pathlib import Path
 
-    parser = argparse.ArgumentParser(prog="python -m src.rag.ingestion.splitter")
+    parser = argparse.ArgumentParser(prog="python -m src.rag.ingestion.recursive_chunker")
     sub = parser.add_subparsers(dest="command", required=True)
 
     split_cmd = sub.add_parser("split", help="切分一段文本并打印各段（用 | 分隔）")
