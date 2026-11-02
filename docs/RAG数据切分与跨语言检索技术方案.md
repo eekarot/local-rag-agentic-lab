@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.3\
+> **文档版本**：1.4\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2078,7 +2078,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D03 | D01 | TXT Parser（段落/句子边界） | 输出 block 数 ≥ 空行分隔段数；空 block 数 == 0 |
 | D04 | D01 | PDF Parser 升级（pymupdf，保留页码与版面块） | 抽样 30 页人工表：`page_number` 有值率 100%；抽取字符数与 pypdf 对比 ±5% 内，或写明差异原因 |
 | D05 | B01 | ✅ **已完成（2026-11-02）** 统一 Token 计数（BGE-M3 tokenizer 口径） | `python -m src.rag.ingestion.tokenizer count "文本"` 输出整数；`verify --n 8` 返回 `aligned: true`（实测逐条中位误差 0%、最大绝对差 0）；17 个单测覆盖空串/未知词/批量一致/`truncate` 边界/词表缺失提示。**原「与 FlagEmbedding 计数差 0」已作废**（B01 决定不引入 FlagEmbedding），改为「与 Ollama `prompt_eval_count` 逐条对齐」 |
-| D06 | D05 | Recursive Splitter（分隔符优先级 + `split_preserving_separator` + `merge_small_parts` + token 窗口兜底） | 单测 6 类边界（超长段落/超长句/无分隔符/超长单词/代码块/表格）全绿；`token 超限率 == 0` |
+| D06 | D05 | ✅ **已完成（2026-11-02）** Recursive Splitter（分隔符优先级 + `split_preserving_separator` + `merge_small_parts` + token 窗口兜底） | `python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real`（35 用例）全绿，6 类边界（超长段落/超长句/无分隔符/超长单词/代码块/表格）逐类断言；`python -m src.rag.ingestion.splitter check --n 2000` → **超限率 0.00%、还原失败 0**；不变量 `"".join(pieces) == text` 在 300 条真实 chunk + 100 篇拼长文档上全部成立 |
 | D07 | D06 | Overlap（句子边界回退 + `source_start/end`） | 抽样 100 对相邻 chunk：overlap token ∈ [50, 70] 占比 ≥95%；任意重叠文本可在原文定位 |
 | D08 | D06 | Parent Builder（章节边界优先，≤2000 token） | `chunk→parent` 关联成功率 == 100%；parent token ≤ 2000 超限数 == 0 |
 | D09 | D06,D08 | Chunk Validator（长度/空/重复/边界/元数据） | 校验报告含四项数字：空 chunk 0、超限 0、重复文本占比、边界完整率；失败样例落 `*.invalid.jsonl` |
@@ -2324,7 +2324,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | D01 | ✅ 2026-11-02 | `src/rag/ingestion/block.py`（`DocumentBlock` + `BLOCK_TYPES` + 字段校验 + `to_dict/from_dict`）、`src/rag/ingestion/parsers/base.py`（`BaseParser` 抽象基类 + `can_parse` + `describe`）、`src/rag/ingestion/parsers/__init__.py`（后缀注册表，冲突显式报错）、`src/rag/ingestion/errors.py` | `python -m unittest tests.test_document_block tests.test_parser_base` → 21 用例全绿 |
 | D05 | ✅ 2026-11-02 | `src/rag/ingestion/tokenizer.py`：`TokenCounter`（`count` / `count_batch` / `truncate` / `verify_against_ollama` / `default_counter`）+ CLI（`count` / `verify`）；词表落 `storage/tokenizer/bge-m3/tokenizer.json`（ModelScope 镜像，17.1 MB，不入库） | `python -m src.rag.ingestion.tokenizer verify --n 6` → `aligned: true`、`median_rel_diff: 0.0`、`max_abs_diff: 0`；集成测试含 nomic 负向对照 |
-
+| D06 | ✅ 2026-11-02 | `src/rag/ingestion/splitter.py`：`SEPARATORS`（照抄 §2.4）、`recursive_split`、`split_preserving_separator`（分隔符留在前段末尾）、`split_by_token_window`（token 窗口兜底，收缩到硬上限内）、`merge_small_parts`（只在最后做一次合并）；CLI：`split` / `check` | `python -m src.rag.ingestion.splitter check --n 2000` → 超限率 0.00%、还原失败 0、碎块率 3.95%；`python -m unittest tests.test_recursive_splitter tests.test_recursive_splitter_real` → 35 用例全绿 |
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
 - `count(text)` = BGE-M3 tokenizer 的**内容 token**（不含 BOS/EOS），空白文本为 0；
@@ -2334,6 +2334,20 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 - 校验用**逐条**中位相对误差（≤2%）+ 逐条最大绝对差（≤2 token），**不要用聚合总量**（见 §17.11.1）。
 
 **新增依赖**：`tokenizers>=0.20.0`（实装 0.23.3），只用于加载词表，不跑模型推理。
+
+**D06 实测（用于 D07/D08/D09 的参数决策）**
+
+| 测量 | 结果 |
+|---|---|
+| 2,000 条真实 chunk（target 400 / max 500） | 超限率 **0.00%**、还原失败 **0**、碎块率（<80 token）**3.95%** |
+| 100 篇「拼 8 条 chunk」的长文档 → 699 段 | token p50 **318**、p95 **479**、max **499**、碎块率 **0.1%** |
+| 切分吞吐 | ≈ **3,000 chunk/s**（纯 CPU，含 token 计数；81k 全量约 27 s） |
+| 现有索引 chunk 的 token 分布（300 条抽样） | p50 **128**、max **434** —— **全部低于 500 token 上限** |
+
+最后一行是 B02 的直接证据：旧切分是「500 **字符**」，实际只用到 500 token 预算的 1/4，最长的 chunk 也只有 434 token。「按 token 重切分」不是把块变碎，而是让块真正达到设计粒度——每块塞进更多上下文，Child 数从 81,027 降到约 3 万。
+
+**与方案伪代码的一处差异**：伪代码在递归每一层都调 `merge_small_parts`，实现改为**只在最后合并一次**。原因：内层已按 target 拼好的片段到外层还会被再拼一次，既重复 token 计数（最坏 O(n²)），又让「按哪一级目标切」不可预测；末尾合并结果等价、成本更低。
+
 
 ---
 
@@ -2357,4 +2371,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
   1.3                     2026-11-02              D01/D05 落地：DocumentBlock + Parser 注册表、
                                                   TokenCounter（本地 BGE-M3 词表，与 Ollama
                                                   逐条对齐）；新增 17.12 执行记录与 Token 口径
+  1.4                     2026-11-02              D06 落地：Recursive Splitter（分隔符优先级、
+                                                  分隔符保留、token 窗口兜底、单次合并）+ check CLI；
+                                                  补 D06 实测（超限率 0、碎块率 3.95%、3k chunk/s）
+                                                  与「现有 chunk 全部 <500 token」这一 B02 证据
   ------------------------------------------------------------------------------------

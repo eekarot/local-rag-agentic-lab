@@ -103,6 +103,7 @@ local-rag-agentic-lab/
 │       ├── block.py            # DocumentBlock：统一中间结构（D01）
 │       ├── errors.py           # IngestionError / UnsupportedFormatError / TokenizerUnavailable
 │       ├── tokenizer.py        # TokenCounter：token 计数 + Ollama 抽样校验（D05）
+│       ├── splitter.py         # Recursive Splitter：分隔符优先级 + token 窗口兜底（D06）
 │       └── parsers/
 │           ├── base.py         # BaseParser 抽象基类（D01）
 │           └── __init__.py     # 按后缀分派的解析器注册表
@@ -338,6 +339,36 @@ python -m src.rag.ingestion.tokenizer verify --n 8
 所以：**校验必须逐条做**，聚合口径分辨率不够；切分预算用 `count()` 衡量，与 Ollama 计数天然差 2/条，这是定义不是误差。
 
 **验收：** 能说明为什么「聚合校验」分辨不出错模型，并能用 `verify` 输出证明当前计数器与 Ollama 同口径。
+
+### 实验 9：递归切分——先切到 token 预算里，再谈检索质量
+
+有了 token 计数器就能按方案 §2.3 的口径切：Child 目标 400 token、硬上限 500、Parent 1500/2000。
+
+```powershell
+python -m src.rag.ingestion.splitter check --n 2000          # 期望：超限率 0.00%、还原失败 0
+python -m src.rag.ingestion.splitter split "长文本..." --max-tokens 500 --target-tokens 400
+Get-Content data/rag_basics.md -Raw | python -m src.rag.ingestion.splitter split - --max-tokens 200
+```
+
+切分有三条必须成立的不变式（`tests/test_recursive_splitter.py` 逐条断言）：
+
+1. **`"".join(pieces) == 原文`** —— 只切不改写，否则 `source_start/source_end` 一定错位；
+2. **每段 ≤ max_tokens** —— 超限率必须为 0，这是 D06 的验收线；
+3. **分隔符不丢** —— 句号、换行符留在前一段末尾，所以代码块和表格不会被拦腰切断。
+
+实测（2,000 条真实 chunk，target 400 / max 500）：
+
+| 指标 | 结果 |
+|---|---|
+| 超限率 | **0.00%** |
+| 还原失败 | **0** |
+| 碎块率（< 80 token） | 3.95% |
+| 长文档（拼 8 条 chunk）699 段 | token p50 318 / p95 479 / max 499 |
+| 吞吐 | ≈ 3,000 chunk/s（81k 全量约 27 s） |
+
+顺便得到一个关键事实：现有索引（500 **字符**切的）chunk token 数是 p50 128、max 434 —— **全部低于 500 token 上限**。所以「按 token 重切分」不是把块变碎，而是让每块真正装满设计的上下文预算。
+
+**验收：** 能解释「超限率」和「碎块率」分别在防什么，并说明为什么切分必须保证逐字符可还原。
 
 
 ## 重要说明
