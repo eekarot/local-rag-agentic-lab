@@ -44,6 +44,28 @@ class RealVocabTest(unittest.TestCase):
         self.assertLessEqual(counter.count(out), 50)
         self.assertGreater(counter.count(out), 40)
 
+    def test_truncate_returns_exact_prefix_of_original(self):
+        """真实词表下必须逐字符前缀：D07 要靠它算 source_start/source_end。
+
+        decode(ids[:n]) 会把空格/标点规范化，得到的不是原文子串，
+        用它算偏移会错位，所以截断要按 token 的字符 offset 回溯原文。
+        """
+        counter = TokenCounter()
+        text = sample_texts(1)[0]
+        self.assertGreater(counter.count(text), 150)
+        for budget in (60, 120, 200):
+            with self.subTest(budget=budget):
+                out = counter.truncate(text, budget)
+                self.assertLessEqual(counter.count(out), budget)
+                self.assertTrue(text.startswith(out), f"截断结果不是原文前缀（budget={budget}）")
+
+    def test_truncate_keeps_punctuation_and_spacing(self):
+        counter = TokenCounter()
+        text = "First sentence. Second sentence, with commas; and spaces. " * 30
+        out = counter.truncate(text, 40)
+        self.assertTrue(text.startswith(out))
+        self.assertFalse(out.endswith(" ") and not text[len(out)].isspace())
+
 
 @unittest.skipUnless(RUN_OLLAMA, "设置 RAG_OLLAMA_CHECK=1 才跑（依赖 Ollama 服务）")
 @unittest.skipUnless(DEFAULT_TOKENIZER_PATH.is_file(), "缺少 bge-m3 tokenizer.json")

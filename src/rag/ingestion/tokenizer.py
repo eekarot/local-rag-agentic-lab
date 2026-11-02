@@ -77,13 +77,19 @@ class TokenCounter:
         return [self.count(text) for text in texts]
 
     def truncate(self, text: str, max_tokens: int) -> str:
-        """把文本截到 ≤ max_tokens（用于兜底窗口，不做句子回退）。"""
+        """把文本截到 ≤ max_tokens，且返回值必须是**原文的逐字符前缀**。
+
+        不能用 ``decode(ids[:n])``：真实词表（XLM-R）的 decode 会重新拼空格与标点，
+        得到的不是原文子串；下游要靠前缀长度算 ``source_start/source_end``（D07），
+        一旦错位就会丢掉/重复字符。所以按第 n 个 token 的字符 offset 回切原文。
+        """
         if max_tokens <= 0 or not text:
             return ""
-        if self.count(text) <= max_tokens:
+        encoding = self._tokenizer.encode(text, add_special_tokens=False)
+        if len(encoding.ids) <= max_tokens:
             return text
-        ids = self._tokenizer.encode(text, add_special_tokens=False).ids[:max_tokens]
-        return self._tokenizer.decode(ids)
+        cut = encoding.offsets[max_tokens - 1][1]
+        return text[:cut]
 
     def verify_against_ollama(
         self,

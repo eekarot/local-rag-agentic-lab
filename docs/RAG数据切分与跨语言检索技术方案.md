@@ -2328,6 +2328,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
 - `count(text)` = BGE-M3 tokenizer 的**内容 token**（不含 BOS/EOS），空白文本为 0；
+- `truncate(text, n)` 返回**原文的逐字符前缀**（按第 n 个 token 的字符 offset 回切），不是 `decode(ids[:n])`——后者会规范化空格/标点，用它算 `source_start/source_end` 会错位（D07 依赖这一点）；
 - Ollama 单条 `prompt_eval_count` = `count(text) + 2`；批量 = `Σcount + 2×条数`；
 - 因此切分预算（child 400/500、overlap 60、parent 1500/2000）用 `count()` 衡量，与 Ollama 计数天然差 2/条，这是定义而不是误差；
 - 校验用**逐条**中位相对误差（≤2%）+ 逐条最大绝对差（≤2 token），**不要用聚合总量**（见 §17.11.1）。
