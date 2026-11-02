@@ -2,3 +2,6 @@ requests>=2.31.0
 numpy>=1.26.0
 pypdf>=5.0.0
 jieba>=0.42.1
+# 已安装版本 0.23.3 —— 只用来加载 BGE-M3 的 tokenizer.json 做 token 计数，
+# 不跑模型推理（向量仍走 Ollama /api/embed，见决策 B01）
+tokenizers>=0.20.0

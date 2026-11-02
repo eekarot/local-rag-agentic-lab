@@ -56,6 +56,20 @@ pip install -r requirements.txt
 `.\.venv\Scripts\python.exe -m pip install -r requirements.txt`
 然后把下文的 `python` 替换为 `.\.venv\Scripts\python.exe`。
 
+### 额外准备：BGE-M3 tokenizer 词表（约 17 MB，不入库）
+
+新版切分按 token 计量（决策 B02），需要 BGE-M3 的词表做本地计数。
+HuggingFace 在国内常被墙，用 ModelScope 镜像下载：
+
+```powershell
+New-Item -ItemType Directory -Force storage/tokenizer/bge-m3 | Out-Null
+curl.exe -sL -o storage/tokenizer/bge-m3/tokenizer.json "https://www.modelscope.cn/api/v1/models/BAAI/bge-m3/repo?Revision=master&FilePath=tokenizer.json"
+python -m src.rag.ingestion.tokenizer count "HNSW 是什么"
+```
+
+也可以用环境变量 `RAG_TOKENIZER_PATH` 指向已有的 `tokenizer.json`。
+这一步只加载词表、不跑模型推理，向量仍由 Ollama 计算。
+
 ## 第一次运行
 
 ```powershell
@@ -80,9 +94,18 @@ local-rag-agentic-lab/
 ├── data/                       # 自己的 Markdown/TXT/PDF 语料
 │   ├── rag_basics.md
 │   └── agent_basics.md
-├── storage/                    # 自动生成的索引
+├── storage/                    # 自动生成的索引（不入库）
 │   ├── index.json              # 元数据 + 文本块 + BM25 倒排表（不含向量）
-│   └── embeddings.npy          # 向量矩阵 float32 (N × dim)，行序对应 records
+│   ├── embeddings.npy          # 向量矩阵 float32 (N × dim)，行序对应 records
+│   └── tokenizer/bge-m3/tokenizer.json   # BGE-M3 词表，token 计量口径
+├── src/rag/                    # 目标架构（方案 §6 目录；旧扁平模块在 E06 迁移时并入）
+│   └── ingestion/
+│       ├── block.py            # DocumentBlock：统一中间结构（D01）
+│       ├── errors.py           # IngestionError / UnsupportedFormatError / TokenizerUnavailable
+│       ├── tokenizer.py        # TokenCounter：token 计数 + Ollama 抽样校验（D05）
+│       └── parsers/
+│           ├── base.py         # BaseParser 抽象基类（D01）
+│           └── __init__.py     # 按后缀分派的解析器注册表
 ├── src/
 │   ├── __init__.py
 │   ├── config.py               # 模型、切分与检索参数
@@ -109,7 +132,7 @@ local-rag-agentic-lab/
 │   ├── probe_full_rank.py       # 探针：全量 81k 语料上 gold 排名（精确 / 邻近族两个口径）
 │   ├── probes/                  # 探针结果 JSON
 │   └── reports/                # 每次 measure 生成的报告
-├── tests/                      # 指标、日志解析、建库重试的单元测试（stdlib unittest）
+├── tests/                      # 单元测试（stdlib unittest）：指标、日志解析、建库重试、Block/token 计数
 ├── logs/                       # 自动生成的运行日志（JSONL）+ review 报告
 ├── docs/
 │   └── eval-and-logging-design.md   # 评估方案 + 日志模块设计标准（开发前必读）
@@ -288,6 +311,34 @@ python -m experiments.probe_full_rank --matrix <另一个模型的 embeddings.np
 结论：`bge-m3` 把「英文语料捞不回来」修好了一半（`Recall@10` 翻倍），代价是中文语料在 `k=4` 上退步——因为跨语言能力拆掉了原来那层「语言防火墙」，英文大池（79,244 条）开始和中文小池（1,783 条）抢位置。
 
 **验收：** 能解释为什么「换更强的多语言模型」不等于「指标一定上升」，并能用探针数据说明收益落在哪个切片上。
+
+### 实验 8：把切分从「字符」换成「token」（方案 Phase 1 的起点）
+
+现在的切分是 `CHUNK_SIZE=500` **字符**，实测平均只有 **134 token**（BGE-M3 词表口径），而方案要求 Child 400–500 token——差 3 倍。换口径之前必须先有 token 计数器，并且要和 Ollama 的计数对齐，否则「超限率 0」无从验收。
+
+```powershell
+# ① 计数（本地词表，毫秒级，不调模型）
+python -m src.rag.ingestion.tokenizer count "HNSW 是用多层图做近似最近邻搜索的算法。"
+Get-Content data/rag_basics.md | python -m src.rag.ingestion.tokenizer count -
+
+# ② 与 Ollama 逐条对齐（每条一次调用，约 2 s）
+python -m src.rag.ingestion.tokenizer verify --n 8
+```
+
+实测口径（2026-11-02，bge-m3 / XLM-R 词表 250,002）：
+
+| 项 | 结果 |
+|---|---|
+| 单条 Ollama `prompt_eval_count` | `count(text) + 2`（BOS + EOS） |
+| 批量 Ollama `prompt_eval_count` | `Σcount(text) + 2 × 条数` |
+| 逐条对齐（8–200 条真实 chunk） | 中位相对误差 **0%**，最大绝对差 **0 token** |
+| 负向对照（拿 nomic 冒充） | 中位 **5.97%**、最大差 **107 token** → 判为不一致 |
+| 聚合总量对比（错误做法） | 200 条时 nomic 只差 **0.35%**，正负抵消 → 测不出词表错 |
+
+所以：**校验必须逐条做**，聚合口径分辨率不够；切分预算用 `count()` 衡量，与 Ollama 计数天然差 2/条，这是定义不是误差。
+
+**验收：** 能说明为什么「聚合校验」分辨不出错模型，并能用 `verify` 输出证明当前计数器与 Ollama 同口径。
+
 
 ## 重要说明
 

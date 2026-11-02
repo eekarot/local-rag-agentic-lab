@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.2\
+> **文档版本**：1.3\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2073,11 +2073,11 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | 编号 | 依赖 | 任务 | 验收方式 |
 |---|---|---|---|
-| D01 | — | `DocumentBlock` 数据结构 + Parser 基类接口（方案 §2.2） | `pytest tests/unit/test_block_schema.py` 全绿；对 1 个 md 样本断言：heading block 数 == 文件内 `^#+ ` 行数，`section_path` 与标题层级一致 |
+| D01 | — | ✅ **已完成（2026-11-02）** `DocumentBlock` 数据结构 + Parser 基类接口（方案 §2.2） | `python -m unittest tests.test_document_block tests.test_parser_base`（14 个用例）全绿：7 种 `block_type` 均可构造、未知类型报错且列出合法值、heading 缺 level 报错、`source_start>source_end` 报错、`to_dict/from_dict` 往返一致、缺省容器不共享、注册表大小写不敏感分派、未知后缀报错并列出已注册后缀。（原计划用 pytest + md 样本计数，改为 unittest；「heading 数 == `^#+ ` 行数」移入 D02，因为那需要真实 Markdown 解析器） |
 | D02 | D01 | Markdown Parser（标题层级、列表、表格、代码块，标题不脱离正文） | 解析 `docs/*.md`：代码块/表格不被拆成 paragraph；`section_path` 非空率 100%；单测覆盖"表格紧跟标题""代码块内含 `#`"两个陷阱 |
 | D03 | D01 | TXT Parser（段落/句子边界） | 输出 block 数 ≥ 空行分隔段数；空 block 数 == 0 |
 | D04 | D01 | PDF Parser 升级（pymupdf，保留页码与版面块） | 抽样 30 页人工表：`page_number` 有值率 100%；抽取字符数与 pypdf 对比 ±5% 内，或写明差异原因 |
-| D05 | B01 | 统一 Token 计数（BGE-M3 tokenizer 口径） | `python -m src.rag.ingestion.tokenizer.count "样例"`；与 FlagEmbedding tokenizer 计数差 == 0；单测覆盖中英混排/代码/表格 |
+| D05 | B01 | ✅ **已完成（2026-11-02）** 统一 Token 计数（BGE-M3 tokenizer 口径） | `python -m src.rag.ingestion.tokenizer count "文本"` 输出整数；`verify --n 8` 返回 `aligned: true`（实测逐条中位误差 0%、最大绝对差 0）；17 个单测覆盖空串/未知词/批量一致/`truncate` 边界/词表缺失提示。**原「与 FlagEmbedding 计数差 0」已作废**（B01 决定不引入 FlagEmbedding），改为「与 Ollama `prompt_eval_count` 逐条对齐」 |
 | D06 | D05 | Recursive Splitter（分隔符优先级 + `split_preserving_separator` + `merge_small_parts` + token 窗口兜底） | 单测 6 类边界（超长段落/超长句/无分隔符/超长单词/代码块/表格）全绿；`token 超限率 == 0` |
 | D07 | D06 | Overlap（句子边界回退 + `source_start/end`） | 抽样 100 对相邻 chunk：overlap token ∈ [50, 70] 占比 ≥95%；任意重叠文本可在原文定位 |
 | D08 | D06 | Parent Builder（章节边界优先，≤2000 token） | `chunk→parent` 关联成功率 == 100%；parent token ≤ 2000 超限数 == 0 |
@@ -2242,7 +2242,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 **代价与补偿**：
 
 1. **无法拿到逐条 token 数**。`/api/embed` 只返回整个 batch 的 `prompt_eval_count`（如 200 条 chunk → 26,867 token，平均 134 token/条），逐条调用等于每条 2 s，81k 条不可行。
-   → **D05 执行口径改为**：token 计数走**本地 tokenizer**（用 `tokenizers` 库读 bge-m3 的 tokenizer 文件，纯 CPU、毫秒级，不跑模型推理），Ollama 的 `prompt_eval_count` 只用于**抽样校验**（batch 总量对比，允许 ±2%）。
+   → **D05 执行口径改为**：token 计数走**本地 tokenizer**（`tokenizers` 库读 bge-m3 的 `tokenizer.json`，纯 CPU、毫秒级，不跑模型推理），Ollama 的 `prompt_eval_count` 只用于**逐条抽样校验**。已实施并对齐（2026-11-02）：单条 `prompt_eval_count == count(text) + 2`（BOS+EOS），逐条中位相对误差 **0%**、最大绝对差 **0 token**；用 nomic 冒充时中位 **5.97%**、最大差 **107 token**（负向对照，证明校验有分辨力）。
+   → 注意**不能用聚合总量校验**：200 条 chunk 上换错模型的聚合差只有 **0.35%**，正负误差相互抵消，测不出来。
    → 注意：这不违反 B01 —— B01 约束的是"向量计算走 API"，不是"tokenizer 也必须走 API"。
    → 用字符/词数**估算** token 不可接受：实测相对误差 p50 15.4% / **max 43.1%**，无法支撑「max 500 token 硬上限」的验收（D06 要求超限率 == 0）。
 2. **query embedding 缓存成为硬需求**（新增到 D13）：`query hash → 向量` 的 LRU 或 SQLite 缓存，命中率目标 ≥60%（评估集场景可达 ~100%）。
@@ -2317,6 +2318,24 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 ---
 
 
+## 17.12 执行记录（滚动更新）
+
+| 条目 | 状态 | 落地内容 | 验证 |
+|---|---|---|---|
+| D01 | ✅ 2026-11-02 | `src/rag/ingestion/block.py`（`DocumentBlock` + `BLOCK_TYPES` + 字段校验 + `to_dict/from_dict`）、`src/rag/ingestion/parsers/base.py`（`BaseParser` 抽象基类 + `can_parse` + `describe`）、`src/rag/ingestion/parsers/__init__.py`（后缀注册表，冲突显式报错）、`src/rag/ingestion/errors.py` | `python -m unittest tests.test_document_block tests.test_parser_base` → 21 用例全绿 |
+| D05 | ✅ 2026-11-02 | `src/rag/ingestion/tokenizer.py`：`TokenCounter`（`count` / `count_batch` / `truncate` / `verify_against_ollama` / `default_counter`）+ CLI（`count` / `verify`）；词表落 `storage/tokenizer/bge-m3/tokenizer.json`（ModelScope 镜像，17.1 MB，不入库） | `python -m src.rag.ingestion.tokenizer verify --n 6` → `aligned: true`、`median_rel_diff: 0.0`、`max_abs_diff: 0`；集成测试含 nomic 负向对照 |
+
+**Token 口径（D05 产出，后续 D06–D12 直接用）**
+
+- `count(text)` = BGE-M3 tokenizer 的**内容 token**（不含 BOS/EOS），空白文本为 0；
+- Ollama 单条 `prompt_eval_count` = `count(text) + 2`；批量 = `Σcount + 2×条数`；
+- 因此切分预算（child 400/500、overlap 60、parent 1500/2000）用 `count()` 衡量，与 Ollama 计数天然差 2/条，这是定义而不是误差；
+- 校验用**逐条**中位相对误差（≤2%）+ 逐条最大绝对差（≤2 token），**不要用聚合总量**（见 §17.11.1）。
+
+**新增依赖**：`tokenizers>=0.20.0`（实装 0.23.3），只用于加载词表，不跑模型推理。
+
+---
+
 ---
 
 ## 版本变更记录
@@ -2326,13 +2345,15 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
   ----------------------- ----------------------- ------------------------------------
   1.0                     2026-11-02              初版：数据切分、跨语言检索、Qdrant
                                                   HNSW、工程实施和验收方案
-  1.2                     2026-11-02              确认三项决策：B01 Embedding 走 Ollama API、
-                                                  B02 按方案重切分（Token 口径）、B06 复用
-                                                  build_questions.py；新增 17.11 决策记录
-                                                  （含实测依据与下游条目调整）
   1.1                     2026-11-02              追加第 17 章「现状差距清单」：
                                                   39 个功能差距（D01–D39）、6 个工程项
                                                   （E01–E06）、6 个阻塞决策（B01–B06），
                                                   含依赖批次表、里程碑与迁移影响
-
+  1.2                     2026-11-02              确认三项决策：B01 Embedding 走 Ollama API、
+                                                  B02 按方案重切分（Token 口径）、B06 复用
+                                                  build_questions.py；新增 17.11 决策记录
+                                                  （含实测依据与下游条目调整）
+  1.3                     2026-11-02              D01/D05 落地：DocumentBlock + Parser 注册表、
+                                                  TokenCounter（本地 BGE-M3 词表，与 Ollama
+                                                  逐条对齐）；新增 17.12 执行记录与 Token 口径
   ------------------------------------------------------------------------------------
