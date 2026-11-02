@@ -1,0 +1,5 @@
+{
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.defaultPackageManager": "ms-python.python:pip",
+    "python.defaultInterpreterPath": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe"
+}

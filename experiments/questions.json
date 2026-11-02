@@ -1,0 +1,1162 @@
+[
+  {
+    "qid": "eval-001",
+    "question": "RAG 是什么？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "系统先从外部知识源中检索与问题相关的材料，再把这些材料连同问题交给语言模型生成答案。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "检索增强生成（Retrieval-Augmented Generation）：先检索外部材料，再连同问题交给语言模型。",
+    "note": ""
+  },
+  {
+    "qid": "eval-002",
+    "question": "为什么文档要切分成 chunk？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "若整份长文档只生成一个向量，细粒度问题可能难以匹配到正确段落"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "一个向量压不住长文档的多个主题，细粒度问题匹配不到；切太短又会丢上下文。",
+    "note": ""
+  },
+  {
+    "qid": "eval-003",
+    "question": "Embedding 模型负责生成最终答案吗？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "Embedding 模型不是负责撰写答案的聊天模型。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "不负责。Embedding 只把文本映射成向量，写答案是聊天模型的职责。",
+    "note": ""
+  },
+  {
+    "qid": "eval-004",
+    "question": "Top-K 太大有什么风险？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "Top-K 太小可能漏掉证据，太大则可能带入无关内容。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "太小漏证据，太大带入无关内容并抬高延迟；需要实验选择。",
+    "note": ""
+  },
+  {
+    "qid": "eval-005",
+    "question": "关键词检索在哪些问题上可能更有优势？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "关键词检索通过词项匹配寻找文档，适合专有名词、编号、错误代码、产品型号等精确文本。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "专有名词、编号、错误代码、产品型号等需要精确字面匹配的场景。",
+    "note": ""
+  },
+  {
+    "qid": "eval-006",
+    "question": "RRF 是用来做什么的？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "由于不同检索方法的原始分数尺度可能不同，可以使用 Reciprocal Rank Fusion（RRF）融合排名。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "融合多路检索的排名：只用名次不用原始分数，避开量纲不一致的问题。",
+    "note": ""
+  },
+  {
+    "qid": "eval-007",
+    "question": "Reranker 能否找回第一阶段完全没召回的证据？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "它不能找回第一阶段检索完全没有召回的证据，所以仍需要关注初始召回率。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "不能。Reranker 只重排已召回的候选，因此初始召回率仍是上限。",
+    "note": ""
+  },
+  {
+    "qid": "eval-008",
+    "question": "固定 RAG 与 Agentic RAG 有什么区别？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "Agentic RAG 让模型根据问题和已有证据决定下一步，例如搜索、改写查询、再次检索或回答。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0002",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "固定 RAG 按预设流程走；Agentic RAG 由模型决定是否再检索、改写查询或直接回答。",
+    "note": ""
+  },
+  {
+    "qid": "eval-009",
+    "question": "为什么 Agent Loop 需要最大步数？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "如果模型反复认为证据不足并不断搜索，循环可能永远无法结束。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "防止无终止循环；配合重复查询检测、错误处理与最终回退把系统收敛在可控范围。",
+    "note": ""
+  },
+  {
+    "qid": "eval-010",
+    "question": "更换 Embedding 模型后需要做什么？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "更换 Embedding 模型后，通常需要重新计算知识库中所有文本块的向量。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "重建索引：旧向量与新模型的语义空间不兼容。",
+    "note": ""
+  },
+  {
+    "qid": "eval-011",
+    "question": "RAG 和模型微调有什么区别？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "RAG 在推理时向模型提供外部检索内容；微调则通过训练过程改变模型参数。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "agent_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "RAG 改的是推理时的上下文，微调改的是模型参数；前者适合易变/需引用的知识。",
+    "note": ""
+  },
+  {
+    "qid": "eval-012",
+    "question": "工具调用时权限应遵循什么原则？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "工具权限应遵循最小权限原则。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "最小权限原则：只授予完成任务必需的权限。",
+    "note": ""
+  },
+  {
+    "qid": "eval-013",
+    "question": "RAG 常见失败类型有哪些？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "常见失败包括：语料中没有答案、文档解析错误、切分边界不合理、检索没有召回正确证据、证据彼此冲突、Prompt 没有约束生成"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "语料缺答案、解析错误、切分不当、召回失败、证据冲突、Prompt 缺约束、模型不忠于证据。",
+    "note": ""
+  },
+  {
+    "qid": "eval-014",
+    "question": "Agentic RAG 相比固定 RAG 要付出什么代价？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "Agentic RAG 更灵活，但会增加延迟、成本、失败模式与控制复杂度。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0002",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "更灵活，但增加延迟、成本、失败模式与控制复杂度。",
+    "note": ""
+  },
+  {
+    "qid": "eval-015",
+    "question": "chunk 切得过短会有什么问题？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "若切分过短，上下文又可能丢失。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "上下文被切断，单块信息不足以回答；Chunk Size 与 Overlap 需实验选择。",
+    "note": ""
+  },
+  {
+    "qid": "eval-016",
+    "question": "为什么 RAG 不能自动保证答案正确？",
+    "type": "concept",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "它可以为模型提供更新或私有的知识，也便于答案引用来源，但不能自动保证答案正确。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "RAG 只提供外部知识，是否忠实使用、是否相关仍取决于检索质量与生成约束。",
+    "note": ""
+  },
+  {
+    "qid": "eval-017",
+    "question": "DGX B300 单机的 GPU 显存总量是多少？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "8 x 288 GB = 2.3 TB total"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0003",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0004",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "8 × 288 GB = 2.3 TB（八张 B300，每张 288 GB）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-018",
+    "question": "DGX B300 默认配置的系统内存是多少？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "2 TB default (up to 4 TB)"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0005",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "默认 2 TB，可扩到 4 TB。",
+    "note": ""
+  },
+  {
+    "qid": "eval-019",
+    "question": "DGX B300 的 GPU 通过什么方式连网络？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "ConnectX-8 networking connects directly to GPUs via PCIe Gen6."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0008",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "通过 ConnectX-8 网络，经 PCIe Gen6 直连 GPU。",
+    "note": ""
+  },
+  {
+    "qid": "eval-020",
+    "question": "DGX B300 的系统内存最多能扩到多少？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Supports up to 4 TB of RAM, configurable on-site with 128 GB DIMMs purchased from NVIDIA."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0008",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0009",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "最多 4 TB，现场用 NVIDIA 的 128 GB DIMM 配置。",
+    "note": ""
+  },
+  {
+    "qid": "eval-021",
+    "question": "DGX B300 装了几张 GPU？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The system is built on eight NVIDIA B300 Tensor Core GPUs."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "8 张 NVIDIA B300 Tensor Core GPU。",
+    "note": ""
+  },
+  {
+    "qid": "eval-022",
+    "question": "NVIDIA RAG 参考架构里，文本通常切分成多少 token 的 chunk？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The tokenized data is typically chunked or split into smaller chunks (256 or 512 tokens) before it is sent to Embedding NIM."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\enterprise-rag-on-enterprise-ra.md::chunk-0019",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "256 或 512 token，然后送入 Embedding NIM。",
+    "note": ""
+  },
+  {
+    "qid": "eval-023",
+    "question": "RAG 流水线里 chunk 大小不能超过 embedding 模型的什么限制？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "the chunk size should not exceed the maximum context length (8192 tokens) supported."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\enterprise-rag-on-enterprise-ra.md::chunk-0019",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "不能超过 embedding 模型的最大上下文长度（8192 tokens）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-024",
+    "question": "MIG 关闭后要恢复 GPU 的 NVLink 点对点能力，需要什么在运行？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "the FM service must be running"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\datacenter\\tesla\\fabric-manager-user-guide\\index.md::chunk-0162",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\datacenter\\tesla\\fabric-manager-user-guide\\index.md::chunk-0163",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "需要 Fabric Manager（FM）服务在运行。",
+    "note": ""
+  },
+  {
+    "qid": "eval-025",
+    "question": "Base Command Manager 免费授权每台机器最多支持多少加速器？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "the free license is available for up to eight accelerators"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\base-command-manager\\bcm-licensing-and-support\\index.md::chunk-0003",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "每台服务器/节点/系统最多 8 个加速器。",
+    "note": ""
+  },
+  {
+    "qid": "eval-026",
+    "question": "哪种 Base Command Manager 授权套餐包含 GPU Operator、Network Operator 和 vGPU？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Base Command Manager license, Enterprise Support, GPU Operator, Network Operator, vGPU, and AI and data science software"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\base-command-manager\\bcm-licensing-and-support\\index.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "NVIDIA AI Enterprise 套餐包含 BCM 授权、企业支持、GPU/Network Operator、vGPU 与 AI 软件。",
+    "note": ""
+  },
+  {
+    "qid": "eval-027",
+    "question": "NVIDIA 认为哪些参数会显著影响 RAG 的准确率？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "**Accuracy:** LLM Model, Chunk Size, Reranker ON/OFF, TopK."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0069",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "LLM 模型、Chunk Size、Reranker 开关、TopK。",
+    "note": ""
+  },
+  {
+    "qid": "eval-028",
+    "question": "Enterprise RAG 的 Chat 场景首字响应目标是多少？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Required first response in under 3s-5s"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0031",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "首字响应 3–5 秒以内（TTFT p90 ≤ 3–5 s）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-029",
+    "question": "Enterprise RAG 的 Summarization 场景典型输入/输出长度是多少？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Long ISL (1024 tokens); Medium OSL (512 tokens)."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0034",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "输入 1024 token（含多轮历史）、输出 512 token。",
+    "note": ""
+  },
+  {
+    "qid": "eval-030",
+    "question": "DGX RHEL8 安装指南建议如何处理 BMC 的默认用户名？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "NVIDIA recommends disabling the default username and creating a unique username and password as soon as possible."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgx-rhel8-install-guide\\changing-bmc-login.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "尽快禁用默认用户名，创建唯一的用户名与密码。",
+    "note": ""
+  },
+  {
+    "qid": "eval-031",
+    "question": "NVIDIA RAG 基准里的 Wikipedia 数据集规模有多大？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "5.9 M documents, 38M vector embeddings (chunk size 256/50, 2048dim X FP32)"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\deploy-rag-ingestion-pipeline.md::chunk-0140",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\enterprise-rag-on-enterprise-ra.md::chunk-0063",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0093",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "590 万文档、3800 万向量，chunk 256/50，2048 维 FP32。",
+    "note": ""
+  },
+  {
+    "qid": "eval-032",
+    "question": "RAG 里增大 chunk size 或送入更多 chunk 会带来什么开销？",
+    "type": "fact",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The larger the chunk size selected and the more the number of VDB chunks sent to the LLM the larger the latency overhead"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0059",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "chunk 越大、送给 LLM 的 chunk 越多，延迟开销越大。",
+    "note": ""
+  },
+  {
+    "qid": "eval-033",
+    "question": "MIG 模式下 DGX A100 的 NVLink 会被关闭，那关闭 MIG 之后要靠什么才能恢复点对点？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "On DGX A100 and NVIDIA HGX A100 systems, the corresponding GPU NVLinks and NVSwitch side NVLinks are trained off when MIG mode is enabled",
+      "the FM service must be running"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\datacenter\\tesla\\fabric-manager-user-guide\\index.md::chunk-0163",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\datacenter\\tesla\\fabric-manager-user-guide\\index.md::chunk-0162",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "A100 上 MIG 开启会把 GPU 与 NVSwitch 侧 NVLink 训练关闭；关闭 MIG 后需要 Fabric Manager 服务运行才能重新训练恢复 P2P。",
+    "note": ""
+  },
+  {
+    "qid": "eval-034",
+    "question": "DGX B300 一张卡 288 GB，整机显存多少？系统内存最大能扩到多少？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "8 x 288 GB = 2.3 TB total",
+      "Supports up to 4 TB of RAM, configurable on-site with 128 GB DIMMs purchased from NVIDIA."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0003",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0008",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0009",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "整机 2.3 TB（8×288 GB）；系统内存默认 2 TB，最大 4 TB。",
+    "note": ""
+  },
+  {
+    "qid": "eval-035",
+    "question": "DGX B300 有几张 GPU，默认系统内存多少？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The system is built on eight NVIDIA B300 Tensor Core GPUs.",
+      "2 TB default (up to 4 TB)"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0005",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "8 张 B300 Tensor Core GPU，默认 2 TB 系统内存（可扩到 4 TB）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-036",
+    "question": "RAG 参考架构推荐 chunk 用多少 token，同时这个大小还受什么上限约束？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The tokenized data is typically chunked or split into smaller chunks (256 or 512 tokens) before it is sent to Embedding NIM.",
+      "the chunk size should not exceed the maximum context length (8192 tokens) supported."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\enterprise-rag-on-enterprise-ra.md::chunk-0019",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "常用 256 或 512 token，且不得超过 embedding 模型最大上下文 8192 token。",
+    "note": ""
+  },
+  {
+    "qid": "eval-037",
+    "question": "RAG 里 chunk 大小和 TopK 同时影响什么？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The larger the chunk size selected and the more the number of VDB chunks sent to the LLM the larger the latency overhead",
+      "**Accuracy:** LLM Model, Chunk Size, Reranker ON/OFF, TopK."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0059",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0069",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "两者同时影响延迟与准确率：越大/越多越慢，同时也会影响准确率，需要权衡。",
+    "note": ""
+  },
+  {
+    "qid": "eval-038",
+    "question": "Enterprise RAG 的 Chat 与 Summarization 两种场景，首字响应时间目标差多少？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Required first response in under 3s-5s",
+      "Long ISL (1024 tokens); Medium OSL (512 tokens)."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0031",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0034",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "Chat 要求首字 3–5 秒内；Summarization 输入 1024/输出 512 token，首字目标 10–15 秒。",
+    "note": ""
+  },
+  {
+    "qid": "eval-039",
+    "question": "DGX B300 单机能否落在 Base Command Manager 免费授权范围内？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "the free license is available for up to eight accelerators",
+      "The system is built on eight NVIDIA B300 Tensor Core GPUs."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\base-command-manager\\bcm-licensing-and-support\\index.md::chunk-0003",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgxb300-user-guide\\introduction-to-dgxb300.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgxb300-user-guide\\dgxb300-user-guide.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "能：免费授权每台最多 8 个加速器，B300 正好 8 张 GPU。",
+    "note": ""
+  },
+  {
+    "qid": "eval-040",
+    "question": "想要 GPU Operator、vGPU 这些能力，需要选哪种 BCM 授权？免费版的上限是多少？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Base Command Manager license, Enterprise Support, GPU Operator, Network Operator, vGPU, and AI and data science software",
+      "the free license is available for up to eight accelerators"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\base-command-manager\\bcm-licensing-and-support\\index.md::chunk-0001",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\base-command-manager\\bcm-licensing-and-support\\index.md::chunk-0003",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "要选 NVIDIA AI Enterprise 套餐；免费版每台最多 8 个加速器。",
+    "note": ""
+  },
+  {
+    "qid": "eval-041",
+    "question": "NVIDIA 的 Wikipedia RAG 基准用了多大的数据量，chunk 是怎么设的？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "5.9 M documents, 38M vector embeddings (chunk size 256/50, 2048dim X FP32)",
+      "The tokenized data is typically chunked or split into smaller chunks (256 or 512 tokens) before it is sent to Embedding NIM."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\deploy-rag-ingestion-pipeline.md::chunk-0140",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\enterprise-rag-on-enterprise-ra.md::chunk-0063",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0093",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\enterprise-rag-on-enterprise-ra.md::chunk-0019",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "590 万文档 / 3800 万向量，chunk 256/50、2048 维 FP32；参考架构一般推荐 256 或 512 token。",
+    "note": ""
+  },
+  {
+    "qid": "eval-042",
+    "question": "Reranker 找不回的漏召回，Agentic RAG 能补吗？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "它不能找回第一阶段检索完全没有召回的证据，所以仍需要关注初始召回率。",
+      "Agentic RAG 让模型根据问题和已有证据决定下一步，例如搜索、改写查询、再次检索或回答。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      },
+      {
+        "id": "rag_basics.md::chunk-0002",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "Reranker 本身不能；但 Agentic RAG 可以通过改写查询、再检索一轮来补召回。",
+    "note": ""
+  },
+  {
+    "qid": "eval-043",
+    "question": "为什么要有最大步数上限，它防的是哪类失败？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "如果模型反复认为证据不足并不断搜索，循环可能永远无法结束。",
+      "常见失败包括：语料中没有答案、文档解析错误、切分边界不合理、检索没有召回正确证据、证据彼此冲突、Prompt 没有约束生成"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "防的是「证据不足→反复搜索」的循环；失败类型里语料缺答案与召回失败最容易触发这种循环。",
+    "note": ""
+  },
+  {
+    "qid": "eval-044",
+    "question": "决定 RAG 准确率的参数里包含 TopK，那 TopK 调太大有什么副作用？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "**Accuracy:** LLM Model, Chunk Size, Reranker ON/OFF, TopK.",
+      "Top-K 太小可能漏掉证据，太大则可能带入无关内容。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0069",
+        "grade": 2
+      },
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "TopK 是准确率的关键参数；太大带入无关内容，太小漏证据。",
+    "note": ""
+  },
+  {
+    "qid": "eval-045",
+    "question": "更换 embedding 模型要重建索引，那新模型的 chunk 还受什么长度限制？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "更换 Embedding 模型后，通常需要重新计算知识库中所有文本块的向量。",
+      "the chunk size should not exceed the maximum context length (8192 tokens) supported."
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-deployment-guide\\latest\\enterprise-rag-on-enterprise-ra.md::chunk-0019",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "要重算全部向量；且 chunk 不能超过新模型最大上下文（如 8192 token）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-046",
+    "question": "固定 RAG 延迟更低，那什么时候才值得上 Agentic RAG？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "不是所有问题都需要 Agentic RAG；固定 RAG 通常更简单、更可预测、延迟更低。",
+      "Agentic RAG 更灵活，但会增加延迟、成本、失败模式与控制复杂度。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "rag_basics.md::chunk-0002",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "只有在需要改写查询/多轮检索时才值得；代价是延迟、成本、失败模式与复杂度上升。",
+    "note": ""
+  },
+  {
+    "qid": "eval-047",
+    "question": "RAG 有的问题一次检索就答不好，这属于哪类失败，能不能用 Agentic 方式补？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "常见失败包括：语料中没有答案、文档解析错误、切分边界不合理、检索没有召回正确证据、证据彼此冲突、Prompt 没有约束生成",
+      "Agentic RAG 让模型根据问题和已有证据决定下一步，例如搜索、改写查询、再次检索或回答。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      },
+      {
+        "id": "rag_basics.md::chunk-0002",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "「检索没有召回正确证据」是典型失败；Agentic RAG 可以改写查询再检索一轮来补。",
+    "note": ""
+  },
+  {
+    "qid": "eval-048",
+    "question": "RAG 的准确率和性能是一回事吗？为什么 chunk/topk 的选择要权衡？",
+    "type": "multi_hop",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Both Accuracy and Performance are critical for RAG Inference",
+      "The larger the chunk size selected and the more the number of VDB chunks sent to the LLM the larger the latency overhead"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0066",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0067",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\enterprise-reference-architectures\\enterprise-rag-retrieval-scaling-and-sizing-guide\\latest\\rag-retrieval-accuracy-performance.md::chunk-0059",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "两者都关键且互相牵制：chunk 越大、送入越多，延迟越高。",
+    "note": ""
+  },
+  {
+    "qid": "eval-049",
+    "question": "DGX B300 在中国的官方售价是多少？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "价格类问题：全库无 B300 报价，price 与「价格」检索只命中其它产品文档的许可/成本论述。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-050",
+    "question": "NVIDIA 企业级支持的客服电话是多少？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "联系方式类：全库无电话号码或热线，只有「联系支持」的流程说明。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-051",
+    "question": "Slurm 的许可证费用是多少？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "价格类：Slurm 相关文档只讲配置与使用，无定价信息。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-052",
+    "question": "Java 版 Base Command Manager SDK 的下载地址是什么？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "版本/语言类：BCM 文档无 Java SDK 相关内容。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-053",
+    "question": "Mission Control 的月度订阅费用是多少？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "价格类：Mission Control 文档无订阅价格。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-054",
+    "question": "DGX B300 的上市日期是哪一天？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "日期类：文档只有硬件规格与配置，无发布/上市日期。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-055",
+    "question": "H100 的官方零售价是多少美元？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "价格类：全库无 H100 零售价。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-056",
+    "question": "DGX SuperPOD 的交付周期是多久？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "交付/商务类：文档讲部署架构，不讲交付周期。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-057",
+    "question": "InfiniBand 线缆的采购折扣是多少？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "商务类：无采购与折扣信息。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-058",
+    "question": "DGX B300 的机箱有几种颜色可选？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "外观类：文档只讲规格与接口，无机箱配色。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-059",
+    "question": "本项目使用的 qwen3.5:9b 模型训练数据截止到什么时候？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "模型元信息：语料是 NVIDIA 产品文档与一本书，不含该本地模型的训练数据说明。｜查证：整句在全库命中 0 条 chunk"
+  },
+  {
+    "qid": "eval-060",
+    "question": "我们公司内网知识库的管理员密码是多少？",
+    "type": "negative",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "私有信息：属于用户内部环境，绝不可能出现在公开语料里（安全性正样本）。｜查证：整句在全库命中 0 条 chunk"
+  }
+]

@@ -1,0 +1,35 @@
+# ---- 生成物：不进仓库（可按 README 的命令重新生成）----
+
+# 索引与向量库（可重建：python -m src.build_index）
+storage/
+# 旧格式单文件索引（若存在）
+index.json
+embeddings.npy
+embeddings.part.npy
+.build_progress.json
+
+# 运行日志与 review 报告（每次运行自动生成）
+logs/
+
+# 语料（外部资料，43 MB，含 PDF；按 RAG_DATA_DIR 自备）
+data/
+
+# 评估产物：报告、基线、探针结果都由 measure / 探针脚本生成
+experiments/reports/
+experiments/probes/
+experiments/baseline.json
+
+# ---- 工具与缓存 ----
+
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+.env
+.DS_Store
+Thumbs.db

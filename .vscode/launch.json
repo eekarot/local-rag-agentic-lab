@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "build_index (module)",
+      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.build_index",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        "OLLAMA_CHAT_MODEL": "qwen3.5:9b"
+      },
+      "justMyCode": true
+    },
+    {
+      "name": "rag (module)",
+      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.rag",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        "OLLAMA_CHAT_MODEL": "qwen3.5:9b"
+      },
+      "justMyCode": true
+    },
+    {
+      "name": "agentic_rag (module)",
+      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.agentic_rag",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        "OLLAMA_CHAT_MODEL": "qwen3.5:9b"
+      },
+      "justMyCode": true
+    },
+    {
+      "name": "evaluate (module)",
+      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.evaluate",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        "OLLAMA_CHAT_MODEL": "qwen3.5:9b"
+      },
+      "justMyCode": true
+    }
+  ]
+}
