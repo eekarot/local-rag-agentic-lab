@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.3\
+> **文档版本**：2.4\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2095,7 +2095,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | 编号 | 依赖 | 任务 | 验收方式 |
 |---|---|---|---|
 | D13 | D05,B01 | ✅ **已完成（2026-11-02）** Embedding 服务抽象（`src/rag/embedding/`：`encode_documents` / `encode_queries`、批量与二分重试、维度/NaN/Inf/全零校验、内容 hash 缓存（SQLite + 进程内 LRU）、`stats` 与 CLI） | `python -m unittest tests.test_embedding_service`（31 用例）全绿；真实 24 条 chunk：**冷启 p95 2212 ms → 内存命中 p95 0.019 ms（113,489×）、SQLite 命中 p95 3.1 ms（713×）**，二次调用命中率 **100%**；单条 query 冷 2176 ms → 命中 6.78 ms（<10 ms）；维度≠1024 / NaN / Inf / 全零各自抛错 |
-| D14 | D13 | `embedding_text`（Document/Section 前缀）与 `content` 分离 | 库中两个字段同时存在；前缀缺失计数可统计；小样本 A/B（有/无前缀）Recall@10 差异写入报告 |
+| D14 | D13 | ✅ **已完成（2026-11-02）** `embedding_text` 与 `content` 分离 + 前缀可统计 + 有/无前缀 A/B（`src/rag/ingestion/embedding_text_report.py`：`prefix_stats`/`reconstruction_stats`/`query_metrics`/`ab_summary`/`run_ab` + CLI；`DocumentStore.parents_containing`/`documents_containing` 供金标选样） | `python -m unittest tests.test_embedding_text_report` **18 用例**；`--stats-only` 全量前缀覆盖 **100%**、可重建 **100%**；A/B：48 题、10,028 点 → **MRR 0.429 → 0.554（+0.125）**、hit@10 +2.1pt、Recall@10 +0.9pt（两次独立运行同向） |
 | D15 | B04 | ✅ **已完成（2026-11-02）** Qdrant 部署 + Collection + Payload Index（6 个过滤字段）；`docker-compose.yml` 固定 `qdrant/qdrant:v1.15.0`，`src/rag/store/qdrant_store.py` 管建/读/删 + CLI | `docker compose up -d qdrant && python -m src.rag.store.qdrant_store create`；`curl -s localhost:6333/collections/rag_chunks_v1` → **size=1024、distance=Cosine、hnsw m=16、ef_construct=200、payload_schema 6 个**（实测已核对）；`python -m unittest tests.test_qdrant_store` 18 用例全绿 |
 | D16 | D10,D15 | ✅ **已完成（2026-11-02）** 幂等 Upsert + 版本管理 + 按文档删除（`src/rag/store/indexer.py`：point id = `point_id_for(chunk_id)` 覆盖写、陈旧点集差集删除、按 `document_id` 过滤删除、先 Store 后 Qdrant 的失败可自愈顺序） | `python -m unittest tests.test_indexer` 14 用例；真实 3 篇：首轮 13 点 → **重复导入 13 点不变、陈旧点 0**；版本变化时 **陈旧点 6 个被删、点数 = 新 child 数**；`delete_document` 后 **按 document_id 过滤计数 0** |
 | D17 | D08 | ✅ **已完成（2026-11-02）** SQLite Document Store（`src/rag/store/document_store.py`：documents / parents / children 三表 + 外键强制 + 整篇替换事务 + `import_chunks_dir` / `verify_against_jsonl` / `get_parent_for_chunk` + CLI） | `python -m unittest tests.test_document_store` 18 用例；真实 20 篇：**`SELECT count(*) FROM parents` = 102 == JSONL 行数 102**（documents 20/20、children 182/182）；任意 `chunk_id` → `python -m src.rag.store.document_store show <chunk_id>` 可查到父块原文 + `source_uri` + `section_path`；重复导入计数不变 |
@@ -2370,6 +2370,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D21 | ✅ 2026-11-02 | `src/rag/store/index_versions.py`（登记表 + 只读 `check` + `assert_compatible` 闸门 + retire/activate + 建议名）、`Indexer._assert_versions`（upsert 前对账，失败一个点都不写）、`scripts/ingest.py --versions`、`tests tests.test_indexer::VersionGateTest` | 负向：v2 写 v1 collection → `CollectionVersionMismatch` 且点数不变 |
 | D19 | ✅ 2026-11-02 | `src/rag/store/search.py`（`qdrant_search`/`exact_topk`/`ann_recall`/`measure_ann_recall`/`scroll_vectors` + CLI） | 真实向量：1 万点 1.000、10 万点 0.990；`tests.test_search` 11 用例 |
 | D20 | ✅ 2026-11-02 | `scripts/ingest.py --dir data --limit 10000`（全链路）；`IngestState.forget_document_id` + `Indexer.delete_document(state=...)` + `scripts/ingest.py --delete` 补上「删除→状态表同步→可重建」闭环 | 全语料 1467 篇 → 38,865 点 / 0 失败 / 1992 s；hit@5 8/10、回溯 10/10；删除后重建精确回到 38,865 |
+| D14 | ✅ 2026-11-02 | `src/rag/ingestion/embedding_text_report.py`（前缀统计 / 可重建性 / 父块 Recall@k / A-B 汇总 / 双 collection 跑分 + CLI）、`DocumentStore.parents_containing` / `documents_containing` | 前缀覆盖 100%（全语料 25,411 父块无缺 title/section）、可重建 100%；A/B 48 题：MRR +0.125、hit@10 +2.1pt、Recall@10 +0.9pt |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2451,6 +2452,39 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D14 实测：`embedding_text` 前缀到底有没有用**
+
+设计意图是「子块脱离父块后仍知道自己在哪篇文档、哪一节」，但**意图不等于收益**，得测。做法：同一批子块建两个 collection（有前缀 / 纯正文），同一批 query 各查一遍，按**父块**算 Recall@k / hit@k / MRR。
+
+样本规模（`--from-gold`：按题目 `gold_spans` 挑含金标的文件，再均匀抽干扰文件，避免"按字母序取前 N 个"的偏样）：
+
+| 样本 | 点数 | 可判定题数 | prefixed Recall@10 / hit@10 / MRR | plain Recall@10 / hit@10 / MRR | delta |
+|---|---|---|---|---|---|
+| 19 含金标 + 200 干扰 | 6,092 | 48 | 0.7587 / 0.8542 / **0.6095** | 0.7344 / 0.8125 / 0.4431 | +0.0243 / +0.0417 / **+0.1664** |
+| 19 含金标 + 400 干扰 | 10,028 | 48 | 0.7344 / 0.8333 / **0.5541** | 0.7257 / 0.8125 / 0.4288 | +0.0087 / +0.0208 / **+0.1253** |
+
+**结论：前缀的主要收益是把"第一个正确结果"往前提，而不是让更多正确答案进 Top-10。** MRR 两次独立运行分别 +0.166 / +0.125，hit@10 与 Recall@10 只小幅变化（其中一次 Recall@10 是 −0.0167，负的）。对 RAG 来说这恰恰是有用的那部分——上下文窗口只放 4~8 条，第 1 名比第 9 名重要得多。
+
+**但必须说清差异的来源有多窄**（不然就是拿 2 道题冒充 48 道题的结论）：
+
+| 运行 | prefixed 更好 | 更差 | 完全持平 | 差异题 |
+|---|---|---|---|---|
+| 6,092 点 | 2 题 | 1 题 | 45 题 | eval-002 ↑、eval-030 ↓、eval-045 ↑ |
+| 10,028 点 | 2 题 | 3 题 | 43 题 | eval-002 ↑、eval-019 ↑、eval-020 ↓、eval-030 ↓、eval-034 ↓ |
+
+差异几乎全部集中在「**问题用词和正文用词不同、但和章节标题相同**」的题上：
+
+- `eval-002`「为什么文档要切分成 chunk？」：prefixed **1.000** vs plain **0.000**（两次运行都是 0）。正文里讲的是"分段/子块"，`chunk` 这个词只出现在章节标题里——**前缀把标题里的关键词补进了向量**，这正是 §2.8 想要的效果；
+- `eval-045`「更换 embedding 模型要重建索引，那新模型的 chunk 还受什么长度限制？」：prefixed 0.500 vs plain 0.000；
+- 反例 `eval-030`「DGX RHEL8 安装指南建议如何处理 BMC 的默认用户名？」：prefixed **0.250/0.333** vs plain **0.583/0.667**。前缀在这里是干扰——同一篇文档里 BMC 相关章节太多，`Document:`/`Section:` 把不同章节的子块推得更像了。
+
+所以**保留前缀（方案 §2.8 不变）**，但记下两条：① 收益幅度小、题间方差大，不是"免费大涨分"；② 前缀对"同一文档内多个相似章节"的场景有副作用——这类问题应该靠 reranker（D31）而不是靠 embedding 前缀解决。
+
+另外两条可验收的硬事实：
+
+- **前缀覆盖 100%**：全语料 25,411 个父块里缺 `title` 的 **0** 个、缺 `section_path` 的 **0** 个；即使两者都缺，最差也只是退化成 `Content: ...` 一行，不会变成"无前缀"。
+- **`embedding_text` 100% 可重建**：10,028 个抽样子块的 `embedding_text` 与 `build_embedding_text(title, section_path, content)` 逐字节相等（mismatched = 0）。这条直接支撑现有设计——**不用把它落库**（Qdrant payload 里没有它），少存一份原文，索引体积不膨胀。
 
 **D20 端到端实测（全语料 1467 篇）**
 
@@ -2636,6 +2670,10 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.1                     2026-11-02              D18 落地：导入状态机（§10.1 十个状态）+ 失败清单 +
   2.2                     2026-11-02              D21 + D19 落地：索引版本闸门（同维不同模型拒绝混写）与
   2.3                     2026-11-02              D20 端到端 DoD：全语料 1467 篇 → 38,865 点 / 0 失败 /
+  2.4                     2026-11-02              D14 落地：前缀覆盖/可重建性统计 + 有/无前缀 A/B。实测前缀主要
+                                                  提升 MRR（+0.125~0.166）而非 Recall@10，差异集中在 2–5 道
+                                                  「问题用词=章节标题」的题；记下同文档多相似章节的副作用。
+                                                  Phase 2 全部完成（D13/D14/D15/D16/D17/D18/D19/D20/D21）
                                                   1992 s；中英 query hit@5 8/10、回溯 10/10；删除重建
                                                   精确回到基线。补「删除时同步清状态表」缺口，记录
                                                   indexed_vectors_count < 20000 时走精确扫描这件事

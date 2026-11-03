@@ -716,6 +716,38 @@ python scripts/ingest.py --delete md/docs.nvidia.com/xxx.md   # 删除（三方�
 
 **验收：** 能说出删除一篇文档需要同步哪三处，以及为什么 1 万点的召回数字不能当 ANN 的成绩。
 
+### 实验 21：`embedding_text` 前缀到底有没有用（A/B，而不是"我觉得有用"）
+
+```powershell
+python -m src.rag.ingestion.embedding_text_report --dir data --stats-only
+python -m src.rag.ingestion.embedding_text_report --dir data --from-gold --distractors 400 --queries 60 --k 10
+```
+
+同一批子块建**两个** collection（有前缀 / 纯正文），同一批 query 各查一遍，按**父块**算指标：
+
+| 样本 | prefixed Recall@10 / hit@10 / MRR | plain Recall@10 / hit@10 / MRR | delta |
+|---|---|---|---|
+| 6,092 点 · 48 题 | 0.759 / 0.854 / **0.610** | 0.734 / 0.813 / 0.443 | +0.024 / +0.042 / **+0.166** |
+| 10,028 点 · 48 题 | 0.734 / 0.833 / **0.554** | 0.726 / 0.813 / 0.429 | +0.009 / +0.021 / **+0.125** |
+
+**前缀主要把「第一个正确结果」往前提（MRR +0.13~0.17），而不是让更多正确答案进 Top-10。**
+对 RAG 来说这恰好是有用的那部分——上下文只放 4~8 条。
+
+但差异来源很窄：48 题里只有 **2–5 题**不一致，其余 43–45 题完全相同。
+
+- `eval-002`「为什么文档要切分成 chunk？」prefixed **1.000** vs plain **0.000**——正文讲的是"分段"，
+  `chunk` 只出现在章节标题里，**前缀把标题关键词补进了向量**；
+- 反例 `eval-030`（BMC 默认用户名）prefixed **0.25** vs plain **0.58**——同一文档里相似章节太多，
+  前缀反而把它们推得更像。
+
+所以：保留前缀（§2.8 不变），但别把它当"免费涨分"；同文档多相似章节要靠 reranker（D31）解决。
+
+两条硬事实：全语料 25,411 父块**缺 title 0 / 缺 section_path 0**（前缀覆盖 100%），
+且 `embedding_text` 与 `build_embedding_text(...)` **逐字节相等（10,028/10,028）**——
+所以它**不用落库**，Qdrant payload 里没有它。
+
+**验收：** 能解释为什么 MRR 的提升对 RAG 比 Recall@10 更有意义，以及前缀在什么场景下是负作用。
+
 
 ## 重要说明
 

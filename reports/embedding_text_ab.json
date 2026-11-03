@@ -1,0 +1,328 @@
+{
+  "prefix": {
+    "total": 6092,
+    "with_prefix": 6092,
+    "without_prefix": 0,
+    "prefix_ratio": 1.0,
+    "reasons": {}
+  },
+  "reconstruction": {
+    "total": 6092,
+    "mismatched": 0,
+    "reconstructable_ratio": 1.0,
+    "examples": []
+  },
+  "chunks": 6092,
+  "queries": 48,
+  "k": 10,
+  "collections": {
+    "prefixed": "ab_embtext_3a147c21_prefixed",
+    "plain": "ab_embtext_3a147c21_plain"
+  },
+  "judged": 48,
+  "prefixed": {
+    "recall": 0.7587,
+    "hit": 0.8542,
+    "mrr": 0.6095
+  },
+  "plain": {
+    "recall": 0.7344,
+    "hit": 0.8125,
+    "mrr": 0.4431
+  },
+  "delta": {
+    "recall": 0.0243,
+    "hit": 0.0417,
+    "mrr": 0.1664
+  },
+  "rows": [
+    {
+      "qid": "eval-001",
+      "question": "RAG 是什么？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-002",
+      "question": "为什么文档要切分成 chunk？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-003",
+      "question": "Embedding 模型负责生成最终答案吗？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-004",
+      "question": "Top-K 太大有什么风险？",
+      "prefixed_recall": 0.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-005",
+      "question": "关键词检索在哪些问题上可能更有优势？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-006",
+      "question": "RRF 是用来做什么的？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-007",
+      "question": "Reranker 能否找回第一阶段完全没召回的证据？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-008",
+      "question": "固定 RAG 与 Agentic RAG 有什么区别？",
+      "prefixed_recall": 0.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-009",
+      "question": "为什么 Agent Loop 需要最大步数？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-010",
+      "question": "更换 Embedding 模型后需要做什么？",
+      "prefixed_recall": 0.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-011",
+      "question": "RAG 和模型微调有什么区别？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-012",
+      "question": "工具调用时权限应遵循什么原则？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-013",
+      "question": "RAG 常见失败类型有哪些？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-014",
+      "question": "Agentic RAG 相比固定 RAG 要付出什么代价？",
+      "prefixed_recall": 0.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-015",
+      "question": "chunk 切得过短会有什么问题？",
+      "prefixed_recall": 0.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-016",
+      "question": "为什么 RAG 不能自动保证答案正确？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-017",
+      "question": "DGX B300 单机的 GPU 显存总量是多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-018",
+      "question": "DGX B300 默认配置的系统内存是多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-019",
+      "question": "DGX B300 的 GPU 通过什么方式连网络？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-020",
+      "question": "DGX B300 的系统内存最多能扩到多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-021",
+      "question": "DGX B300 装了几张 GPU？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-022",
+      "question": "NVIDIA RAG 参考架构里，文本通常切分成多少 token 的 chunk？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-023",
+      "question": "RAG 流水线里 chunk 大小不能超过 embedding 模型的什么限制？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-024",
+      "question": "MIG 关闭后要恢复 GPU 的 NVLink 点对点能力，需要什么在运行？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-025",
+      "question": "Base Command Manager 免费授权每台机器最多支持多少加速器？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-026",
+      "question": "哪种 Base Command Manager 授权套餐包含 GPU Operator、Network Operator 和 vGPU？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-027",
+      "question": "NVIDIA 认为哪些参数会显著影响 RAG 的准确率？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-028",
+      "question": "Enterprise RAG 的 Chat 场景首字响应目标是多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-029",
+      "question": "Enterprise RAG 的 Summarization 场景典型输入/输出长度是多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-030",
+      "question": "DGX RHEL8 安装指南建议如何处理 BMC 的默认用户名？",
+      "prefixed_recall": 0.25,
+      "plain_recall": 0.5833
+    },
+    {
+      "qid": "eval-031",
+      "question": "NVIDIA RAG 基准里的 Wikipedia 数据集规模有多大？",
+      "prefixed_recall": 0.3333,
+      "plain_recall": 0.3333
+    },
+    {
+      "qid": "eval-032",
+      "question": "RAG 里增大 chunk size 或送入更多 chunk 会带来什么开销？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-033",
+      "question": "MIG 模式下 DGX A100 的 NVLink 会被关闭，那关闭 MIG 之后要靠什么才能恢复点对点？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-034",
+      "question": "DGX B300 一张卡 288 GB，整机显存多少？系统内存最大能扩到多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-035",
+      "question": "DGX B300 有几张 GPU，默认系统内存多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-036",
+      "question": "RAG 参考架构推荐 chunk 用多少 token，同时这个大小还受什么上限约束？",
+      "prefixed_recall": 0.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-037",
+      "question": "RAG 里 chunk 大小和 TopK 同时影响什么？",
+      "prefixed_recall": 0.5,
+      "plain_recall": 0.5
+    },
+    {
+      "qid": "eval-038",
+      "question": "Enterprise RAG 的 Chat 与 Summarization 两种场景，首字响应时间目标差多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-039",
+      "question": "DGX B300 单机能否落在 Base Command Manager 免费授权范围内？",
+      "prefixed_recall": 0.3333,
+      "plain_recall": 0.3333
+    },
+    {
+      "qid": "eval-040",
+      "question": "想要 GPU Operator、vGPU 这些能力，需要选哪种 BCM 授权？免费版的上限是多少？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-041",
+      "question": "NVIDIA 的 Wikipedia RAG 基准用了多大的数据量，chunk 是怎么设的？",
+      "prefixed_recall": 0.0,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-042",
+      "question": "Reranker 找不回的漏召回，Agentic RAG 能补吗？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-043",
+      "question": "为什么要有最大步数上限，它防的是哪类失败？",
+      "prefixed_recall": 0.5,
+      "plain_recall": 0.5
+    },
+    {
+      "qid": "eval-044",
+      "question": "决定 RAG 准确率的参数里包含 TopK，那 TopK 调太大有什么副作用？",
+      "prefixed_recall": 0.5,
+      "plain_recall": 0.5
+    },
+    {
+      "qid": "eval-045",
+      "question": "更换 embedding 模型要重建索引，那新模型的 chunk 还受什么长度限制？",
+      "prefixed_recall": 0.5,
+      "plain_recall": 0.0
+    },
+    {
+      "qid": "eval-046",
+      "question": "固定 RAG 延迟更低，那什么时候才值得上 Agentic RAG？",
+      "prefixed_recall": 0.5,
+      "plain_recall": 0.5
+    },
+    {
+      "qid": "eval-047",
+      "question": "RAG 有的问题一次检索就答不好，这属于哪类失败，能不能用 Agentic 方式补？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    },
+    {
+      "qid": "eval-048",
+      "question": "RAG 的准确率和性能是一回事吗？为什么 chunk/topk 的选择要权衡？",
+      "prefixed_recall": 1.0,
+      "plain_recall": 1.0
+    }
+  ]
+}

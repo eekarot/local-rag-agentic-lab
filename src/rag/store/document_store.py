@@ -255,6 +255,34 @@ class DocumentStore:
 
     # -- 统计与核对 -----------------------------------------------------
 
+    def parents_containing(self, spans: Iterable[str]) -> set[str]:
+        """哪些父块包含这些原文片段（D14 用 gold_spans 造判定金标）。"""
+        found: set[str] = set()
+        with self._connect() as conn:
+            for span in spans:
+                if not span:
+                    continue
+                rows = conn.execute(
+                    "SELECT parent_id FROM parents WHERE content LIKE ?", (f"%{span}%",)
+                ).fetchall()
+                found.update(row[0] for row in rows)
+        return found
+
+    def documents_containing(self, spans: Iterable[str]) -> set[str]:
+        """哪些文档（source_uri）包含这些原文片段。D14 用它按金标挑样本文件。"""
+        found: set[str] = set()
+        with self._connect() as conn:
+            for span in spans:
+                if not span:
+                    continue
+                rows = conn.execute(
+                    "SELECT DISTINCT d.source_uri FROM parents p JOIN documents d"
+                    " ON d.document_id = p.document_id WHERE p.content LIKE ?",
+                    (f"%{span}%",),
+                ).fetchall()
+                found.update(row[0] for row in rows)
+        return found
+
     def count(self, table: str) -> int:
         if table not in TABLES:
             raise DocumentStoreError(f"未知表名 {table!r}，只支持 {TABLES}")
