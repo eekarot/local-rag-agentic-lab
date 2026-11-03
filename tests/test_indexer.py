@@ -16,6 +16,7 @@ import numpy as np
 
 from src.rag.embedding.service import EmbeddingService
 from src.rag.store.document_store import DocumentStore
+from src.rag.store.index_versions import CollectionVersionMismatch, IndexVersions
 from src.rag.store.indexer import Indexer
 from src.rag.store.qdrant_store import (
     COLLECTION_NAME,
@@ -131,8 +132,10 @@ class IndexerTestBase(unittest.TestCase):
         self.embedder = EmbeddingService(
             backend=self.backend, cache_path=f"{self.tmp_dir.name}/c.sqlite3"
         )
+        self.versions = IndexVersions(f"{self.tmp_dir.name}/versions.sqlite3")
         self.indexer = Indexer(
-            client=self.client, collection=self.collection, store=self.store, embedder=self.embedder
+            client=self.client, collection=self.collection, store=self.store,
+            embedder=self.embedder, versions=self.versions,
         )
         self.addCleanup(self._cleanup)
 
@@ -285,6 +288,46 @@ class DeleteTest(IndexerTestBase):
         self.indexer.delete_document(DOC_A)
         self.index(make_document(), parents, children)
         self.assertEqual(self.indexer.count(), 2)
+
+
+class VersionGateTest(IndexerTestBase):
+    """D21 验收的负向用例：换 embedding 版本必须拒绝写入旧 collection。"""
+
+    def test_first_write_registers_collection(self):
+        self.index()
+        row = self.versions.get(self.collection)
+        self.assertIsNotNone(row)
+        self.assertEqual(row["embedding_version"], "bge-m3-v1")
+
+    def test_second_write_with_new_embedding_version_is_rejected(self):
+        parents = make_parents(n=1)
+        children = make_children(parents, per_parent=2)
+        self.index(make_document(), parents, children)
+        before = self.indexer.count()
+
+        parents2 = make_parents(n=2, version="sha256:v2", tag="v2")
+        children2 = make_children(parents2, version="sha256:v2", per_parent=2, tag="v2")
+        for child in children2:
+            child["embedding_version"] = "bge-m3-v2"
+        with self.assertRaises(CollectionVersionMismatch) as ctx:
+            self.index(make_document(version="sha256:v2"), parents2, children2)
+        self.assertIn("bge-m3-v2", str(ctx.exception))
+        self.assertEqual(self.indexer.count(), before, "拒绝写入时一个点都不该变")
+
+    def test_retired_collection_refuses_writes(self):
+        self.index()
+        self.versions.retire(self.collection)
+        with self.assertRaises(CollectionVersionMismatch):
+            self.index()
+
+    def test_document_version_change_still_allowed(self):
+        """换文档版本不涉及向量空间，不该被版本闸挡住。"""
+        parents_v1 = make_parents(n=2, tag="v1")
+        self.index(make_document(), parents_v1, make_children(parents_v1, per_parent=1, tag="v1"))
+        parents_v2 = make_parents(n=2, version="sha256:v2", tag="v2")
+        result = self.index(make_document(version="sha256:v2"), parents_v2,
+                            make_children(parents_v2, version="sha256:v2", per_parent=1, tag="v2"))
+        self.assertEqual(result["upserted"], 2)
 
 
 class BatchTest(IndexerTestBase):

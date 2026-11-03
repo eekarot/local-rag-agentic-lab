@@ -25,6 +25,7 @@ import numpy as np
 from ..embedding.service import EmbeddingService
 from .document_store import DocumentStore, load_chunks_dir
 from .errors import VectorStoreError
+from .index_versions import IndexVersions
 from .qdrant_store import (
     COLLECTION_NAME,
     VECTOR_SIZE,
@@ -55,6 +56,7 @@ class Indexer:
         embedder: EmbeddingService | None = None,
         batch_size: int = 256,
         vector_size: int = VECTOR_SIZE,
+        versions: IndexVersions | None = None,
     ):
         self.client = client or make_client()
         self.collection = collection
@@ -62,6 +64,7 @@ class Indexer:
         self.embedder = embedder
         self.batch_size = max(1, batch_size)
         self.vector_size = vector_size
+        self.versions = versions
 
     # -- 索引 -----------------------------------------------------------
 
@@ -89,6 +92,10 @@ class Indexer:
             )
 
         ensure_collection(self.client, self.collection, vector_size=self.vector_size)
+
+        # 写入前对账（D21）：同维不同模型的向量混写不会报错，只会让检索静默变差，
+        # 所以这道闸必须在 upsert 之前，且失败时一个点都不许写。
+        self._assert_versions(children)
 
         # 1) 先落 Document Store（事务；失败则 Qdrant 完全没动）
         if self.store is not None:
@@ -207,6 +214,25 @@ class Indexer:
         }
 
     # -- 内部 -----------------------------------------------------------
+
+    def _assert_versions(self, children: Sequence[Mapping[str, Any]]) -> None:
+        if self.versions is None:
+            return
+        models = {c.get("embedding_model") for c in children if c.get("embedding_model")}
+        versions = {c.get("embedding_version") for c in children if c.get("embedding_version")}
+        model = models.pop() if len(models) == 1 else getattr(self.embedder, "model", None)
+        version = versions.pop() if len(versions) == 1 else getattr(self.embedder, "version", None)
+        if not model or not version:
+            raise IndexerError(
+                "无法确定本次写入的 embedding_model/embedding_version，拒绝写入（D21 要求可追溯）"
+            )
+        self.versions.assert_compatible(
+            self.collection,
+            embedding_model=str(model),
+            embedding_version=str(version),
+            vector_size=self.vector_size,
+            chunker_version=children[0].get("chunker_version"),
+        )
 
     def _vectors_for(
         self,

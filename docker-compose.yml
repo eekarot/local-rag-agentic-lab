@@ -9,12 +9,12 @@
 # 否则客户端会告警 "client version 1.xx is incompatible with server version"。
 services:
   qdrant:
-    image: qdrant/qdrant:v1.15.0
+    image: qdrant/qdrant:v1.16.2   # 1.15.0 有 gridstore panic（见 §17.12 D19 实测），必须 ≥1.16.2
     container_name: rag-qdrant
     ports:
       - "6333:6333"   # REST
       - "6334:6334"   # gRPC
     volumes:
       - ./storage/qdrant:/qdrant/storage
-    mem_limit: 2g     # 与 D39 的 16GB 预算对齐，先按 2GB 起
+    mem_limit: 6g     # 实测 8 万点 ×1024 维在 2 GB 下优化期会被内核回收 mmap 页 → 1.15.0 直接 panic
     restart: unless-stopped

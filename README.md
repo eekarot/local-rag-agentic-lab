@@ -119,6 +119,8 @@ local-rag-agentic-lab/
 │       ├── qdrant_store.py       # collection 配置 / 6 个 payload index / CLI（D15）
 │       ├── document_store.py     # SQLite：Parent 原文 + 元数据 + chunk→parent（D17）
 │       ├── indexer.py            # 幂等 Upsert / 陈旧点清理 / 按文档删除（D16）
+│       ├── index_versions.py     # collection↔模型口径登记 + 写入闸门（D21）
+│       ├── search.py             # dense 检索 / 精确基准 / ANN Recall（D19）
 │       └── errors.py             # VectorStoreError / CollectionMismatchError
 │       ├── ids.py                # 稳定 ID 与内容哈希（document/parent/chunk，D10）
 │       ├── jsonl_store.py        # JSONL 字段契约 + manifest（D12）
@@ -647,6 +649,44 @@ EMBEDDING 时缓存让重算近乎免费；要重写时 point id 幂等所以不
    写 `resolution='source_removed'` 区分「重试成功」与「文件删了」。
 
 **验收：** 能解释为什么「先删后插」不是幂等，以及断点恢复为什么需要三层保险而不是一个状态字段。
+
+### 实验 18：索引版本化——同维不同模型最危险
+
+```powershell
+python -m src.rag.store.index_versions list
+python -m src.rag.store.index_versions check rag_chunks_v1 --embedding-model bge-m3 --embedding-version bge-m3-v2 --vector-size 1024
+# 退出码 1，报错里直接给出可用的新名字：rag_chunks_bge_m3_v2
+```
+
+两个 1024 维模型混写进同一个 collection **不会报任何错**，检索只会慢慢变差——所以要在 upsert
+前对账。闸门接在 `Indexer` 里：拒绝时**一个点都不写**，并区分 `retired`（主动退役）与口径不符。
+
+### 实验 19：ANN 召回——没有精确基准就是自欺
+
+```powershell
+python -m unittest tests.test_search -v          # 11 用例（含 1 万点真跑）
+python -m src.rag.store.search --queries 20      # 直接算 ANN Recall
+```
+
+真实 bge-m3 向量 + 20 条真实 query：
+
+| 点数 | recall@50 | 延迟 p50 |
+|---|---|---|
+| 10,000 | **1.000** | 12–14 ms |
+| 81,027 | 0.994 | 16–28 ms |
+| 100,000 | **0.990**（ef=256） | 11–22 ms |
+
+**这一轮抓出的是 Qdrant 1.15.0 的 bug，不是参数问题**：81k 点 recall 只有 0.46 且 `ef` 完全无效
+→ 查 `status` 发现 `red`、optimizer panic `OutputTooSmall`、点数报 133,382（实际插 81,027）。
+升到 **1.16.2** 后同批数据 `green`、点数精确、recall 0.994。容器内存也从 2 GB 提到 6 GB。
+
+三个排查教训：
+
+1. **先看 `status` 和 `indexed_vectors_count`，再谈召回**——索引没建完时测的是半成品；
+2. **压测脚本用带随机后缀的 collection 名**——同名删除后的残留段会被新库读到，点数虚高；
+3. **`ef` 对结果毫无影响时别继续调参**，那是引擎异常信号。
+
+**验收：** 能解释为什么「两个 1024 维模型混写」比「维度不一致」更危险，以及为什么 ANN 召回必须有精确基准。
 
 
 ## 重要说明

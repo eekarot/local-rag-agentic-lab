@@ -44,11 +44,13 @@ from src.rag.embedding.service import EmbeddingService  # noqa: E402
 from src.rag.ingest.pipeline import DEFAULT_PATTERNS, IngestPipeline  # noqa: E402
 from src.rag.ingest.state import IngestState  # noqa: E402
 from src.rag.store.document_store import DocumentStore  # noqa: E402
+from src.rag.store.index_versions import IndexVersions  # noqa: E402
 from src.rag.store.indexer import Indexer  # noqa: E402
 from src.rag.store.qdrant_store import COLLECTION_NAME, ensure_collection, make_client  # noqa: E402
 
 STATE_PATH = STORAGE_DIR / "ingest" / "state.sqlite3"
 DOCUMENT_DB = STORAGE_DIR / "documents.sqlite3"
+VERSIONS_DB = STORAGE_DIR / "index_versions.sqlite3"
 
 
 def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingService, IngestState]:
@@ -57,9 +59,10 @@ def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingServi
     state = IngestState(args.state or STATE_PATH)
     store = DocumentStore(args.document_db or DOCUMENT_DB)
     embedder = EmbeddingService(cache_path=args.cache or (STORAGE_DIR / "cache" / "embeddings.sqlite3"))
+    versions = IndexVersions(args.versions or VERSIONS_DB)
     indexer = Indexer(
         client=client, collection=args.collection, store=store, embedder=embedder,
-        batch_size=args.batch_size,
+        batch_size=args.batch_size, versions=versions,
     )
     pipeline = IngestPipeline(
         data_dir=args.dir, state=state, store=store, indexer=indexer, embedder=embedder,
@@ -81,6 +84,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--state", type=Path, default=None)
     parser.add_argument("--document-db", type=Path, default=None)
     parser.add_argument("--cache", type=Path, default=None)
+    parser.add_argument("--versions", type=Path, default=None, help="索引版本登记表（D21）")
     parser.add_argument("--batch-size", type=int, default=256, help="单次 upsert 的点数")
     parser.add_argument("--window-docs", type=int, default=64)
     parser.add_argument("--window-children", type=int, default=256)

@@ -8,6 +8,7 @@ tokenizers>=0.20.0
 # 已安装版本 2.0 —— PDF 版面解析（页码、字号、bbox）。1.x 的导入名是 fitz，代码两种都兼容
 pymupdf>=1.24.0
 
-# 已安装版本 1.15.1 —— 向量库客户端。**必须与服务端镜像同 minor**：
-# 实测 client 1.20 连 server 1.15 会告警 incompatibility（major 必须相同、minor 差 ≤1）
-qdrant-client==1.15.1
+# 已安装版本 1.16.2 —— 向量库客户端。**必须与服务端镜像同 minor**：
+# 实测 client 1.20 连 server 1.15 会告警 incompatibility（major 必须相同、minor 差 ≤1）；
+# server 侧用 v1.16.2：v1.15.0 在大集合优化期会 panic（gridstore OutputTooSmall）
+qdrant-client==1.16.2
