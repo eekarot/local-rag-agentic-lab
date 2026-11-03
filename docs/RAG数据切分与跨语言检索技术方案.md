@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.0\
+> **文档版本**：2.1\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2099,7 +2099,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D15 | B04 | ✅ **已完成（2026-11-02）** Qdrant 部署 + Collection + Payload Index（6 个过滤字段）；`docker-compose.yml` 固定 `qdrant/qdrant:v1.15.0`，`src/rag/store/qdrant_store.py` 管建/读/删 + CLI | `docker compose up -d qdrant && python -m src.rag.store.qdrant_store create`；`curl -s localhost:6333/collections/rag_chunks_v1` → **size=1024、distance=Cosine、hnsw m=16、ef_construct=200、payload_schema 6 个**（实测已核对）；`python -m unittest tests.test_qdrant_store` 18 用例全绿 |
 | D16 | D10,D15 | ✅ **已完成（2026-11-02）** 幂等 Upsert + 版本管理 + 按文档删除（`src/rag/store/indexer.py`：point id = `point_id_for(chunk_id)` 覆盖写、陈旧点集差集删除、按 `document_id` 过滤删除、先 Store 后 Qdrant 的失败可自愈顺序） | `python -m unittest tests.test_indexer` 14 用例；真实 3 篇：首轮 13 点 → **重复导入 13 点不变、陈旧点 0**；版本变化时 **陈旧点 6 个被删、点数 = 新 child 数**；`delete_document` 后 **按 document_id 过滤计数 0** |
 | D17 | D08 | ✅ **已完成（2026-11-02）** SQLite Document Store（`src/rag/store/document_store.py`：documents / parents / children 三表 + 外键强制 + 整篇替换事务 + `import_chunks_dir` / `verify_against_jsonl` / `get_parent_for_chunk` + CLI） | `python -m unittest tests.test_document_store` 18 用例；真实 20 篇：**`SELECT count(*) FROM parents` = 102 == JSONL 行数 102**（documents 20/20、children 182/182）；任意 `chunk_id` → `python -m src.rag.store.document_store show <chunk_id>` 可查到父块原文 + `source_uri` + `section_path`；重复导入计数不变 |
-| D18 | D16,D17 | 导入状态机 + 失败清单 + 断点恢复（PENDING→…→COMPLETED / FAILED_*） | 人为 kill 后重启：已完成批次不重算（日志可证）；失败文档进 failure 清单并可单条重试成功 |
+| D18 | D16,D17 | ✅ **已完成（2026-11-02）** 导入状态机 + 失败清单 + 断点恢复（`src/rag/ingest/state.py` 10 个状态 + `resolution` 留痕、`pipeline.py` 编排（窗口攒批 + 逐阶段落库）、`scripts/ingest.py` 一条命令入口） | `python -m unittest tests.test_ingest_state tests.test_ingest_pipeline`（33 用例）；**子进程 `os._exit(9)` 硬杀后重启：3 篇 `[skip]` 不重算、3 篇续跑，用时 10.23 s → 1.55 s**，Qdrant 点数 6（不是 9）；失败文件进 `--failures` 清单、修好后 `--only` 单条重试成功并标 `resolution=completed` |
 | D19 | D15 | Dense 检索（Qdrant）+ 与精确检索基准对照 | 同一 query 的 Qdrant Top50 ∩ numpy 精确 Top50 计算 ANN Recall；1 万点 ≥0.99、10 万点 ≥0.95 |
 | D20 | D12,D13,D16,D17,D19 | 1 万条端到端验收（方案 Phase 2 DoD） | `scripts/ingest.py --limit 10000` 跑通；中英文 query 各 5 条能召回；任意命中可回溯到 parent 原文 |
 | D21 | D15 | 索引版本化（`collection_version` / `embedding_version`） | 换 embedding 模型后脚本拒绝写入旧 collection 并提示新建（负向测试必须存在） |
@@ -2366,6 +2366,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D13 | ✅ 2026-11-02 | `src/rag/embedding/`：`service.py`（EmbeddingService：批量、400 原地重试 + 二分、维度/NaN/Inf/全零校验、进程内 LRU、stats、CLI encode/stats/purge）、`cache.py`（SQLite 内容 hash 缓存，4 KB/行）、`errors.py`；`tests/test_embedding_integration.py` 真模型用例挂 `RAG_OLLAMA_CHECK=1` | `python -m unittest tests.test_embedding_service` 31 用例；`RAG_OLLAMA_CHECK=1 python -m unittest tests.test_embedding_integration` 3 用例；实测冷 p95 2212 ms → 内存命中 0.019 ms、SQLite 命中 3.1 ms |
 | D17 | ✅ 2026-11-02 | `src/rag/store/document_store.py`：三表 schema（外键 ON DELETE CASCADE + 显式 `PRAGMA foreign_keys=ON`）、`replace_document` 单事务整篇替换、`get_parent_for_chunk` 三表 join、`import_chunks_dir`、`verify_against_jsonl`、`delete_document`、CLI import/verify/show/delete/stats | `tests.test_document_store` 18 用例；真实 20 篇：parents 102==102、children 182==182、chunk→父块回溯成功 |
 | D16 | ✅ 2026-11-02 | `src/rag/store/indexer.py`：`index_document`（幂等 upsert + 陈旧点差集删除）、`index_chunks_dir`、`delete_document`、`count(document_id)`、`chunk_ids`、`stats`；payload 剔除 None 字段 | `tests.test_indexer` 14 用例；真实 3 篇：重复导入点数不变、版本变化删 6 陈旧点、按文档删除后过滤计数 0 |
+| D18 | ✅ 2026-11-02 | `src/rag/ingest/state.py`（Stage 枚举严格照 §10.1 + 状态表 + 失败表 + `resolution` 区分「重试成功」/「源文件已移除」+ `is_done` 三版本判据 + `prune_missing`）、`pipeline.py`（发现→窗口攒批→逐阶段落库→失败留痕，`crash_hook` 供 kill 测试）、`scripts/ingest.py`（run/dry-run/status/failures/retry-failed/only/force/limit） | `tests.test_ingest_state` 15 + `tests.test_ingest_pipeline` 18；真实 6 篇：冷跑 10.23 s → 硬杀 → 重启 3 skip + 3 续跑 1.55 s，点数 6 无重复 |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2447,6 +2448,24 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D18 实测（6 篇 md，真 Qdrant + 真 bge-m3）**
+
+| 步骤 | 实测 |
+|---|---|
+| 第 1 轮全量 | 6 篇 → 6 child，**10.23 s**（含冷启 embedding 固定开销） |
+| 子进程 `os._exit(9)` 硬杀 | 杀掉时状态表 3 篇 `COMPLETED`，退出码 9 |
+| 重启续跑 | `[skip] doc1–doc3`（不重算）+ `[ok] doc4–doc6`，**1.55 s**（6.6×，embedding 全命中缓存） |
+| 幂等核对 | Qdrant 点数 **6**（不是 9）——point id 由 chunk_id 决定，重写是覆盖 |
+| 失败清单 | `bad.xyz` → `FAILED_PARSING` + 失败表一行（`resolved=0`） |
+| 单条重试 | 改成 `bad.md` 后 `--only bad.md` → 成功，失败记录标 `resolution=completed` |
+
+**三层保险共同成就「重启不重算」**：状态表（阶段 + 三处版本）跳过 `COMPLETED`；中断停在 EMBEDDING 时缓存让重算近乎免费（0.019 ms/条）；即使要重写向量，point id 幂等所以不产生重复点。**缺任何一层都不成立**。
+
+**两个坑**
+
+1. **窗口不能按文件大小猜子块数**。第一版用 `size // 4000` 估窗口大小，结果 `window_children` 形同虚设（小文件永远估成 1）。改成**切完再攒**：解析+切分后按真实 child 数决定何时 flush。
+2. **源文件消失会留下永远修不好的幽灵失败项**。改名/删除后，它的 `FAILED_*` 行仍挂在重试清单里，但它再也不可能被修好。`prune_missing()` 同时清状态行与失败表中的未解决项，并写 `resolution='source_removed'` 以区分「重试成功」——否则审计时分不清这两种情况。
 
 **D17 + D16 实测（真实语料，Qdrant 1.15.0）**
 
@@ -2560,6 +2579,10 @@ curl -s localhost:6333/collections/rag_chunks_v1
   1.8                     2026-11-02              B04 定案：直接使用 Qdrant（ADR §17.11.4）；D15 落地
   1.9                     2026-11-02              D13 落地：Embedding 服务（批量 + 二分重试、维度/NaN/Inf/
   2.0                     2026-11-02              D17 + D16 落地：SQLite Document Store（三表 + 外键 + 整篇
+  2.1                     2026-11-02              D18 落地：导入状态机（§10.1 十个状态）+ 失败清单 +
+                                                  断点恢复 + `scripts/ingest.py` 一条命令入口；硬杀重启
+                                                  实测 3 skip + 3 续跑、点数无重复；记两个坑（窗口别猜
+                                                  子块数、源文件消失会留幽灵失败项）
                                                   替换事务 + JSONL 核对）与幂等 Upsert（point id 覆盖写、
                                                   陈旧点差集删除、按文档删除）；记两个坑（payload null 能写
                                                   不能查、版本变化别用全删再写）

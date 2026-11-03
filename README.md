@@ -112,6 +112,9 @@ local-rag-agentic-lab/
 │   │   ├── service.py            # 批量编码 / 校验 / 进程内 LRU / CLI（D13）
 │   │   ├── cache.py              # SQLite 内容 hash 缓存（4 KB/行）
 │   │   └── errors.py             # 输入/后端/维度/数值 四类错误
+│   ├── ingest/                   # 导入编排（Phase 2）
+│   │   ├── state.py              # 状态机（§10.1 十个状态）+ 失败清单 + prune（D18）
+│   │   └── pipeline.py           # 发现→窗口攒批→逐阶段落库→断点恢复（D18）
 │   └── store/                    # 向量库层（Phase 2）
 │       ├── qdrant_store.py       # collection 配置 / 6 个 payload index / CLI（D15）
 │       ├── document_store.py     # SQLite：Parent 原文 + 元数据 + chunk→parent（D17）
@@ -610,6 +613,40 @@ python -m unittest tests.test_indexer -v      # 14 用例（真 Qdrant，约 100
    失败重跑能自愈；反过来会产生孤儿向量。
 
 **验收：** 能解释幂等为什么靠「point id 由 chunk_id 决定」而不是「先删后插」。
+
+### 实验 17：一条命令跑完 —— 断点恢复不是玄学
+
+```powershell
+python scripts/ingest.py --dir data/md --limit 200     # 小批量试跑（可反复执行）
+python scripts/ingest.py --dir data                   # 全量：已完成的不重算
+python scripts/ingest.py --status                     # 进度
+python scripts/ingest.py --failures                   # 失败清单
+python scripts/ingest.py --retry-failed               # 只重跑失败的
+python scripts/ingest.py --dir data --only md/x.md    # 单条重试
+python scripts/ingest.py --dir data --dry-run         # 只看不做
+```
+
+硬杀实测（6 篇 md，子进程 `os._exit(9)`）：
+
+| 步骤 | 结果 |
+|---|---|
+| 第 1 轮全量 | 6 篇 → 6 child，**10.23 s** |
+| 硬杀 | 状态表 3 篇 `COMPLETED`，退出码 9 |
+| 重启续跑 | `[skip] doc1–3` + `[ok] doc4–6`，**1.55 s**（6.6×） |
+| 幂等核对 | Qdrant 点数 **6**（不是 9） |
+| 失败→修复→单条重试 | `FAILED_PARSING` → `--only` 成功，`resolution=completed` |
+
+**「重启不重算」是三层保险叠出来的**：状态表（阶段 + 三处版本）跳过 `COMPLETED`；中断停在
+EMBEDDING 时缓存让重算近乎免费；要重写时 point id 幂等所以不产生重复点。缺任何一层都不成立。
+
+**两个坑**：
+
+1. **窗口不能按文件大小猜子块数**——`size // 4000` 让小文件永远估成 1，`window_children` 形同虚设。
+   改成切完再攒（按真实 child 数决定何时 flush）。
+2. **源文件消失会留下修不好的幽灵失败项**——`prune_missing()` 同时清状态行与失败表未解决项，
+   写 `resolution='source_removed'` 区分「重试成功」与「文件删了」。
+
+**验收：** 能解释为什么「先删后插」不是幂等，以及断点恢复为什么需要三层保险而不是一个状态字段。
 
 
 ## 重要说明
