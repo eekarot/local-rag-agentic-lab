@@ -191,6 +191,22 @@ class ResumeTest(PipelineTestBase):
         self.assertEqual(len(texts), 2, f"只该为剩下两篇编码，实际 {len(texts)} 条")
 
 
+class DeleteStateTest(PipelineTestBase):
+    """删除后状态表必须同步清掉，否则重跑会被跳过、永远重建不回来（D20 实测）。"""
+
+    def test_forget_by_document_id(self):
+        self.write("a.md")
+        self.run_pipeline()
+        row = self.state.get("a.md")
+        self.assertEqual(row["stage"], Stage.COMPLETED.value)
+        self.assertEqual(self.state.forget_document_id(row["document_id"]), 1)
+        self.assertIsNone(self.state.get("a.md"))
+        # 清掉状态后重跑必须真的重建
+        summary = self.run_pipeline()
+        self.assertEqual(summary["skipped"], 0)
+        self.assertEqual(summary["indexed"], 1)
+
+
 class FailureTest(PipelineTestBase):
     def test_parse_failure_recorded_and_others_continue(self):
         self.write("good.md")

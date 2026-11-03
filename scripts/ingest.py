@@ -62,7 +62,7 @@ def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingServi
     versions = IndexVersions(args.versions or VERSIONS_DB)
     indexer = Indexer(
         client=client, collection=args.collection, store=store, embedder=embedder,
-        batch_size=args.batch_size, versions=versions,
+        batch_size=args.batch_size, versions=versions, state=state,
     )
     pipeline = IngestPipeline(
         data_dir=args.dir, state=state, store=store, indexer=indexer, embedder=embedder,
@@ -92,6 +92,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--status", action="store_true", help="看进度")
     parser.add_argument("--failures", action="store_true", help="列失败清单")
     parser.add_argument("--retry-failed", action="store_true", help="只重跑失败文档")
+    parser.add_argument("--delete", nargs="*", default=None,
+                        help="删除这些 doc_key（Qdrant + Store + 状态表一起清），之后可重跑重建")
     parser.add_argument("--json", action="store_true", help="输出 JSON（便于脚本消费）")
     args = parser.parse_args(argv)
 
@@ -117,6 +119,19 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     pipeline, client, embedder, state = build_pipeline(args, log=log)
+    if args.delete:
+        indexer = pipeline.indexer
+        for key in args.delete:
+            row = state.get(key)
+            document_id = row["document_id"] if row else None
+            if document_id is None:
+                print(f"[delete] {key}：状态表里没有 document_id，跳过", file=sys.stderr)
+                continue
+            result = indexer.delete_document(document_id)
+            print(f"[delete] {key} → 删点 {result['points']}、删文档 {result['documents']}、"
+                  f"清状态 {result.get('state_reset', 0)}")
+        client.close()
+        return 0
     started = time.perf_counter()
     try:
         if args.retry_failed:

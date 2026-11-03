@@ -688,6 +688,34 @@ python -m src.rag.store.search --queries 20      # 直接算 ANN Recall
 
 **验收：** 能解释为什么「两个 1024 维模型混写」比「维度不一致」更危险，以及为什么 ANN 召回必须有精确基准。
 
+### 实验 20：端到端 DoD —— 全语料 1467 篇
+
+```powershell
+python scripts/ingest.py --dir data --limit 10000      # 全链路
+python scripts/ingest.py --status
+python scripts/ingest.py --delete md/docs.nvidia.com/xxx.md   # 删除（三方一致）
+```
+
+| 环节 | 实测 |
+|---|---|
+| 摄取 | **1467 篇 → 25,411 parent → 38,865 child**，0 失败，1992 s |
+| Qdrant | 38,865 点、`green`、HNSW 建好（36,914 索引）、6 个 payload index |
+| Document Store | 1467 / 25,411 / 38,865，与 Qdrant 对齐 |
+| 召回（中英各 5 条） | **hit@5 = 8/10**（中 4/5、英 4/5），**父块回溯 10/10** |
+| 删除/重建 | 删 1 篇 → 38,859；重跑 → **38,865**（精确回到基线） |
+
+两个未命中都查清了：`eval-002` 首次命中在 #22（排序问题，Phase 3/4 的活），
+`en-1` 那个词在全库出现 **0 次**（是我出的 query 不成立，不是检索坏了）。
+
+**又抓到一个真缺口**：删除文档后状态表仍标 `COMPLETED` → 重跑被跳过 → **永远重建不回来**。
+修法：`forget_document_id` + `Indexer.delete_document(state=...)` + `--delete`。
+「删除」从来不是单点操作，而是 **Qdrant + Document Store + 状态表三方一致**。
+
+**一个会影响读数解释的细节**：Qdrant 默认 `indexing_threshold=20000`，低于它走**精确扫描**。
+所以「1 万点 recall=1.000」是精确扫描的必然结果，不是 HNSW 的功劳。
+
+**验收：** 能说出删除一篇文档需要同步哪三处，以及为什么 1 万点的召回数字不能当 ANN 的成绩。
+
 
 ## 重要说明
 

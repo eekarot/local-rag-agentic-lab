@@ -91,7 +91,8 @@ class ServerSearchTest(unittest.TestCase):
         from qdrant_client import models
 
         self.models = models
-        self.client = make_client(timeout=15)
+        # 10k 点 ×1024 维走 REST JSON 上传要十几秒，超时给小了会整批失败（实测）
+        self.client = make_client(timeout=180)
         self.collection = f"rag_chunks_d19_{uuid.uuid4().hex[:8]}"
         self.client.create_collection(
             self.collection,

@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.2\
+> **文档版本**：2.3\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2101,7 +2101,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D17 | D08 | ✅ **已完成（2026-11-02）** SQLite Document Store（`src/rag/store/document_store.py`：documents / parents / children 三表 + 外键强制 + 整篇替换事务 + `import_chunks_dir` / `verify_against_jsonl` / `get_parent_for_chunk` + CLI） | `python -m unittest tests.test_document_store` 18 用例；真实 20 篇：**`SELECT count(*) FROM parents` = 102 == JSONL 行数 102**（documents 20/20、children 182/182）；任意 `chunk_id` → `python -m src.rag.store.document_store show <chunk_id>` 可查到父块原文 + `source_uri` + `section_path`；重复导入计数不变 |
 | D18 | D16,D17 | ✅ **已完成（2026-11-02）** 导入状态机 + 失败清单 + 断点恢复（`src/rag/ingest/state.py` 10 个状态 + `resolution` 留痕、`pipeline.py` 编排（窗口攒批 + 逐阶段落库）、`scripts/ingest.py` 一条命令入口） | `python -m unittest tests.test_ingest_state tests.test_ingest_pipeline`（33 用例）；**子进程 `os._exit(9)` 硬杀后重启：3 篇 `[skip]` 不重算、3 篇续跑，用时 10.23 s → 1.55 s**，Qdrant 点数 6（不是 9）；失败文件进 `--failures` 清单、修好后 `--only` 单条重试成功并标 `resolution=completed` |
 | D19 | D15 | ✅ **已完成（2026-11-02）** Dense 检索 + 精确基准对照（`src/rag/store/search.py`：`qdrant_search` 带过滤与 `ef`、`exact_topk` numpy 暴力、`ann_recall`、`measure_ann_recall`、CLI） | `python -m unittest tests.test_search` 11 用例；真实 bge-m3 向量 + 20 条真实 query：**1 万点 Recall@50 = 1.000**（≥0.99 ✓）、**10 万点 = 0.990**（≥0.95 ✓，ef=256）；`python -m src.rag.store.search --queries 20` 可直接复跑 |
-| D20 | D12,D13,D16,D17,D19 | 1 万条端到端验收（方案 Phase 2 DoD） | `scripts/ingest.py --limit 10000` 跑通；中英文 query 各 5 条能召回；任意命中可回溯到 parent 原文 |
+| D20 | D12,D13,D16,D17,D19 | ✅ **已完成（2026-11-02）** 端到端 DoD：`scripts/ingest.py` 一条命令 全语料 → Qdrant + Document Store；删除/重建闭环（补上了「删除时同步清状态表」的缺口） | `python scripts/ingest.py --dir data --limit 10000` → **1467 篇 / 25,411 parent / 38,865 child / 0 失败 / 1992 s**；**中英文 query 各 5 条：hit@5 = 8/10、父块回溯 10/10**；删除 1 篇后 38,865 → 38,859，重跑恢复 **38,865**（精确回到基线） |
 | D21 | D15 | ✅ **已完成（2026-11-02）** 索引版本化（`src/rag/store/index_versions.py`：collection↔模型口径登记表 + `assert_compatible` 写入闸门 + `status` active/retired + `collection_name_for` 建议新名；已接进 `Indexer` 与 `scripts/ingest.py`） | `python -m unittest tests.test_index_versions` 13 用例 + `tests.test_indexer` 4 个闸门用例；**负向实测：`python -m src.rag.store.index_versions check rag_chunks_v1 --embedding-model bge-m3 --embedding-version bge-m3-v2 --vector-size 1024` → 退出码 1**，报错含建议名 `rag_chunks_bge_m3_v2`；同口径检查退出码 0 |
 
 **Phase 2 出厂标准**：D13–D21 通过 → 1 万条数据可从原始文档一路走到 Qdrant 检索并可删除/重建。
@@ -2369,6 +2369,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D18 | ✅ 2026-11-02 | `src/rag/ingest/state.py`（Stage 枚举严格照 §10.1 + 状态表 + 失败表 + `resolution` 区分「重试成功」/「源文件已移除」+ `is_done` 三版本判据 + `prune_missing`）、`pipeline.py`（发现→窗口攒批→逐阶段落库→失败留痕，`crash_hook` 供 kill 测试）、`scripts/ingest.py`（run/dry-run/status/failures/retry-failed/only/force/limit） | `tests.test_ingest_state` 15 + `tests.test_ingest_pipeline` 18；真实 6 篇：冷跑 10.23 s → 硬杀 → 重启 3 skip + 3 续跑 1.55 s，点数 6 无重复 |
 | D21 | ✅ 2026-11-02 | `src/rag/store/index_versions.py`（登记表 + 只读 `check` + `assert_compatible` 闸门 + retire/activate + 建议名）、`Indexer._assert_versions`（upsert 前对账，失败一个点都不写）、`scripts/ingest.py --versions`、`tests tests.test_indexer::VersionGateTest` | 负向：v2 写 v1 collection → `CollectionVersionMismatch` 且点数不变 |
 | D19 | ✅ 2026-11-02 | `src/rag/store/search.py`（`qdrant_search`/`exact_topk`/`ann_recall`/`measure_ann_recall`/`scroll_vectors` + CLI） | 真实向量：1 万点 1.000、10 万点 0.990；`tests.test_search` 11 用例 |
+| D20 | ✅ 2026-11-02 | `scripts/ingest.py --dir data --limit 10000`（全链路）；`IngestState.forget_document_id` + `Indexer.delete_document(state=...)` + `scripts/ingest.py --delete` 补上「删除→状态表同步→可重建」闭环 | 全语料 1467 篇 → 38,865 点 / 0 失败 / 1992 s；hit@5 8/10、回溯 10/10；删除后重建精确回到 38,865 |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2450,6 +2451,30 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D20 端到端实测（全语料 1467 篇）**
+
+```
+python scripts/ingest.py --dir data --limit 10000
+→ 发现 1467 个文件，本次处理 1467 个
+→ 完成：skipped=0 indexed=1467 failed=0 children=38865 用时 1992.44s
+```
+
+| 环节 | 实测 |
+|---|---|
+| 摄取 | **1467 篇 → 25,411 parent → 38,865 child**，0 失败，1992 s（冷 cache 起步，后续重跑命中缓存） |
+| Qdrant | 38,865 点，`status=green`，HNSW 已建（`indexed_vectors_count=36,914`），6 个 payload index |
+| Document Store | documents 1467 / parents 25,411 / children 38,865，与 Qdrant 逐一对齐 |
+| 召回（中英各 5 条） | **hit@5 = 8/10**（中文 4/5、英文 4/5），**父块回溯 10/10** |
+| 删除/重建 | 删 1 篇（6 点）→ 38,865→38,859、Store 1467→1466；重跑 → **38,865**（精确回到基线） |
+
+两个未命中都查清了原因，不是"检索坏了"：
+- `eval-002`（中文）首次命中在 **#22**——排序问题，正是 Phase 3/4（lexical + reranker）要解决的；
+- `en-1`（英文，「ef_construct 参数」）全库含该词的父块 **0 个**——NVIDIA 文档里根本没有这个词，**是我出的 query 不成立**。
+
+**这一轮又抓到一个真缺口**：删除文档后状态表仍标 `COMPLETED`，重跑会被 `is_done()` 跳过，**永远重建不回来**（实测：删了之后 `--only` 重跑显示 `发现 0 个文件 / indexed 0`）。修法：`IngestState.forget_document_id()` + `Indexer.delete_document(state=...)` 同步清理 + `scripts/ingest.py --delete`。这也说明「删除」不是单点操作，而是 **Qdrant + Document Store + 状态表三方一致**。
+
+**关于 `indexed_vectors_count`（影响 D19 的读数解释）**：Qdrant 默认 `indexing_threshold=20000`，点数低于阈值时 HNSW 不建索引、走**精确扫描**。所以 D19 里「1 万点 recall=1.000」其实是精确扫描的结果，不是 HNSW 的功劳；38,865 点建好索引后才是真 ANN（81k/100k 的 0.99 是 ANN 的真实数字）。
 
 **D21 + D19 实测（真实 bge-m3 向量 + 20 条真实 query）**
 
@@ -2610,6 +2635,10 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.0                     2026-11-02              D17 + D16 落地：SQLite Document Store（三表 + 外键 + 整篇
   2.1                     2026-11-02              D18 落地：导入状态机（§10.1 十个状态）+ 失败清单 +
   2.2                     2026-11-02              D21 + D19 落地：索引版本闸门（同维不同模型拒绝混写）与
+  2.3                     2026-11-02              D20 端到端 DoD：全语料 1467 篇 → 38,865 点 / 0 失败 /
+                                                  1992 s；中英 query hit@5 8/10、回溯 10/10；删除重建
+                                                  精确回到基线。补「删除时同步清状态表」缺口，记录
+                                                  indexed_vectors_count < 20000 时走精确扫描这件事
                                                   ANN vs 精确召回基准；实测 1 万 1.000 / 10 万 0.990。
                                                   抓出 Qdrant 1.15.0 gridstore panic（optimizer red、点数
                                                   虚高），升级镜像与客户端到 1.16.2、容器内存 2→6 GB

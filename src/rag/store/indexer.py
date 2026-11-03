@@ -57,6 +57,7 @@ class Indexer:
         batch_size: int = 256,
         vector_size: int = VECTOR_SIZE,
         versions: IndexVersions | None = None,
+        state: object | None = None,
     ):
         self.client = client or make_client()
         self.collection = collection
@@ -65,6 +66,9 @@ class Indexer:
         self.batch_size = max(1, batch_size)
         self.vector_size = vector_size
         self.versions = versions
+        # 传入 IngestState 时，删除文档会同步清掉它的导入状态，
+        # 否则状态表还标 COMPLETED，重跑会被跳过、永远重建不回来
+        self.state = state
 
     # -- 索引 -----------------------------------------------------------
 
@@ -164,7 +168,11 @@ class Indexer:
             )
             deleted = before
         store_deleted = self.store.delete_document(document_id) if self.store is not None else 0
-        return {"points": deleted, "documents": store_deleted}
+        state_reset = 0
+        forget = getattr(self.state, "forget_document_id", None)
+        if forget is not None:
+            state_reset = int(forget(document_id))
+        return {"points": deleted, "documents": store_deleted, "state_reset": state_reset}
 
     # -- 查询 -----------------------------------------------------------
 

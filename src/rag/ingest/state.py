@@ -275,6 +275,16 @@ class IngestState:
                     removed += 1
         return removed
 
+    def forget_document_id(self, document_id: str) -> int:
+        """按 document_id 清状态行（删除文档时调用）。
+
+        不清的后果：文档删了、索引里没了，状态表还标 `COMPLETED`，重跑会被
+        `is_done()` 直接跳过——**永远重建不回来**（D20 实测踩到）。
+        """
+        with self._connect() as conn:
+            return int(conn.execute(
+                "DELETE FROM ingest_state WHERE document_id = ?", (document_id,)).rowcount)
+
     def forget_missing(self, existing_keys: Iterable[str]) -> int:
         """清掉源文件已不存在的记录（避免状态表无限膨胀）。"""
         keys = set(existing_keys)
