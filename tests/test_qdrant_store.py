@@ -108,10 +108,13 @@ class PayloadTest(unittest.TestCase):
         payload = payload_from_child(self._child())
         self.assertEqual(payload["section_path"], ["Retrieval", "HNSW"])
 
-    def test_none_language_is_allowed(self):
+    def test_none_fields_are_omitted(self):
+        """None 值写进去能存但不能用 MatchValue 过滤（实测），所以直接剔除。"""
         child = self._child()
         child["language"] = None
-        self.assertIsNone(payload_from_child(child)["language"])
+        payload = payload_from_child(child)
+        self.assertNotIn("language", payload)
+        self.assertIn("document_id", payload)
 
 
 class SpecConstantsTest(unittest.TestCase):

@@ -96,8 +96,13 @@ def point_id_for(chunk_id: str) -> str:
 
 
 def payload_from_child(child: Mapping[str, Any]) -> dict[str, Any]:
-    """Child 记录 → Qdrant payload（`text` 取 `content`）。"""
-    payload = {field: child.get(field) for field in PAYLOAD_FIELDS}
+    """Child 记录 → Qdrant payload（`text` 取 `content`）。
+
+    **None 字段整个剔除**：实测 Qdrant 接受 `null` 值写入，但 `MatchValue` 的
+    value 不接受 None（pydantic 校验失败，要用 IsNull 条件），于是这类字段
+    "存进去了却过滤不到"，等于给索引埋了个假字段。宁可缺席。
+    """
+    payload = {field: child.get(field) for field in PAYLOAD_FIELDS if child.get(field) is not None}
     payload["text"] = child.get("content")
     return payload
 

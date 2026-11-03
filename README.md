@@ -114,6 +114,8 @@ local-rag-agentic-lab/
 │   │   └── errors.py             # 输入/后端/维度/数值 四类错误
 │   └── store/                    # 向量库层（Phase 2）
 │       ├── qdrant_store.py       # collection 配置 / 6 个 payload index / CLI（D15）
+│       ├── document_store.py     # SQLite：Parent 原文 + 元数据 + chunk→parent（D17）
+│       ├── indexer.py            # 幂等 Upsert / 陈旧点清理 / 按文档删除（D16）
 │       └── errors.py             # VectorStoreError / CollectionMismatchError
 │       ├── ids.py                # 稳定 ID 与内容哈希（document/parent/chunk，D10）
 │       ├── jsonl_store.py        # JSONL 字段契约 + manifest（D12）
@@ -567,6 +569,47 @@ python -m src.rag.embedding.service encode "HNSW 的 ef 参数"   # 看维度、
 8 万 × 1024 个 Python float 的对象开销就是几百 MB，下游也全要数组。
 
 **验收：** 能解释为什么"缓存命中率"必须按每次调用算，以及为什么全零向量要报错而不是静默返回。
+
+### 实验 15：Document Store——命中之后要能翻回原文
+
+```powershell
+python -m src.rag.store.document_store import <chunks目录>   # 导入并自动与 JSONL 行数核对
+python -m src.rag.store.document_store verify <chunks目录>
+python -m src.rag.store.document_store show <chunk_id>       # 回溯父块原文 + 来源路径
+python -m src.rag.store.document_store stats
+```
+
+真实 20 篇实测：documents 20 / parents **102** / children **182**，导入 **149 ms**，库 368 KB；
+三表行数与 JSONL **完全一致**；任意 `chunk_id` 能查到父块原文 + `source_uri` + `section_path`。
+
+三条设计约束：**Parent 原文只存这一份**（Qdrant payload 只放 Child 文本）、**外键强制**
+（孤儿 Child 会让"命中却回溯不到父块"）、**换版本是一个事务**（半新半旧比失败更糟）。
+
+### 实验 16：幂等 Upsert——重复导入不该长胖
+
+```powershell
+python -m unittest tests.test_indexer -v      # 14 用例（真 Qdrant，约 100 s）
+```
+
+真实 3 篇实测：
+
+| 操作 | 结果 |
+|---|---|
+| 首轮索引 13 child | 13 点，18.6 s（含冷启 embedding） |
+| 重复导入 | **13 点不变**，陈旧点 0，0.32 s（**57×**，embedding 全命中） |
+| 版本变化（新 child 7） | 该文档 7 点，**陈旧点删除 6** |
+| 限定单文档检索 | 命中 1 条，全部来自目标文档，可回溯 630 字符父块 |
+| 按文档删除 | 过滤计数 **0** |
+
+**两个坑**：
+
+1. **payload 的 `null` 能写不能查**：Qdrant 允许写 `language: null`，但 `MatchValue(None)` 被 pydantic 拒绝
+   （要 `IsNull` 条件）→ 字段"存进去了却过滤不到"。所以 payload 里 **None 直接剔除**。
+2. **版本变化别用「按 document_id 全删再写」**：查询会有空窗，失败留下半篇数据。改成
+   「现有该文档点集 − 本次点集 = 陈旧点集」精确删。写入顺序固定 **先 Store（事务）后 Qdrant（幂等）**，
+   失败重跑能自愈；反过来会产生孤儿向量。
+
+**验收：** 能解释幂等为什么靠「point id 由 chunk_id 决定」而不是「先删后插」。
 
 
 ## 重要说明

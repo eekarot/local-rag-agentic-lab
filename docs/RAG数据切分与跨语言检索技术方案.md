@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：1.9\
+> **文档版本**：2.0\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2097,8 +2097,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D13 | D05,B01 | ✅ **已完成（2026-11-02）** Embedding 服务抽象（`src/rag/embedding/`：`encode_documents` / `encode_queries`、批量与二分重试、维度/NaN/Inf/全零校验、内容 hash 缓存（SQLite + 进程内 LRU）、`stats` 与 CLI） | `python -m unittest tests.test_embedding_service`（31 用例）全绿；真实 24 条 chunk：**冷启 p95 2212 ms → 内存命中 p95 0.019 ms（113,489×）、SQLite 命中 p95 3.1 ms（713×）**，二次调用命中率 **100%**；单条 query 冷 2176 ms → 命中 6.78 ms（<10 ms）；维度≠1024 / NaN / Inf / 全零各自抛错 |
 | D14 | D13 | `embedding_text`（Document/Section 前缀）与 `content` 分离 | 库中两个字段同时存在；前缀缺失计数可统计；小样本 A/B（有/无前缀）Recall@10 差异写入报告 |
 | D15 | B04 | ✅ **已完成（2026-11-02）** Qdrant 部署 + Collection + Payload Index（6 个过滤字段）；`docker-compose.yml` 固定 `qdrant/qdrant:v1.15.0`，`src/rag/store/qdrant_store.py` 管建/读/删 + CLI | `docker compose up -d qdrant && python -m src.rag.store.qdrant_store create`；`curl -s localhost:6333/collections/rag_chunks_v1` → **size=1024、distance=Cosine、hnsw m=16、ef_construct=200、payload_schema 6 个**（实测已核对）；`python -m unittest tests.test_qdrant_store` 18 用例全绿 |
-| D16 | D10,D15 | 幂等 Upsert + 文档版本管理 + 按文档删除/重建 | 同一文档导入两次后 collection 点数不变（重复点 == 0）；删除后按 `document_id` 过滤计数 == 0 |
-| D17 | D08 | SQLite Document Store（Parent 原文 + 文档元数据） | 任意 `chunk_id` 可查到 parent 原文与来源路径；`SELECT count(*) FROM parents` == JSONL 中 parent 数 |
+| D16 | D10,D15 | ✅ **已完成（2026-11-02）** 幂等 Upsert + 版本管理 + 按文档删除（`src/rag/store/indexer.py`：point id = `point_id_for(chunk_id)` 覆盖写、陈旧点集差集删除、按 `document_id` 过滤删除、先 Store 后 Qdrant 的失败可自愈顺序） | `python -m unittest tests.test_indexer` 14 用例；真实 3 篇：首轮 13 点 → **重复导入 13 点不变、陈旧点 0**；版本变化时 **陈旧点 6 个被删、点数 = 新 child 数**；`delete_document` 后 **按 document_id 过滤计数 0** |
+| D17 | D08 | ✅ **已完成（2026-11-02）** SQLite Document Store（`src/rag/store/document_store.py`：documents / parents / children 三表 + 外键强制 + 整篇替换事务 + `import_chunks_dir` / `verify_against_jsonl` / `get_parent_for_chunk` + CLI） | `python -m unittest tests.test_document_store` 18 用例；真实 20 篇：**`SELECT count(*) FROM parents` = 102 == JSONL 行数 102**（documents 20/20、children 182/182）；任意 `chunk_id` → `python -m src.rag.store.document_store show <chunk_id>` 可查到父块原文 + `source_uri` + `section_path`；重复导入计数不变 |
 | D18 | D16,D17 | 导入状态机 + 失败清单 + 断点恢复（PENDING→…→COMPLETED / FAILED_*） | 人为 kill 后重启：已完成批次不重算（日志可证）；失败文档进 failure 清单并可单条重试成功 |
 | D19 | D15 | Dense 检索（Qdrant）+ 与精确检索基准对照 | 同一 query 的 Qdrant Top50 ∩ numpy 精确 Top50 计算 ANN Recall；1 万点 ≥0.99、10 万点 ≥0.95 |
 | D20 | D12,D13,D16,D17,D19 | 1 万条端到端验收（方案 Phase 2 DoD） | `scripts/ingest.py --limit 10000` 跑通；中英文 query 各 5 条能召回；任意命中可回溯到 parent 原文 |
@@ -2364,6 +2364,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D11 | ✅ 2026-11-02 | `src/rag/ingestion/quality_report.py`：A–E 五方案（E 标 not_implemented）+ 8 项抽查自动指标 + 人工评分列 + 逐文档明细 + CLI（`--out`/`--json`） | 40 篇真实语料报告见 §17.12 实测表；`tests.test_quality_report` 25 用例 |
 | D15 | ✅ 2026-11-02 | `src/rag/store/qdrant_store.py`（`ensure_collection` / `collection_config` / `point_id_for` / `payload_from_child` + CLI create/info/drop/ping）+ `docker-compose.yml`（镜像钉 v1.15.0，内存限 2 GB）+ `errors.py`（`CollectionMismatchError` 为 D21 铺路） | `curl -s localhost:6333/collections/rag_chunks_v1`：size=1024 / Cosine / m=16 / ef_construct=200 / payload index 6 个；`tests.test_qdrant_store` 18 用例 |
 | D13 | ✅ 2026-11-02 | `src/rag/embedding/`：`service.py`（EmbeddingService：批量、400 原地重试 + 二分、维度/NaN/Inf/全零校验、进程内 LRU、stats、CLI encode/stats/purge）、`cache.py`（SQLite 内容 hash 缓存，4 KB/行）、`errors.py`；`tests/test_embedding_integration.py` 真模型用例挂 `RAG_OLLAMA_CHECK=1` | `python -m unittest tests.test_embedding_service` 31 用例；`RAG_OLLAMA_CHECK=1 python -m unittest tests.test_embedding_integration` 3 用例；实测冷 p95 2212 ms → 内存命中 0.019 ms、SQLite 命中 3.1 ms |
+| D17 | ✅ 2026-11-02 | `src/rag/store/document_store.py`：三表 schema（外键 ON DELETE CASCADE + 显式 `PRAGMA foreign_keys=ON`）、`replace_document` 单事务整篇替换、`get_parent_for_chunk` 三表 join、`import_chunks_dir`、`verify_against_jsonl`、`delete_document`、CLI import/verify/show/delete/stats | `tests.test_document_store` 18 用例；真实 20 篇：parents 102==102、children 182==182、chunk→父块回溯成功 |
+| D16 | ✅ 2026-11-02 | `src/rag/store/indexer.py`：`index_document`（幂等 upsert + 陈旧点差集删除）、`index_chunks_dir`、`delete_document`、`count(document_id)`、`chunk_ids`、`stats`；payload 剔除 None 字段 | `tests.test_indexer` 14 用例；真实 3 篇：重复导入点数不变、版本变化删 6 陈旧点、按文档删除后过滤计数 0 |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2445,6 +2447,24 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D17 + D16 实测（真实语料，Qdrant 1.15.0）**
+
+| 步骤 | 实测 |
+|---|---|
+| 20 篇 md → JSONL → SQLite | documents 20 / parents **102** / children **182**，导入 **149 ms**，库 368 KB；三表行数与 JSONL **完全一致** |
+| 按 `chunk_id` 回溯 | 父块原文 + `source_uri` + `section_path` + 偏移 `0–9`；父块原文包含子块全文 |
+| 重复导入（D17） | doc 20→20、parent 102→102、child 182→182（不重复） |
+| 首轮索引 3 篇 / 13 child | Qdrant 13 点，18.6 s（含冷启 embedding），Store 9 parent / 13 child |
+| 重复索引（D16 幂等） | 13 → **13 点不变**，陈旧点 **0**，耗时 0.32 s（**57×**，embedding 全命中缓存） |
+| 版本变化 | 该文档新 child 7 → 点数 7，**陈旧点删除 6**，总点数 14 |
+| 限定单文档检索 | 命中 1 条且全部来自目标文档；命中可回溯到 630 字符的父块原文 |
+| 按文档删除 | 删点 1 / 删文档 1 → 该文档过滤计数 **0** |
+
+**两个设计上的坑**
+
+1. **payload 里的 `null` 能写不能查**。Qdrant 接受 `language: null` 写入，但 `MatchValue(value=None)` 会被 pydantic 拒绝（要改用 `IsNull` 条件），于是字段"存进去了却过滤不到"，等于给索引埋假字段。`payload_from_child` 因此**剔除 None 字段**（D15 用例已同步改成断言"字段缺席"）。
+2. **版本变化不能靠「按 document_id 全删再写」**。那样查询会有一段空窗期，且失败后留下半篇数据。改成「现有该文档的点集 − 本次点集 = 陈旧点集」精确删除；写入顺序固定为**先 Document Store（事务）后 Qdrant（幂等）**，失败重跑即可自愈——反过来会产生"命中却回溯不到父块"的孤儿向量。
 
 **D13 实测（bge-m3 / Ollama 0.40.5）**
 
@@ -2539,6 +2559,10 @@ curl -s localhost:6333/collections/rag_chunks_v1
   1.7                     2026-11-02              D07/D09/D11 落地：Overlap（句子边界回退）、Chunk
   1.8                     2026-11-02              B04 定案：直接使用 Qdrant（ADR §17.11.4）；D15 落地
   1.9                     2026-11-02              D13 落地：Embedding 服务（批量 + 二分重试、维度/NaN/Inf/
+  2.0                     2026-11-02              D17 + D16 落地：SQLite Document Store（三表 + 外键 + 整篇
+                                                  替换事务 + JSONL 核对）与幂等 Upsert（point id 覆盖写、
+                                                  陈旧点差集删除、按文档删除）；记两个坑（payload null 能写
+                                                  不能查、版本变化别用全删再写）
                                                   全零校验、内容 hash 缓存 SQLite + 进程内 LRU、stats/CLI）；
                                                   记签名偏差（返回 ndarray）与三个新坑（连接不关锁文件、
                                                   frombuffer 遇截断 blob、命中率要看每次调用）
