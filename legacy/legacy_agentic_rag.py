@@ -1,12 +1,29 @@
+"""旧链 Agentic RAG（**仅存档**，不参与新链）。
+
+    python legacy/legacy_agentic_rag.py      # 需要先有 storage/index.json
+    python -m src.build_index               # 旧链建库（慢，且写的是单文件索引）
+
+新链请用：python scripts/ingest.py --dir data → python -m src.ask "问题"
+"""
+""".. deprecated:: 2.0
+   旧链（单文件索引 `index.json` + `embeddings.npy` + 内存 BM25），仅作历史对比保留。
+
+   新链已迁到 Qdrant + SQLite Document Store，**本模块不参与新链**，不要在新代码里引用：
+
+       建库：python scripts/ingest.py --dir data
+       问答：python -m src.ask "问题"
+       说明：README「快速开始」、设计文档 §17
+"""
 import json
 import re
+import sys
 import time
 
-from . import raglog
-from .config import MAX_AGENT_STEPS, TOP_K, OLLAMA_CHAT_MODEL
-from .ollama_client import chat
-from .retrieve import retrieve, warmup
-from .rag import SYSTEM_PROMPT, format_context
+from src import raglog
+from src.config import MAX_AGENT_STEPS, TOP_K, OLLAMA_CHAT_MODEL
+from src.ollama_client import chat
+from src.retrieve import retrieve, warmup
+from legacy_rag_cli import SYSTEM_PROMPT, format_context
 
 
 AGENT_SYSTEM = """你是一个受控的 Agentic RAG 学习代理。
@@ -46,6 +63,11 @@ def parse_json(text):
 
 
 def main():
+    print(
+        "[deprecated] 这是旧链入口（index.json + embeddings.npy）。"
+        "新链：python scripts/ingest.py --dir data 建库，python -m src.ask \"问题\" 问答",
+        file=sys.stderr,
+    )
     index = warmup()   # 一次性把索引 / BM25 / 向量矩阵载入内存
     question = input("问题> ").strip()
     if not question:

@@ -1,9 +1,28 @@
+"""旧链问答 CLI（**仅存档**，不参与新链）。
+
+原位置是 `src/rag.py`，但 `src/rag/` 包会遮蔽同名模块 → 已移到本目录，
+并改为绝对导入，这样它仍然是可读、可对照的历史实现。
+
+    python legacy/legacy_rag_cli.py           # 需要先有 storage/index.json
+
+新链请用：python scripts/ingest.py --dir data → python -m src.ask "问题"
+"""
+""".. deprecated:: 2.0
+   旧链（单文件索引 `index.json` + `embeddings.npy` + 内存 BM25），仅作历史对比保留。
+
+   新链已迁到 Qdrant + SQLite Document Store，**本模块不参与新链**，不要在新代码里引用：
+
+       建库：python scripts/ingest.py --dir data
+       问答：python -m src.ask "问题"
+       说明：README「快速开始」、设计文档 §17
+"""
+import sys
 import time
 
-from . import raglog
-from .config import TOP_K, OLLAMA_CHAT_MODEL
-from .ollama_client import chat_full
-from .retrieve import MODES, index_stats, load_index, retrieve, warmup
+from src import raglog
+from src.config import TOP_K, OLLAMA_CHAT_MODEL
+from src.ollama_client import chat_full
+from src.retrieve import MODES, index_stats, load_index, retrieve, warmup
 
 
 SYSTEM_PROMPT = """你是一个严谨的本地知识库助手。
@@ -88,6 +107,11 @@ def answer(question, mode="hybrid", k=TOP_K, verbose=True, qid=None):
 
 
 def main():
+    print(
+        "[deprecated] 这是旧链入口（index.json + embeddings.npy）。"
+        "新链：python scripts/ingest.py --dir data 建库，python -m src.ask \"问题\" 问答",
+        file=sys.stderr,
+    )
     warmup()  # 预热索引 / BM25 / 向量矩阵，避免第一条问题出现冷启动尖峰
     mode = "hybrid"
     k = TOP_K

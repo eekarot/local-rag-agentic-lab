@@ -1,3 +1,12 @@
+""".. deprecated:: 2.0
+   旧链（单文件索引 `index.json` + `embeddings.npy` + 内存 BM25），仅作历史对比保留。
+
+   新链已迁到 Qdrant + SQLite Document Store，**本模块不参与新链**，不要在新代码里引用：
+
+       建库：python scripts/ingest.py --dir data
+       问答：python -m src.ask "问题"
+       说明：README「快速开始」、设计文档 §17
+"""
 import json
 import time
 

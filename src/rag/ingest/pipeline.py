@@ -38,6 +38,68 @@ from .state import IngestState, Stage
 DEFAULT_PATTERNS = ("**/*.md", "**/*.txt", "**/*.pdf")
 
 
+#: dry-run 预览时最多列出多少个待处理文件（够看清命名习惯，又不刷屏）
+PREVIEW_KEYS = 10
+
+
+def _pattern_labels(patterns: Sequence[str]) -> list[str]:
+    """`("**/*.md", "**/*.txt")` → `[".md", ".txt"]`。给用户看扩展名，不给看 glob。"""
+    labels: list[str] = []
+    for pattern in patterns:
+        suffix = Path(pattern).suffix
+        label = suffix or pattern
+        if label not in labels:
+            labels.append(label)
+    return labels
+
+
+def empty_corpus_hint(
+    data_dir: Path | str, patterns: Sequence[str] = DEFAULT_PATTERNS
+) -> list[str]:
+    """语料目录为空时的可复制指引。
+
+    开源场景下这是**第一次运行最常见的失败**：仓库不携带语料（版权 + 体积），
+    用户克隆下来 `data/` 是空的。只打印「发现 0 个文件」等于把人扔在半路，
+    所以这里必须一次说清三件事：**该放哪**、**支持什么格式**、**放完跑哪条命令**。
+
+    空目录不是错误：`failed` 仍为 0，退出码仍为 0（见 `tests/test_ingest_empty_corpus.py`）。
+    """
+    exts = "、".join(_pattern_labels(patterns))
+    globs = " ".join(patterns)
+    target = f'python scripts/ingest.py --dir "{data_dir}"'
+    return [
+        f"[ingest] {data_dir} 里没有可导入的文件（空目录不算错误，退出码仍是 0）",
+        f"[ingest] 支持格式：{exts}（递归扫描子目录）",
+        f"[ingest] 默认 patterns：{globs}（需要别的后缀用 --patterns 覆盖）",
+        "[ingest] 放法：把文档放进 data/ 下，例如 data/md/我的笔记.md；建议按主题分子目录",
+        f"[ingest] 放好之后重跑：{target}",
+        f"[ingest] 想先看会切出什么、不落库：{target} --dry-run",
+    ]
+
+
+def missing_only_keys_hint(only_keys: Iterable[str]) -> list[str]:
+    """`--only` 一个都没匹配到时给**另一套**指引。
+
+    这跟「空目录」是两件事：目录里其实有文件，是 key 写法不对（key 必须是相对 `--dir`
+    的路径）。给错药比不给药更浪费时间，所以两种提示分开生成。
+    """
+    keys = list(only_keys)
+    shown = "、".join(keys[:5]) + ("…" if len(keys) > 5 else "")
+    return [
+        f"[ingest] --only 指定的文件一个都没匹配到：{shown}",
+        "[ingest] key 是相对 --dir 的路径，如 md/nvidia/hnsg.md：不带盘符、不带 --dir 前缀",
+        "[ingest] 想知道本次会处理哪些文件：加 --dry-run 跑一遍，会列出前 10 个文件名",
+    ]
+
+
+def _preview_keys(keys: Sequence[str], limit: int = PREVIEW_KEYS) -> list[str]:
+    """dry-run 的文件名预览（`--only` 写错时靠它自查）。"""
+    head = list(keys[:limit])
+    if len(keys) > limit:
+        head.append(f"…（共 {len(keys)} 个）")
+    return head
+
+
 @dataclass
 class IngestConfig:
     data_dir: Path
@@ -62,6 +124,8 @@ class IngestSummary:
     embedding_calls: int = 0
     elapsed_s: float = 0.0
     failures: list[dict[str, Any]] = field(default_factory=list)
+    #: 空语料 / `--only` 落空时给用户的可复制指引（`--json` 下日志会被吞，所以也放 summary）
+    hint: list[str] = field(default_factory=list)
 
     def as_dict(self) -> dict[str, Any]:
         return dict(self.__dict__)
@@ -135,15 +199,31 @@ class IngestPipeline:
             self.log(f"[ingest] 清理 {pruned} 条已消失文件的状态记录")
 
         files = self.discover()
+        summary.discovered = len(files)
         if only_keys is not None:
             wanted = set(only_keys)
             files = [p for p in files if p.relative_to(self.data_dir).as_posix() in wanted]
-        summary.discovered = len(files)
+            if not files:
+                # 目录里有文件但 key 全落空 → 教路径怎么写，别说「请放文档」
+                hint = missing_only_keys_hint(only_keys)
+                for line in hint:
+                    self.log(line)
+                summary.hint = hint
+                summary.elapsed_s = round(time.perf_counter() - started, 2)
+                return summary.as_dict()
         if limit is not None:
             files = files[:limit]
         self.log(f"[ingest] 发现 {summary.discovered} 个文件，本次处理 {len(files)} 个"
                  f"{'（dry-run）' if dry_run else ''}")
+        if not files:
+            # 空语料：不是错误，但必须给出「放哪 / 支持什么 / 放完跑哪条」
+            hint = empty_corpus_hint(self.data_dir, self.patterns)
+            for line in hint:
+                self.log(line)
+            summary.hint = hint
         if dry_run:
+            for key in _preview_keys([p.relative_to(self.data_dir).as_posix() for p in files]):
+                self.log(f"[dry-run] {key}")
             summary.elapsed_s = round(time.perf_counter() - started, 2)
             return summary.as_dict()
 

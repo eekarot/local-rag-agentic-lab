@@ -1,49 +1,37 @@
-# Local RAG Lab — Windows + Ollama
+# Local RAG Lab —— 一个带评估的本地 RAG（Ollama + Qdrant）
 
-一套从零学习 RAG 到 Agentic RAG 的本地实验项目。默认不使用 LangChain，直接调用 Ollama HTTP API，便于观察每个步骤的数据流。
+用 Ollama 做 embedding 与生成，用 Qdrant 存向量：文档 → 父子块 → 三路召回（中文 dense / 英文 dense / 英文词法）→ RRF 融合 → 交叉编码器重排 → 父块组装 → 带引用回答。
 
-## 学习目标
+这个仓库的重点不是"能答"，而是**每个"更好"都有数字、每条数字都能重跑**：202 题中英成对评估集、正负样本分开计分、bootstrap 置信区间、逐题配对显著性检验、以及一份把所有失败留痕的导入状态机。
 
-1. 理解文档切分、Embedding、向量检索、Prompt 组装与生成。
-2. 通过实验比较 chunk size、Top-K、向量检索与混合检索。
-3. 了解 RAG 的常见失败类型，并建立小型评估集。
-4. 实现一个受控的 Agentic RAG：模型可以选择检索、改写查询、基于证据回答，但有最大步骤数。
+## 它和常见 RAG demo 的差别
 
-## 先决条件
+| 常见 demo | 这里 |
+|---|---|
+| 一个 `chain.invoke()` 看不到中间态 | 三路候选、RRF 分数、重排前后排名、组装后 token 数，每步都能单独打印或关掉对比 |
+| "感觉效果变好了" | 每个改动都有 A/B：同批题、逐题配对、报"更好/更差/持平计数"+ 显著性 |
+| 检索错了无从下手 | 导入状态机记录每篇文档走到哪个阶段；失败清单可单条重试；索引带版本闸门 |
+| 引用是装饰 | 引用可解析、可校验（越界/畸形会单独计数），并做过引用纪律 A/B |
 
-- Windows 10/11
-- Python 3.10+
-- 已安装并运行 Ollama
-- 至少一个可用的 Ollama 聊天模型
+## 快速开始
 
-打开 PowerShell，先检查：
+按顺序做，每一步都给了**验证方法**。全部做完大约 15 分钟（不含建库；建库按你的语料量算）。
 
-```powershell
-ollama list
-ollama --version
-```
+### 第 0 步：先决条件
 
-下载一个 Embedding 模型（聊天模型不能代替 Embedding 模型）：
+| 依赖 | 验证命令 | 期望输出 |
+|---|---|---|
+| Python 3.10+ | `python -V` | `Python 3.10.x` 或更高 |
+| Ollama 已运行 | `ollama list` | 打印模型表；连不上会直接报连接错误 |
+| Embedding 模型 | `ollama pull bge-m3` | 拉完后 `ollama list` 里出现 `bge-m3`（1024 维，建库口径） |
+| 聊天模型 | `ollama pull qwen3.5:9b` | 拉完后 `ollama list` 里出现该名字。**机器带不动 9B 就换小的**，只是改环境变量 |
+| Docker | `docker compose version` | 打印版本号。Qdrant 跑在容器里 |
 
-```powershell
-ollama pull bge-m3
-```
+> `ollama list` 里的名字**必须带 tag**（如 `qwen3.5:9b`）。只写 `qwen3.5` 一般会 404。
 
-> 索引是按某个 Embedding 模型建的。`storage/index.json` 里的 `embedding_model` / `embedding_dim` 记录了建库用的模型（当前为 `bge-m3` / 1024 维），换成别的模型必须重建索引。
+### 第 1 步：安装依赖
 
-如果电脑内存较小，聊天模型优先选你已经能流畅运行的小模型。项目默认 `qwen3.5:9b`；如果你的机器跑不动它，换成本地已有的小模型即可（不改代码，只设环境变量）。
-
-```powershell
-$env:OLLAMA_CHAT_MODEL = "你在 ollama list 中看到的模型名"
-$env:OLLAMA_EMBED_MODEL = "bge-m3"
-```
-
-> 如果报 `Ollama 上找不到模型 'xxx'`，说明拉下来的模型名与配置不一致：
-> 跑 `ollama list` 看真实名字（要带 tag，如 `qwen3.5:9b`），再改环境变量或 `ollama pull`。
-
-## 安装
-
-在项目根目录执行：
+**Windows（PowerShell）**
 
 ```powershell
 py -3 -m venv .venv
@@ -52,118 +40,178 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-如果 PowerShell 阻止激活脚本，可以不激活虚拟环境，直接使用：
-`.\.venv\Scripts\python.exe -m pip install -r requirements.txt`
-然后把下文的 `python` 替换为 `.\.venv\Scripts\python.exe`。
+**macOS / Linux**
 
-### 额外准备：BGE-M3 tokenizer 词表（约 17 MB，不入库）
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-新版切分按 token 计量（决策 B02），需要 BGE-M3 的词表做本地计数。
-HuggingFace 在国内常被墙，用 ModelScope 镜像下载：
+> PowerShell 若禁止执行脚本，不要激活，直接用 `.\.venv\Scripts\python.exe` 代替下文的 `python`。
+
+**验证**（必须打印 `deps ok`）：
+
+```bash
+python -c "import qdrant_client, onnxruntime, tokenizers, pypdf; print('deps ok')"
+```
+
+### 第 2 步：启动 Qdrant
+
+```bash
+docker compose up -d qdrant
+```
+
+**验证**（期望 `version` 里是 `1.16.2`，与本仓库 `qdrant-client` 的 minor 对齐）：
+
+```bash
+curl -s localhost:6333
+```
+
+> 为什么钉 1.16.2：1.15.0 在大集合优化期会 panic（`OutputTooSmall`），且 ANN 召回骤降到 0.5。版本纪律见 `docker-compose.yml` 注释。
+
+### 第 3 步：准备 BGE-M3 词表（约 17 MB，不入库）
+
+切分按 token 计量，需要 BGE-M3 的词表做本地计数（只加载词表，不跑推理；向量仍由 Ollama 算）。
 
 ```powershell
 New-Item -ItemType Directory -Force storage/tokenizer/bge-m3 | Out-Null
 curl.exe -sL -o storage/tokenizer/bge-m3/tokenizer.json "https://www.modelscope.cn/api/v1/models/BAAI/bge-m3/repo?Revision=master&FilePath=tokenizer.json"
+```
+
+**验证**（期望打印一个 token 数，不是报错）：
+
+```bash
 python -m src.rag.ingestion.tokenizer count "HNSW 是什么"
 ```
 
-也可以用环境变量 `RAG_TOKENIZER_PATH` 指向已有的 `tokenizer.json`。
-这一步只加载词表、不跑模型推理，向量仍由 Ollama 计算。
+> 已有词表的话，用 `RAG_TOKENIZER_PATH=/path/to/tokenizer.json` 指过去即可，不必重复下载。
 
-## 第一次运行
+### 第 4 步：放你自己的文档
 
-```powershell
-python -m src.build_index
-python -m src.rag
+仓库**不携带任何语料**（版权 + 体积 + 与你无关）。把 Markdown / TXT / PDF 放进 `data/`：
+
+```text
+data/
+├── md/产品手册/安装.md
+└── pdf/白皮书.pdf
 ```
 
-第一次构建索引会调用 Embedding 模型，耗时取决于文档数量和电脑性能。索引保存在 `storage/` 下：文本块与 BM25 倒排表在 `index.json`，向量在 `embeddings.npy`（float32 二进制，按行序与 `records` 一一对应）。
+规则（子目录递归、命名如何影响 `--only`、PDF 页码限制）都写在 [`data/README.md`](data/README.md)。
 
-大语料建库支持断点续建：中途中断后重新运行 `build_index` 会从上次的进度继续，不会白跑。
+### 第 5 步：建库
 
-示例问题：
-- RAG 和普通 LLM 问答有什么区别？
-- 为什么需要文本切分？
-- 什么情况下向量检索可能找不到准确答案？
-- Agentic RAG 与固定 RAG 流程有什么区别？
+先试跑，**不落库**，看清楚会切出什么：
+
+```bash
+python scripts/ingest.py --dir data --dry-run
+```
+
+正式导入（可反复执行，已完成的不重算）：
+
+```bash
+python scripts/ingest.py --dir data
+```
+
+**期望输出**（末尾那行是判据）：
+
+```text
+[ingest] 发现 12 个文件，本次处理 12 个
+[ingest] 完成：skipped=0 indexed=12 failed=0 children=214 用时 96.4s
+```
+
+- `failed=0` 才算成功；非 0 时看 `python scripts/ingest.py --failures`；
+- 中途 Ctrl+C 随时安全，重跑会从断点继续（状态表 + embedding 缓存 + 点 id 幂等）；
+- `data/` 是空的话会直接打印"该放哪 / 支持什么格式 / 放完跑哪条命令"，退出码仍是 0。
+
+### 第 6 步：问答
+
+```bash
+python -m src.ask "智能体化 RAG 和传统 RAG 有什么区别？"
+```
+
+**期望输出**：一段带 `[证据 n]` 标注的答案 + 来源表 + 耗时行：
+
+```text
+引用：[2, 7, 5]｜越界=0｜解析成功率=1.00
+
+来源：
+  [证据 2] 深入理解AI Agent > 3.2.1 文档分块（Chunking）   doc_9626d3e8…
+  ...
+
+耗时：setup 12.3 s｜retrieve_rerank 5.5 s｜assemble 53 ms｜generate 16.9 s
+上下文：9 块 / 6000 token｜候选 20 条｜各路命中 {'dense_zh': 20, 'dense_en': 20, 'lexical_en': 20}
+```
+
+常用开关：
+
+```bash
+python -m src.ask "问题" --retrieve-only        # 只检索，不跑 9B（秒级，调库用）
+python -m src.ask "问题" --no-rerank            # 关重排（快 ~0.7 s/次，召回略降）
+python -m src.ask "问题" --k 5 --sources all    # 少给几块证据 / 列全部来源
+python -m src.ask "问题" --json                 # 机器可读输出
+```
+
+### 常见故障
+
+| 现象 | 原因 | 处理 |
+|---|---|---|
+| `ConnectionError` / `localhost:11434` 拒绝 | Ollama 没启动 | `ollama serve` 或打开 Ollama 应用 |
+| `Ollama 上找不到模型 'x'` | 名字少 tag 或没 pull | `ollama list` 看真实名字，改 `OLLAMA_CHAT_MODEL` |
+| `404 Client Error` 调 embedding | 用了聊天模型当 embedding | `ollama pull bge-m3`，并确认 `OLLAMA_EMBED_MODEL=bge-m3` |
+| `找不到 tokenizer.json` | 第 3 步没做 | 按第 3 步下载，或设 `RAG_TOKENIZER_PATH` |
+| `client version ... incompatible` | Qdrant 镜像与客户端 minor 不一致 | 用仓库自带 `docker-compose.yml`（1.16.2） |
+| `发现 0 个文件` | `data/` 里没有文档 | 见 [`data/README.md`](data/README.md) |
+| 首次运行卡住 1 分钟 | 首次要从 HuggingFace 拉 449 MB 重排模型 | 等它下完（缓存进 `storage/models`）；或 `--no-rerank` |
 
 ## 项目结构
 
 ```text
 local-rag-agentic-lab/
-├── data/                       # 自己的 Markdown/TXT/PDF 语料
-│   ├── rag_basics.md
-│   └── agent_basics.md
-├── storage/                    # 自动生成的索引（不入库）
-│   ├── index.json              # 元数据 + 文本块 + BM25 倒排表（不含向量）
-│   ├── embeddings.npy          # 向量矩阵 float32 (N × dim)，行序对应 records
-│   └── tokenizer/bge-m3/tokenizer.json   # BGE-M3 词表，token 计量口径
-├── src/rag/                    # 目标架构（方案 §6 目录；旧扁平模块在 E06 迁移时并入）
-│   └── ingestion/
-│       ├── block.py            # DocumentBlock：统一中间结构（D01）
-│       ├── errors.py           # IngestionError / UnsupportedFormatError / TokenizerUnavailable
-│       ├── tokenizer.py        # TokenCounter：token 计数 + Ollama 抽样校验（D05）
-│       ├── recursive_chunker.py  # Recursive Splitter：分隔符优先级 + token 窗口兜底（D06）
-│       ├── parent_builder.py     # Parent Builder（章节边界 → 切长 → 并短）+ Child 关联（D08）
-│       ├── overlap.py            # Child 间重叠：句子边界优先 + token 窗口兜底（D07）
-│       ├── validator.py          # 六类校验 + gold 收敛统计 + *.invalid.jsonl（D09）
-│       ├── quality_report.py     # A–E 方案对照 + 8 项抽查指标报告（D11）
-│   ├── embedding/                # Embedding 服务（Phase 2）
-│   │   ├── service.py            # 批量编码 / 校验 / 进程内 LRU / CLI（D13）
-│   │   ├── cache.py              # SQLite 内容 hash 缓存（4 KB/行）
-│   │   └── errors.py             # 输入/后端/维度/数值 四类错误
-│   ├── ingest/                   # 导入编排（Phase 2）
-│   │   ├── state.py              # 状态机（§10.1 十个状态）+ 失败清单 + prune（D18）
-│   │   └── pipeline.py           # 发现→窗口攒批→逐阶段落库→断点恢复（D18）
-│   └── store/                    # 向量库层（Phase 2）
-│       ├── qdrant_store.py       # collection 配置 / 6 个 payload index / CLI（D15）
-│       ├── document_store.py     # SQLite：Parent 原文 + 元数据 + chunk→parent（D17）
-│       ├── indexer.py            # 幂等 Upsert / 陈旧点清理 / 按文档删除（D16）
-│       ├── index_versions.py     # collection↔模型口径登记 + 写入闸门（D21）
-│       ├── search.py             # dense 检索 / 精确基准 / ANN Recall（D19）
-│       └── errors.py             # VectorStoreError / CollectionMismatchError
-│       ├── ids.py                # 稳定 ID 与内容哈希（document/parent/chunk，D10）
-│       ├── jsonl_store.py        # JSONL 字段契约 + manifest（D12）
-│       └── parser/
-│           ├── base.py            # BaseParser 抽象基类 + read_text_file（D01）
-│           ├── markdown_parser.py # 标题/列表/表格/代码块/引用/图注（D02）
-│           ├── txt_parser.py      # 空行分段 + 句子数统计（D03）
-│           ├── pdf_parser.py      # pymupdf 版面块：页码/字号/页眉页脚（D04）
-│           ├── cli.py             # python -m src.rag.ingestion.parser check|dump
-│           └── __init__.py        # 按后缀分派的解析器注册表
+├── data/                     # 你的语料（.gitignore 排除，只保留 README 说明放置规则）
+├── docker-compose.yml        # Qdrant v1.16.2（版本必须与 qdrant-client 同 minor）
 ├── src/
-│   ├── __init__.py
-│   ├── config.py               # 模型、切分与检索参数
-│   ├── ollama_client.py        # 直接调用 Ollama API
-│   ├── text_utils.py           # 文档加载与文本切分
-│   ├── tokenizer.py            # 中英混合分词（jieba + 停用词 + 标识符保留）
-│   ├── bm25.py                 # Okapi BM25 倒排索引（建索引 + 查询）
-│   ├── build_index.py          # 建立 Embedding 向量 + BM25 倒排表
-│   ├── retrieve.py             # 向量、BM25、两种混合检索
-│   ├── rag.py                  # 固定 RAG Pipeline
-│   ├── evaluate.py             # L1 检索评估 CLI（run / measure / compare / list）
-│   ├── eval_metrics.py         # Recall@k / MRR / nDCG / bootstrap / McNemar（纯函数）
-│   ├── eval_logs.py            # 日志 → 指标（只读日志，不调模型）
-│   ├── eval_compare.py         # 基线对比（回归门禁）与模式配对比较
-│   ├── eval_dataset.py         # 题目集校验、gold_spans → chunk id 定位
-│   ├── raglog.py               # trace / span / 事件落 JSONL
-│   ├── raglog_report.py        # review 报告（md / html / failures / stats / diff）
-│   └── agentic_rag.py          # 受控 Agentic RAG
-├── experiments/
-│   ├── questions.json          # 评估集（60 题：16/16/16/12）
-│   ├── build_questions.py      # 由原文句子生成题目集（gold 自动定位）
-│   ├── baseline.json           # L1 基线（含 CI），回归门禁用
-│   ├── probe_embed_model.py     # 探针：两个 Embedding 模型的跨语言区分度（不重建索引）
-│   ├── probe_full_rank.py       # 探针：全量 81k 语料上 gold 排名（精确 / 邻近族两个口径）
-│   ├── probes/                  # 探针结果 JSON
-│   └── reports/                # 每次 measure 生成的报告
-├── tests/                      # 单元测试（stdlib unittest）：指标、日志解析、建库重试、Block/token 计数
-├── logs/                       # 自动生成的运行日志（JSONL）+ review 报告
-├── docs/
-│   └── eval-and-logging-design.md   # 评估方案 + 日志模块设计标准（开发前必读）
-├── requirements.txt
-└── README.md
+│   ├── ask.py                # 产品入口：python -m src.ask "问题"
+│   ├── rag/
+│   │   ├── ingestion/        # 解析 → Block → 递归切分 → 父子块 → overlap → 校验 → 质量报告
+│   │   ├── embedding/        # bge-m3 批量编码 + 校验 + SQLite 内容 hash 缓存
+│   │   ├── ingest/           # 导入状态机（十阶段）+ 失败清单 + 断点恢复
+│   │   ├── store/            # Qdrant（collection/payload index）+ SQLite Document Store + 版本闸门
+│   │   ├── retrieval/        # 三路召回 / RRF 融合 / 窗口重排 / 依赖装配
+│   │   ├── context/          # 父块组装：去重、邻接合并、预算截尾
+│   │   ├── answer/           # 提示词 + 引用解析 + 弃答判定
+│   │   ├── translate/        # 中→英 query 翻译（术语表 + 缓存）
+│   │   └── lang/             # 语言识别（按「词」不按「字符」计比例）
+│   ├── eval_*.py             # 评估：数据集校验 / 日志算指标 / 门禁对比 / 消融 / L2 答案层
+│   └── raglog*.py            # JSONL trace 落盘与 review 报告
+├── scripts/
+│   ├── ingest.py             # 一条命令：文档 → Qdrant + Document Store
+│   └── backfill_parent_index.py
+├── experiments/              # 探针、题库、消融（每个实验在 README 下半部分有命令 + 期望值）
+├── legacy/                   # 旧链（单文件索引 index.json + embeddings.npy），仅存档
+├── tests/                    # stdlib unittest，754 用例
+└── docs/                     # 设计文档（切分与检索方案 / 评估与日志设计）
 ```
+
+## Legacy：旧链（仅存档，不要用于新工程）
+
+仓库早期版本用单文件索引（`storage/index.json` + `embeddings.npy` + 内存 BM25）跑通了 RAG 与 Agentic RAG 的全部教学实验。新链改用 Qdrant + SQLite 之后，旧链被移到 `legacy/` 存档：
+
+| 文件 | 说明 |
+|---|---|
+| `legacy/legacy_rag_cli.py` | 原来的 `src/rag.py`。**它被 `src/rag/` 包遮蔽，已无法作为 `src.rag` 导入**，所以移到这里并改绝对导入 |
+| `legacy/legacy_agentic_rag.py` | 原来的 `src/agentic_rag.py`（受控 Agentic：模型可选检索/改写，有最大步数） |
+| `src/build_index.py` `src/retrieve.py` `src/bm25.py` | 旧链的建库/检索/BM25，仍在 `src/`（README 下半部分的教学实验要跑它），文件头标了 deprecated |
+
+旧链需要先建索引，且指令与新链**不通用**：
+
+```bash
+python -m src.build_index        # 旧链建库（写 storage/index.json，慢）
+python legacy/legacy_rag_cli.py  # 旧链问答
+```
+
+新链只需要记两条：`python scripts/ingest.py --dir data` 与 `python -m src.ask "问题"`。
 
 ## 评估与日志的设计标准
 
@@ -176,7 +224,7 @@ local-rag-agentic-lab/
 
 ## 运行日志与 review
 
-`python -m src.rag` 和 `python -m src.agentic_rag` 每次提问都会自动落一份 JSONL 日志（默认 `logs/`，等级 `detail`），记录候选规模、分路排名、三段耗时、引用与弃答标记。
+旧链的 `legacy/legacy_rag_cli.py` 和 `legacy/legacy_agentic_rag.py` 每次提问都会自动落一份 JSONL 日志（默认 `logs/`，等级 `detail`），记录候选规模、分路排名、三段耗时、引用与弃答标记。
 
 ```powershell
 python -m src.raglog_report latest --html      # 单文件 HTML，[证据 n] 可点击跳转
@@ -217,7 +265,7 @@ ollama list
 
 ```powershell
 python -m src.build_index
-python -m src.rag
+python legacy/legacy_rag_cli.py
 ```
 
 观察每个问题的检索片段、来源、向量相似度和最终答案。
@@ -230,7 +278,7 @@ python -m src.rag
 
 ```powershell
 python -m src.build_index
-python -m src.rag
+python legacy/legacy_rag_cli.py
 ```
 
 注意：这里 chunk size 以字符数近似，不是 Token 数。真实项目还需要考虑标题、表格、代码块和语义边界。
@@ -295,7 +343,7 @@ python -m src.evaluate list                                 # 历史 run
 ### 实验 6：运行 Agentic RAG
 
 ```powershell
-python -m src.agentic_rag
+python legacy/legacy_agentic_rag.py
 ```
 
 该 Agent 可以选择：

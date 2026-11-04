@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.16
+> **文档版本**：2.17
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2167,6 +2167,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | E06 | — | 目录结构与脚本迁移（`src/rag/*`、`scripts/*`、`config/*`） | 目录与 §6 一致；README 命令同步；旧入口保留一个版本周期并在 README 标注 deprecated |
 | E07 | D35 | ✅ **已完成（2026-11-04）** 产品问答入口：`python -m src.ask "问题"`（链路抽到 `src/rag/ask/pipeline.py`，评估器与产品共用一份代码） | `python -m unittest tests.test_ask_cli` **20 用例**；真实问答跑通（中文/英文/负样本/`--retrieve-only`）；`--json` 输出可被脚本消费；`src/eval_answer.answer_one` 改为调用同一 `answer_query()`，**40 题重跑结果与旧实现一致**（口径未漂移） |
 
+| O1 | B13 | ✅ **已完成（2026-11-05）** 空语料引导：`data/README.md` + `data/.gitkeep` + `IngestPipeline` 空目录/`--only` 落空两套指引（`empty_corpus_hint` / `missing_only_keys_hint`）+ `--dry-run` 列前 10 个文件名 | `python -m unittest tests.test_ingest_empty_corpus` **10 用例**；空目录实跑 `python scripts/ingest.py --dir <空目录>` 打印 5 行指引、`failed=0`、**exit 0**；有文件时不误报（`summary.hint` 为空）；`--only md/nope.md` 只给路径写法提示 |
+| O7 | — | ✅ **已完成（2026-11-05）** 旧链收口：`src/rag.py` → `legacy/legacy_rag_cli.py`、`src/agentic_rag.py` → `legacy/legacy_agentic_rag.py`（**原位置被 `src/rag/` 包遮蔽，早已无法作为 `src.rag` 导入**），改绝对导入；`build_index`/`retrieve`/`bm25` 保留但加 `.. deprecated::` 文件头 + 运行横幅（写 stderr，不污染 stdout） | `python -m src.rag` 报 `No module named src.rag.__main__`（旧代码不可达，故移走）；`python -m py_compile legacy/*.py` ok；`rg -n "python -m src.rag$" README.md` **0 命中**；README 新增 `## Legacy` 段并只指向两条新命令 |
 ---
 
 ## 17.8 依赖序（执行批次）与里程碑
@@ -2215,6 +2217,10 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **B09** | 跨语言 Recall@10 0.85 是硬指标还是阶段目标 | ✅ **已定（2026-11-04，用户拍板）：阶段目标，非硬门槛**。当前 60.3% 距 0.85 差 25 pt；若当硬门槛 D30 无法收尾。报告必须同时写「当前值 + 差距 + 归因」，不能只写「未达标」 | D30 验收口径 |
 | **B10** | 评估集规模（统计功效） | ✅ **已定（2026-11-04，用户拍板）：扩到 ~200 题**。依据：83 可判定题 CI 半宽 **±10 pt**，测不出 3–5 pt 的翻译路增益；200 题约 ±6.5 pt。执行见 D27c | D27c、D28 |
 | **B07** | Parent `min_tokens` 是否从 200 提到 400 | ⏳ **待定（D11 数据已出）**。40 篇实测：碎块率 14.3% → **7.0%**、重复 0.31% → **0**、child/parent 1.66 → 2.20；代价是合并后 `section_path` 变粗。**D28 已跑通但矩阵还不支持改 chunking 参数**：需要重建一个 `min_tokens=400` 的 collection（随机后缀 + 一次全量 ingest ~2,000 s）再跑同一套题，列为下一轮 B07 专项 | D08 默认配置、D20 端到端门槛、D28 消融 |
+| **B11** | 开源许可证选哪个（要求：让别人能随便用） | ✅ **已定（2026-11-04，用户拍板）：Apache-2.0**（先议 MIT，最终改 Apache-2.0）。理由：本仓库会被人嵌到工程里用，Apache-2.0 的**明示专利授权 + 专利报复终止条款**让企业法务不需要自己推演；代价是「改动需标注 + NOTICE」和对 GPLv2 不兼容，本项目都不受影响。落地要求：`LICENSE` + README 底部声明 + 注明运行时下载的模型（`bge-m3` / `mmarco-mMiniLMv2`）许可证归属 | O8 |
+| **B12** | 安装是否要做「一条命令」（bootstrap / pipx / 发行包） | ✅ **已定（2026-11-04，用户拍板）：不做**，改为「README 把安装过程展示清楚」。理由：依赖里 4 项是**外部进程**（Ollama 模型、Docker、17 MB 词表、449 MB 重排模型），一条命令只把失败藏得更深。验收口径变成「每一步都有验证命令 + 期望输出 + 故障表」 | O2、O6（降级为可选） |
+| **B13** | 仓库是否携带示例语料 | ✅ **已定（2026-11-04，用户拍板）：不携带任何语料**（版权 + 体积 + 与用户业务无关），只提交 `data/README.md` 说明放置规则。配套硬要求：`ingest` 扫到 0 文件时**必须打印「该放哪 / 支持什么格式 / 放完跑哪条命令」并保持退出码 0**，`--only` 落空要给**另一套**提示（教 key 写法） | O1 |
+| **B14** | HTTP 服务的并发策略与流式 | ✅ **已定（2026-11-04，用户拍板）：要 SSE；并发走「有界队列 + 单飞」**。背景实测：生成 p50 **53.5 s**，reranker 常驻 **945 MB** 且 `max_concurrency=1`，机器可用内存只剩 **5.9 GB** → 放开并发只会让每个请求都变慢。定案：`MAX_INFLIGHT=1` / `MAX_QUEUE=2` / `QUEUE_TIMEOUT=20 s`，溢出回 **429 + Retry-After**，生成超时 **504 但保留已发 sources**，`/retrieve` 与 `/ask` **分开限流**（前者纯 CPU 短任务可并发）；SSE 五事件 `queued / sources / delta / done / error` + 15 s 心跳 + **客户端断开要 abort 生成**（否则僵尸占满队列） | O3、O4a/O4b/O4c |
 
 ---
 
@@ -3263,6 +3269,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.14                    2026-11-04              Phase 4 全部完成：D31 Reranker（B08 定案：ONNX，不装 torch）/ D32 Context Assembler /
   2.15                    2026-11-04              单条 query 端到端追踪（experiments/trace_query.py）；修 N11 section_path 被按字符拆、
   2.16                    2026-11-04              E07 问答入口 src/ask.py + D33b 引用纪律（精确率 21.67% → 38.46%）；
+  2.17                    2026-11-05              开源基线决策 B11–B14（Apache-2.0 / 不携语料 / 不做一键安装 / HTTP 有界队列 + SSE）；
+                                                 O1 空语料引导 + O7 旧链收口（legacy/）+ README 重写为可跟做
                                                  B03 定案不迁 pytest；N12 判据重写、N13/N14 修掉
                                                  N12 弃答判定子串误判（错误自信率 45% → 5%，40 条答案重新计分）
                                                  D33 Prompt 与引用规范 / D34 消融 F·G / D35 L2 首版（40 题自动指标 + 人工表）

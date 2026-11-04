@@ -11,7 +11,11 @@
 
 只在 build_index 阶段分词一次，查询时只访问命中词项的 posting list，
 查询成本从「每次全量重算」降到 O(命中 posting 长度)。
+
+**旧链专用**：新链的词法检索走 `src/rag/store/lexical.py`，本模块只为旧入口保留
+（见 `src/rag.py` 的 deprecated 说明）。
 """
+
 
 import math
 from collections import Counter
