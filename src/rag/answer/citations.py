@@ -13,58 +13,85 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Sequence
 
-#: 正例：`[证据 3]` / `[证据3]` / `【证据 3】` / `[证据 3,4]` / `[证据 3、4]`
+#: 正例：`[证据 3]` / `[证据3]` / `【证据 3】` / `[证据 3,4]` / `[证据 3、4]` / `[证据 1-7]`
+#: 区间写法是实测出来的（D33b 40 题里 eval-137 写成 `[证据 1-7]`），不认就会被记成畸形引用。
 CITATION_PATTERN = re.compile(
-    r"[\[【]\s*证据\s*([0-9][0-9\s,，、]*)\s*[\]】]"
+    r"[\[【]\s*证据\s*([0-9][0-9\s,，、\-–—~至]*)\s*[\]】]"
 )
+
+#: 区间引用：`1-7` / `1–7` / `1~7` / `1至7`
+_RANGE_PATTERN = re.compile(r"(\d+)\s*[-–—~至]\s*(\d+)")
+
+#: 一次最多展开多少条：防止 `[证据 1-9999]` 把报告撑爆
+MAX_RANGE_SPAN = 20
 
 #: 反例：括号里写了「证据」但不是数字 → 记 malformed
 MALFORMED_PATTERN = re.compile(r"[\[【]\s*证据\s*([^\]】]*)\s*[\]】]")
 
-#: 结论型信号：只在这些词出现在**开头或结尾**时才算弃答（结论通常在这两处）
-ABSTAIN_STRONG = (
-    "知识库未提供", "知识库中没有", "知识库中未提供", "未提供足够", "没有提供足够", "没有足够证据",
-    "无法从证据", "无法回答", "无法找到", "无法确认", "无法确定", "不足以回答",
-    "insufficient evidence", "not enough evidence", "cannot answer", "cannot find",
-    "cannot determine", "cannot be determined from the provided",
+#: 「否定 + 缺失」配对：否定词后面**紧跟（≤6 字内）**缺失谓词，才算在声称"证据里没有"。
+#:
+#: 不用固定短语清单，是因为真实回答的措辞发散得厉害：同一批 20 条负样本里就出现了
+#: 未包含 / 未找到 / 未提供 / 未直接提供 / 无法查询到 / 无法提供 六种写法。
+#: 也不能只判「同一句里既有否定又有缺失词」——"根据**提供**的知识库…循环永远**无法**结束"
+#: 会因此误判；位置关系（否定在前、谓词紧随）才是"缺失声明"的证据。
+#: 注意：**不能放单字 "不"**——「证据不足时改写查询」会被判成「不 + 查询」，实测误伤
+_NEGATION = ("没有", "无法", "不能", "未", "不存在", "cannot", "without", "not ", "no ")
+_ABSENCE = ("提供", "包含", "找到", "查到", "查询", "回答", "提及", "说明", "收录",
+            "确定", "确认", "evidence", "information", "answer", "mention", "contain",
+            "provide", "found")
+_ABSENCE_PATTERN = re.compile(
+    "(" + "|".join(re.escape(token) for token in _NEGATION) + ")"
+    "[^。！？；;!?|]{0,6}?"
+    "(" + "|".join(re.escape(token) for token in _ABSENCE) + ")",
+    re.IGNORECASE,
 )
 
 #: 弱信号：**只认一句话式的极简弃答**（开头就是它、且整段很短）
 ABSTAIN_WEAK = ("证据不足", "no evidence")
 
 #: 兼容旧名（外部按整组匹配的地方仍然可用）
-ABSTAIN_PATTERNS = ABSTAIN_STRONG + ABSTAIN_WEAK
+ABSTAIN_PATTERNS = _NEGATION + _ABSENCE + ABSTAIN_WEAK
 
 #: 弱信号当作弃答的最大答案长度（字符）：超过就认为是在正常作答中引用该词
 ABSTAIN_TERSE_CHARS = 40
 
-#: 结论区：首尾各取几个句子参与强信号匹配。
-#: 实测 40 条答案：edge=3 是拐点（2 会漏掉「末尾倒数第三句下结论」的 eval-058，
-#: 4 会把正文里转述的 eval-015 误判），所以取 3。
+#: 只看**开头几句**：弃答是"开口就拒"，正文中后段的信息缺口声明不算（N12/N13）
 ABSTAIN_EDGE_SENTENCES = 3
 
 _SENTENCE_END = "。！？!?;" + chr(10)
 
 
-def _edge_text(text: str, sentences: int = ABSTAIN_EDGE_SENTENCES) -> str:
-    """取答案的「首 N 句 + 末 N 句」：结论在这两处，正文中间的多是转述（N12）。"""
-    parts = [piece for piece in re.split("[" + re.escape(_SENTENCE_END) + "]", text) if piece.strip()]
-    if len(parts) <= 2 * sentences:
-        return text
-    return " ".join(parts[:sentences] + parts[-sentences:])
+def _sentences(text: str) -> list[str]:
+    return [piece for piece in re.split("[" + re.escape(_SENTENCE_END) + "]", text) if piece.strip()]
+
+
+def opening_sentences(text: str, sentences: int = ABSTAIN_EDGE_SENTENCES) -> list[str]:
+    """答案的**开头 N 句**（逐句判断，不能先拼起来再判——拼完句号就没了，
+    "…无法结束。设置最大步数…" 这种会被当成"否定 + 缺失"同一句，直接误判）。
+
+    不再取末尾 N 句：末尾补一句「知识库未提供具体算法原理」是完整答案的常见写法，
+    取末尾会把 eval-006 这类答完的题误判成弃答。
+    """
+    return _sentences(text)[:sentences]
+
+
+def claims_absence(text: str) -> bool:
+    """这段话是否在声称「证据里没有 X」：**否定词在前、缺失谓词紧随（≤6 字）**。"""
+    return bool(_ABSENCE_PATTERN.search(text or ""))
 
 
 def detect_abstain(text: str, *, terse_chars: int = ABSTAIN_TERSE_CHARS) -> bool:
     """模型是否在弃答。
 
-    强信号（"无法找到"/"知识库中未提供"…）只看**首尾两句**——完整答案的正文里经常出现
-    "无法确定『哪家公司？』" 这类转述（实测 eval-015 被误判）。
-    弱信号（"证据不足"）只认极简回答的开头，因为它在长文里几乎总是被引内容。
+    判据（N12 修正后定稿）：**开头 3 句里有"否定 + 缺失"**，或者整段很短且开头就是
+    "证据不足"。反例都写成用例了：
+    - 「模型反复认为证据不足并不断搜索」→ 正文转述，不是弃答；
+    - 「如果 chunk 太小，无法确定『哪家公司？』」→ 正文举例，且在第 4 句之后。
     """
     lowered = (text or "").lower().strip()
     if not lowered:
         return False
-    if any(pattern in _edge_text(lowered) for pattern in ABSTAIN_STRONG):
+    if any(claims_absence(sentence) for sentence in opening_sentences(lowered)):
         return True
     if len(lowered) > terse_chars:
         return False
@@ -117,13 +144,30 @@ class CitationReport:
         }
 
 
+def _expand_numbers(raw: str) -> list[int] | None:
+    """`3,4` / `1-7` / `1、2、5` → 编号列表。区间跨度超过 `MAX_RANGE_SPAN` 返回 None。"""
+    numbers: list[int] = []
+    consumed = raw
+    for match in _RANGE_PATTERN.finditer(raw):
+        start, end = int(match.group(1)), int(match.group(2))
+        if end < start or end - start > MAX_RANGE_SPAN:
+            return None
+        numbers.extend(range(start, end + 1))
+        consumed = consumed.replace(match.group(0), " ")
+    numbers.extend(int(piece) for piece in re.findall(r"\d+", consumed))
+    return numbers
+
+
 def parse_citations(text: str, *, k: int | None = None) -> CitationReport:
     """解析引用。`k` 给了就顺便判越界（`n > k` 或 `n < 1`）。"""
     body = text or ""
     report = CitationReport(text_length=len(body))
 
     for match in CITATION_PATTERN.finditer(body):
-        numbers = [int(piece) for piece in re.findall(r"\d+", match.group(1))]
+        numbers = _expand_numbers(match.group(1))
+        if numbers is None:                       # 区间跨度离谱 → 记畸形，不展开
+            report.malformed.append(match.group(0))
+            continue
         if not numbers:
             report.malformed.append(match.group(0))
             continue

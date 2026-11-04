@@ -36,6 +36,7 @@ if str(ROOT_DIR) not in sys.path:  # pragma: no cover
 from src.config import OLLAMA_CHAT_MODEL  # noqa: E402
 from src.rag.answer.citations import citation_summary, parse_citations, resolve_sources  # noqa: E402
 from src.rag.answer.prompt import build_messages, detect_abstain  # noqa: E402
+from src.rag.ask.pipeline import answer_query  # noqa: E402
 from src.rag.context.assembler import assemble  # noqa: E402
 from src.rag.retrieval.fusion import RRF_K, rrf_fuse_routes  # noqa: E402
 from src.rag.retrieval.rerank import (  # noqa: E402
@@ -65,59 +66,41 @@ def pick_questions(questions: Sequence[Mapping[str, Any]], positives: int, negat
 def answer_one(question: Mapping[str, Any], retriever, parents, counter, reranker,
                ask: Callable[[list[dict[str, str]]], str], *, pool: int = 20, k: int = 10,
                budget: int = 6000) -> dict[str, Any]:
-    """单题端到端：三路召回 → 重排 → 组装 → prompt → 模型 → 引用体检。"""
+    """单题端到端：**链路本身在 `src/rag/ask/pipeline.py`**（E07），这里只负责计分。
+
+    之前整段链路写在这个函数里，导致「评估器」成了唯一能跑通产品链路的入口；
+    现在产品与评估共用 `answer_query()`，评估到的行为就是线上跑的行为。
+    """
     started = time.perf_counter()
-    result = retriever.retrieve(question["question"], query_en=question.get("query_en"), k=pool)
-    routes = {name: route.ids[:pool] for name, route in result.routes.items()}
-    fused = rrf_fuse_routes(routes, rrf_k=RRF_K, top_k=pool)
-    hits = [RerankHit(chunk_id=hit.parent_id, parent_id=hit.parent_id,
-                      text=(parents.get(hit.parent_id) or {}).get("text", ""),
-                      score=hit.score, rank=rank)
-            for rank, hit in enumerate(fused, start=1)]
-    for hit in hits:
-        hit.fields["window"] = best_window(hit.text, question["question"],
-                                           max_tokens=reranker.config.max_length, counter=counter)
-    ranked = rerank_hits(question["question"], hits, encoder=reranker.encoder,
-                         config=reranker.config, top_n=k, stats=reranker.stats,
-                         text_getter=lambda hit: hit.fields["window"])
-    assembled = assemble([{"parent_id": hit.parent_id, "score": hit.score,
-                           "rerank_score": hit.rerank_score} for hit in ranked],
-                         parents, counter=counter, budget=budget)
-    bundle = build_messages(question["question"], assembled)
+    result = answer_query(
+        question["question"],
+        retriever=retriever, parents=parents, counter=counter, reranker=reranker,
+        ask=ask, query_en=question.get("query_en"), k=k, pool=pool, budget=budget,
+    )
 
-    if bundle.abstained:                     # 无证据：不调模型
-        answer, latency_ms, called = bundle.messages[0]["content"], 0.0, False
-    else:
-        started_llm = time.perf_counter()
-        answer = ask(bundle.messages)
-        latency_ms = (time.perf_counter() - started_llm) * 1000
-        called = True
-
-    report = parse_citations(answer, k=len(assembled.blocks) or None)
-    cited_blocks = resolve_sources(report, [block.as_dict() for block in assembled.blocks])
     gold = gold_ids(question)
-    cited_parents = {pid for block in cited_blocks for pid in block.get("parent_ids") or []}
+    cited_parents = {pid for block in result.sources for pid in block.get("parent_ids") or []}
     return {
         "qid": question.get("qid"),
         "type": question.get("type"),
         "question": question["question"],
-        "answer": answer,
-        "abstained": bool(bundle.abstained) or detect_abstain(answer),
-        "abstain_reason": bundle.reason,
-        "blocks": len(assembled.blocks),
-        "context_tokens": assembled.tokens,
-        "cited": report.cited,
-        "out_of_range": report.out_of_range,
-        "malformed": report.malformed,
-        "parse_rate": round(report.parse_rate, 4),
-        "cited_blocks": len(cited_blocks),
+        "answer": result.answer,
+        "abstained": result.abstained,
+        "abstain_reason": result.abstain_reason,
+        "blocks": len(result.blocks),
+        "context_tokens": result.context_tokens,
+        "cited": result.report.cited,
+        "out_of_range": result.report.out_of_range,
+        "malformed": result.report.malformed,
+        "parse_rate": round(result.report.parse_rate, 4),
+        "cited_blocks": len(result.sources),
         "cited_hit_gold": len(cited_parents & gold),
         "gold_size": len(gold),
         "is_negative": question.get("type") == "negative",
-        "llm_called": called,
-        "latency_ms": round(latency_ms, 1),
+        "llm_called": result.llm_called,
+        "latency_ms": round(result.timings.get("generate_ms", 0.0), 1),
         "total_ms": round((time.perf_counter() - started) * 1000, 1),
-        "report": report,
+        "report": result.report,
     }
 
 

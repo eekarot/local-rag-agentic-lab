@@ -50,6 +50,22 @@ class ParseCitationTest(unittest.TestCase):
         self.assertEqual(report.cited, [1])
         self.assertEqual(report.occurrences, 2)
 
+    def test_range_citation_expanded(self):
+        """真实输出里出现过 `[证据 1-7]`（D33b 40 题里的 eval-137）→ 展开成 1..7，别记成畸形。"""
+        report = parse_citations("资料中都提到过 [证据 1-3]，但没有价格。")
+        self.assertEqual(report.cited, [1, 2, 3])
+        self.assertEqual(report.malformed, [])
+        self.assertEqual(report.parse_rate, 1.0)
+
+    def test_range_out_of_range_still_counted(self):
+        report = parse_citations("见 [证据 5-7]。", k=5)
+        self.assertEqual(report.out_of_range, [6, 7])
+        self.assertEqual(report.cited, [5])
+
+    def test_absurd_range_recorded_as_malformed(self):
+        report = parse_citations("见 [证据 3-99]。", k=10)
+        self.assertEqual(report.malformed, ["[证据 3-99]"])
+
     def test_out_of_range_detected(self):
         report = parse_citations("见 [证据 7]。", k=5)
         self.assertEqual(report.out_of_range, [7])
@@ -104,7 +120,7 @@ class PromptTest(unittest.TestCase):
                                     tokens=20, dropped=[], stats={})
 
     def test_all_seven_rules_present(self):
-        self.assertEqual(len(SYSTEM_RULES), 7)
+        self.assertEqual(len(SYSTEM_RULES), 8)     # 七条来自 §4.9，第八条是 D33b 的引用纪律
         for number, rule in enumerate(SYSTEM_RULES, start=1):
             self.assertIn(f"{number}. {rule}", SYSTEM_PROMPT)
 

@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.15
+> **文档版本**：2.16
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2138,6 +2138,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D34 | D32 | ✅ **已完成（2026-11-04）** 消融 F/G（`src/eval_rerank_ablation.py`：F=E+重排、G=F+上下文组装，含 legacy 基线） | `python -m unittest tests.test_eval_answer_layer` 覆盖口径；真实 174 题：**nDCG@10 0.6190 → 0.6730（+5.40 pt，CI [+0.79,+9.97]）**、MRR 0.6039 → 0.6641（+6.02 pt，CI [+0.07,+11.77]）；**hit@10 不变（p=1.0）**；G 见 D32；报告 `experiments/reports/d34_rerank.md` |
 | D35 | D33 | ✅ **已完成首版（2026-11-04）** L2 答案层评估（`src/eval_answer.py`：端到端问答 + 引用体检 + 正负样本分算 + 人工打分表 + 断点续跑 `--resume`） | 40 题（20 正 + 20 负）实测（弃答判定修正后，见 N12）：**引用精确率 21.67%**、**错误自信率 5.00%**、**过度弃答率 10.00%**（人工复核后 1/20 属误判 → 真实 5%）、**负样本弃答率 95.00%**、越界引用 0、上下文 p50 3,172 token、答案延迟 p50 **53.5 s**；人工 faithfulness 表 `experiments/reports/l2_scoring_sheet.csv`（人工列待填） |
 
+| D33b | D35 | ✅ **已完成（2026-11-04）** 引用纪律收紧：system 加第八条「每条结论只引最直接的一条，最多两条」+ user 模板同步（原「关键结论应标注来源编号」是讨好式全引的根源） | 同 40 题同参数重跑（`--k 8 --budget 4000`）：**`citation_precision` 21.67% → 38.46%**、平均每条答案引用块数 **3.00 → 1.95**、`positives_answered_with_gold` 60% → **75%**、逐题 **33 更好 / 2 更差 / 5 持平**；`over_abstain` 不变（10%）；报告 `experiments/reports/l2_d33b.json` |
+
 **Phase 4 出厂标准**：D31–D35 通过 → 上下文可复现、可定位、无重复膨胀，且答案层有第一版人工数据。
 
 ---
@@ -2159,10 +2161,11 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | E01 | — | YAML + Pydantic Settings 收敛全部参数 | `depth / rrf_k / alpha / top_k / ef_search / chunk_size` 均来自 YAML；`rg -n "depth=3" src/` 与 `rg -n "alpha=" src/` 均无命中 |
 | E02 | D20 | FastAPI 四端点 + Pydantic schema | `POST /api/v1/ask` 返回 `answer` + `sources`；`/retrieve?debug=true` 含三路候选数；OpenAPI 文档可访问 |
-| E03 | B03 | 测试体系（pytest：unit / integration / performance） | 三类目录齐全；现有 45 个 `unittest` 迁移后仍全绿；新增 chunking / RRF / translation 单测 |
+| E03 | B03 | 测试体系分层（**B03 定案：不迁 pytest**，保留 stdlib unittest） | 现有用例不迁移，只做分层与慢跑标记：`python -m unittest discover -s tests` 仍全绿（当前 **731 用例 / 400 s**）；新增 `tests/slow/` 放真实模型/真库用例，默认不跑、用 `RAG_RUN_SLOW=1` 打开 |
 | E04 | D20 | 日志与评估资产迁移（保留 `raglog` 与 L1 评估，接新 pipeline） | 新 pipeline 产出同类事件（`retrieve`/`prompt`/`generate`）；`measure` 能对新日志出报告 |
 | E05 | E04,D27 | 新基线重立 + 回归门禁 | 生成新 `baseline.json`；人为劣化时 `compare` 返回 exit 1 |
 | E06 | — | 目录结构与脚本迁移（`src/rag/*`、`scripts/*`、`config/*`） | 目录与 §6 一致；README 命令同步；旧入口保留一个版本周期并在 README 标注 deprecated |
+| E07 | D35 | ✅ **已完成（2026-11-04）** 产品问答入口：`python -m src.ask "问题"`（链路抽到 `src/rag/ask/pipeline.py`，评估器与产品共用一份代码） | `python -m unittest tests.test_ask_cli` **20 用例**；真实问答跑通（中文/英文/负样本/`--retrieve-only`）；`--json` 输出可被脚本消费；`src/eval_answer.answer_one` 改为调用同一 `answer_query()`，**40 题重跑结果与旧实现一致**（口径未漂移） |
 
 ---
 
@@ -2204,7 +2207,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | **B01** | Embedding 走 Ollama API 还是 FlagEmbedding 本地 | ✅ **已定（2026-11-02）：走 Ollama API**（保持现状，不引入 FlagEmbedding / torch 依赖）。细则见 17.11.1 | D05、D13、D39 |
 | **B02** | 是否按方案重切分（500 字符 → Child 400–500 token） | ✅ **已定（2026-11-02）：按方案重切分**（Parent-Child + Token 口径）。影响评估见 17.11.2 | D05–D12、D27、E05 |
-| B03 | 测试框架 pytest 还是 stdlib unittest（现状环境无 pytest） | ⏳ 未定。建议：不阻塞交付，先用 unittest 保持目录分层 | E03 |
+| B03 | 测试框架 pytest 还是 stdlib unittest（现状环境无 pytest） | ✅ **已定（2026-11-04，用户拍板）：不迁移**，继续用 stdlib `unittest` + `python -m unittest discover -s tests`。依据：731 用例 400 s 稳定全绿，迁移只换来更短的装饰器语法，却要重写 60+ 文件的发现机制和 mock 用法。**E03 的验收口径随之调整**：不做 pytest 迁移，只补 `tests/` 内的 unit/integration 分层标记 | E03 |
 | B04 | Qdrant 引入时机 | ✅ **已定（2026-11-02，用户拍板）：Phase 2 起直接用 Qdrant**，不做「先 numpy 后切换」。理由见 §17.11.4：过滤能力是硬需求（实测 Top-50 分散在 23 个文件、单文件最多 6 条）、numpy 兜底等于做两套、本机 Docker + `qdrant/qdrant:v1.15.0` 已验通 | D15–D21、D25、D36（**解开 24 项**） |
 | B05 | 中文 BM25 是否保留（当前 jieba BM25 对 1,783 条中文 chunk 有效，方案只要英文 lexical） | ✅ **已定（2026-11-04）：保留，但只作为可选第四路**。202 题实测：候选池 D 85.1% → D2 89.4%（@10 **7 胜 0 负 p=0.0156** 显著）；RRF 列表 E 79.3% → E2 80.4%（p=0.7266 不显著，但 MRR +0.021 / nDCG +0.014 同向）。不进默认三路（D24 规格是三路），D29 语言治理时按需启用 | D25、D26、D28、D27c |
 | **B06** | 评估集重建成本与方式 | ✅ **已定（2026-11-02）：复用 `experiments/build_questions.py`**，新增 `query_en` 字段，不重写工具链。细则见 17.11.3 | D27、D28、E05 |
@@ -2349,7 +2352,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **N7** | `src/rag/retrieval/__init__.py` 的 `__getattr__` 里写 `from . import fusion, ...`，在子模块未进 `sys.modules` 时递归回调自身 → `RecursionError`（`from src.rag.retrieval import rerank` 直接炸；以前的用例都直接 import 子模块，所以没暴露） | 已改成 `importlib.import_module`，并把子模块表收敛成 `_SUBMODULES`，新增一行即可扩展 |
 | **N8** | L2 答案延迟 **p50 53.5 s**（9B + 3k 上下文 + CPU） | 记入 E02 容量设计；D39 一并核算 |
 | **N11** | `load_parent_records()` 把 `parents.section_path` 的 **JSON 文本**原样返回，`assemble()` 里 `list()` 把字符串拆成单字符 → prompt 每块头部变成 `section=[ > " > 深 > 入 > …`，每块白吃 100+ 字符（追踪单条 query 时发现） | 已修：`store_wiring._path_list()` 解析 + `assembler._path_list()` 消费侧再防御；**新增 `tests/test_store_wiring_section_path.py` 6 用例**（含坏 JSON 不抛异常） |
-| **N12** | 弃答判定用「答案里出现『证据不足』」的子串匹配 → 40 条里 14 条误判（模型转述被引内容会写到这个词），导致 D35 首版错误自信率虚报 45% | 已修：`citations.detect_abstain()` 改成「强信号只看**首尾各 3 句** + 弱信号只认**开头极简**回答」；**新增 `tests/test_abstain_detection.py` 6 用例**；40 条答案重新计分（未重跑模型）：错误自信 45% → **5%**、负样本弃答 55% → **95%** |
+| **N12** | 弃答判定用「答案里出现『证据不足』」的子串匹配 → 40 条里 14 条误判（模型转述被引内容会写到这个词），导致 D35 首版错误自信率虚报 45% | 已修：`citations.detect_abstain()` 换成「**否定词 + 缺失谓词（≤6 字内紧随）** 且出现在**开头 3 句**」，弱信号（证据不足）只认极简开头；**`tests/test_abstain_detection.py` 7 用例**（eval-009 转述反例、eval-006 末尾声明反例都在里面） |
+| **N13** | 弃答判定的**固定短语清单**本身就漏：同一批 20 条负样本里出现 `未包含 / 未找到 / 未提供 / 未直接提供 / 无法查询到 / 无法提供` **六种写法**，清单只覆盖其中一半 → 负样本弃答率被低估 35 pt | 已修：改成「否定 ∧ 缺失谓词 + 位置关系」的组合判据（`_ABSENCE_PATTERN`）；**注意不能放单字「不」**——「证据不足时改写查询」会被判成「不 + 查询」（有用例） |
+| **N14** | 引用解析不认区间：`[证据 1-7]` 被记成 malformed（真实输出里出现过，eval-137） | 已修：`CITATION_PATTERN` 支持 `1-7 / 1–7 / 1~7 / 1至7`，展开上限 `MAX_RANGE_SPAN=20`（防 `[证据 1-9999]`），跨度超限仍记 malformed；3 个用例覆盖展开/越界/畸形 |
 
 
 ---
@@ -3257,6 +3262,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.13                    2026-11-04              D27c：题库 101 → 202 题（句子候选 key 机制，成对率 100%、8/8 topic、判别 174）。
   2.14                    2026-11-04              Phase 4 全部完成：D31 Reranker（B08 定案：ONNX，不装 torch）/ D32 Context Assembler /
   2.15                    2026-11-04              单条 query 端到端追踪（experiments/trace_query.py）；修 N11 section_path 被按字符拆、
+  2.16                    2026-11-04              E07 问答入口 src/ask.py + D33b 引用纪律（精确率 21.67% → 38.46%）；
+                                                 B03 定案不迁 pytest；N12 判据重写、N13/N14 修掉
                                                  N12 弃答判定子串误判（错误自信率 45% → 5%，40 条答案重新计分）
                                                  D33 Prompt 与引用规范 / D34 消融 F·G / D35 L2 首版（40 题自动指标 + 人工表）
                                                  N6 parent_index 全 NULL（已修 + 回填 25,411 行）、N7 retrieval/__init__ 递归、N8 答案延迟 53.5 s
