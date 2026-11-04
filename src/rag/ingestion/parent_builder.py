@@ -112,6 +112,9 @@ class Parent:
             "source_start": self.source_start,
             "source_end": self.source_end,
             "chunker_version": self.chunker_version,
+            # parent_index 必须落库：D09 的父块关联键是 (document_id, parent_index)，
+            # D32 的「同文档相邻合并」也靠它。漏了它，两处都退化成不可用（实测 25,411 行全 NULL）。
+            "parent_index": self.parent_index,
         }
 
 

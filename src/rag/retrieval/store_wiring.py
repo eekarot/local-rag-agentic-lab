@@ -30,20 +30,27 @@ STORAGE_DIR = Path(__file__).resolve().parents[3] / "storage"
 
 
 def load_parent_records(store_path: str | Path | None = None) -> list[dict[str, Any]]:
-    """从 Document Store 拉父块（id / 正文 / 标题 / 章节 / 来源）。"""
+    """从 Document Store 拉父块（id / 正文 / 标题 / 章节 / 来源 / 文档 / 序号）。
+
+    `document_id` 与 `parent_index` 是 D32 组装器判「同文档相邻」的唯一依据：
+    少了它们，`assemble()` 会把所有块当成不同文档、`adjacent_overlap_ratio` 也不可信。
+    """
     from ..store.document_store import DocumentStore
 
     store = DocumentStore(store_path or (STORAGE_DIR / "documents.sqlite3"))
     out: list[dict[str, Any]] = []
     with store._connect() as conn:      # noqa: SLF001  同包内部
         rows = conn.execute(
-            "SELECT p.parent_id, p.content, p.title, p.section_path, d.source_uri"
+            "SELECT p.parent_id, p.document_id, p.parent_index, p.content, p.title,"
+            " p.section_path, d.source_uri"
             " FROM parents p JOIN documents d ON d.document_id = p.document_id"
         ).fetchall()
     for row in rows:
         out.append({
             "id": row["parent_id"],
             "chunk_id": row["parent_id"],
+            "document_id": row["document_id"],
+            "parent_index": row["parent_index"],
             "text": row["content"] or "",
             "title": row["title"],
             "section_path": row["section_path"],

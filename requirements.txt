@@ -12,3 +12,10 @@ pymupdf>=1.24.0
 # 实测 client 1.20 连 server 1.15 会告警 incompatibility（major 必须相同、minor 差 ≤1）；
 # server 侧用 v1.16.2：v1.15.0 在大集合优化期会 panic（gridstore OutputTooSmall）
 qdrant-client==1.16.2
+
+# 已安装版本 1.31.1 —— D31 Reranker 的执行后端。**刻意不引入 torch/sentence-transformers**：
+# bge-reranker-v2-m3 只发布 PyTorch 权重，装 CPU torch 要多 1–2 GB RSS，与 D39 的 16 GB 预算冲突；
+# onnxruntime + 449 MB 的 cross-encoder 在同一台机器上 256 token 只要 28–53 ms/对（B08 定案）
+onnxruntime>=1.18.0
+# 已安装版本 2.4.0 —— 按文件名从 HuggingFace 拉 reranker 的 onnx/tokenizer（缓存落在 storage/models）
+huggingface_hub>=0.24.0

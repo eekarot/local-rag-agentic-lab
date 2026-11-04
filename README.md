@@ -996,6 +996,54 @@ python -m src.eval_ablation run --out experiments/reports/d28_ablation_202.md
 
 **验收：** 能说清「为什么 83 题的 p=0.0703 变成 202 题的 p<0.0001 不能解读为效果变强了」。
 
+### 实验 29：Phase 4 —— Reranker / Context Assembler / 引用规范 / 消融 F·G / L2 首版（D31–D35）
+
+```powershell
+python experiments/probe_reranker.py --candidates 50          # B08：延迟 + RSS 探针
+python -m src.eval_rerank_ablation run --limit 202           # D34：E vs F + G 上下文层
+python scripts/backfill_parent_index.py                      # N6：回填 25,411 行 parent_index
+python -m src.eval_answer run --positives 20 --negatives 20 --k 8 --budget 4000 --resume
+```
+
+**B08 定案：不装 torch，走 onnxruntime + `mmarco-mMiniLMv2` fp32**
+
+| 候选 | 体积 | 256 tok | 结论 |
+|---|---|---|---|
+| mmarco fp32 | 449 MB | 28–53 ms/对 | **选它** |
+| jina-reranker-v2 int8 | 266 MB | 88 ms/对 | int8 在本机反而慢一倍 |
+
+50 候选 × 1 query：**P50 1.83 s / P95 1.87 s，RSS +910 MB**；生产只重排 top-20 → **674 ms**。
+
+**D34：F = E + 重排（174 题，池 20）**
+
+| 方案 | k | Recall | hit | MRR | nDCG |
+|---|---|---|---|---|---|
+| E 三路 RRF | 10 | 76.09% | 83.91% | 0.6039 | 0.6190 |
+| F + 重排 | 10 | 78.75% | **83.91%（不变）** | **0.6641** | **0.6730** |
+
+- **MRR +6.02 pt、nDCG +5.40 pt 显著，hit@10 一点没变（p=1.0）**
+- 这是第三次「召回不涨、排序变好」（前两次：D14 embedding 前缀、D28 RRF）
+- 所以 **reranker 不是召回问题的解**：它把已进 top-10 的块往前挪，不会把第 11 名拉进来
+
+**G = F + Context Assembler**：块 10.00 → 7.28、token 6,015 → **4,536（-24.6%）**、相邻重叠块 3.79% → **0.00%**
+
+**D35：L2 首版（40 题 = 20 正 + 20 负）**
+
+| 指标 | 值 |
+|---|---|
+| 引用越界率 | **0.00%**（D33 编号纪律成立） |
+| 引用精确率（自动近似） | 21.67%（模型「讨好式全引」） |
+| **错误自信率** | **45.00%**（负样本近一半没弃答 —— 当前最大风险） |
+| 过度弃答率 | 15.00% |
+| 负样本弃答率 | 55.00% |
+| 答案延迟 p50 | **53.5 s**（9B + 3k 上下文 + CPU，不可上线） |
+
+**修掉的三个真问题**：`parents.parent_index` 25,411 行全 NULL（N6，已回填）、
+`retrieval/__init__.__getattr__` 递归 `RecursionError`（N7）、
+组装器相邻判定写成 `<=` 把「隔 20 个父块」也当重叠（虚报 17.9%）。
+
+**验收：** 能解释「为什么 hit@10 完全没变、nDCG 却涨了 5.4 pt」，以及「为什么 D32 的 22.9% 和这里的 3.79% 不是一个口径」。
+
 
 ## 重要说明
 
