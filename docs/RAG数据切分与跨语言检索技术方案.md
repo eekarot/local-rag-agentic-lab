@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.4\
+> **文档版本**：2.5\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2117,7 +2117,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D24 | D19,D23 | 三路召回编排（zh dense / en dense / en BM25） | 一次请求输出三路各自 Top50 与融合结果（debug 字段）；任一路可单独关闭且其余路结果与单独运行逐条一致 |
 | D25 | D15,D23 | 英文 lexical 检索（Qdrant full-text，输入英文 query） | 同一评估集上，英文 query + 英文 BM25 的关键词类命中数高于当前中文 query 版本（报绝对值与样本量） |
 | D26 | D24 | 应用层 RRF 三路融合 + 跨列表按 `chunk_id` 去重 | 输出无重复 `chunk_id`；同 chunk 多路命中分数正确累加；单测覆盖 k=60、并列名次、空列表 |
-| D27 | D11,B02,B06 | 评估集扩到 100–200 条**中英成对**题（§11.2 结构） | `query_zh`/`query_en` 成对率 100%；`topic`/`difficulty` 覆盖 8 类问题；缺失字段 == 0；`check` 校验 0 error |
+| D27 | D11,B02,B06 | ✅ **已完成（2026-11-04）** 评估集扩到 **101 条中英成对题**（`src/eval_bilingual.py` 校验骨架 + `experiments/expand_questions.py` 增量扩题） | `python -m src.eval_bilingual check --min-total 100` → **0 error**；`python -m src.eval_dataset check` → **0 error**；**成对率 100.00%（101/101）**、`topic` **8/8 覆盖**（concept_zh 6 / zh_with_en_term 9 / acronym_model 8 / number_spec 24 / paraphrase 6 / multi_condition 3 / cross_chunk 27 / no_answer 18）、`difficulty` easy 29 / normal 51 / hard 21、待审草稿 **0** |
 | D28 | D27,D26 | 消融矩阵 A–E 跑通并出报告 | A–E 每格给出 Recall@5/@10、MRR@10、nDCG@10、P50/P95、翻译耗时；配 McNemar / bootstrap CI |
 | D29 | D28 | 语言不平衡治理（同语言加权或来源配额） | 中文语料切片不低于改造前水平（`hybrid` 70.0% / `hybrid_score` 75.0%），同时英文切片下降不超过基线 CI 半宽 |
 | D30 | D28 | 跨语言门槛核算 | 中文问英文语料 Recall@10 报告值（当前 31.9%）与门槛 0.85 的差距归因表（翻译/精排/Parent/语料失衡各占多少） |
@@ -2371,6 +2371,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D19 | ✅ 2026-11-02 | `src/rag/store/search.py`（`qdrant_search`/`exact_topk`/`ann_recall`/`measure_ann_recall`/`scroll_vectors` + CLI） | 真实向量：1 万点 1.000、10 万点 0.990；`tests.test_search` 11 用例 |
 | D20 | ✅ 2026-11-02 | `scripts/ingest.py --dir data --limit 10000`（全链路）；`IngestState.forget_document_id` + `Indexer.delete_document(state=...)` + `scripts/ingest.py --delete` 补上「删除→状态表同步→可重建」闭环 | 全语料 1467 篇 → 38,865 点 / 0 失败 / 1992 s；hit@5 8/10、回溯 10/10；删除后重建精确回到 38,865 |
 | D14 | ✅ 2026-11-02 | `src/rag/ingestion/embedding_text_report.py`（前缀统计 / 可重建性 / 父块 Recall@k / A-B 汇总 / 双 collection 跑分 + CLI）、`DocumentStore.parents_containing` / `documents_containing` | 前缀覆盖 100%（全语料 25,411 父块无缺 title/section）、可重建 100%；A/B 48 题：MRR +0.125、hit@10 +2.1pt、Recall@10 +0.9pt |
+| D27 | ✅ 2026-11-04 | `src/eval_bilingual.py`（8 类 topic 分类 / 成对率 / 术语保留率 / 草稿→过审状态机 / `check`）、`experiments/expand_questions.py`（+41 题，gold 由 `locate()` 自动定位） | 101 题、成对率 **100%**、topic **8/8**、两套 `check` 均 0 error；新题集 L1：`hybrid_score` Recall@10 **60.4%**，中文语料 79.6% vs 英文语料 42.7% |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2452,6 +2453,51 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D27 实测：评估集从 60 条扩到 101 条中英成对题**
+
+原来 60 题全是中文问法、无英文问法、无 `topic`/`difficulty` 切片。D27 补三件事（工具见 `src/eval_bilingual.py`）：
+
+1. **成对**：101 题全部有 `query_en`（方案 §11.2 的 `query_zh`/`query_en`，落地时不改 `question` 字段名，见 §17.11.3）；
+2. **切片**：`topic` 按 §11.2 的 8 类问题落成枚举，`difficulty` 分 easy/normal/hard；
+3. **过审状态机**：`query_en_status ∈ {draft, reviewed, edited}`。机器草稿一律 `draft`，`check` 默认把 `draft` 当**错误**——
+   评估集里混着未审的机翻，跑出来的消融结论就分不清是「检索不行」还是「翻译不行」。
+
+| 项 | 值 |
+|---|---|
+| 题数 | **101**（原 60 + 新增 41） |
+| 题型配额 | concept 23 / fact 33 / multi_hop 27 / negative 18 |
+| `query_en` 成对率 | **100.00%（101/101）** |
+| `topic` 覆盖 | **8/8**：concept_zh 6、zh_with_en_term 9、acronym_model 8、number_spec 24、paraphrase 6、multi_condition 3、cross_chunk 27、no_answer 18 |
+| `difficulty` | easy 29 / normal 51 / hard 21 |
+| 待审草稿 | **0** |
+| `check` | `src.eval_bilingual check --min-total 100` → **0 error**；`src.eval_dataset check` → **0 error**（原有 gold 定位/配额校验仍然通过） |
+
+新题的 `gold_spans` 全部是语料原文，由 `locate()` 自动定位成 chunk id（41 题**一次零失败**）；`query_en` 由人写，
+旧 60 题先用 `python -m src.eval_bilingual draft` 出机翻草稿、再逐条改写标 `edited`。
+
+**顺带修掉一个会影响主链路的 bug**：`qwen3.5:9b` 是**思考型模型**，`/api/chat` 不显式传 `think:false` 时
+`message.content` 是**空串**、真正的输出全在 `message.thinking` 里——表现就是「调用不报错但答案是空的」，
+或者推理写太长直接 300 s 超时（实测一条草稿 >700 s 未返回）。加上 `think=False` 后单条 **1.1 s**。
+`src/ollama_client.py` 的 `chat_full/chat` 已加 `think` / `num_predict` 两个透传参数（默认 `None`，不改变既有调用行为）。
+
+**新题集的 L1 现状（旧 81k chunk 索引，`--modes vector,bm25,hybrid,hybrid_score --k 10`）**：
+
+| 模式 | Recall@10 | hit@10 | MRR@10 | nDCG@10 |
+|---|---|---|---|---|
+| vector | 52.1%±9.9 | 60.2%±10.3 | 0.396 | 0.401 |
+| bm25 | 41.9%±9.6 | 48.2%±10.8 | 0.358 | 0.345 |
+| hybrid | 54.7%±10.0 | 62.7%±10.3 | 0.373 | 0.393 |
+| hybrid_score | **60.4%±9.8** | **67.5%±10.2** | **0.421** | **0.445** |
+
+**最有信息量的一个数**（也正是 Phase 3 存在的理由）：
+
+| 切片 | n | Recall@10 | MRR@10 |
+|---|---|---|---|
+| corpus=中文语料 | 27 | **79.6%±14.8** | 0.590 |
+| corpus=英文语料（中文提问） | 56 | **42.7%±10.5** | 0.268 |
+
+同一条中文 query，问中文语料能到 79.6%，问英文语料掉到 42.7%——**差距 36.9 个百分点**，这就是 D23/D24/D26 要填的坑。
 
 **D14 实测：`embedding_text` 前缀到底有没有用**
 
@@ -2671,6 +2717,12 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.2                     2026-11-02              D21 + D19 落地：索引版本闸门（同维不同模型拒绝混写）与
   2.3                     2026-11-02              D20 端到端 DoD：全语料 1467 篇 → 38,865 点 / 0 失败 /
   2.4                     2026-11-02              D14 落地：前缀覆盖/可重建性统计 + 有/无前缀 A/B。实测前缀主要
+  2.5                     2026-11-04              D27 落地：评估集 60 → 101 条中英成对题（成对率 100%、topic 8/8、
+                                                  待审草稿 0）。新增 eval_bilingual（8 类 topic / 术语保留率 /
+                                                  draft→reviewed 状态机 / check）与 expand_questions 增量扩题。
+                                                  修 qwen3.5:9b 思考型模型需 think:false（否则答案为空/超时）。
+                                                  新题集 L1：hybrid_score Recall@10 60.4%；中文语料 79.6% vs
+                                                  英文语料 42.7%（差 36.9pt）
                                                   提升 MRR（+0.125~0.166）而非 Recall@10，差异集中在 2–5 道
                                                   「问题用词=章节标题」的题；记下同文档多相似章节的副作用。
                                                   Phase 2 全部完成（D13/D14/D15/D16/D17/D18/D19/D20/D21）
