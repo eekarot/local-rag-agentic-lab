@@ -937,6 +937,32 @@ python experiments/compare_chains.py `
 
 **验收：** 能说清为什么"新链路 hit@10 涨了 27 个点"不能直接写成"检索质量提升 27 个点"。
 
+### 实验 27：三路召回 + RRF + 消融矩阵 A–E（D24/D26/D28）
+
+```powershell
+python -m unittest tests.test_retrieval_routes tests.test_retrieval_fusion tests.test_eval_ablation
+python -m src.eval_ablation run  --out experiments/reports/d28_ablation.md
+python -m src.eval_ablation run --include-zh-lexical  --out experiments/reports/d28_ablation_zhlex.md
+```
+
+83 题首轮（父块粒度，不含翻译开销；`query_en` 用人工撰写）：
+
+| 方案 | 配置 | R@10 | MRR@10 | 池/列表 | P50 |
+|---|---|---|---|---|---|
+| A | 中文 Query + Dense | 64.9% ±8.9 | 0.506 | 10.0 | 29 ms |
+| B | 英文 Query + Dense | 61.0% ±9.3 | 0.478 | 10.0 | 30 ms |
+| C | A ∪ B 候选池 | 66.5% ±8.9 | 0.507 | 13.5 | 58 ms |
+| D | C + 英文 BM25 池 | **78.3%** ±7.4 | 0.513 | 20.2 | 126 ms |
+| E | 三路 RRF | **72.4%** ±8.0 | **0.544** | 10.0 | 126 ms |
+
+- **英文 query 单路 dense 不比中文原句强**（A vs B：5 胜 1 负、p=0.2188）→ bge-m3 的跨语言能力让「翻译再检索」没有独立增益
+- **英文 BM25 是池子的主要贡献**（C→D：10 胜 0 负、p=0.0020）
+- **三路 RRF 相对中文 dense 是 7 胜 1 负、p=0.0703**——方向明确但差一点显著，正是扩题到 200 的原因
+- **E 的 MRR/nDCG 全场最高**（0.544/0.556）→ RRF 主要在「把对的抬到前面」
+- **C/D 是候选池、E 是列表，不能直接比大小**；每路深度 = k（`E@5` = 3×5 候选融合取 5）
+
+**验收：** 能解释「为什么 D 的 78.3% 不能当成比 E 的 72.4% 更强」，以及为什么 `E@5` 会随融合深度变化（63.6% vs 58.7%）。
+
 
 ## 重要说明
 

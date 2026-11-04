@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.10
+> **文档版本**：2.12
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -1768,7 +1768,7 @@ collection_version
   Chunk 最大 Token 超限率        0（结构性例外需明确记录）
   Child → Parent 关联成功率                           100%
   导入重复执行的重复点数量                               0
-  中文问题跨语言 Recall@10        ≥ 0.85（在自建评估集上）
+  中文问题跨语言 Recall@10        ≥ 0.85（在自建评估集上；**阶段目标而非硬门槛**，见 B09）
   HNSW Recall@10                ≥ 0.95（相对精确检索基准）
   查询结果来源可追踪率                                100%
   检索失败时伪造答案                                     0
@@ -2114,14 +2114,15 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | D22 | — | ✅ **已完成（2026-11-04）** 语言识别（`src/rag/lang/detect.py`：汉字数 /（汉字数 + 英文单词数）比 + 0.20 阈值） | `python -m unittest tests.test_lang_detect` **15 用例**；`python -m src.rag.lang.detect --questions experiments/questions.json` → **202 条样本（zh 101 / en 101）准确率 100.00%**（验收线 95%）；`HNSW 是什么？` → **zh**（ratio 0.75）、`DGX B300 装了几张 GPU？` → zh（0.5714）、`What is RRF?` → en、`8192` → unknown |
 | D23 | D22 | ✅ **已完成（2026-11-04）** 翻译服务（`src/rag/translate/{terms,cache,service}.py`：严格 JSON + 术语保护 + SQLite 缓存 + 四态降级 `ok`/`cached`/`skipped`/`passthrough_terms`/`passthrough_error`，**永不抛异常**） | `python -m src.rag.translate.service --questions experiments/questions.json` → **202 条中文 query 成功率 100.00%**（验收线 98%，190 冷 + 12 缓存，621.7 s）；**术语保留率 100%**（101/101 全为 1.0，min=1.0）；缓存二次运行 **202/202 命中、0.2 s（3100×）**；`python -m unittest tests.test_translate` **20 用例**（含超时降级、漏术语回退、真模型 2 例） |
-| D24 | D19,D23 | 三路召回编排（zh dense / en dense / en BM25） | 一次请求输出三路各自 Top50 与融合结果（debug 字段）；任一路可单独关闭且其余路结果与单独运行逐条一致 |
+| D24 | D19,D23 | ✅ **已完成（2026-11-04）** 三路召回编排（`src/rag/retrieval/`：`routes.py` 三路 + `orchestrator.py` 统一出口 + `store_wiring.py` 真实装配） | 一次请求输出三路各自 Top50 与融合结果（debug 字段）；任一路可单独关闭且其余路结果与单独运行逐条一致 |
 | D25 | D15,D23 | ✅ **已完成（2026-11-04）** 英文 lexical（`src/rag/store/lexical.py`：`ensure_text_index` + `fulltext_filter`(OR) + `load_payloads`/`build_bm25`/`BM25Index` + CLI 中英对比）。**依赖已解除**：直接用评估集的 `query_en`（§17.11.3），不等 D23 翻译服务 | `python -m src.rag.store.lexical --questions experiments/questions.json --k 10` → 83 题可判定：中文 query **46/83（55.42%）** vs 英文 query **57/83（68.67%）**，**+11 条**；关键词类子集 32 题：**13/32（40.62%）vs 24/32（75.00%）**，+11 条 / Recall **+32.55 pt** |
-| D26 | D24 | 应用层 RRF 三路融合 + 跨列表按 `chunk_id` 去重 | 输出无重复 `chunk_id`；同 chunk 多路命中分数正确累加；单测覆盖 k=60、并列名次、空列表 |
+| D26 | D24 | ✅ **已完成（2026-11-04）** 应用层 RRF 三路融合（`fusion.py`：去重 + 分数累加 + 并列可复现 + `union_pool`） | 输出无重复 `chunk_id`；同 chunk 多路命中分数正确累加；单测覆盖 k=60、并列名次、空列表 |
 | D27 | D11,B02,B06 | ✅ **已完成（2026-11-04）** 评估集扩到 **101 条中英成对题**（`src/eval_bilingual.py` 校验骨架 + `experiments/expand_questions.py` 增量扩题） | `python -m src.eval_bilingual check --min-total 100` → **0 error**；`python -m src.eval_dataset check` → **0 error**；**成对率 100.00%（101/101）**、`topic` **8/8 覆盖**（concept_zh 6 / zh_with_en_term 9 / acronym_model 8 / number_spec 24 / paraphrase 6 / multi_condition 3 / cross_chunk 27 / no_answer 18）、`difficulty` easy 29 / normal 51 / hard 21、待审草稿 **0** |
 | **D27b** | D20,D27 | ✅ **已完成（2026-11-04）** gold_spans → 新库映射（`src/eval_gold.py`）+ 新库 L1 跑批入口（`src/eval_store.py`） | `python -m src.eval_gold` → 101 题：**ok 82 / ambiguous 1 / unmatched 0 / negative 18**，可用于新库评估 **83 题**，gold 父块数 p50 = 1、match_mode 全部 **exact**；`python -m src.eval_store run --k 10` + `python -m src.evaluate measure latest --main-mode hybrid --write-baseline` → **83 正 + 18 负、249 trace**，hybrid Recall@10 **72.59%±8.3** / hit@10 **84.34%** / MRR@10 0.509；`python -m src.evaluate compare latest` → **结论 ok** |
-| D28 | D27,D26 | 消融矩阵 A–E 跑通并出报告 | A–E 每格给出 Recall@5/@10、MRR@10、nDCG@10、P50/P95、翻译耗时；配 McNemar / bootstrap CI |
+| D27c | D27b,B10 | 评估集 101 → **~200 题**（成对率 100%，`gold_spans` 必须是语料原文） | `python -m src.eval_bilingual check --min-total 190` 零 error；成对率 100%；`python -m src.eval_gold --write` 中 `unmatched == 0`；可判定题 ≥ 160 |
+| D28 | D27b,D26 | ✅ **首轮已完成（2026-11-04）** 消融矩阵 A–E（`src/eval_ablation.py`；83 题结果见 §17.12，**待 D27c 扩题到 200 后复跑定案**） | A–E 每格给出 Recall@5/@10、MRR@10、nDCG@10、P50/P95、翻译耗时；配 McNemar / bootstrap CI（A 中文 dense / B 英文 dense / C 中英 dense 并集 / D +英文 lexical / E 三路 RRF） |
 | D29 | D28 | 语言不平衡治理（同语言加权或来源配额） | 中文语料切片不低于改造前水平（`hybrid` 70.0% / `hybrid_score` 75.0%），同时英文切片下降不超过基线 CI 半宽 |
-| D30 | D28 | 跨语言门槛核算 | 中文问英文语料 Recall@10 报告值（当前 31.9%）与门槛 0.85 的差距归因表（翻译/精排/Parent/语料失衡各占多少） |
+| D30 | D28 | 跨语言门槛核算 | 中文问英文语料 Recall@10 报告值（当前 60.3%，新库口径）与**阶段目标 0.85**（B09 定案：非硬门槛）的差距归因表（翻译/精排/Parent/语料失衡各占多少） |
 
 **Phase 3 出厂标准**：D22–D30 通过 → 三路召回 + RRF 可用，且能说清"离 0.85 还差多少、差在哪一环"。
 
@@ -2205,8 +2206,11 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **B02** | 是否按方案重切分（500 字符 → Child 400–500 token） | ✅ **已定（2026-11-02）：按方案重切分**（Parent-Child + Token 口径）。影响评估见 17.11.2 | D05–D12、D27、E05 |
 | B03 | 测试框架 pytest 还是 stdlib unittest（现状环境无 pytest） | ⏳ 未定。建议：不阻塞交付，先用 unittest 保持目录分层 | E03 |
 | B04 | Qdrant 引入时机 | ✅ **已定（2026-11-02，用户拍板）：Phase 2 起直接用 Qdrant**，不做「先 numpy 后切换」。理由见 §17.11.4：过滤能力是硬需求（实测 Top-50 分散在 23 个文件、单文件最多 6 条）、numpy 兜底等于做两套、本机 Docker + `qdrant/qdrant:v1.15.0` 已验通 | D15–D21、D25、D36（**解开 24 项**） |
-| B05 | 中文 BM25 是否保留（当前 jieba BM25 对 1,783 条中文 chunk 有效，方案只要英文 lexical） | ⏳ 未定。建议：两套并存，消融单列一路 | D25、D26、D28 |
+| B05 | 中文 BM25 是否保留（当前 jieba BM25 对 1,783 条中文 chunk 有效，方案只要英文 lexical） | ⏳ **首轮数据已出（D28 `D2`/`E2` 格）：池内 +6.6 pt（@5 p=0.0312 显著、@10 p=0.0625 边缘）、RRF 列表 +3.2 pt（p=0.6875 不显著）。结论方向「保留」，等 200 题复跑定案** | D25、D26、D28、D27c |
 | **B06** | 评估集重建成本与方式 | ✅ **已定（2026-11-02）：复用 `experiments/build_questions.py`**，新增 `query_en` 字段，不重写工具链。细则见 17.11.3 | D27、D28、E05 |
+| **B08** | Reranker 走哪条路（Ollama 无 rerank 接口） | ⏳ 待 D31 前定。候选：本地 sentence-transformers（CPU，RSS ~2–3 GB）/ TEI 服务 / 远调 API。约束来自 D39 的 16 GB 预算 | D31、D39 |
+| **B09** | 跨语言 Recall@10 0.85 是硬指标还是阶段目标 | ✅ **已定（2026-11-04，用户拍板）：阶段目标，非硬门槛**。当前 60.3% 距 0.85 差 25 pt；若当硬门槛 D30 无法收尾。报告必须同时写「当前值 + 差距 + 归因」，不能只写「未达标」 | D30 验收口径 |
+| **B10** | 评估集规模（统计功效） | ✅ **已定（2026-11-04，用户拍板）：扩到 ~200 题**。依据：83 可判定题 CI 半宽 **±10 pt**，测不出 3–5 pt 的翻译路增益；200 题约 ±6.5 pt。执行见 D27c | D27c、D28 |
 | **B07** | Parent `min_tokens` 是否从 200 提到 400 | ⏳ **待定（D11 数据已出）**。40 篇实测：碎块率 14.3% → **7.0%**、重复 0.31% → **0**、child/parent 1.66 → 2.20；代价是合并后 `section_path` 变粗。**必须等 D28 检索级消融确认收益后再改默认值** | D08 默认配置、D20 端到端门槛、D28 消融 |
 
 ---
@@ -2458,6 +2462,81 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D24 + D26 + D28 实测：三路召回、RRF 融合、消融矩阵 A–E**
+
+三个新模块（`src/rag/retrieval/`）：
+
+| 文件 | 职责 | 为什么这样拆 |
+|---|---|---|
+| `routes.py` | `DenseRoute` / `LexicalRoute` / `JiebaLexicalRoute` / `collapse_to_parents` | 路由**只认「一段文本」**，不认语言；哪一路吃中/英文由编排层决定 → 「关掉一路」不影响其它路输入 |
+| `fusion.py` | `rrf_fuse_routes`（去重 + 累加 + 并列可复现）、`union_pool` | 融合与候选池是两个口径，分开实现防止混用 |
+| `orchestrator.py` | `MultiRouteRetriever.retrieve(..., disable=(), k=50)` | 一次请求出三路 Top-k + `debug` + `fused` |
+| `store_wiring.py` | 真实装配（Qdrant + DocumentStore + EmbeddingService + 英文 BM25 缓存） | 装配与逻辑分离，所以前三个模块能用假协作者单测 |
+
+**验收（命令 + 期望值）**
+
+```
+python -m unittest tests.test_retrieval_routes tests.test_retrieval_fusion tests.test_eval_ablation
+# → 44 用例 OK
+
+python -m src.eval_ablation run --out experiments/reports/d28_ablation.md
+# → 83 题、A–E 五格、含 ±半宽、P50/P95、20 组 McNemar
+```
+
+「任一路可单独关闭且其余路结果与单独运行逐条一致」写成了两条互补用例：
+`test_disabling_a_route_does_not_change_other_routes`（关一路，其余逐条相等）与
+`test_single_route_run_matches_multi_route_run`（多路里的一路 == 只开这一路）。
+
+**消融矩阵首次实测（83 题 / 父块粒度 / `query_en` 人工撰写，不含翻译开销）**
+
+| 方案 | 配置 | R@5 | R@10 | hit@10 | MRR@10 | nDCG@10 | 池/列表 | P50 |
+|---|---|---|---|---|---|---|---|---|
+| A | 中文 Query + Dense | 58.1% ±9.7 | 64.9% ±8.9 | 77.1% | 0.506 | 0.514 | 10.0 | 29 ms |
+| B | 英文 Query + Dense | 52.1% ±9.9 | 61.0% ±9.3 | 72.3% | 0.478 | 0.484 | 10.0 | 30 ms |
+| C | A ∪ B（候选池） | 60.5% ±9.2 | 66.5% ±8.9 | 78.3% | 0.507 | 0.519 | 13.5 | 58 ms |
+| D | C + 英文 BM25（候选池） | 72.5% ±7.9 | 78.3% ±7.4 | 89.2% | 0.513 | 0.553 | 20.2 | 126 ms |
+| E | 三路 RRF（融合列表） | 63.6% ±9.0 | 72.4% ±8.0 | 84.3% | 0.544 | 0.556 | 10.0 | 126 ms |
+
+**四条读数**：
+
+1. **英文翻译 query 的单路 dense 不比中文原句强**：B 61.0% vs A 64.9%，配对 5 胜 1 负、
+   **p=0.2188 不显著**。也就是说「把中文问题翻成英文再打英文语料」这件事，在
+   bge-m3 的跨语言能力下**没有独立增益**——它只在融合里作为一路噪声源存在。
+2. **英文 BM25 是候选池的主要贡献者**：C → D 池内 R@10 66.5% → 78.3%，
+   配对 **10 胜 0 负、p=0.0020 显著**。与 D25「关键词类 Recall +32.55 pt」一致。
+3. **三路 RRF（E）相对中文 dense（A）@10 是 7 胜 1 负、p=0.0703**：方向明确但**差一点显著**。
+   这恰好是 B10（扩到 200 题）的直接依据——83 题 CI 半宽 ±9 pt，7.5 pt 的效应本来就测不稳。
+4. **E 的 MRR/nDCG 是全场最高（0.544 / 0.556）**，高于 D 的池子口径（0.513 / 0.553）。
+   即：RRF 把「该在第一位的」抬得更靠前了，这也是 D14「前缀主要提 MRR」之后第二次出现
+   「召回不涨、排序变好」的现象。
+
+**口径必须写清楚的两件事**（否则数字会被误读）：
+
+- **C/D 是候选池，E 是列表**。C/D 的 Recall 是「池内覆盖率上限」（池大小 13.5–20.2），
+  E 的 Recall 是「top-k 命中率」。**D 的 78.3% 不能和 E 的 72.4% 直接比大小**——
+  配对检验里 `D vs E @10 p=0.1250` 也说明了这一点（4 胜 0 负但样本太少）。
+- **每路检索深度 = k**（路由内部向 Qdrant 多要 `4k` 个 child，再收敛成 `k` 个父块），
+  所以 `E@5` 是「三路各 5 条 → 15 个候选 → 融合取 5」。把融合深度从 `k` 改成 `max(k)`
+  会让 `E@5` 从 63.6% 变成 58.7%（**结论会反转**），所以这一条必须钉在报告里。
+
+**B05（中文 BM25 去留）的首轮数据**（`--include-zh-lexical` 跑出 `D2`/`E2` 格）：
+
+| 方案 | R@10 | MRR@10 | 对比 | 配对结论 |
+|---|---|---|---|---|
+| D | 78.3% | 0.513 | — | — |
+| D2 = D + 中文 BM25 | **84.9%** | 0.516 | D2 vs D | @5 6 胜 0 负 **p=0.0312**；@10 5 胜 0 负 p=0.0625 |
+| E | 72.4% | 0.544 | — | — |
+| E2 = 四路 RRF | **75.6%** | **0.569** | E2 vs E | @10 4 胜 2 负 p=0.6875（不显著） |
+| — | — | — | E2 vs A | @10 9 胜 1 负 **p=0.0215 显著** |
+
+方向：**中文 BM25 让 RRF 的增益从不显著（A vs E p=0.0703）变成显著（A vs E2 p=0.0215）**，
+故 B05 建议「保留，不做替换」。但 83 题下 `E2 vs E` 自身不显著，**必须等 200 题复跑定案**。
+
+**顺手修的一个设计错误**：`--include-zh-lexical` 最初会把 `E` 也悄悄变成四路
+（因为 E 直接抄了 `retriever.fused`），导致 E 与 E2 的差异混进了「融合路数」以外的东西。
+改成 **E 由三路原始列表自己算 RRF**（`cell_rankings` 内直接调 `rrf_fuse_routes`），
+并加了用例 `test_e_ignores_retriever_fused`（给一个 `fused=[]` 的假检索器，E 仍要出结果）。
 
 **新旧两条链路的严格配对对比（能不能比？怎么比？）**
 
@@ -2953,6 +3032,11 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.8                     2026-11-04              D23 落地：Query 翻译服务（严格 JSON + 术语保护 + SQLite 缓存 +
   2.9                     2026-11-04              D27b 落地：gold_spans → 新库 parent 映射（83 题，0 未命中）+ 新库 L1 正式基线
   2.10                    2026-11-04              新增「新旧链路严格配对对比」（48 题交集）：dense hit@10 52.1%→79.2%（p=0.0010
+  2.11                    2026-11-04              B10 定案：评估集扩到 ~200 题（83 题 CI ±10 pt 测不出小效应）→ 新增 D27c；B09 定案：跨语言
+  2.12                    2026-11-04              D24 + D26 + D28 落地：`src/rag/retrieval/` 三路编排 + RRF + `src/eval_ablation.py` 消融矩阵。
+                                                  83 题首轮：A 64.9% / B 61.0%（英文 query 无独立增益）/ C 66.5% / D 78.3% 池 /
+                                                  E 72.4%（A vs E p=0.0703）；B05 首轮数据：加中文 BM25 后 E2 75.6%（A vs E2 p=0.0215）
+                                                  0.85 是阶段目标非硬门槛；B08：Reranker 路线待 D31 前定
                                                   显著）、lexical 不显著（p=0.3750）、hybrid hit@10 60.4%→87.5%（p=0.0023）。
                                                   修 score_traces 静默归零：按命中 id 前缀判断金标空间
                                                   （hybrid Recall@10 72.59% / hit@10 84.34%，跨语言鸿沟 37.8 pt）。
