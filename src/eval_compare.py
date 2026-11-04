@@ -15,6 +15,20 @@ from .eval_metrics import mcnemar_exact
 METRIC_NAMES = ("recall", "hit", "full", "mrr", "ndcg")
 
 
+def runs_comparable(prev_meta, now_meta) -> tuple[bool, str]:
+    """两次 run 的逐题配对是否成立。返回 (可比, 原因)。
+
+    只看题集还不够：**换索引/换检索链路**后「上一份日志」和「这一份」根本不是同一个
+    检索器，逐题差值（`+0.578`）会被误读成「改进了 57.8 个点」。实测就是踩到这条：
+    新库基线 vs 旧 81k 索引的日志，hybrid 差值 +0.578、CI 全在 0 以上。
+    """
+    if prev_meta.get("content_hash") != now_meta.get("content_hash"):
+        return False, "content_hash 不同（索引/模型/参数变了）"
+    if prev_meta.get("dataset_sha256") != now_meta.get("dataset_sha256"):
+        return False, "题目集不同"
+    return True, ""
+
+
 def _iter_metrics(metrics, metric_names=METRIC_NAMES):
     """展开 `{slice_kind: {slice_name: block}}` 里的标量指标。"""
     for slice_kind in ("by_mode", "by_type", "by_lang", "by_mode_type", "by_mode_lang"):

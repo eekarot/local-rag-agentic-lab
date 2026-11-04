@@ -61,6 +61,9 @@ _STATE = {
     "run_id": None,
     "run_written": False,
     "run_event": None,
+    # 索引元信息覆盖：新库链路（Qdrant parent/child）不是 storage/index.json
+    "index_meta": None,
+    "models": None,
 }
 if _STATE["level"] not in LEVEL_ORDER:
     _STATE["level"] = DEFAULT_LEVEL
@@ -89,6 +92,19 @@ def reset_run():
     _STATE["run_id"] = None
     _STATE["run_written"] = False
     _STATE["run_event"] = None
+    # 覆盖也要一起清：否则换回旧链路时 run 事件会继续报新库的元信息
+    _STATE["index_meta"] = None
+    _STATE["models"] = None
+
+
+def set_index_meta(meta, models=None):
+    """替换 run 事件里的索引元信息。
+
+    必须在 `reset_run()` **之后**调用（reset 会清掉覆盖），
+    典型用法：`reset_run()` → `set_index_meta(...)` → 开始写 trace。
+    """
+    _STATE["index_meta"] = dict(meta) if meta else None
+    _STATE["models"] = dict(models) if models else None
 
 
 def enabled(level="detail"):
@@ -156,6 +172,20 @@ def _build_run_event(params=None):
     索引读取失败不影响日志功能（例如单元测试没有索引），此时降级为 index=None。
     """
     index_meta, models = None, {}
+    override = _STATE.get("index_meta")
+    if override:
+        return {
+            "schema": SCHEMA_VERSION,
+            "python": ".".join(str(v) for v in __import__("sys").version_info[:3]),
+            "platform": __import__("platform").platform(),
+            "index": dict(override),
+            "models": dict(_STATE.get("models") or {}),
+            "params": params or {},
+            "content_hash": _sha32(json.dumps(
+                {"index": override, "models": _STATE.get("models") or {}, "params": params or {}},
+                sort_keys=True, ensure_ascii=False,
+            ))[:16],
+        }
     try:  # 延迟导入，避免 retrieve -> raglog 的循环依赖
         from .config import OLLAMA_CHAT_MODEL, OLLAMA_EMBED_MODEL
         from .retrieve import index_stats, load_index

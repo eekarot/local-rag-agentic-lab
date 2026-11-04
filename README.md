@@ -860,6 +860,51 @@ python -m src.rag.translate.service --questions experiments/questions.json --jso
 
 **验收：** 能解释为什么"漏术语时要回退中文原文"而不是"用漏了术语的译文继续检索"。
 
+### 实验 25：新库正式基线（D27b）
+
+```powershell
+# 1) 把 gold_spans 映射成新库的 parent/child id（写回 gold_points）
+python -m src.eval_gold --write
+
+# 2) 新库跑批（dense / lexical / hybrid），再算指标并落基线
+python -m src.eval_store run --k 10
+python -m src.evaluate measure latest --main-mode hybrid --write-baseline
+python -m src.evaluate compare latest      # 门禁：结论 ok
+```
+
+**gold 映射（101 题）**：ok **82** / ambiguous **1**（`eval-030`，一个 span 命中 12 个父块）/
+unmatched **0** / negative 18 → 可用 **83 题**；match_mode 全部 `exact`，gold 父块数 p50 = 1。
+
+**基线（83 正 + 18 负，249 trace）**：
+
+| 模式 | Recall@4 | Recall@10 | hit@10 | MRR@10 | p50 |
+|---|---|---|---|---|---|
+| dense | 52.91%±10.1 | 64.86%±8.9 | 77.11% | 0.506 | 12 ms |
+| lexical（jieba BM25） | 43.47%±9.8 | 47.69%±9.9 | 53.01% | 0.379 | 5 ms |
+| **hybrid（RRF k=60）** | 49.50%±9.8 | **72.59%±8.3** | **84.34%** | **0.509** | 17 ms |
+
+**跨语言鸿沟（hybrid）**：中文语料 Recall@10 **98.1%** vs 英文语料（中文提问）**60.3%** → **37.8 pt**，
+与旧索引上测到的 36.9 pt 一致：这是语料语言问题，不是索引实现问题。
+
+**三处修复：**
+
+1. **跨索引配对会虚报**——新库 run 的「上一份日志」是旧 81k 索引，逐题差值被算成
+   `hybrid +0.578`（读作「改进 57.8 个点」）。→ `runs_comparable()` 先比 `content_hash`
+   与 `dataset_sha256`，不可比就一个数都不报。
+2. **报告里的复现命令指向旧入口**（`src.evaluate run` 读 `storage/index.json`）→
+   run 事件带 `index.runner`，按 runner 输出 `src.eval_store run`。
+3. **负样本 z 分数缺统计量** → `CorpusCosStats` 一次性扫全库算 μ 与二阶矩 `M`（4 MB 缓存），
+   之后每题 `O(d²)` **精确**得到 E[cos] 与 std，不是抽样近似。
+
+**两个反直觉的数字：**
+
+- `hybrid` 的 **Recall@4 反而低于 `dense`**（49.5% vs 52.9%）：RRF 把两路都靠前的抬上来，
+  代价是把单路第一名挤后。RAG 只放 4–8 条上下文，D26 调融合参数时要继续盯这个。
+- `dense` vs `hybrid` 的 McNemar **p = 0.5034**：83 题上 7 pt 的 hit@10 差距**还没到统计显著**，
+  现在不能说"混合检索比纯向量好"。
+
+**验收：** 能解释为什么 `hybrid` 的 Recall@10 更高但 Recall@4 更低，以及为什么这不矛盾。
+
 
 ## 重要说明
 

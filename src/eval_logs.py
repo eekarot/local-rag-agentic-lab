@@ -128,7 +128,11 @@ def score_traces(traces, questions, ks=(4, 10)) -> dict:
         if item is None:
             unmatched.append(trace.get("qid"))
             continue
-        gold = {chunk["id"] for chunk in item.get("gold_chunks") or []}
+        # 新库链路（D20 之后）金标是父块 id，写在 gold_points.parent_ids；
+        # 旧 81k 链路用 gold_chunks。两套 id 空间不相交，必须按「有没有 gold_points」分流，
+        # 否则新库的 Recall 会因为拿旧 chunk id 去比而恒为 0。
+        points = (item.get("gold_points") or {}).get("parent_ids") or []
+        gold = set(points) if points else {chunk["id"] for chunk in item.get("gold_chunks") or []}
         hits = trace.get("hits") or []
         row = {
             "qid": item["qid"],

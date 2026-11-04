@@ -19,7 +19,18 @@
     "topic": "concept_zh",
     "difficulty": "easy",
     "query_en": "What is RAG?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-002",
@@ -41,7 +52,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "normal",
     "query_en": "Why should documents be split into chunks?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-003",
@@ -63,7 +85,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "easy",
     "query_en": "Does the Embedding model generate the final answer?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-004",
@@ -89,7 +122,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "normal",
     "query_en": "What are the risks of Top-K being too large?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-005",
@@ -111,7 +155,18 @@
     "topic": "paraphrase",
     "difficulty": "normal",
     "query_en": "Which kinds of questions does keyword search handle better?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-006",
@@ -133,7 +188,18 @@
     "topic": "acronym_model",
     "difficulty": "normal",
     "query_en": "What is RRF used for?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-007",
@@ -155,7 +221,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "normal",
     "query_en": "Can a Reranker recover evidence that the first stage never retrieved?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-008",
@@ -177,7 +254,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "normal",
     "query_en": "What is the difference between fixed RAG and Agentic RAG?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-009",
@@ -199,7 +287,17 @@
     "topic": "zh_with_en_term",
     "difficulty": "normal",
     "query_en": "Why does the Agent Loop need a maximum step count?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-010",
@@ -221,7 +319,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "easy",
     "query_en": "What must be done after changing the Embedding model?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-011",
@@ -247,7 +356,17 @@
     "topic": "paraphrase",
     "difficulty": "normal",
     "query_en": "What is the difference between RAG and model fine-tuning?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-012",
@@ -269,7 +388,17 @@
     "topic": "concept_zh",
     "difficulty": "easy",
     "query_en": "What principle should tool-call permissions follow?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-013",
@@ -291,7 +420,18 @@
     "topic": "concept_zh",
     "difficulty": "normal",
     "query_en": "What are the common RAG failure types?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-014",
@@ -313,7 +453,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "normal",
     "query_en": "What does Agentic RAG cost compared with fixed RAG?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-015",
@@ -335,7 +486,18 @@
     "topic": "zh_with_en_term",
     "difficulty": "normal",
     "query_en": "What problems come from splitting chunks too short?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-016",
@@ -357,7 +519,18 @@
     "topic": "concept_zh",
     "difficulty": "hard",
     "query_en": "Why can't RAG guarantee that its answers are correct?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-017",
@@ -383,7 +556,19 @@
     "topic": "number_spec",
     "difficulty": "easy",
     "query_en": "What is the total GPU memory of a single DGX B300?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_0c372a1eb05597712223e9708a2a9e4a",
+        "par_d59a8d09bd8ea7006772ccd6a04f3e41"
+      ],
+      "child_ids": [
+        "chk_789d11464ddb942e0ffc50e9190f9ef9",
+        "chk_fcb833db9d6eddae37029a8797d03204"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-018",
@@ -413,7 +598,19 @@
     "topic": "number_spec",
     "difficulty": "easy",
     "query_en": "What is the default system memory of a DGX B300?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_0c372a1eb05597712223e9708a2a9e4a",
+        "par_d59a8d09bd8ea7006772ccd6a04f3e41"
+      ],
+      "child_ids": [
+        "chk_789d11464ddb942e0ffc50e9190f9ef9",
+        "chk_fcb833db9d6eddae37029a8797d03204"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-019",
@@ -443,7 +640,19 @@
     "topic": "acronym_model",
     "difficulty": "normal",
     "query_en": "How do the GPUs in a DGX B300 connect to the network?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_46525dd8d3abb33fd7abc3a9c02dbb27",
+        "par_e8c441584e99b4793a271efd01229878"
+      ],
+      "child_ids": [
+        "chk_09fde4827d629ac76ecc1b5711c58cfc",
+        "chk_5e302e4e2b8518f4d77e03c54209d745"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-020",
@@ -469,7 +678,19 @@
     "topic": "number_spec",
     "difficulty": "easy",
     "query_en": "How far can the system memory of a DGX B300 be expanded?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_46525dd8d3abb33fd7abc3a9c02dbb27",
+        "par_e8c441584e99b4793a271efd01229878"
+      ],
+      "child_ids": [
+        "chk_09fde4827d629ac76ecc1b5711c58cfc",
+        "chk_5e302e4e2b8518f4d77e03c54209d745"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-021",
@@ -495,7 +716,19 @@
     "topic": "number_spec",
     "difficulty": "easy",
     "query_en": "How many GPUs does a DGX B300 have?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_bb5159fdc39279bc3731d206bb65ad92",
+        "par_dbfd6289fbc43e2a0ad717a6b6cabf81"
+      ],
+      "child_ids": [
+        "chk_431171792884b34cf7de723c9a248b43",
+        "chk_6be0334de777cd2561f7b2a34563f341"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-022",
@@ -517,7 +750,19 @@
     "topic": "number_spec",
     "difficulty": "normal",
     "query_en": "In the NVIDIA RAG reference architecture, how many tokens is a text chunk usually split into?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_096c375a53978afddedb616f3e36e879"
+      ],
+      "child_ids": [
+        "chk_43b5d935b6c18a5a63e82c45e1f73d3e",
+        "chk_b2a1bf393fb08cbb888492fde1bedee1",
+        "chk_df7e04c39801c1853e63398d36d28242"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-023",
@@ -539,7 +784,19 @@
     "topic": "number_spec",
     "difficulty": "normal",
     "query_en": "In a RAG pipeline, what limit of the embedding model must the chunk size stay under?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_096c375a53978afddedb616f3e36e879"
+      ],
+      "child_ids": [
+        "chk_43b5d935b6c18a5a63e82c45e1f73d3e",
+        "chk_b2a1bf393fb08cbb888492fde1bedee1",
+        "chk_df7e04c39801c1853e63398d36d28242"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-024",
@@ -565,7 +822,17 @@
     "topic": "acronym_model",
     "difficulty": "normal",
     "query_en": "After MIG is disabled, what must be running to restore NVLink peer-to-peer on the GPUs?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_39b6989723ad231dfb440bd8295b7653"
+      ],
+      "child_ids": [
+        "chk_1e1dce66db774dedea1743410164829f"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-025",
@@ -587,7 +854,18 @@
     "topic": "number_spec",
     "difficulty": "normal",
     "query_en": "How many accelerators per machine does the Base Command Manager free license support?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_8395b92bce02073118f76b49f8efdc96"
+      ],
+      "child_ids": [
+        "chk_d41eb6088622744181f14e1f57a7948a",
+        "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-026",
@@ -609,7 +887,18 @@
     "topic": "acronym_model",
     "difficulty": "normal",
     "query_en": "Which Base Command Manager license tier includes GPU Operator, Network Operator and vGPU?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_8395b92bce02073118f76b49f8efdc96"
+      ],
+      "child_ids": [
+        "chk_d41eb6088622744181f14e1f57a7948a",
+        "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-027",
@@ -631,7 +920,17 @@
     "topic": "multi_condition",
     "difficulty": "hard",
     "query_en": "Which parameters does NVIDIA say significantly affect RAG accuracy?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_697fb8fde6a13e3e3e741f48b0e5e67a"
+      ],
+      "child_ids": [
+        "chk_c51b72929cbe44ea2819ec4be9bd8009"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-028",
@@ -653,7 +952,21 @@
     "topic": "number_spec",
     "difficulty": "normal",
     "query_en": "What is the first-token response target for Enterprise RAG chat scenarios?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_ca9bc1404f757b2510412e22b701e664"
+      ],
+      "child_ids": [
+        "chk_4a138df59584d1de4a95b3008d908ee1",
+        "chk_6d1aefa379c2d1cd4da6789780e492d3",
+        "chk_6dc184fc978bfb3801546633ae419d70",
+        "chk_82fec035970d9288bbc2174f948f27db",
+        "chk_af5a1b4d5e7d005c1373fe1a0eb58f18"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-029",
@@ -675,7 +988,21 @@
     "topic": "number_spec",
     "difficulty": "normal",
     "query_en": "What are the typical input and output lengths for the Enterprise RAG summarization scenario?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_ca9bc1404f757b2510412e22b701e664"
+      ],
+      "child_ids": [
+        "chk_4a138df59584d1de4a95b3008d908ee1",
+        "chk_6d1aefa379c2d1cd4da6789780e492d3",
+        "chk_6dc184fc978bfb3801546633ae419d70",
+        "chk_82fec035970d9288bbc2174f948f27db",
+        "chk_af5a1b4d5e7d005c1373fe1a0eb58f18"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-030",
@@ -697,7 +1024,46 @@
     "topic": "acronym_model",
     "difficulty": "normal",
     "query_en": "How does the DGX RHEL8 install guide say the default BMC username should be handled?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_2a3115dedf3a1149becb9a660f69bf45",
+        "par_2a3cadcc6f01bd7a8b4571fc0042a674",
+        "par_42aa1f6cf1c5e51619c251a8c2606f37",
+        "par_50ab44c3a4a6a2ec1b13963269efb54f",
+        "par_90f56e038fb19ba54668dffb00b4db95",
+        "par_a6983c3938be43b0d884dc91a0ae5cc0",
+        "par_b1bf1c2a23a0401705a051bf2eef1957",
+        "par_b20e869d48d69743a2e1f61250d2d0a3",
+        "par_d439e0e5df6ac6852c100f14547bc155",
+        "par_d4ad9ece15bf13704b80ca77ac8e6afc",
+        "par_e3889f99ab97bf2efe3551a4913206b0",
+        "par_fbd558d6c71fcf04824207397d9c12e1"
+      ],
+      "child_ids": [
+        "chk_0cd485d69b878e9a985faadb6967d8c3",
+        "chk_11d81d22d69230fd2451750a3c81967c",
+        "chk_182060eca8f3fe327279041492e6ec84",
+        "chk_1bcc6d9ac2e712a6cf399d5590ed5774",
+        "chk_29d2511edf813c7084da3be8b612fb63",
+        "chk_2b22fc35d63f50fbda42753ccbbb3660",
+        "chk_2f186e9ac18a0963aea73d9eb775e73c",
+        "chk_373ad0ac510a14e00a719077067f0e8d",
+        "chk_4330e85ef3dde3288b3dd5b15a2b0882",
+        "chk_55f354dd68dd87f86ad13ba580eb4865",
+        "chk_7083e9fb383b27d0130aa586782f4a3b",
+        "chk_74de062f936323a32b284f48c8c62436",
+        "chk_7bad7e6b65c282268309bed065ffed05",
+        "chk_89a0355c48fc1168ae584f19b2adc6c7",
+        "chk_93d2f2623cef2ef18c37b69ae0754568",
+        "chk_9add7222a05e8e7dfbfcbbb1701f0e53",
+        "chk_b879d116cb35a2c91fe963c0e48b7882",
+        "chk_cd6dbbead7a7f34945fc8aa3079c74a8",
+        "chk_f5f5a24e59df8a95ba85a4063b6167bc"
+      ],
+      "status": "ambiguous",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-031",
@@ -727,7 +1093,26 @@
     "topic": "number_spec",
     "difficulty": "normal",
     "query_en": "How large is the Wikipedia dataset in the NVIDIA RAG benchmark?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_092e086552d0f9c26a0791d35a64fb42",
+        "par_e7013cc3b482387a8dd0344f2394c4b7",
+        "par_edef1bb5bb04f9f59bbb7dc5e0633f5d"
+      ],
+      "child_ids": [
+        "chk_243ddb239f10326c6d7164be2a091ab7",
+        "chk_3feb9f43b14f9f47b2daeab0536b2ec7",
+        "chk_529dfdcd4e4ca8aba33a1c6f6adeb711",
+        "chk_add7cdb6443b95600d43dfa5ceff0bea",
+        "chk_b8e0fe49f5d76710498abaa86a1c4403",
+        "chk_bea76857c16250b4f878e387f70e256c",
+        "chk_ee69f4d8e383f5ca2ea6665bad877345",
+        "chk_f538facd6f6dc60e44a967ba3a919fe8"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-032",
@@ -749,7 +1134,18 @@
     "topic": "multi_condition",
     "difficulty": "normal",
     "query_en": "What overhead comes from a larger chunk size or from sending more chunks in RAG?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_89926064786d6eeef5a9b2ff7ccc570b"
+      ],
+      "child_ids": [
+        "chk_74a3c2c4174f2b676e8f85e4f5e73d4c",
+        "chk_cedefbe240fa1e2f9e84caa7e7e30156"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-033",
@@ -776,7 +1172,17 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "MIG turns off NVLink on a DGX A100 - what must run to restore peer-to-peer after MIG is disabled?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_39b6989723ad231dfb440bd8295b7653"
+      ],
+      "child_ids": [
+        "chk_1e1dce66db774dedea1743410164829f"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-034",
@@ -811,7 +1217,23 @@
     "topic": "cross_chunk",
     "difficulty": "normal",
     "query_en": "A DGX B300 card has 288 GB - what is the whole-system GPU memory, and how far can system memory be expanded?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_0c372a1eb05597712223e9708a2a9e4a",
+        "par_46525dd8d3abb33fd7abc3a9c02dbb27",
+        "par_d59a8d09bd8ea7006772ccd6a04f3e41",
+        "par_e8c441584e99b4793a271efd01229878"
+      ],
+      "child_ids": [
+        "chk_09fde4827d629ac76ecc1b5711c58cfc",
+        "chk_5e302e4e2b8518f4d77e03c54209d745",
+        "chk_789d11464ddb942e0ffc50e9190f9ef9",
+        "chk_fcb833db9d6eddae37029a8797d03204"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-035",
@@ -850,7 +1272,23 @@
     "topic": "cross_chunk",
     "difficulty": "easy",
     "query_en": "How many GPUs does a DGX B300 have, and what is its default system memory?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_0c372a1eb05597712223e9708a2a9e4a",
+        "par_bb5159fdc39279bc3731d206bb65ad92",
+        "par_d59a8d09bd8ea7006772ccd6a04f3e41",
+        "par_dbfd6289fbc43e2a0ad717a6b6cabf81"
+      ],
+      "child_ids": [
+        "chk_431171792884b34cf7de723c9a248b43",
+        "chk_6be0334de777cd2561f7b2a34563f341",
+        "chk_789d11464ddb942e0ffc50e9190f9ef9",
+        "chk_fcb833db9d6eddae37029a8797d03204"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-036",
@@ -873,7 +1311,19 @@
     "topic": "cross_chunk",
     "difficulty": "normal",
     "query_en": "How many tokens does the RAG reference architecture recommend per chunk, and what upper limit bounds that size?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_096c375a53978afddedb616f3e36e879"
+      ],
+      "child_ids": [
+        "chk_43b5d935b6c18a5a63e82c45e1f73d3e",
+        "chk_b2a1bf393fb08cbb888492fde1bedee1",
+        "chk_df7e04c39801c1853e63398d36d28242"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-037",
@@ -900,7 +1350,20 @@
     "topic": "cross_chunk",
     "difficulty": "normal",
     "query_en": "What do chunk size and TopK both affect in RAG?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_697fb8fde6a13e3e3e741f48b0e5e67a",
+        "par_89926064786d6eeef5a9b2ff7ccc570b"
+      ],
+      "child_ids": [
+        "chk_74a3c2c4174f2b676e8f85e4f5e73d4c",
+        "chk_c51b72929cbe44ea2819ec4be9bd8009",
+        "chk_cedefbe240fa1e2f9e84caa7e7e30156"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-038",
@@ -927,7 +1390,21 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "How much do the first-token latency targets differ between the Enterprise RAG chat and summarization scenarios?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_ca9bc1404f757b2510412e22b701e664"
+      ],
+      "child_ids": [
+        "chk_4a138df59584d1de4a95b3008d908ee1",
+        "chk_6d1aefa379c2d1cd4da6789780e492d3",
+        "chk_6dc184fc978bfb3801546633ae419d70",
+        "chk_82fec035970d9288bbc2174f948f27db",
+        "chk_af5a1b4d5e7d005c1373fe1a0eb58f18"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-039",
@@ -958,7 +1435,22 @@
     "topic": "cross_chunk",
     "difficulty": "easy",
     "query_en": "Does a single DGX B300 fit inside the Base Command Manager free license?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_8395b92bce02073118f76b49f8efdc96",
+        "par_bb5159fdc39279bc3731d206bb65ad92",
+        "par_dbfd6289fbc43e2a0ad717a6b6cabf81"
+      ],
+      "child_ids": [
+        "chk_431171792884b34cf7de723c9a248b43",
+        "chk_6be0334de777cd2561f7b2a34563f341",
+        "chk_d41eb6088622744181f14e1f57a7948a",
+        "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-040",
@@ -985,7 +1477,18 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "Which BCM license do you need for GPU Operator and vGPU, and what is the free tier limit?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_8395b92bce02073118f76b49f8efdc96"
+      ],
+      "child_ids": [
+        "chk_d41eb6088622744181f14e1f57a7948a",
+        "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-041",
@@ -1020,7 +1523,30 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "How much data does NVIDIA's Wikipedia RAG benchmark use, and how is the chunk size set?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_092e086552d0f9c26a0791d35a64fb42",
+        "par_096c375a53978afddedb616f3e36e879",
+        "par_e7013cc3b482387a8dd0344f2394c4b7",
+        "par_edef1bb5bb04f9f59bbb7dc5e0633f5d"
+      ],
+      "child_ids": [
+        "chk_243ddb239f10326c6d7164be2a091ab7",
+        "chk_3feb9f43b14f9f47b2daeab0536b2ec7",
+        "chk_43b5d935b6c18a5a63e82c45e1f73d3e",
+        "chk_529dfdcd4e4ca8aba33a1c6f6adeb711",
+        "chk_add7cdb6443b95600d43dfa5ceff0bea",
+        "chk_b2a1bf393fb08cbb888492fde1bedee1",
+        "chk_b8e0fe49f5d76710498abaa86a1c4403",
+        "chk_bea76857c16250b4f878e387f70e256c",
+        "chk_df7e04c39801c1853e63398d36d28242",
+        "chk_ee69f4d8e383f5ca2ea6665bad877345",
+        "chk_f538facd6f6dc60e44a967ba3a919fe8"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-042",
@@ -1047,7 +1573,18 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "Can Agentic RAG recover the misses a Reranker cannot bring back?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-043",
@@ -1074,7 +1611,20 @@
     "topic": "cross_chunk",
     "difficulty": "normal",
     "query_en": "Why is there a maximum step limit, and which failure type does it prevent?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534",
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_df4385907be5aaac0dd356ce605e6c08",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-044",
@@ -1105,7 +1655,20 @@
     "topic": "cross_chunk",
     "difficulty": "normal",
     "query_en": "TopK is one of the parameters that drive RAG accuracy - what are the side effects of setting it too large?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534",
+        "par_697fb8fde6a13e3e3e741f48b0e5e67a"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_c51b72929cbe44ea2819ec4be9bd8009",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-045",
@@ -1132,7 +1695,22 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "Changing the embedding model means rebuilding the index - what length limit still applies to chunks under the new model?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_096c375a53978afddedb616f3e36e879",
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_43b5d935b6c18a5a63e82c45e1f73d3e",
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_b2a1bf393fb08cbb888492fde1bedee1",
+        "chk_df7e04c39801c1853e63398d36d28242",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-046",
@@ -1159,7 +1737,20 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "Fixed RAG has lower latency, so when is Agentic RAG actually worth it?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534",
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_df4385907be5aaac0dd356ce605e6c08",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-047",
@@ -1186,7 +1777,18 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "Some questions cannot be answered by a single retrieval in RAG - which failure type is that, and can an Agentic approach fix it?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-048",
@@ -1217,7 +1819,20 @@
     "topic": "cross_chunk",
     "difficulty": "hard",
     "query_en": "Are accuracy and performance the same thing in RAG, and why must chunk/topk be traded off?",
-    "query_en_status": "edited"
+    "query_en_status": "edited",
+    "gold_points": {
+      "parent_ids": [
+        "par_697fb8fde6a13e3e3e741f48b0e5e67a",
+        "par_89926064786d6eeef5a9b2ff7ccc570b"
+      ],
+      "child_ids": [
+        "chk_74a3c2c4174f2b676e8f85e4f5e73d4c",
+        "chk_c51b72929cbe44ea2819ec4be9bd8009",
+        "chk_cedefbe240fa1e2f9e84caa7e7e30156"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-049",
@@ -1427,7 +2042,23 @@
       }
     ],
     "reference_answer": "400 Gbps（单向），端口到端口延迟极低。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_5274bb57afa98fb1b7c4de1b08aaf58d",
+        "par_b183378ab670ccdfa6c936e8efd91a39",
+        "par_dca87637a614333e7a5c02f4ea55f9b1",
+        "par_fdbc0494d6f5f27911bd382c2af741ae"
+      ],
+      "child_ids": [
+        "chk_05e69d120d2327e4c192e3e97db7ff56",
+        "chk_133c19c4ea158ec22c99c03ef12637c3",
+        "chk_95131fea9d63073a8c717db64362e912",
+        "chk_a82687a2444884221f5d7d5ea1abba6c"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-062",
@@ -1453,7 +2084,19 @@
       }
     ],
     "reference_answer": "HDR100 = 2 条 50 Gbps 通道；EDR 是 4 条 25 Gbps，两者不是一回事。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_448d79aaa64233635e60e800eb67e5d8",
+        "par_cde579f426a703a036f5924b70e92313"
+      ],
+      "child_ids": [
+        "chk_0849cadb075a8f1c487a10adc7b7a2ab",
+        "chk_e98988a5d2e0c1589b16f24b79842831"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-063",
@@ -1475,7 +2118,18 @@
       }
     ],
     "reference_answer": "最多 16 个 SU，约 9,000 张 GPU。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_f6a4e06b63cf24f9b49539f3eeb46813"
+      ],
+      "child_ids": [
+        "chk_548f15b16ffb6fb1e7aa90d5181ca90f",
+        "chk_653d01f782c5696ea2222bcbcde19c69"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-064",
@@ -1501,7 +2155,19 @@
       }
     ],
     "reference_answer": "72 张 GPU（rack-scale 配置）。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_34c594b370e46000232c867b63e0672c",
+        "par_73487a1dd3076437689788a62264ac66"
+      ],
+      "child_ids": [
+        "chk_640b2254c09f475e8814aaf2ecadf269",
+        "chk_a4b626a5124c2ba969120e78128fa97a"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-065",
@@ -1527,7 +2193,19 @@
       }
     ],
     "reference_answer": "用 72x1 NVLink 拓扑，72 张 GPU 落在同一个 NVLink 域。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_4281504070c08fd861138e84269e0a6f",
+        "par_83e6355d954afff17007245e1091f953"
+      ],
+      "child_ids": [
+        "chk_62222eca7b803dbb15427cc38940bbf8",
+        "chk_e6bfeced370f36385b0297793b657651"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-066",
@@ -1553,7 +2231,19 @@
       }
     ],
     "reference_answer": "两颗 B200 GPU + 一颗 Grace CPU，用 900 GB/s 的 NVLink-C2C 互连。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_4281504070c08fd861138e84269e0a6f",
+        "par_83e6355d954afff17007245e1091f953"
+      ],
+      "child_ids": [
+        "chk_62222eca7b803dbb15427cc38940bbf8",
+        "chk_e6bfeced370f36385b0297793b657651"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-067",
@@ -1579,7 +2269,27 @@
       }
     ],
     "reference_answer": "8 小时工时下 85 dBA（时间加权平均）。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_4eba908bb08791353cddfd594ab568cf",
+        "par_b37fbaefe0076e24bad54236475316ed"
+      ],
+      "child_ids": [
+        "chk_2ef41b17eed969db5a478ba4ecebd6fd",
+        "chk_661fbb0001ea4c49e12da8b593fb91dc",
+        "chk_71b625f6884df1e8f2abd38b3fe84d72",
+        "chk_ad22589ade228bf62465c9617e20e16a",
+        "chk_b5dd2f2eabf8d9a71af80a6c61903bdd",
+        "chk_b821f7fc160f1f53f9d09a8961dc2b49",
+        "chk_b85f0d6db619a51b33b67e20e90aede7",
+        "chk_cf84cb7818f773d44588453acd1cdc6b",
+        "chk_dc719519575d293aaa0c43c313476b2d",
+        "chk_de2b31f74ccf5d7e82f96d25be44d476"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-068",
@@ -1605,7 +2315,19 @@
       }
     ],
     "reference_answer": "60 天。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_0bb8cdd23ee43c52f28f4dd74b5c720a",
+        "par_3b02930a1e395fdc1596bdaf6078032f"
+      ],
+      "child_ids": [
+        "chk_d2067b599525d5d09e74766f16e3518d",
+        "chk_d8b767a8fbe7b1b0b021f06330648c79"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-069",
@@ -1627,7 +2349,22 @@
       }
     ],
     "reference_answer": "约 130 GB，其中 PID 文件约占 9 GB。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_42d2dc1a9900a41437f28280d42a9fd4"
+      ],
+      "child_ids": [
+        "chk_31cccddc1a3ef6389d8eec287aca5c67",
+        "chk_af55ce9dbe4642e0895360f19cc9f358",
+        "chk_b76992921fd799bb6b729311b777fe7f",
+        "chk_bc8c67fe75876930981854ab4b41db8f",
+        "chk_c622aba2db36e25fd43abebb967b8e1b",
+        "chk_f9706e33895ffa3b056ec907af2d3598"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-070",
@@ -1649,7 +2386,22 @@
       }
     ],
     "reference_answer": "72 张 GPU，通过 NVLink 连接。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_3c4d29f38fdeed10a15f5c07fea9556f"
+      ],
+      "child_ids": [
+        "chk_14b6cc72b6c5c7571336e426fa7cd658",
+        "chk_20889687f1d4550b7dcb4a72b4e52236",
+        "chk_2ec7588fc56ce98ea1793833eb4f908c",
+        "chk_5457981dad4cc80465fed70ec06263d0",
+        "chk_8ba003a4ca3dd7dbc185e039362125e1",
+        "chk_add566f22fab5dee1cbdc14b23d1b189"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-071",
@@ -1675,7 +2427,23 @@
       }
     ],
     "reference_answer": "580 或更高。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_5555271370e346ef77d9992dabbaa359",
+        "par_eba8f4d565bbe1a46bc1d8a15c25aa32"
+      ],
+      "child_ids": [
+        "chk_24d2690b7f6a927f9cdf4e944a96e245",
+        "chk_2a28b6bdb85974867aa8a00e723d8cee",
+        "chk_2e8f5de4b4d689a88b2d43494570778b",
+        "chk_6abca488e30f75d805e4072116e0217e",
+        "chk_6e760b4314cfaf0876df8b2b7bf36227",
+        "chk_8fee9edcaf43514bf34cb4c7d32095de"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-072",
@@ -1701,7 +2469,25 @@
       }
     ],
     "reference_answer": "550 或更高。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_34fde78dc9d09e4948b62633332a2fc5",
+        "par_b3976894fa1f194d733e20f19435cafa"
+      ],
+      "child_ids": [
+        "chk_0486de9e581631e7824da5eb865391af",
+        "chk_31a4994f0c512ff97ee67d9278847d8e",
+        "chk_8bbc89c307897f84ac3b14d4c5e6a462",
+        "chk_8bf0e8b9c4e27e06916ea80d3686af05",
+        "chk_a2df70b3605d7feed467bd3bc521918e",
+        "chk_ad3783df5ef01747ccc5872288e02d83",
+        "chk_bdb45bc38d500a77b6d18d7e47c92426",
+        "chk_d270aa3534ddbbf6af9d776d0aed909e"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-073",
@@ -1723,7 +2509,18 @@
       }
     ],
     "reference_answer": "2024 年 10 月的长期支持版，支持 3 年。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_839591bb7bc9d562c184c5727e662f88"
+      ],
+      "child_ids": [
+        "chk_08e03f4bf76e70b3dc70b79632bc44cf",
+        "chk_7aed689181d4d5a401075292f5cff3c2"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-074",
@@ -1745,7 +2542,17 @@
       }
     ],
     "reference_answer": "至少 100 Gb/s。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_519405ea97e9960877cb1cd356add0e0"
+      ],
+      "child_ids": [
+        "chk_3c6000a64be88afad56fad3b3b2f9258"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-075",
@@ -1767,7 +2574,18 @@
       }
     ],
     "reference_answer": "96 × 400 Gb/s。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_f6a4e06b63cf24f9b49539f3eeb46813"
+      ],
+      "child_ids": [
+        "chk_548f15b16ffb6fb1e7aa90d5181ca90f",
+        "chk_653d01f782c5696ea2222bcbcde19c69"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-076",
@@ -1793,7 +2611,19 @@
       }
     ],
     "reference_answer": "twin two-way 单模分光器 + 200 Gbps OSFP flat 单模光模块。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_4950b69bc5235ef4d4405ee6647b7dc0",
+        "par_a8fc2aa8d4a1810777bdf7e8e143b6a7"
+      ],
+      "child_ids": [
+        "chk_d051eb770773d8f4415828912b3b5431",
+        "chk_d648b872b35e1cb2c507774558aff6d0"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-077",
@@ -1815,7 +2645,19 @@
       }
     ],
     "reference_answer": "4 条 GPU rail → 4 个 IP 池。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_69ac32a20e8d2c31fe3dbf206e1d8f4a"
+      ],
+      "child_ids": [
+        "chk_d21aced082282c1b6b4a83de64d91197",
+        "chk_fc0fe5bf30b48f16918d52e8c2568d98",
+        "chk_fcf59c2022d974ba3d8a07516189fb21"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-078",
@@ -1837,7 +2679,18 @@
       }
     ],
     "reference_answer": "稠密向量检索。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-079",
@@ -1859,7 +2712,18 @@
       }
     ],
     "reference_answer": "BM25 是更成熟的词项匹配算法，比简单重叠更可靠。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_11e84983b392afccbff1656d56bc0534"
+      ],
+      "child_ids": [
+        "chk_8367f5704d2409e55a56838ac5b42fea",
+        "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-080",
@@ -1881,7 +2745,17 @@
       }
     ],
     "reference_answer": "给目标与状态 → 解析决策 → 执行工具 → 结果入状态 → 决定继续或结束。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-081",
@@ -1903,7 +2777,17 @@
       }
     ],
     "reference_answer": "模型只输出结构化动作；由宿主程序校验参数后执行并回传结果。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-082",
@@ -1925,7 +2809,17 @@
       }
     ],
     "reference_answer": "固定版固定为「检索一次→组装→生成」；Agentic 允许在证据不足时改写查询或追加检索。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-083",
@@ -1947,7 +2841,17 @@
       }
     ],
     "reference_answer": "要更新/引用/隔离的知识用 RAG；改行为、格式或任务模式用微调；两者可结合。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-084",
@@ -1969,7 +2873,17 @@
       }
     ],
     "reference_answer": "重复查询检测、工具错误处理与最终回退。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_510e51772536523af6024e40fa17cc18"
+      ],
+      "child_ids": [
+        "chk_df4385907be5aaac0dd356ce605e6c08"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-085",
@@ -2004,7 +2918,25 @@
       }
     ],
     "reference_answer": "NDR 单向 400 Gbps；用户存储至少 100 Gb/s。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_519405ea97e9960877cb1cd356add0e0",
+        "par_5274bb57afa98fb1b7c4de1b08aaf58d",
+        "par_b183378ab670ccdfa6c936e8efd91a39",
+        "par_dca87637a614333e7a5c02f4ea55f9b1",
+        "par_fdbc0494d6f5f27911bd382c2af741ae"
+      ],
+      "child_ids": [
+        "chk_05e69d120d2327e4c192e3e97db7ff56",
+        "chk_133c19c4ea158ec22c99c03ef12637c3",
+        "chk_3c6000a64be88afad56fad3b3b2f9258",
+        "chk_95131fea9d63073a8c717db64362e912",
+        "chk_a82687a2444884221f5d7d5ea1abba6c"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-086",
@@ -2039,7 +2971,23 @@
       }
     ],
     "reference_answer": "一个机架 72 张 GPU，拓扑是 72x1，72 张同处一个 NVLink 域。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_34c594b370e46000232c867b63e0672c",
+        "par_4281504070c08fd861138e84269e0a6f",
+        "par_73487a1dd3076437689788a62264ac66",
+        "par_83e6355d954afff17007245e1091f953"
+      ],
+      "child_ids": [
+        "chk_62222eca7b803dbb15427cc38940bbf8",
+        "chk_640b2254c09f475e8814aaf2ecadf269",
+        "chk_a4b626a5124c2ba969120e78128fa97a",
+        "chk_e6bfeced370f36385b0297793b657651"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-087",
@@ -2070,7 +3018,26 @@
       }
     ],
     "reference_answer": "每颗 Superchip = 2×B200 + 1×Grace（NVLink-C2C 900 GB/s）；NVL72 机架默认一个 72 GPU 的 NVLink 分区。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_3c4d29f38fdeed10a15f5c07fea9556f",
+        "par_4281504070c08fd861138e84269e0a6f",
+        "par_83e6355d954afff17007245e1091f953"
+      ],
+      "child_ids": [
+        "chk_14b6cc72b6c5c7571336e426fa7cd658",
+        "chk_20889687f1d4550b7dcb4a72b4e52236",
+        "chk_2ec7588fc56ce98ea1793833eb4f908c",
+        "chk_5457981dad4cc80465fed70ec06263d0",
+        "chk_62222eca7b803dbb15427cc38940bbf8",
+        "chk_8ba003a4ca3dd7dbc185e039362125e1",
+        "chk_add566f22fab5dee1cbdc14b23d1b189",
+        "chk_e6bfeced370f36385b0297793b657651"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-088",
@@ -2097,7 +3064,21 @@
       }
     ],
     "reference_answer": "16 台 spine 最多 16 个 SU（约 9,000 GPU）；B300 参考架构画的是 512 节点满配。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_b534a282ac7f89cd8684cd77a679bf3b",
+        "par_f6a4e06b63cf24f9b49539f3eeb46813"
+      ],
+      "child_ids": [
+        "chk_26dbdfc0e0a063e7995f29d6aecbe6ac",
+        "chk_548f15b16ffb6fb1e7aa90d5181ca90f",
+        "chk_56d42dbf5bb86d8a8b236b0f8a952fe8",
+        "chk_653d01f782c5696ea2222bcbcde19c69"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-089",
@@ -2132,7 +3113,23 @@
       }
     ],
     "reference_answer": "EDR = 4×25 Gbps，HDR100 = 2×50 Gbps；NDR200 用 twin two-way 单模分光器 + 200 Gbps OSFP flat 光模块。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_448d79aaa64233635e60e800eb67e5d8",
+        "par_4950b69bc5235ef4d4405ee6647b7dc0",
+        "par_a8fc2aa8d4a1810777bdf7e8e143b6a7",
+        "par_cde579f426a703a036f5924b70e92313"
+      ],
+      "child_ids": [
+        "chk_0849cadb075a8f1c487a10adc7b7a2ab",
+        "chk_d051eb770773d8f4415828912b3b5431",
+        "chk_d648b872b35e1cb2c507774558aff6d0",
+        "chk_e98988a5d2e0c1589b16f24b79842831"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-090",
@@ -2163,7 +3160,23 @@
       }
     ],
     "reference_answer": "每个计算托盘 4 条 GPU rail → 4 个 IP 池；整套机架 72 张 GPU。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_34c594b370e46000232c867b63e0672c",
+        "par_69ac32a20e8d2c31fe3dbf206e1d8f4a",
+        "par_73487a1dd3076437689788a62264ac66"
+      ],
+      "child_ids": [
+        "chk_640b2254c09f475e8814aaf2ecadf269",
+        "chk_a4b626a5124c2ba969120e78128fa97a",
+        "chk_d21aced082282c1b6b4a83de64d91197",
+        "chk_fc0fe5bf30b48f16918d52e8c2568d98",
+        "chk_fcf59c2022d974ba3d8a07516189fb21"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-091",
@@ -2194,7 +3207,26 @@
       }
     ],
     "reference_answer": "NetQ 评估许可 60 天；离线安装约 130 GB（PID 文件约 9 GB）。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_0bb8cdd23ee43c52f28f4dd74b5c720a",
+        "par_3b02930a1e395fdc1596bdaf6078032f",
+        "par_42d2dc1a9900a41437f28280d42a9fd4"
+      ],
+      "child_ids": [
+        "chk_31cccddc1a3ef6389d8eec287aca5c67",
+        "chk_af55ce9dbe4642e0895360f19cc9f358",
+        "chk_b76992921fd799bb6b729311b777fe7f",
+        "chk_bc8c67fe75876930981854ab4b41db8f",
+        "chk_c622aba2db36e25fd43abebb967b8e1b",
+        "chk_d2067b599525d5d09e74766f16e3518d",
+        "chk_d8b767a8fbe7b1b0b021f06330648c79",
+        "chk_f9706e33895ffa3b056ec907af2d3598"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-092",
@@ -2229,7 +3261,23 @@
       }
     ],
     "reference_answer": "DGX 要求 580+；595 及以后建议升到 DGX OS 8（该驱动的验证栈）。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_5555271370e346ef77d9992dabbaa359",
+        "par_eba8f4d565bbe1a46bc1d8a15c25aa32"
+      ],
+      "child_ids": [
+        "chk_24d2690b7f6a927f9cdf4e944a96e245",
+        "chk_2a28b6bdb85974867aa8a00e723d8cee",
+        "chk_2e8f5de4b4d689a88b2d43494570778b",
+        "chk_6abca488e30f75d805e4072116e0217e",
+        "chk_6e760b4314cfaf0876df8b2b7bf36227",
+        "chk_8fee9edcaf43514bf34cb4c7d32095de"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-093",
@@ -2256,7 +3304,21 @@
       }
     ],
     "reference_answer": "MLNX_OFED 最后独立版支持 3 年；双口 QSFP112 的 ConnectX-7 SuperNIC 最高 200 Gb/s。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_6f1cfbcb1fc8da1b561193a9b0982f5b",
+        "par_839591bb7bc9d562c184c5727e662f88"
+      ],
+      "child_ids": [
+        "chk_08e03f4bf76e70b3dc70b79632bc44cf",
+        "chk_782e2dae481beaab45cb1e655019f8a8",
+        "chk_7aed689181d4d5a401075292f5cff3c2",
+        "chk_8d922ff7d1999d358c251dbd4fa87fdd"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-094",
@@ -2283,7 +3345,20 @@
       }
     ],
     "reference_answer": "单 SU 聚合 96 × 400 Gb/s；满配 fabric 按 576 节点设计。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_01a75de67526aaa9aaaaed1e6cfb37b1",
+        "par_f6a4e06b63cf24f9b49539f3eeb46813"
+      ],
+      "child_ids": [
+        "chk_3c2cd00fe373a08800ef54ae9ffe1aef",
+        "chk_548f15b16ffb6fb1e7aa90d5181ca90f",
+        "chk_653d01f782c5696ea2222bcbcde19c69"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-095",
@@ -2322,7 +3397,35 @@
       }
     ],
     "reference_answer": "噪声上限 85 dBA（8 小时加权）；DGX-1 约 134 lbs，需要吊装设备。",
-    "note": ""
+    "note": "",
+    "gold_points": {
+      "parent_ids": [
+        "par_4eba908bb08791353cddfd594ab568cf",
+        "par_5031390a9b38e70e3c65ee6693fb8965",
+        "par_90c267a0297dbbc27291f64425828075",
+        "par_b37fbaefe0076e24bad54236475316ed",
+        "par_b969ea92315cd88c9e44d6b557699e08",
+        "par_f48c7fb10ebdbcbb553db63c11893df7"
+      ],
+      "child_ids": [
+        "chk_2ef41b17eed969db5a478ba4ecebd6fd",
+        "chk_333cc9e5cecf50371bb93d8f0d03d2d3",
+        "chk_395f3d871ac754f0760d53e211f9239c",
+        "chk_645bae7dbc4d4cb6e2b2907daafbcbc8",
+        "chk_661fbb0001ea4c49e12da8b593fb91dc",
+        "chk_71b625f6884df1e8f2abd38b3fe84d72",
+        "chk_ad22589ade228bf62465c9617e20e16a",
+        "chk_af5d17051aa007422e329c85ca80c8bc",
+        "chk_b5dd2f2eabf8d9a71af80a6c61903bdd",
+        "chk_b821f7fc160f1f53f9d09a8961dc2b49",
+        "chk_b85f0d6db619a51b33b67e20e90aede7",
+        "chk_cf84cb7818f773d44588453acd1cdc6b",
+        "chk_dc719519575d293aaa0c43c313476b2d",
+        "chk_de2b31f74ccf5d7e82f96d25be44d476"
+      ],
+      "status": "ok",
+      "match_mode": "exact"
+    }
   },
   {
     "qid": "eval-096",

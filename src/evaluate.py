@@ -28,7 +28,7 @@ from pathlib import Path
 import src.retrieve as retrieve_module
 from . import raglog
 from .config import QUESTIONS_PATH, TOP_K
-from .eval_compare import compare_modes, diff_baseline
+from .eval_compare import compare_modes, diff_baseline, runs_comparable
 from .eval_logs import aggregate, latest_run, load_traces, score_traces
 from .eval_metrics import DEFAULT_BOOT, paired_bootstrap
 from .ollama_client import embed_texts
@@ -177,6 +177,12 @@ def render_markdown(payload) -> str:
         f" + 负样本 {metrics.get('n_negative_questions', 0)} 题（不计入） |"
     )
     lines.append(f"| trace 数 | {metrics['n_traces']} |")
+    index_meta = payload.get("index") or {}
+    if index_meta.get("runner") == "store":
+        lines.append(
+            f"| 索引 | Qdrant `{index_meta.get('collection')}` + Document Store"
+            f"（{index_meta.get('parents')} 父块） |"
+        )
     if payload.get("unmatched"):
         lines.append(f"| 未匹配 qid | {', '.join(payload['unmatched'][:6])}{' …' if len(payload['unmatched']) > 6 else ''} |")
     lines.append("")
@@ -245,6 +251,14 @@ def render_markdown(payload) -> str:
         lines.append("> 配对检验只看「一成一败」的题：都不中说明这题当前检索全军覆没，不计入模式差异。\n")
 
     prev = payload.get("deltas_vs_prev") or {}
+    if prev.get("skipped"):
+        lines.append("## 与上一份日志的逐题配对")
+        lines.append("")
+        lines.append(
+            f"上一份 run：`{prev['previous_run']}` —— **不可比，已跳过**（{prev['skipped']}）。"
+            "跨索引/跨题集的差值没有意义，不写进报告。"
+        )
+        lines.append("")
     if prev.get("by_mode"):
         lines.append(f"## 与上一份日志的逐题配对（hit@{payload.get('paired_k')}）\n")
         lines.append(f"上一份 run：`{prev['previous_run']}`\n")
@@ -270,8 +284,8 @@ def render_markdown(payload) -> str:
             )
         else:
             lines.append(
-                "- ⚠️ 日志缺少 `cos_mean` / `cos_std`（旧版日志），无法计算 z 分数；"
-                "请重跑 `python -m src.evaluate run`。"
+                "- ⚠️ 本 run 未采集 `cos_mean` / `cos_std`，z 分数不可算。"
+                "语义路（dense/hybrid）应当采集；出现这行说明统计量写入失败。"
             )
         if negatives.get("top1_cos_p50") is not None:
             lines.append(
@@ -338,6 +352,18 @@ def _negative_summary(rows, positives=None):
     return out
 
 
+def _run_meta(path) -> dict:
+    """日志第一行是 run 事件（含 content_hash / dataset_sha256）。"""
+    try:
+        first = Path(path).read_text(encoding="utf-8").splitlines()[0]
+    except (IndexError, OSError):
+        return {}
+    try:
+        return json.loads(first)
+    except ValueError:
+        return {}
+
+
 def build_payload(args):
     questions = load_questions(args.questions)
     path = _resolve_log_path(args.run)
@@ -392,6 +418,10 @@ def _prev_pair(scored, path, questions, args):
     if len(siblings) < 2 or siblings[-1] != path:
         return {}
     prev_path = siblings[-2]
+    comparable, reason = runs_comparable(_run_meta(prev_path), _run_meta(path))
+    if not comparable:
+        # 不可比就一个数都不报：报出来的差值只会被当成「改进」
+        return {"previous_run": prev_path.stem, "by_mode": {}, "skipped": reason}
     prev_scored = score_traces(load_traces(prev_path), questions, ks=args.ks)
     matrix_now = {(r["qid"], r["mode"]): r for r in scored["positives"]}
     matrix_prev = {(r["qid"], r["mode"]): r for r in prev_scored["positives"]}

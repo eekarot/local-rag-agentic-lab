@@ -1,9 +1,9 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.8\
-> **日期**：2026-11-02\
+> **文档版本**：2.9
+> **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
-> RAG 数据处理与跨语言检索工程。\
+> RAG 数据处理与跨语言检索工程。
 > **主要场景**：用户使用中文提问，知识库主要为英文文档；文档切分需要尽量保持语义完整；检索需要兼顾召回率、准确率、延迟和本地资源限制。
 
 ------------------------------------------------------------------------
@@ -2118,6 +2118,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D25 | D15,D23 | ✅ **已完成（2026-11-04）** 英文 lexical（`src/rag/store/lexical.py`：`ensure_text_index` + `fulltext_filter`(OR) + `load_payloads`/`build_bm25`/`BM25Index` + CLI 中英对比）。**依赖已解除**：直接用评估集的 `query_en`（§17.11.3），不等 D23 翻译服务 | `python -m src.rag.store.lexical --questions experiments/questions.json --k 10` → 83 题可判定：中文 query **46/83（55.42%）** vs 英文 query **57/83（68.67%）**，**+11 条**；关键词类子集 32 题：**13/32（40.62%）vs 24/32（75.00%）**，+11 条 / Recall **+32.55 pt** |
 | D26 | D24 | 应用层 RRF 三路融合 + 跨列表按 `chunk_id` 去重 | 输出无重复 `chunk_id`；同 chunk 多路命中分数正确累加；单测覆盖 k=60、并列名次、空列表 |
 | D27 | D11,B02,B06 | ✅ **已完成（2026-11-04）** 评估集扩到 **101 条中英成对题**（`src/eval_bilingual.py` 校验骨架 + `experiments/expand_questions.py` 增量扩题） | `python -m src.eval_bilingual check --min-total 100` → **0 error**；`python -m src.eval_dataset check` → **0 error**；**成对率 100.00%（101/101）**、`topic` **8/8 覆盖**（concept_zh 6 / zh_with_en_term 9 / acronym_model 8 / number_spec 24 / paraphrase 6 / multi_condition 3 / cross_chunk 27 / no_answer 18）、`difficulty` easy 29 / normal 51 / hard 21、待审草稿 **0** |
+| **D27b** | D20,D27 | ✅ **已完成（2026-11-04）** gold_spans → 新库映射（`src/eval_gold.py`）+ 新库 L1 跑批入口（`src/eval_store.py`） | `python -m src.eval_gold` → 101 题：**ok 82 / ambiguous 1 / unmatched 0 / negative 18**，可用于新库评估 **83 题**，gold 父块数 p50 = 1、match_mode 全部 **exact**；`python -m src.eval_store run --k 10` + `python -m src.evaluate measure latest --main-mode hybrid --write-baseline` → **83 正 + 18 负、249 trace**，hybrid Recall@10 **72.59%±8.3** / hit@10 **84.34%** / MRR@10 0.509；`python -m src.evaluate compare latest` → **结论 ok** |
 | D28 | D27,D26 | 消融矩阵 A–E 跑通并出报告 | A–E 每格给出 Recall@5/@10、MRR@10、nDCG@10、P50/P95、翻译耗时；配 McNemar / bootstrap CI |
 | D29 | D28 | 语言不平衡治理（同语言加权或来源配额） | 中文语料切片不低于改造前水平（`hybrid` 70.0% / `hybrid_score` 75.0%），同时英文切片下降不超过基线 CI 半宽 |
 | D30 | D28 | 跨语言门槛核算 | 中文问英文语料 Recall@10 报告值（当前 31.9%）与门槛 0.85 的差距归因表（翻译/精排/Parent/语料失衡各占多少） |
@@ -2375,6 +2376,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D22 | ✅ 2026-11-04 | `src/rag/lang/detect.py`（`cjk_char_count` / `latin_word_count` / `language_ratio` / `detect` / `detect_batch` / `summarize` + CLI） | 评估集 202 条**准确率 100%**；混排样例 `HNSW 是什么？`→zh、`What is RRF?`→en、`8192`→unknown |
 | D25 | ✅ 2026-11-04 | `src/rag/store/lexical.py`（`tokenize_en` / `BM25Index` / `parent_hits` / `ensure_text_index` / `fulltext_filter` / `load_payloads` / CLI） | 83 题：中文 46/83 vs 英文 57/83（**+11**）；关键词类 32 题 **13/32 vs 24/32**；Qdrant text 索引 38,865 点建成功；修 AND→OR 语义 bug |
 | D23 | ✅ 2026-11-04 | `src/rag/translate/terms.py`（`protect_tokens`/`missing_terms`/`retention`）、`cache.py`（SQLite，键含 model+version）、`service.py`（`TranslateService`/`parse_json_reply`/`ollama_provider`/CLI）；`ollama_client.chat*` 加 `fmt`(JSON 模式) | 202 条成功率 **100%**、术语保留 **100%**、缓存 **3100×**、超时全部降级为原文 |
+| D27b | ✅ 2026-11-04 | `src/eval_gold.py`（`normalize`/`map_question`/`build_gold_points`/`apply_gold_points`/CLI）、`src/eval_store.py`（`parent_ranked`/`rrf_fuse`/`CorpusCosStats`/`StoreRetriever`/`run_questions`）、`eval_logs.score_traces` 按 `gold_points` 分流、`raglog.set_index_meta`、`eval_compare.runs_comparable` | 83 题 gold 落地（0 未命中）；新库基线 hybrid Recall@10 **72.59%**、hit@10 **84.34%** |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2456,6 +2458,84 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D27b 实测：gold 落地 + 新库正式基线**
+
+两件事合在一起做，因为它们互为前提：**没有新库 gold，新库分数恒为 0；没有新库基线，
+后面所有「提升 x 个点」都无法判断是不是噪声。**
+
+**① gold_spans → 新库 parent/child（`src/eval_gold.py`）**
+
+`questions.json` 里的 `gold_chunks` 是旧 81,027-chunk 索引的 `rag_basics.md::chunk-0000`，
+新库是 Qdrant 38,865 child / 25,411 parent，两套 id 空间不相交。映射规则先严后宽：
+
+1. 精确：`parents.content LIKE '%span%'`；
+2. 归一化：两边空白折叠成单空格再比（PDF 转出的文本常有双空格/硬换行，人工抄 span 会写成单空格）。
+
+| 结果 | 题数 | 含义 |
+|---|---|---|
+| `ok` | **82** | 全部 span 命中且不过泛 |
+| `ambiguous` | **1**（`eval-030`） | 一个 span 命中 **12** 个父块，分数不可信 |
+| `unmatched` | **0** | —— 说明语料与旧索引是同一批文件 |
+| `negative` | 18 | 负样本不写 gold |
+
+- 可用 **83 题**；`match_mode` **全部 exact**（一次都没用到归一化兜底）；gold 父块数 **p50 = 1**（45 题为 1、24 题为 2、少数 3–6 题）；
+- `eval-030`（「DGX RHEL8 安装指南建议如何处理 BMC 的默认用户名？」）的 span 是 BCM 文档里反复出现的样板句，落 12 个父块——同一题在 D14 的 A/B 里也异常过，两处独立指向同一个问题：**这题必须人工点名具体文档**。
+
+**② 新库 L1 正式基线（`src/eval_store.py` → `experiments/baseline.json`）**
+
+三个模式都在**父块**层排名（与 `gold_points.parent_ids` 同口径）：
+
+| 模式 | 实现 | 为什么这么选 |
+|---|---|---|
+| `dense` | bge-m3 query 向量 → Qdrant ANN（多捞 4 倍）→ 子块收敛成父块 | 语义召回，跨语言主力 |
+| `lexical` | 父块正文 **jieba BM25**（25,411 父块，建索引 15 s） | 型号/数字这类词面命中，中文分词 |
+| `hybrid` | **RRF**（k=60）融合前两路 | 两路分数量纲不同（余弦 vs BM25），加权和要调权重且随库漂移；RRF 只用名次 |
+
+**基线数字（83 正 + 18 负，249 trace，`run_id=20261104T113427-12fd`）**：
+
+| 模式 | Recall@4 | Recall@10 | hit@10 | full@10 | MRR@10 | p50 / p95 |
+|---|---|---|---|---|---|---|
+| dense | 52.91%±10.1 | 64.86%±8.9 | 77.11% | 53.01% | 0.506 | 12 / 31 ms |
+| lexical | 43.47%±9.8 | 47.69%±9.9 | 53.01% | 42.17% | 0.379 | 5 / 25 ms |
+| **hybrid** | 49.50%±9.8 | **72.59%±8.3** | **84.34%** | 62.65% | **0.509** | 17 / 38 ms |
+
+`hybrid` 切片（这是 Phase 3 要动的部分）：
+
+| 切片 | n | Recall@4 | Recall@10 | MRR@10 |
+|---|---|---|---|---|
+| type=concept | 23 | 87.0% | 100.0% | 0.718 |
+| type=fact | 33 | 36.4% | 70.7% | 0.370 |
+| type=multi_hop | 27 | 33.6% | 51.5% | 0.500 |
+| corpus=中文语料 | 27 | **85.2%** | **98.1%** | 0.760 |
+| corpus=英文语料（中文提问） | 56 | **32.3%** | **60.3%** | 0.388 |
+
+**跨语言鸿沟 37.8 pt（98.1% vs 60.3%）**，与 D27 在旧索引上测到的 36.9 pt 几乎一致——
+说明这个差距不是索引实现问题，是**语料语言**问题，Phase 3 的存在理由再次被同一批数据确认。
+
+负样本（供 L2）：top1 对全库的 z 分数 p50 **+4.28** / max **+6.77**；正样本 z 中位数 +4.94 −
+负样本 +4.28 = **+0.66** → **依旧不可以用单一向量阈值做弃答判定**（结论与旧基线一致）。
+
+**为让这份基线可信做的三处修复（都是真错，不是配置）**：
+
+1. **`_prev_pair` 会跨索引配对**：新库 run 的「上一份日志」是旧 81k 索引的 run，逐题差值
+   报成 `hybrid +0.578 [+0.470, +0.687]`——会被读成「改进了 57.8 个点」。修法：
+   `eval_compare.runs_comparable()` 先比 `content_hash` 与 `dataset_sha256`，不可比就**一个数都不报**，
+   报告里写「不可比，已跳过」。
+2. **报告里的「复现」命令指向错的入口**：老代码硬编码 `python -m src.evaluate run`——那跑的是
+   `storage/index.json` 旧链路。修法：run 事件里带 `index.runner`，`render_markdown` 按 runner 输出
+   `python -m src.eval_store run`。
+3. **负样本 z 分数拿不到**：旧路径从索引统计里取 `cos_mean/cos_std`，新链路没有。修法：
+   `CorpusCosStats` 用一次性扫全库（38,865×1024，20 s）算出 μ 与二阶矩 M（4 MB 缓存），
+   之后每题 `O(d²)` **精确**得到 E[cos] 与 std——不是抽样近似。
+
+**两个反直觉的数字必须写明**：
+
+- `hybrid` 的 Recall@4（49.5%）**低于** `dense`（52.9%），但 Recall@10 高 7.7 pt、hit@10 高 7.2 pt。
+  RRF 会把两路都靠前的结果抬上来，代价是**把单路的第一名挤后**。RAG 只放 4–8 条上下文，
+  所以这个「@4 反降」必须在 D26 的融合参数里继续盯。
+- `dense` vs `hybrid` 的 McNemar **p=0.5034（不显著）**：83 题上 7 pt 的 hit@10 差距还没到统计显著。
+  换句话说，现在**不能**宣称「混合检索比纯向量好」，只能说方向一致、样本不够。
 
 **D23 实测：翻译服务（严格 JSON + 术语保护 + 缓存 + 降级）**
 
@@ -2827,6 +2907,10 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.6                     2026-11-04              D22 落地：语言识别按「汉字数/(汉字数+英文单词数)」判定，
   2.7                     2026-11-04              D25 落地：英文 lexical = Qdrant full-text 召回 + 应用层 BM25 排序
   2.8                     2026-11-04              D23 落地：Query 翻译服务（严格 JSON + 术语保护 + SQLite 缓存 +
+  2.9                     2026-11-04              D27b 落地：gold_spans → 新库 parent 映射（83 题，0 未命中）+ 新库 L1 正式基线
+                                                  （hybrid Recall@10 72.59% / hit@10 84.34%，跨语言鸿沟 37.8 pt）。
+                                                  三处修复：跨索引配对会虚报 +57.8pt、报告复现命令指向旧入口、
+                                                  负样本 z 分数缺统计量（CorpusCosStats 精确解）
                                                   四态降级，永不抛异常）。202 条成功率 100%、术语保留 100%、
                                                   缓存 3100×。四个真 bug：提示词漏进译文（术语检查照样过）、
                                                   温度 0 重试无效、Windows sqlite 不关闭、cls.provider 变绑定方法

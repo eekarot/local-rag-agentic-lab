@@ -18,6 +18,10 @@ data/
 experiments/reports/
 experiments/probes/
 experiments/baseline.json
+experiments/baseline_old*.json
+# gold_spans→新库 parent 映射明细（可由 python -m src.eval_gold 重新生成，questions.json 里已内嵌）
+experiments/gold_points.json
+experiments/questions.json.bak
 
 # ---- 工具与缓存 ----
 

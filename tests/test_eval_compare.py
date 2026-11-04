@@ -84,3 +84,33 @@ class TestCompareModes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RunsComparableTest(unittest.TestCase):
+    """逐题配对的前提：同一个检索器 + 同一套题。"""
+
+    def test_same_everything(self):
+        from src.eval_compare import runs_comparable
+
+        meta = {"content_hash": "a", "dataset_sha256": "d"}
+        self.assertEqual(runs_comparable(meta, dict(meta))[0], True)
+
+    def test_index_changed_is_not_comparable(self):
+        from src.eval_compare import runs_comparable
+
+        ok, reason = runs_comparable(
+            {"content_hash": "a", "dataset_sha256": "d"},
+            {"content_hash": "b", "dataset_sha256": "d"},
+        )
+        self.assertFalse(ok)
+        self.assertIn("content_hash", reason)
+
+    def test_dataset_changed_is_not_comparable(self):
+        from src.eval_compare import runs_comparable
+
+        ok, reason = runs_comparable(
+            {"content_hash": "a", "dataset_sha256": "d1"},
+            {"content_hash": "a", "dataset_sha256": "d2"},
+        )
+        self.assertFalse(ok)
+        self.assertIn("题目集", reason)
