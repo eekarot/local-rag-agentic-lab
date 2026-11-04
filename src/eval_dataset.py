@@ -84,6 +84,10 @@ def _span_locations(item, records, cache):
     return results
 
 
+#: span 在旧索引里命中多少处就算「需要人工点名」。已有显式 `gold_points` 时只降级为警告。
+SPAN_HIT_ERROR_THRESHOLD = 5
+
+
 def validate(path=QUESTIONS_PATH, resolve_spans=False, verbose=True):
     """返回 (errors, warnings)。errors 非空表示题目文件不可用。"""
     data = json.loads(open(path, encoding="utf-8").read()) if not hasattr(path, "read_text") else json.loads(path.read_text(encoding="utf-8"))
@@ -109,15 +113,26 @@ def validate(path=QUESTIONS_PATH, resolve_spans=False, verbose=True):
 
         spans = item.get("gold_spans") or []
         declared = item.get("gold_chunks") or []
+        # 新库（D20 之后）的 gold 是 parent id，写在 gold_points 里。已有显式映射时，
+        # 「span 命中多处 / 旧索引没覆盖」都不再是错误——校验器的本意是逼出人工确认，
+        # 而映射已经人工确认过了（详见 §17.11.3）。
+        mapped_points = (item.get("gold_points") or {}).get("parent_ids") or []
         if question_type != "negative":
             if not spans and not declared:
                 errors.append(f"{label}: 正样本必须有 gold_spans 或 gold_chunks")
             for span, hits in _span_locations(item, records, cache):
                 if not hits:
-                    errors.append(f"{label}: gold_span 在语料里定位不到：{span[:40]}…")
-                elif len(hits) >= 5 and not declared:
+                    if mapped_points:
+                        warnings.append(
+                            f"{label}: gold_span 不在旧 81k 索引里（该文档只进了新库），"
+                            f"已由 gold_points 映射到 {len(mapped_points)} 个父块：{span[:30]}…"
+                        )
+                    else:
+                        errors.append(f"{label}: gold_span 在语料里定位不到：{span[:40]}…")
+                elif (len(hits) >= SPAN_HIT_ERROR_THRESHOLD
+                      and not declared and not mapped_points):
                     errors.append(f"{label}: gold_span 命中 {len(hits)} 处（≥5），需要人工指定 id：{span[:30]}…")
-                elif len(hits) >= 5:
+                elif len(hits) >= SPAN_HIT_ERROR_THRESHOLD:
                     warnings.append(
                         f"{label}: gold_span 命中 {len(hits)} 处（跨文档重复），已用显式 gold_chunks "
                         f"收敛到 {len(declared)} 条"

@@ -29,7 +29,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -62,7 +62,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -95,7 +95,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -132,7 +132,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -165,7 +165,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -198,7 +198,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -231,7 +231,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -264,7 +264,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -296,7 +296,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -329,7 +329,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -365,7 +365,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -397,7 +397,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -430,7 +430,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -463,7 +463,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -496,7 +496,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -529,7 +529,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -567,7 +567,7 @@
         "chk_fcb833db9d6eddae37029a8797d03204"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -609,7 +609,7 @@
         "chk_fcb833db9d6eddae37029a8797d03204"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -651,7 +651,7 @@
         "chk_5e302e4e2b8518f4d77e03c54209d745"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -689,7 +689,7 @@
         "chk_5e302e4e2b8518f4d77e03c54209d745"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -727,7 +727,7 @@
         "chk_6be0334de777cd2561f7b2a34563f341"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -761,7 +761,7 @@
         "chk_df7e04c39801c1853e63398d36d28242"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -795,7 +795,7 @@
         "chk_df7e04c39801c1853e63398d36d28242"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -831,7 +831,7 @@
         "chk_1e1dce66db774dedea1743410164829f"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -864,7 +864,7 @@
         "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -897,7 +897,7 @@
         "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -929,7 +929,7 @@
         "chk_c51b72929cbe44ea2819ec4be9bd8009"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -965,7 +965,7 @@
         "chk_af5a1b4d5e7d005c1373fe1a0eb58f18"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1001,7 +1001,7 @@
         "chk_af5a1b4d5e7d005c1373fe1a0eb58f18"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1061,8 +1061,8 @@
         "chk_cd6dbbead7a7f34945fc8aa3079c74a8",
         "chk_f5f5a24e59df8a95ba85a4063b6167bc"
       ],
-      "status": "ambiguous",
-      "match_mode": "exact"
+      "status": "ok",
+      "match_mode": "explicit"
     }
   },
   {
@@ -1111,7 +1111,7 @@
         "chk_f538facd6f6dc60e44a967ba3a919fe8"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1144,7 +1144,7 @@
         "chk_cedefbe240fa1e2f9e84caa7e7e30156"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1181,7 +1181,7 @@
         "chk_1e1dce66db774dedea1743410164829f"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1232,7 +1232,7 @@
         "chk_fcb833db9d6eddae37029a8797d03204"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1287,7 +1287,7 @@
         "chk_fcb833db9d6eddae37029a8797d03204"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1322,7 +1322,7 @@
         "chk_df7e04c39801c1853e63398d36d28242"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1362,7 +1362,7 @@
         "chk_cedefbe240fa1e2f9e84caa7e7e30156"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1403,7 +1403,7 @@
         "chk_af5a1b4d5e7d005c1373fe1a0eb58f18"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1449,7 +1449,7 @@
         "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1487,7 +1487,7 @@
         "chk_ec6c8f60c08d6342761fde0acdb0ef0b"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1545,7 +1545,7 @@
         "chk_f538facd6f6dc60e44a967ba3a919fe8"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1583,7 +1583,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1623,7 +1623,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1667,7 +1667,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1709,7 +1709,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1749,7 +1749,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1787,7 +1787,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -1831,7 +1831,7 @@
         "chk_cedefbe240fa1e2f9e84caa7e7e30156"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2057,7 +2057,7 @@
         "chk_a82687a2444884221f5d7d5ea1abba6c"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2095,7 +2095,7 @@
         "chk_e98988a5d2e0c1589b16f24b79842831"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2128,7 +2128,7 @@
         "chk_653d01f782c5696ea2222bcbcde19c69"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2166,7 +2166,7 @@
         "chk_a4b626a5124c2ba969120e78128fa97a"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2204,7 +2204,7 @@
         "chk_e6bfeced370f36385b0297793b657651"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2242,7 +2242,7 @@
         "chk_e6bfeced370f36385b0297793b657651"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2288,7 +2288,7 @@
         "chk_de2b31f74ccf5d7e82f96d25be44d476"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2326,7 +2326,7 @@
         "chk_d8b767a8fbe7b1b0b021f06330648c79"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2363,7 +2363,7 @@
         "chk_f9706e33895ffa3b056ec907af2d3598"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2400,7 +2400,7 @@
         "chk_add566f22fab5dee1cbdc14b23d1b189"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2442,7 +2442,7 @@
         "chk_8fee9edcaf43514bf34cb4c7d32095de"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2486,7 +2486,7 @@
         "chk_d270aa3534ddbbf6af9d776d0aed909e"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2519,7 +2519,7 @@
         "chk_7aed689181d4d5a401075292f5cff3c2"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2551,7 +2551,7 @@
         "chk_3c6000a64be88afad56fad3b3b2f9258"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2584,7 +2584,7 @@
         "chk_653d01f782c5696ea2222bcbcde19c69"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2622,7 +2622,7 @@
         "chk_d648b872b35e1cb2c507774558aff6d0"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2656,7 +2656,7 @@
         "chk_fcf59c2022d974ba3d8a07516189fb21"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2689,7 +2689,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2722,7 +2722,7 @@
         "chk_f4fe25884d673e07ba9dbbf8ff481c8d"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2754,7 +2754,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2786,7 +2786,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2818,7 +2818,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2850,7 +2850,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2882,7 +2882,7 @@
         "chk_df4385907be5aaac0dd356ce605e6c08"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2935,7 +2935,7 @@
         "chk_a82687a2444884221f5d7d5ea1abba6c"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -2986,7 +2986,7 @@
         "chk_e6bfeced370f36385b0297793b657651"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3036,7 +3036,7 @@
         "chk_e6bfeced370f36385b0297793b657651"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3077,7 +3077,7 @@
         "chk_653d01f782c5696ea2222bcbcde19c69"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3128,7 +3128,7 @@
         "chk_e98988a5d2e0c1589b16f24b79842831"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3175,7 +3175,7 @@
         "chk_fcf59c2022d974ba3d8a07516189fb21"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3225,7 +3225,7 @@
         "chk_f9706e33895ffa3b056ec907af2d3598"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3276,7 +3276,7 @@
         "chk_8fee9edcaf43514bf34cb4c7d32095de"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3317,7 +3317,7 @@
         "chk_8d922ff7d1999d358c251dbd4fa87fdd"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3357,7 +3357,7 @@
         "chk_653d01f782c5696ea2222bcbcde19c69"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3424,7 +3424,7 @@
         "chk_de2b31f74ccf5d7e82f96d25be44d476"
       ],
       "status": "ok",
-      "match_mode": "exact"
+      "match_mode": "explicit"
     }
   },
   {
@@ -3516,5 +3516,3015 @@
     "gold_chunks": [],
     "reference_answer": "",
     "note": "日期/地区类：文档无任何区域上市时间表。"
+  },
+  {
+    "qid": "eval-102",
+    "question": "这份入库指南的重点是哪类数据的批量入库？",
+    "query_en": "Which data type does the ingest guide focus on for bulk ingest?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "This guide covers multiple methods to ingest enterprise data into Milvus Vector database based type of data and size of data however the focus is on Wiki Text Bulk Ingest with text-only data."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_cb0e71e68e736a71b750f43965422a39"
+      ],
+      "child_ids": [
+        "chk_a9fce606c5d70862c62394affa754f70",
+        "chk_e4fbd0296fbc6f8adca4701147606fcf",
+        "chk_f1755201fbd9eaf50658fb49f0fc8f03"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "纯文本（text-only）的 Wiki Text 批量入库，而不是多模态数据。",
+    "note": ""
+  },
+  {
+    "qid": "eval-103",
+    "question": "把嵌入先写到 MinIO 之后，批量进 Milvus 的分段是多大？",
+    "query_en": "What segment size is used to bulk ingest Milvus after embeddings are stored in MinIO?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Store embeddings in MinIO object store bucket and then bulk ingest in 1GB segments (1K docs) directly into Milvus Vector DB."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_cb0e71e68e736a71b750f43965422a39"
+      ],
+      "child_ids": [
+        "chk_a9fce606c5d70862c62394affa754f70",
+        "chk_e4fbd0296fbc6f8adca4701147606fcf",
+        "chk_f1755201fbd9eaf50658fb49f0fc8f03"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "按 1 GB 分段（每段约 1K 文档）直接写入 Milvus。",
+    "note": ""
+  },
+  {
+    "qid": "eval-104",
+    "question": "Ingestor 服务用哪个端点接收文档入库请求？",
+    "query_en": "Which endpoint does the Ingestor server use to receive document ingest requests?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The Ingestor server processes document ingest requests (HTTP GET and POST to endpoint `/v1/documents`) and sends responses (HTTP response Code 200/400/500) to the user when ingestion is completed or failed."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_7bd6eab41d1706eb406e0da141586d05",
+        "par_9cdbf8e074c162f4938ec29076d9dd27"
+      ],
+      "child_ids": [
+        "chk_004297dbb2183bc120a67535cb449ccd",
+        "chk_654fd84fee0dc4f493551c54ee840b41",
+        "chk_9802ff4a2b60c3ad09580348c0014343",
+        "chk_a774831f1734130feffbb85ea34e4c47",
+        "chk_b7a38ff94d45c92459d06a109bfbd631"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "`/v1/documents`，用 HTTP GET/POST 提交，返回 200/400/500。",
+    "note": ""
+  },
+  {
+    "qid": "eval-105",
+    "question": "NV-Ingest 侧能撑多高的文档并发，取决于哪些资源？",
+    "query_en": "What does the achievable document concurrency on the NV-Ingest side depend on?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "This depends on the number of NV-Ingest server workers available and CPU resources allocated."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_7bd6eab41d1706eb406e0da141586d05"
+      ],
+      "child_ids": [
+        "chk_654fd84fee0dc4f493551c54ee840b41",
+        "chk_9802ff4a2b60c3ad09580348c0014343",
+        "chk_b7a38ff94d45c92459d06a109bfbd631"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "取决于可用的 NV-Ingest server worker 数量与分配的 CPU 资源。",
+    "note": ""
+  },
+  {
+    "qid": "eval-106",
+    "question": "做 NV-Ingest 入库压测时，客户端和服务端分别要怎么扩？",
+    "query_en": "When benchmarking NV-Ingest ingestion, how should the client side and the server side be scaled respectively?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For ingestions benchmarking on the NV-Ingest client side increase the document concurrent requests (CR):",
+      "and then scale out server side services NV-Ingest along with Embedding and Extraction NIM microservices to support the higher concurrency."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_cb0e71e68e736a71b750f43965422a39"
+      ],
+      "child_ids": [
+        "chk_a9fce606c5d70862c62394affa754f70",
+        "chk_e4fbd0296fbc6f8adca4701147606fcf",
+        "chk_f1755201fbd9eaf50658fb49f0fc8f03"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "客户端提高文档并发请求数（CR），服务端把 NV-Ingest 与 Embedding/Extraction NIM 一起扩。",
+    "note": ""
+  },
+  {
+    "qid": "eval-107",
+    "question": "在 Mission Control 里，一个 Scaling Unit 对应多少台 DGX 节点？",
+    "query_en": "In Mission Control, how many DGX nodes make up one Scaling Unit?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The following describes the Mission Control architecture for DGX B200/B300 systems (1 Scaling Unit = 32 DGX nodes)."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6d7be778c3d2c1e257da9346e16624b8"
+      ],
+      "child_ids": [
+        "chk_631c6826362f166cdf9057eaacef0676"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "B200/B300 架构下 1 个 Scaling Unit = 32 台 DGX 节点。",
+    "note": ""
+  },
+  {
+    "qid": "eval-108",
+    "question": "Mission Control 给 B200/B300 和 GB200/GB300 用的控制面节点，CPU 架构分别是什么？",
+    "query_en": "What CPU architecture do Mission Control control plane nodes use for B200/B300 systems, and for GB200/GB300 systems?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "All control plane nodes are x86-based.",
+      "All control plane nodes are Arm-based."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_0d475c3a0ccc7d6645007bf34db0e660",
+        "par_6d7be778c3d2c1e257da9346e16624b8"
+      ],
+      "child_ids": [
+        "chk_27f5ed181af1059c804028a431410b41",
+        "chk_631c6826362f166cdf9057eaacef0676"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "B200/B300 全是 x86；GB200/GB300 全是 Arm。",
+    "note": ""
+  },
+  {
+    "qid": "eval-109",
+    "question": "B200/B300 的 Mission Control 把管理职责分给几组控制面节点？",
+    "query_en": "Into how many groups of control-plane nodes does Mission Control for B200/B300 separate management responsibilities?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The B200/B300 architecture separates management responsibilities across four sets of x86 control-plane node groups."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_be7956ff16f768d5b300a32e060fbb41"
+      ],
+      "child_ids": [
+        "chk_63f43f29075934a573f7f9b371d7e5ed"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "四组 x86 控制面节点。",
+    "note": ""
+  },
+  {
+    "qid": "eval-110",
+    "question": "Slurm 作业开始和结束时自动执行的那组健康检查被称为什么？",
+    "query_en": "What are the health checks called that Slurm runs automatically at the start and end of a job?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "When a Slurm job is submitted, the Autonomous Hardware Recovery Agent automatically runs a set of checks at the start and end of the job to validate node health and stability.",
+      "These are known as Prolog and Epilog checks."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4128d9c475b994359bc333e6da2384ae",
+        "par_4b640f46219754fbe394848d784d6ef7",
+        "par_98a7e053623a8ba020b82f20a9eda464",
+        "par_c6224de7a5d88b733eb6798b20d292fa"
+      ],
+      "child_ids": [
+        "chk_3f07f10fa7d854b7fc4f8448c4d33736",
+        "chk_6cc51abafe06d04b8747938e431517fc",
+        "chk_87f3b6733dc2fcae09565f081a8984de",
+        "chk_f5cc782ced0d09015ea804cbc82c7830"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Prolog 与 Epilog 检查。",
+    "note": ""
+  },
+  {
+    "qid": "eval-111",
+    "question": "这些 Prolog/Epilog 脚本能不能在 AHR 界面里查看或配置？",
+    "query_en": "Can these Prolog and Epilog scripts be viewed or configured in the AHR UI?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "These scripts are automatically pushed to each node when the job runs, but they are not visible or configurable through the NVIDIA Autonomous Hardware Recovery UI."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4128d9c475b994359bc333e6da2384ae",
+        "par_4b640f46219754fbe394848d784d6ef7",
+        "par_98a7e053623a8ba020b82f20a9eda464",
+        "par_c6224de7a5d88b733eb6798b20d292fa"
+      ],
+      "child_ids": [
+        "chk_3f07f10fa7d854b7fc4f8448c4d33736",
+        "chk_6cc51abafe06d04b8747938e431517fc",
+        "chk_87f3b6733dc2fcae09565f081a8984de",
+        "chk_f5cc782ced0d09015ea804cbc82c7830"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "不能；脚本自动下发到节点，界面里看不到也改不了。",
+    "note": ""
+  },
+  {
+    "qid": "eval-112",
+    "question": "周期性检查在 AHR 里被定义成什么？满足什么条件会自动启用？",
+    "query_en": "What are periodic checks defined as in AHR, and under what condition are they enabled automatically?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Unlike the Prolog and Epilog checks, Periodic Checks are defined within the NVIDIA Mission Control autonomous hardware recovery interface as Alarms, and are detailed in the next section.",
+      "They will be automatically enabled for racks that pass Single Rack Testing but may also be manually enabled or disabled for specific racks by running the `ALARMS_ENABLE` AND `ALARMS_DISABLE` runbooks."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4128d9c475b994359bc333e6da2384ae",
+        "par_4b640f46219754fbe394848d784d6ef7",
+        "par_98a7e053623a8ba020b82f20a9eda464",
+        "par_c6224de7a5d88b733eb6798b20d292fa"
+      ],
+      "child_ids": [
+        "chk_3f07f10fa7d854b7fc4f8448c4d33736",
+        "chk_6cc51abafe06d04b8747938e431517fc",
+        "chk_87f3b6733dc2fcae09565f081a8984de",
+        "chk_f5cc782ced0d09015ea804cbc82c7830"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "定义成 Alarm；通过 Single Rack Testing 的机架会自动启用，也可用 ALARMS_ENABLE/ALARMS_DISABLE runbook 手动开关。",
+    "note": ""
+  },
+  {
+    "qid": "eval-113",
+    "question": "AHR 除了做健康检查，还能对机架里的固件做什么？",
+    "query_en": "Besides health checks, what can AHR do to the firmware inside the racks?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "NVIDIA Mission Control autonomous hardware recovery provides functionality for upgrading, cycling, and verifying firmware and the corresponding OS within your GB200 racks."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4d78001c0c04c5ba0002059dc0a61545",
+        "par_958dbe22e2771739d064bbd132cfacfe",
+        "par_bba5ac2e6929468170cdcadaf380d7a8"
+      ],
+      "child_ids": [
+        "chk_1aaa647fefaf16ef1f6aee0ea53f90c2",
+        "chk_477bf8b5673ba1f6f5e749b480f20c4a",
+        "chk_9458b46e1f0f8dc2ae56e6eb4a464966",
+        "chk_ffc4ddfc9206700e758ed458f15f6e2b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "可以升级、上电重启循环（cycling）与校验固件及对应 OS。",
+    "note": ""
+  },
+  {
+    "qid": "eval-114",
+    "question": "NVLink 分区里，默认分区占用了多少个多播组？",
+    "query_en": "How many multicast teams are allocated to the default partition in NVLink partitioning?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The Default Partition is allocated all 1,024 multicast teams."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_81f2d030ccfb114d24d34bc17d4d2640"
+      ],
+      "child_ids": [
+        "chk_1794df465618ae88e92449a06f22ca5d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "全部 1,024 个 multicast teams。",
+    "note": ""
+  },
+  {
+    "qid": "eval-115",
+    "question": "要新建带多播组的分区，第一步必须先做什么？",
+    "query_en": "What must be done first before creating new partitions with multicast teams?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "To create new partitions with multicast teams, delete the default partition first."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_81f2d030ccfb114d24d34bc17d4d2640"
+      ],
+      "child_ids": [
+        "chk_1794df465618ae88e92449a06f22ca5d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "先删掉默认分区。",
+    "note": ""
+  },
+  {
+    "qid": "eval-116",
+    "question": "给一个分区预留多少多播组，是按什么来定的？",
+    "query_en": "What determines how many multicast teams should be reserved for a partition?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The number of teams to reserve to a partition is determined on the expected usage by the partition’s tenant."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_81f2d030ccfb114d24d34bc17d4d2640"
+      ],
+      "child_ids": [
+        "chk_1794df465618ae88e92449a06f22ca5d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "按该分区租户的预期使用量决定。",
+    "note": ""
+  },
+  {
+    "qid": "eval-117",
+    "question": "要在 NVL72 机架上用 NVOS 改分区配置，先 SSH 到哪台机器？",
+    "query_en": "To change partition settings with NVOS on an NVL72 rack, which machine do you SSH into first?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "SSH to the leader NVSwitch within the target NVL72 rack."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_657a9facdaf291a4410bf8d295c4c9ea"
+      ],
+      "child_ids": [
+        "chk_0404102f20ecaa5b1533db2006d6ecf2",
+        "chk_5284a7da12162057d944f9accd21236d",
+        "chk_7ebc43e87c709477b2de49964377f089",
+        "chk_86610a7aaeb8acbe85140a54f5c1af05",
+        "chk_91f68c169b94d5afdca6ddc83bd0a3eb",
+        "chk_ce431f8b7dea6a2c00e9770c64f8abae"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "SSH 到目标 NVL72 机架里的 leader NVSwitch。",
+    "note": ""
+  },
+  {
+    "qid": "eval-118",
+    "question": "系统里用来提交和控制作业的工作负载管理系统是哪个？",
+    "query_en": "Which workload management system is used to submit and control work on the system?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Workload management is the submission and control of work on the system.",
+      "Slurm is the workload management system used."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_105d72e5b74cb86b357a4e88cc4577ef",
+        "par_5e03f335b3ca99e0216d841762042f75",
+        "par_9973cceea0274d4e08d39bb393611603",
+        "par_b8cbd3110ea88324b4d55b26bd48ab4f",
+        "par_c424faa34cb586e50e856260a093d0a2"
+      ],
+      "child_ids": [
+        "chk_080657f79e134f378c7f58563f8919fc",
+        "chk_1a9c9eb8c40bdfd43c08caef40ecfd8b",
+        "chk_57967b18358e30b9d8bc83df0da6d20c",
+        "chk_5c84f66ae434ee92ace329070e7900c7",
+        "chk_68f264f34d035b435d47ee1204b83427",
+        "chk_b6101c4026d1b22ff220e14e62a15306",
+        "chk_bbb856e743f7eaa6ad8d46b500546fe7",
+        "chk_d0c2ad5087a6d2c66cb8a740becaa516",
+        "chk_d23aca150028ffb81b1ffc1ff48c3a6c",
+        "chk_eb73b9a4218070c2d1dbbdc96d4a1b10"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Slurm。",
+    "note": "同一句出现在 DGX OS 快速入门/管理指南的多个版本里，命中多个父块都算正确。"
+  },
+  {
+    "qid": "eval-119",
+    "question": "Slurm 最常用于哪类应用场景？",
+    "query_en": "For which application scenario is Slurm most frequently used?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Slurm is an open-source job scheduling system for Linux clusters, most frequently used for HPC applications."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_5e03f335b3ca99e0216d841762042f75",
+        "par_9973cceea0274d4e08d39bb393611603",
+        "par_b8cbd3110ea88324b4d55b26bd48ab4f"
+      ],
+      "child_ids": [
+        "chk_1a9c9eb8c40bdfd43c08caef40ecfd8b",
+        "chk_68f264f34d035b435d47ee1204b83427",
+        "chk_bbb856e743f7eaa6ad8d46b500546fe7",
+        "chk_d0c2ad5087a6d2c66cb8a740becaa516"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Linux 集群上的 HPC 应用。",
+    "note": ""
+  },
+  {
+    "qid": "eval-120",
+    "question": "Slurm 用哪三类对象来管理计算资源？",
+    "query_en": "Which three object types does Slurm use to manage compute resources?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "SLURM manages compute resources through partitions (queues), nodes (compute servers), and jobs (units of work)."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_9973cceea0274d4e08d39bb393611603"
+      ],
+      "child_ids": [
+        "chk_1a9c9eb8c40bdfd43c08caef40ecfd8b",
+        "chk_d0c2ad5087a6d2c66cb8a740becaa516"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "分区（partition/队列）、节点（node）、作业（job）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-121",
+    "question": "全局在 slurm.conf 里把 DisableRootJobs 设成 Yes 会有什么后果？",
+    "query_en": "What happens if DisableRootJobs is set to Yes globally in slurm.conf?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "If DisableRootJobs has been manually set to Yes at the global level in slurm.conf, that configuration will no longer take effect."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_a1431c080bcca847d1d9803305e2e63e"
+      ],
+      "child_ids": [
+        "chk_7f04dae0d09282d6fa150411e0dc997a"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "该配置不再生效。",
+    "note": ""
+  },
+  {
+    "qid": "eval-122",
+    "question": "怎么确认 NicClusterPolicy 已经生效？该看哪个状态值？",
+    "query_en": "How do you verify that the NicClusterPolicy has been applied, and which status value should you check?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "You verify that the NicClusterPolicy is applied by checking its status.",
+      "In the output, look at STATUS – should be ready when the policy is fully applied:"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_85f290795c40a6ac1f1a377eb9338eec"
+      ],
+      "child_ids": [
+        "chk_15fead5a36c6a8694dac53a4b8c180c2"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "查它的 status，STATUS 为 ready 表示策略已完全生效。",
+    "note": ""
+  },
+  {
+    "qid": "eval-123",
+    "question": "同一张网卡上能不能混用不同的网络类型？",
+    "query_en": "Is it possible to combine different networking types on the same NICs?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "It is impossible to combine different networking types on the same NICs."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_5c687b38fe5b4b709b3cda79c4e92cfe",
+        "par_ae8ee7985ce2622005497f23feea03f2",
+        "par_bfecfd226e455d4c48a65bd866323bc5",
+        "par_fb25fea5aca4eda89e1bf54b37d19197"
+      ],
+      "child_ids": [
+        "chk_03da196a42fecc62ca49a40c544fde10",
+        "chk_275aa544fd2aa451cf3dfd03a799bd85",
+        "chk_287c57e0059bb8450e1245be29daedab",
+        "chk_3e5ef0da5698a641de33a2826a2f0030",
+        "chk_4011af7c9987e62859db13d84dbd09f7",
+        "chk_402e704dd3fa8d4e6d2b0d49cbe4020e",
+        "chk_5da6249a27ce21aec6aee6d7b9bc24c4",
+        "chk_5f78f468a22706838e64495f1a13ddf2",
+        "chk_68ef18211eeb79c8aa500a0d1273f57e",
+        "chk_7d8733345f399c4050de19c763091c09",
+        "chk_b9c58b3434b23738d3e9a8d796aaf62c",
+        "chk_e1c2a14e920e3221547c1d81540be8b1",
+        "chk_fd9792238757f9adcd0678440ea84551"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "不能，同一张网卡上无法组合不同网络类型。",
+    "note": ""
+  },
+  {
+    "qid": "eval-124",
+    "question": "Network Operator 的哪些内核变体只是 Tech Preview？",
+    "query_en": "Which kernel variants for the Network Operator are supported only as a Tech Preview?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "nvidia , aws , azure , and oracle kernel variants are supported as a Tech Preview and have limited testing."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_02f844932f43d052080b744461190c39"
+      ],
+      "child_ids": [
+        "chk_70d52b113b73936f0d7f6ca36f1f1dac"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "nvidia、aws、azure、oracle 变体（只有 generic 是 GA）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-125",
+    "question": "RDMA 子系统处于 shared 模式时，设备在各命名空间里可见性如何？什么时候可以这么用？",
+    "query_en": "In shared RDMA subsystem mode, how are devices exposed across namespaces, and when is shared mode acceptable?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "When RDMA subsystem is in shared mode, RDMA device is accessible in all network namespace.",
+      "When RDMA device isolation among multiple network namespaces is not needed, shared mode can be used."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_926b3d6955094014d13bc010be243c20",
+        "par_c01ec0d2c7b9e895a178a48deb9f00ec"
+      ],
+      "child_ids": [
+        "chk_63a270b69e4198ae0743005540e9f266",
+        "chk_e074d551c54840f97c5ea18bec6246a7"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "所有网络命名空间都能访问 RDMA 设备；不需要做设备隔离时可以用，且这是默认模式。",
+    "note": ""
+  },
+  {
+    "qid": "eval-126",
+    "question": "部署 Network Operator 时官方推荐怎么传参数，为什么不用命令行参数？",
+    "query_en": "How does NVIDIA recommend passing parameters when deploying the Network Operator, and why avoid CLI arguments?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Since several parameters should be provided when creating custom resources during operator deployment, it is recommended to use a configuration file.",
+      "While it is possible to override the parameters via CLI, we recommend to avoid the use of CLI arguments in favor of a configuration file."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6bd793f2123e9e9a89dde1d5f5284821",
+        "par_7f4b3c6f1b6b27da1aba23d74e46a2ca",
+        "par_9695aff19e66909476df9456994c9ee5",
+        "par_a9298436f2950065ca57bf697c1fe596",
+        "par_e8df87eb786b75e8f5bbe259a165a355"
+      ],
+      "child_ids": [
+        "chk_1d3771b9cc7320f5c9763341b2c3ea96",
+        "chk_3bd00780fdf559e48e55e1a743329e24",
+        "chk_6dc2cbf40bb5ced74a304a8818e69b3e",
+        "chk_a5cfd9401e4e9ef3c30031ceb10871f7",
+        "chk_e452dc8b98d3813ac470bbf060846f3c",
+        "chk_e6ee6453be2b287c8aa049171d50db72",
+        "chk_fe55e580b9f4632ceafd7cb252fe357b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "用配置文件；参数多、CLI 覆盖容易出错。",
+    "note": "Network Operator 各版本手册重复同一段部署建议，多父块均正确。"
+  },
+  {
+    "qid": "eval-127",
+    "question": "系统更新换掉了 Linux 内核版本之后，内核模块会怎样？",
+    "query_en": "After a system update changes the Linux kernel version, what happens to the kernel modules?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "If you perform a system update which changes the version of the Linux kernel being used, the packages should automatically rebuild the kernel modules unless precompiled modules are being used."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_5dad3966e741e07f8d7abc2cd70d87ff",
+        "par_b0a15ff2ec21f581ea0cb5a7130686a8"
+      ],
+      "child_ids": [
+        "chk_4fc7116f0810397867259ad452b5ee12",
+        "chk_919f99698269a5480fcddd79f76e5733",
+        "chk_98f45c79c1ae5cea4222ba5d82c47d6a"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "除非用的是预编译模块，否则软件包会自动重建内核模块。",
+    "note": ""
+  },
+  {
+    "qid": "eval-128",
+    "question": "驱动的标准安装用哪种模块，替代方案是什么？",
+    "query_en": "Which modules does the standard driver installation use, and what is the alternative?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The next step describe the standard installation with DKMS modules as provided by NVIDIA.",
+      "An alternative to the standard installation, is the installation with Precompiled Open Kernel modules."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_17bef5dd4c497d3ecb93db318a6b96fd",
+        "par_85afe9c38c4dd784a42343f0dddea47a"
+      ],
+      "child_ids": [
+        "chk_a829f49bd1104f44f2969fab9efd259d",
+        "chk_ef54d88bb1b9cae907bbf8087762f8c3"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "标准安装用 DKMS 模块；替代方案是预编译的 Open Kernel 模块。",
+    "note": ""
+  },
+  {
+    "qid": "eval-129",
+    "question": "默认情况下 Docker 去哪里找镜像？",
+    "query_en": "By default, where does Docker look for images?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "By default, Docker searches for images in Docker Hub, which is a cloud-hosted public and private image registry.",
+      "Docker Hub serves a huge collection of existing images that users can make use of."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_88895187173c3744c6cec8c9de49a444"
+      ],
+      "child_ids": [
+        "chk_da27375b1d66d1ba89678711cd7eadc4"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Docker Hub（云端公共/私有镜像仓库）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-130",
+    "question": "Docker Hub 对请求数量是什么态度？",
+    "query_en": "What kind of limits does Docker Hub maintain on requests?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Docker Hub maintains limits for the number of requests."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_88895187173c3744c6cec8c9de49a444"
+      ],
+      "child_ids": [
+        "chk_da27375b1d66d1ba89678711cd7eadc4"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Docker Hub 对请求数量设有上限。",
+    "note": ""
+  },
+  {
+    "qid": "eval-131",
+    "question": "Harness 这个词原指什么？放到 Agent 语境里又指什么？",
+    "query_en": "What did the word Harness originally refer to, and what does it mean in the context of an Agent?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "这个词原指马具，即套在马身上的缰绳与挽具，不是为了限制马的奔跑能力，而是把这种力量引导到正确的方向上。",
+      "换到Agent 语境里，模型是那匹强大但不可预测的马，Harness 则是把它的能力引导成可靠任务执行的工程外壳。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_47ffce5f8f8995ca22c47eb7b9b871cb"
+      ],
+      "child_ids": [
+        "chk_49067b449bccbe26a05740b83c3b71de",
+        "chk_e2908dad12500c564cc320f86034b21b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "原指马具（缰绳与挽具）；在 Agent 语境里是把模型能力引导成可靠任务执行的工程外壳。",
+    "note": ""
+  },
+  {
+    "qid": "eval-132",
+    "question": "Agent 的 Harness 具体包括哪些基础设施？",
+    "query_en": "What infrastructure does an Agent's Harness include?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "在Agent 中，Harness 包括上下文管理、工具接口、安全约束、验证与纠正等基础设施（详见本章末节）。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_47ffce5f8f8995ca22c47eb7b9b871cb"
+      ],
+      "child_ids": [
+        "chk_49067b449bccbe26a05740b83c3b71de",
+        "chk_e2908dad12500c564cc320f86034b21b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "上下文管理、工具接口、安全约束、验证与纠正等。",
+    "note": ""
+  },
+  {
+    "qid": "eval-133",
+    "question": "为什么模型越强，反而越需要更精细的约束与纠正？",
+    "query_en": "Why does a stronger model need finer constraint, verification, and correction mechanisms?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "模型自主决策的空间越大，出错时的影响面也越大，因此需要更精细的约束、验证和纠正机制来确保可靠性。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_47ffce5f8f8995ca22c47eb7b9b871cb"
+      ],
+      "child_ids": [
+        "chk_49067b449bccbe26a05740b83c3b71de",
+        "chk_e2908dad12500c564cc320f86034b21b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "模型自主决策空间越大，出错时影响面越大。",
+    "note": ""
+  },
+  {
+    "qid": "eval-134",
+    "question": "Harness 工程研究的到底是哪一层代码？",
+    "query_en": "Which layer of code does Harness engineering actually study?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "Harness 工程研究的正是这层“模型之外、Agent 边界之内”的运行与治理代码。",
+      "更精确地说，Harness 不是模型之外的一切，而是Agent 边界内、模型之外的运行与治理层。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4b0a9080f755e063ff17071adc1513cd"
+      ],
+      "child_ids": [
+        "chk_627dc54f5db94eec2746447a84316302",
+        "chk_7a32df13c208d84b4d9c326c9e90a751",
+        "chk_8f7eccb7cbd0b644143604c4bcabbf03",
+        "chk_b7950aa8e6741fd7fecccde2aa4156cf",
+        "chk_c99a7306f1c536a7147fc8b128ee316d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Agent 边界内、模型之外的运行与治理层。",
+    "note": ""
+  },
+  {
+    "qid": "eval-135",
+    "question": "沙箱内随行动变化的文件与进程、外部数据库、网页，属于 Environment 还是 Harness？",
+    "query_en": "Do sandbox files and processes, external databases, and web pages belong to the Environment or to the Harness?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "zh_with_en_term",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "沙箱内随行动变化的文件和进程、外部数据库、网页、用户及物理世界属于Environment。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4b0a9080f755e063ff17071adc1513cd"
+      ],
+      "child_ids": [
+        "chk_627dc54f5db94eec2746447a84316302",
+        "chk_7a32df13c208d84b4d9c326c9e90a751",
+        "chk_8f7eccb7cbd0b644143604c4bcabbf03",
+        "chk_b7950aa8e6741fd7fecccde2aa4156cf",
+        "chk_c99a7306f1c536a7147fc8b128ee316d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "属于 Environment；即使与 Agent 同进程运行也不改变归属。",
+    "note": ""
+  },
+  {
+    "qid": "eval-136",
+    "question": "早期 Agent 框架关注什么，现在的重心又转到了哪里？",
+    "query_en": "What did early Agent frameworks focus on, and where has the focus shifted now?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "早期的Agent 框架主要关注上下文与工具：给模型工具、给模型上下文，让它“能做事”。",
+      "的重心已经转向约束、验证与纠正：确保工具调用是安全的、上下文是经过管理的、错误是可纠正的。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4b0a9080f755e063ff17071adc1513cd"
+      ],
+      "child_ids": [
+        "chk_627dc54f5db94eec2746447a84316302",
+        "chk_7a32df13c208d84b4d9c326c9e90a751",
+        "chk_8f7eccb7cbd0b644143604c4bcabbf03",
+        "chk_b7950aa8e6741fd7fecccde2aa4156cf",
+        "chk_c99a7306f1c536a7147fc8b128ee316d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "早期关注给模型工具与上下文（能做事）；现在转向约束、验证与纠正（不做错事）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-137",
+    "question": "DGX Spark 在中国大陆的官方售价是多少人民币？",
+    "query_en": "What is the official price of DGX Spark in mainland China in RMB?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "价格类：语料里只有技术文档，没有任何区域定价表。"
+  },
+  {
+    "qid": "eval-138",
+    "question": "BCM 11 的商业授权一年要多少钱？",
+    "query_en": "How much does a BCM 11 commercial license cost per year?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "商务报价类：文档只讲功能与许可分类，不给价格。"
+  },
+  {
+    "qid": "eval-139",
+    "question": "Mission Control 2.3.1 的默认登录密码是什么？",
+    "query_en": "What is the default login password for Mission Control 2.3.1?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "凭据类：文档不会写默认口令。"
+  },
+  {
+    "qid": "eval-140",
+    "question": "NV-Ingest 在单台 ARM 节点上每小时能处理多少页文档？",
+    "query_en": "How many pages per hour can NV-Ingest process on a single ARM node?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "缺失基准：文档给的吞吐基准不含 ARM 单机口径。"
+  },
+  {
+    "qid": "eval-141",
+    "question": "DGX B300 在中国的首次交付日期是哪一天？",
+    "query_en": "On what date was DGX B300 first delivered in China?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "日期/地区类：没有任何按国家划分的交付时间表。"
+  },
+  {
+    "qid": "eval-142",
+    "question": "BCM headnode 的高可用靠什么共享服务，哪些目录必须在两台 head 之间共享？",
+    "query_en": "What shared service does BCM headnode HA rely on, and which directories must be shared between head nodes?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "NFS is used for BCM headnode HA.",
+      "User home directories (`/home`) and shared data directories (`/cm_shared`, which includes files such as the DGX OS image) must be shared between head nodes and are stored on an NFS filesystem that both headnodes mount."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_b046bc4ac0d4291c98708ce169233691",
+        "par_e4fa8927a6bfa27510ebc5057b760791"
+      ],
+      "child_ids": [
+        "chk_4ac13082d18b15eb5b3fc5084ecdd110",
+        "chk_f388e72cdb02d4a7af10bca202b5407c"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "NFS；/home 与 /cm_shared（含 DGX OS 镜像）必须共享。",
+    "note": ""
+  },
+  {
+    "qid": "eval-143",
+    "question": "给集群用的 NFS 导出必须满足哪两个条件？",
+    "query_en": "Which two requirements must an NFS export satisfy to be usable by the cluster?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "In particular, the exported NFS directory must be mountable read-write, and files must be allowed to be owned by UID 0 `(root)`; these are indicated by the `rw` and `no_root_squash` directives in the example below."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_b046bc4ac0d4291c98708ce169233691"
+      ],
+      "child_ids": [
+        "chk_4ac13082d18b15eb5b3fc5084ecdd110"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "可读写挂载，且允许文件属于 UID 0（root）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-144",
+    "question": "什么情况下需要重启 CMDaemon？",
+    "query_en": "Under what circumstance do you need to restart CMDaemon?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For instance, a restart may be necessary to activate changes when the CMDaemon configuration file is modified."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_041d2131fea86db62c85db1a6d901aa4",
+        "par_1d1c49ef2d2697a60437a37605df4222"
+      ],
+      "child_ids": [
+        "chk_57b4ed0e03eb13e17338d799e16309cd",
+        "chk_6cdef290664216cd8491377c2d4986da",
+        "chk_ae6b028b1be361ac003c6437c847249b",
+        "chk_b966c24a4061d8fff98957dd1e6f5dd5"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "修改了 CMDaemon 配置文件、需要激活变更时。",
+    "note": ""
+  },
+  {
+    "qid": "eval-145",
+    "question": "BCM 里的 software image 实际是什么东西？",
+    "query_en": "In BCM, what is a software image in practice?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "A software image is a blueprint for the contents of the local filesystems on a compute node.",
+      "In practice, a software image is a directory on the head node containing a full Linux filesystem."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_727cbaf3c3769f8f792dfecd73fb88c1",
+        "par_c1a5902ad1113aa42c17b6ea98f03edc",
+        "par_c90e035128a89b4fa70fcd62bd2030ca",
+        "par_e5ea4de777eac37b8e284a7f36bb3b0c"
+      ],
+      "child_ids": [
+        "chk_47801ca3e40585425d535853f64c2ac9",
+        "chk_58b6cf00d1d062ef8379efcd6554da93",
+        "chk_68201404620a72bc92aa49b9af1a1bbb",
+        "chk_a690821f1df673cae6bededea1f46dd7",
+        "chk_a8883f7c614cb5a0533f98a77d1f53bd",
+        "chk_aa7c7a5aa84cf763359cadad523cbe72",
+        "chk_abbe0ef5466b33743261053610e9b4b4",
+        "chk_bfb6cb7d5ddc0fc41a037c6b4e31c069"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "head 节点上的一个目录，内含完整 Linux 文件系统，是计算节点本地文件系统的蓝图。",
+    "note": ""
+  },
+  {
+    "qid": "eval-146",
+    "question": "给 DGX 节点装系统时用的镜像，名字上有什么标识？",
+    "query_en": "What prefix identifies the image used to provision DGX nodes?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "DGX nodes are provisioned with a copy of the DGX OS image, identified by the dgx- prefix in the image name."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_c1a5902ad1113aa42c17b6ea98f03edc",
+        "par_c90e035128a89b4fa70fcd62bd2030ca"
+      ],
+      "child_ids": [
+        "chk_aa7c7a5aa84cf763359cadad523cbe72",
+        "chk_abbe0ef5466b33743261053610e9b4b4",
+        "chk_bfb6cb7d5ddc0fc41a037c6b4e31c069"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "镜像名带 dgx- 前缀，是 DGX OS 镜像的副本。",
+    "note": ""
+  },
+  {
+    "qid": "eval-147",
+    "question": "BCM 的 trigger 由哪两部分组成？文档里用什么例子说明？",
+    "query_en": "In BCM, what two parts make up a trigger, and what example does the document use?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "A trigger is a sample state condition that runs an action.",
+      "In this case, the sample state condition may be that the metric (Section 6.2.1.8) CPUUser must not exceed 50.",
+      "If it does, then an action (killallyesaction) is run, which should kill the yes processes."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_0bafb5b62716b0c4dbb4c66210860f6e",
+        "par_388516c82f29d30e4a99162c96e33268",
+        "par_973e834494998891410431af733f5c1b"
+      ],
+      "child_ids": [
+        "chk_17c96901342503f7d996f339b5955567",
+        "chk_1d89e476702c681c065af69f1e45555c",
+        "chk_27b34cfcf037575ff7eb18a49fe41e3a",
+        "chk_52e09b278911cd8da37825a6629f6e72",
+        "chk_62ce9cd7b82dc270a170ae3d90a76824",
+        "chk_ae77b8a38bf5fa408f3822bdbd2e14c1",
+        "chk_e8fd97af99bb76ba4441dc4ac5b74e86"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "一个样本状态条件 + 一个动作；例：CPUUser 超过 50 时执行 killallyesaction。",
+    "note": ""
+  },
+  {
+    "qid": "eval-148",
+    "question": "机柜的最小尺寸和 NVIDIA 推荐的尺寸分别是多少？",
+    "query_en": "What is the minimum cabinet size, and what size does NVIDIA recommend?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Cabinets must be at least 24” x 48” (600 mm x 1,200 mm) in size, and at least 48U tall.",
+      "For proper cable management, rPDU placement, airflow management, and service clearance to the rear of the systems, NVIDIA recommends 32” x 48” (800 mm x 1,200 mm) racks."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6bd2c60d2a82e38e1e0765591b5092fc"
+      ],
+      "child_ids": [
+        "chk_5ff093d27e15b1620445810f25aa9683"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "至少 24“ x 48”（600 mm x 1,200 mm）、48U 高；NVIDIA 推荐 32“ x 48”（800 mm x 1,200 mm）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-149",
+    "question": "每个机架要接几个温度传感器，装在哪两个位置？",
+    "query_en": "How many temperature sensors per rack are connected, and at which two positions are they mounted?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For each rack, two temperature sensors will be connected to Ethernet ports in the PDU closest to the front of the rack.",
+      "The sensors must be mounted at the front side of the rack, at the 4U position and at the 42U position."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6bd2c60d2a82e38e1e0765591b5092fc",
+        "par_e9003c6d03ab4328434c7ed18f6f1531"
+      ],
+      "child_ids": [
+        "chk_2f7554da9f11f1c13616ec6a0e21999e",
+        "chk_5ff093d27e15b1620445810f25aa9683"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "两个，装在机架前侧 4U 与 42U 位置。",
+    "note": ""
+  },
+  {
+    "qid": "eval-150",
+    "question": "DGX SuperPOD 的节点数跨度是多少？",
+    "query_en": "Across what node count does DGX SuperPOD scale?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "DGX SuperPOD scales from 31 to 1,023 nodes of DGX Systems."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_276f4b9cce74304279cefee910a7e379"
+      ],
+      "child_ids": [
+        "chk_bd49cc0d7038521054e663514ff70520",
+        "chk_e061e52eb7807f9905ef8fa15a98e336"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "从 31 到 1,023 个 DGX 节点。",
+    "note": ""
+  },
+  {
+    "qid": "eval-151",
+    "question": "DGX B300 单机是几个 GPU 的配置？",
+    "query_en": "How many GPUs does a DGX B300 system have?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The DGX B300 system delivers breakthrough AI performance with the most powerful chips ever built, in an eight GPU configuration."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1dab63b1d8f39ffd28087fc1f6d8c5fd",
+        "par_30252c2dcbf8a57b14a8b1d30b5f96ff",
+        "par_5da860607ea914742c973b2c95316dce",
+        "par_842726dd6698391d46ad601cd097ebea"
+      ],
+      "child_ids": [
+        "chk_6db23af22d1addf05eb4672f56964c3e",
+        "chk_7a013e57fc2382e68b1447c01c04c7df",
+        "chk_d3147d3d1c4c1507ecffeaa1beefdffe",
+        "chk_d91f7a2c3117fd654e9e48508dc183b7"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "八 GPU 配置。",
+    "note": ""
+  },
+  {
+    "qid": "eval-152",
+    "question": "InfiniBand XDR 的单向峰值速率是多少？",
+    "query_en": "What is the peak per-direction speed of InfiniBand XDR?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "NVIDIA InfiniBand XDR has a peak speed of 800 Gbps per direction with an extremely low port-to-port latency and is backwards compatible with the previous generations of InfiniBand specifications."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_24260ac5ee4509a9d5fe2b92d789bb6c",
+        "par_6cb9de5850cbb4ab6872bee795bde18c",
+        "par_ce7702c3140b574a4fe7f8b271c7c6b2"
+      ],
+      "child_ids": [
+        "chk_24dc461a971c419395d4e3c4bcc7c112",
+        "chk_82f08a2b5589a47a9467c0f52e1d35a6",
+        "chk_e04df4e5209920a113edff01c1d87e26"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "每向 800 Gbps。",
+    "note": ""
+  },
+  {
+    "qid": "eval-153",
+    "question": "Kubernetes 升级里的 N-2 规则是什么意思？能不能跳着升？",
+    "query_en": "What does the N-2 rule mean for Kubernetes upgrades, and can you skip versions?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Kubernetes upgrade requires “N-2 step upgrades” meaning the upgrade process may require multiple control plane and worker node upgrades.",
+      "For example, an upgrade to 1.31 from 1.28 would be 1.28 > 1.29 > 1.30 > 1.31."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_57c69711b798e8e9286f00127b959c47"
+      ],
+      "child_ids": [
+        "chk_080def148274387c3c6a65af67842e6f",
+        "chk_aa4b14feb1b6030c6d08218cffa024ff",
+        "chk_ddf6e6056815117600d2fe0a42775283"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "每次只能跳两个小版本，例如从 1.28 升 1.31 要 1.28→1.29→1.30→1.31。",
+    "note": ""
+  },
+  {
+    "qid": "eval-154",
+    "question": "Kubernetes 升级先升哪类节点？worker 节点怎么利用 N-2 兼容性省事？",
+    "query_en": "Which Kubernetes nodes are upgraded first, and how do worker nodes use N-2 compatibility?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Upgrade control plane nodes first followed by worker nodes.",
+      "Worker node upgrades can take advantage of N-2 API compatibility by performing the worker node upgrade once for every 2 control plane upgrades."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_57c69711b798e8e9286f00127b959c47"
+      ],
+      "child_ids": [
+        "chk_080def148274387c3c6a65af67842e6f",
+        "chk_aa4b14feb1b6030c6d08218cffa024ff",
+        "chk_ddf6e6056815117600d2fe0a42775283"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "先升 control plane，再升 worker；worker 可以每两轮 control plane 升级才做一次。",
+    "note": ""
+  },
+  {
+    "qid": "eval-155",
+    "question": "启动 DCGM 时报版本不匹配，在哪些系统上可以忽略这个提示？",
+    "query_en": "When DCGM reports a version mismatch at startup, on which systems can the message be ignored?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The version check occurs on all DGX systems, but applies only to NVSwitch systems, so the message can be ignored on the DGX Station/DGX-1 system."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_308c4d6fc9ce7ef03786c82d40d51e8d",
+        "par_5c03d2187292c924ac28b0f13fecca6b",
+        "par_95206b4598e64a4899a959915c99de50",
+        "par_fb0672ac6e5fbc8b83fd0f26eb45f5dd"
+      ],
+      "child_ids": [
+        "chk_09d4caa5199925cde2e6fde93e5b4b3c",
+        "chk_0b2af43f4453f3dd5d8ae0b72a26b01b",
+        "chk_7e13848297d0fa826313c0ac47dd1a82",
+        "chk_7fafb3b8bc9ec9ec1661383b89342cf4",
+        "chk_c6f7e5a65f1cf016adf72737c578fa8b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "非 NVSwitch 系统（如 DGX Station / DGX-1）可以忽略。",
+    "note": ""
+  },
+  {
+    "qid": "eval-156",
+    "question": "node category 是用来做什么的？里面节点会继承什么？",
+    "query_en": "What are node categories for, and what do nodes inside a category inherit?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Node categories provide administrators a mechanism for grouping nodes that share common characteristics, such as hardware specifications, intended roles, or configuration requirements.",
+      "Nodes within a category inherit default property values and settings from that category, simplifying management of large clusters."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_3667c149a82d38ff72b393447c735965"
+      ],
+      "child_ids": [
+        "chk_03aaa89899bf9c17f7ded7f3ccbad048"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "把硬件规格/角色/配置需求相同的节点分组；节点继承该 category 的默认属性与配置。",
+    "note": ""
+  },
+  {
+    "qid": "eval-157",
+    "question": "node group 和 node category 的区别是什么？",
+    "query_en": "What is the difference between a node group and a node category?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Node categories provide administrators a mechanism for grouping nodes that share common characteristics, such as hardware specifications, intended roles, or configuration requirements.",
+      "A node group is a collection of individual nodes assembled for administrative convenience to perform operations simultaneously."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_3667c149a82d38ff72b393447c735965",
+        "par_c0c932de3cb70f39c852dedbe008bbdc"
+      ],
+      "child_ids": [
+        "chk_03aaa89899bf9c17f7ded7f3ccbad048",
+        "chk_0bb4a8fad2fbd22d5f7b4a97ff65063c"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "category 是共享属性的分组且子节点继承默认值；node group 只是为了批量操作而把节点拼在一起。",
+    "note": ""
+  },
+  {
+    "qid": "eval-158",
+    "question": "换了内核之后，为什么还得在 BCM 里重新登记？",
+    "query_en": "After changing the kernel, why does it still need to be registered with BCM?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "zh_with_en_term",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Because compute nodes boot the kernel from the head node (through PXE) and not from the local disk, any updated kernel must be registered with BCM if the kernel has changed.",
+      "It also creates a new initial ramdisk for the updated kernel."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_67cd140bf1ea36a3d5dd2e282eacf10f"
+      ],
+      "child_ids": [
+        "chk_35585bc8529997c2b672cade1ebe7036"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "因为计算节点是从 head 节点（PXE）引导内核、不用本地盘，且还要生成新的 initramfs。",
+    "note": ""
+  },
+  {
+    "qid": "eval-159",
+    "question": "升级 DGX OS 镜像前为什么建议先克隆一份？",
+    "query_en": "Why is it recommended to clone the DGX OS image before upgrading?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "A best practice is to save a copy of the image in case you need to roll back to a prior DGX OS release / version / state.",
+      "Save a copy by using clone image function within `cmsh`."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_994d2cbc5311f602611d406b8b2f5624",
+        "par_99b75f86bba4503f3edc2ef4e07fd0bd"
+      ],
+      "child_ids": [
+        "chk_17653a89ce01f98a7a9313759dcf85ef",
+        "chk_2d51c4d625665cd32251e4a922f374b4",
+        "chk_411bbfeeba9a36f3e3484b9c5cef48ee",
+        "chk_4382c04c68c97c599b5a470025740a23",
+        "chk_74f754be7d4615ff3198ebf07300ee6b",
+        "chk_787b210b00835057828c713d04160f5c",
+        "chk_93520d975219a61a926b81435fe906fb",
+        "chk_b3d32c5589556d1119d39346ed62bab2",
+        "chk_bf485452266edb535dc1e46e7f51e20c",
+        "chk_d96b404e932a89a472cecc30ac38ec24",
+        "chk_f0a7d850394d31beb56bfc384c3e6ad3"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "方便回滚到之前的版本/状态，可用 cmsh 的 clone image 功能。",
+    "note": ""
+  },
+  {
+    "qid": "eval-160",
+    "question": "在 chroot 里刷新包索引之后，还要给镜像装什么？",
+    "query_en": "After refreshing package metadata inside chroot, what else should be installed into the image?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Run `aptupdate` to refresh the local package repository metadata (list of available upgradable packages and their versions).",
+      "Install the latest supported CUDA toolkit for the DGX OS version running on the DGX node."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_994d2cbc5311f602611d406b8b2f5624",
+        "par_ebc14cf3d8a764fe3b4e501d7a3891af"
+      ],
+      "child_ids": [
+        "chk_2f6854e8701ba1e7f4852eeca3d6ec15",
+        "chk_4382c04c68c97c599b5a470025740a23",
+        "chk_4a9d09063301668cb10de4e1d7f05823",
+        "chk_545eac58c5ce89ea207e6520dfc34dc2",
+        "chk_557b43f7e5683861a0b7bb4e5ac17375",
+        "chk_93520d975219a61a926b81435fe906fb",
+        "chk_b720f4ea5739dccbd8d559a5b7bca0e6",
+        "chk_bf485452266edb535dc1e46e7f51e20c",
+        "chk_d96b404e932a89a472cecc30ac38ec24",
+        "chk_f0a7d850394d31beb56bfc384c3e6ad3",
+        "chk_fba7d436476f3d06e0a5792b9f2ecc05"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "装对应 DGX OS 版本支持的最新 CUDA toolkit。",
+    "note": ""
+  },
+  {
+    "qid": "eval-161",
+    "question": "在集群环境里对 DNS 和 NTP 有什么基本要求？",
+    "query_en": "What basic requirement applies to DNS and NTP servers in the cluster environment?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Make sure the DNS and NTP servers are reachable from within the cluster environment."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_220bdb1343df461dc2f4ad7bdd33b802",
+        "par_c24d3e4c900d1116d9f3f618118d1e7a"
+      ],
+      "child_ids": [
+        "chk_80920ebafe1cf938c257d38eec250388",
+        "chk_fc1365a1feb356b2d3c5c95f546d1f8d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "必须能从集群环境内部访问到。",
+    "note": ""
+  },
+  {
+    "qid": "eval-162",
+    "question": "DGX Spark 官方推荐的管理平台是哪个？许可怎么算？",
+    "query_en": "Which management platform is recommended for DGX Spark, and how is its license provided?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Canonical Landscape is the primary recommended management platform for DGX Spark, and its license is included as part of the Ubuntu Pro entitlement."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1a649268776e94dd20aa509e6e382f63",
+        "par_3c90cfc71d81eca3e9af0f774cb0843d"
+      ],
+      "child_ids": [
+        "chk_511ef22abe4d206b7c3d52ea40033a45",
+        "chk_7b99ee06d7fbc927f6f3377ce33d828f"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Canonical Landscape；许可包含在 Ubuntu Pro 授权里。",
+    "note": ""
+  },
+  {
+    "qid": "eval-163",
+    "question": "除了 Landscape，还能用哪些工具管 DGX Spark 机群？这些工具由谁支持？",
+    "query_en": "Besides Landscape, which tools can manage a DGX Spark fleet, and who supports them?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "In addition, ecosystem tools such as Ansible, Puppet, Tanium, and others may offer ARM64‑capable agents that can be used for broader fleet management, including approval workflows and rollback strategies.",
+      "These alternatives are supported solely by their respective vendors."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1a649268776e94dd20aa509e6e382f63",
+        "par_3c90cfc71d81eca3e9af0f774cb0843d"
+      ],
+      "child_ids": [
+        "chk_511ef22abe4d206b7c3d52ea40033a45",
+        "chk_7b99ee06d7fbc927f6f3377ce33d828f"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Ansible、Puppet、Tanium 等有 ARM64 agent 的生态工具；由各自厂商支持。",
+    "note": ""
+  },
+  {
+    "qid": "eval-164",
+    "question": "Pre-Release 版本的软件在使用和支持上各有什么限制？",
+    "query_en": "What limitations apply to Pre-Release software in terms of use and support?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Use of a Pre-Release version may result in unexpected results, such as loss of use or loss of content.",
+      "Pre-release versions are provided “AS-IS,” “WITH ALL FAULTS,” and “AS-AVAILABLE,” and are excluded from Enterprise Support."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_0beb36f46a0f48713ce89817b3e75894",
+        "par_1a472453103801eee6b3e13da4207d49"
+      ],
+      "child_ids": [
+        "chk_166c10b55451c6bc3961e89c543d17cd",
+        "chk_6722144fb452258adf52dcde6a8f8d4e",
+        "chk_7f391aa1dd8189e2019614b14e9fe749",
+        "chk_8386f3915b282ca799083ee9b2debd70",
+        "chk_92af752f67c13da0b1560f8859898700",
+        "chk_957da7965e1ad7364621df453a6929c9",
+        "chk_ac77ddd682f469a4515e4f97c59d8c31",
+        "chk_cf73d5da6d74a53c0f830da6813b08d9",
+        "chk_e1a8d5c134891b69eff3e1e166a291b1",
+        "chk_fc5626a2b31cf21335a7ca7a507c8eeb"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "可能丢失使用/内容，不适合关键业务；按 AS-IS 提供且不在 Enterprise Support 范围内。",
+    "note": ""
+  },
+  {
+    "qid": "eval-165",
+    "question": "NGC 对 DGX Spark 用户的价值体现在哪？",
+    "query_en": "Where does the value of NGC for DGX Spark users come from?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For DGX Spark users, NGC provides access to the latest frameworks, tools, and optimized environments specifically designed for the Grace Blackwell architecture.",
+      "NGC is particularly valuable for DGX Spark users because it provides the most current and optimized software stack for this new platform, ensuring you have access to the latest performance optimizations and features."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6d52347b6d56ae26cf761aa6404cf6c7",
+        "par_8875d32bf6ce5929f7333b7470d9a48a"
+      ],
+      "child_ids": [
+        "chk_0eeb333f79d385660595b27e29a7c388",
+        "chk_c1e39bcc3e401c46664f72bf77f1557f"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "提供针对 Grace Blackwell 架构优化的最新框架、工具与优化环境。",
+    "note": ""
+  },
+  {
+    "qid": "eval-166",
+    "question": "在 NGC 上跑 NIM 容器需要什么认证？创建 API Key 时要勾选什么？",
+    "query_en": "What authentication is required to run NIM containers on NGC, and what must be selected when creating the API Key?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "NVIDIA NIM microservices (NIM) containers on NGC require authenticated NGC access.",
+      "When creating the Personal API Key, select at least **NGC Catalog** from the **Services Included** list."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1ba99c71df6005a61a854b2f6898ac64",
+        "par_b7356c3b2e6e87a4716ae20fe19f521b"
+      ],
+      "child_ids": [
+        "chk_11d07d5e5ff00f8d41598fe8d5dd6f9d",
+        "chk_84cec217622c71b91c000b546538474f"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "需要已认证的 NGC 访问；创建 Personal API Key 时 Services Included 里至少勾 NGC Catalog。",
+    "note": ""
+  },
+  {
+    "qid": "eval-167",
+    "question": "NIM for LLMs 能用旧版 API key 吗？",
+    "query_en": "Can NIM for LLMs use legacy API keys?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Legacy API keys are not supported by NVIDIA NIM for LLMs."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1ba99c71df6005a61a854b2f6898ac64",
+        "par_b7356c3b2e6e87a4716ae20fe19f521b"
+      ],
+      "child_ids": [
+        "chk_11d07d5e5ff00f8d41598fe8d5dd6f9d",
+        "chk_84cec217622c71b91c000b546538474f"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "不支持旧版 API key。",
+    "note": ""
+  },
+  {
+    "qid": "eval-168",
+    "question": "为什么更新过程中绝对不能关机或重启？",
+    "query_en": "Why must you never power down or reboot during the update process?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Critical: Do not shut down or reboot the system during the update process.",
+      "The installation cannot be interrupted once the download begins, and powering down during updates can cause system damage."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_11fb9f093b237881ca79acf5be309808",
+        "par_5d265fe2cff5cac193532c56aa26003e"
+      ],
+      "child_ids": [
+        "chk_4dcd09c4f2dcc8119d9ed5d5f57bad0c",
+        "chk_f5a9726260d9cf46a8a31dc7f6184671"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "更新一旦开始不能中断，down 机可能造成系统损坏。",
+    "note": ""
+  },
+  {
+    "qid": "eval-169",
+    "question": "DGX Spark 连不上热点时，看到热点可用和看不到热点分别说明什么？",
+    "query_en": "When DGX Spark fails to join a hotspot, what does it mean if the hotspot is visible versus not visible?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The modal instructs you to try to reconnect to the Spark's hotspot and try again.",
+      "If you DO NOT see the hotspot available when this error modal appears, that means the Spark did join the network but your laptop can't communicate with it."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4daca2a0f419fd2cd30a1042bb7030ea"
+      ],
+      "child_ids": [
+        "chk_f55107f65763c531193fb1d24780712a"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "看到热点→确实没连上网络；看不到热点→其实已连上网络，只是笔记本和它不通。",
+    "note": ""
+  },
+  {
+    "qid": "eval-170",
+    "question": "交换机端口速率组合为什么必须考虑向后兼容？有哪些手段？",
+    "query_en": "Why must switch port speed mixes consider backwards compatibility, and what techniques are used?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Enabling the necessary mix of uplinks and downlinks, including backwards compatibility to previous Ethernet generations, involves a combination of per-port speeds and port splitting.",
+      "Often it is also possible to reduce a port’s lane rate for backwards compatibility, for example to use a 100 GbE-capable port for 40 GbE, but all lanes of the port must run at the same rate.",
+      "For multilane ports, it is often possible to logically split the lanes into subsets and use a physical splitter (breakout) cable."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6914c179c65af49e3677719191092fd6",
+        "par_72d934ed2ae75a66e96171e70af385a7",
+        "par_d6b40a7b1d52b9600c48640fb1ef5515",
+        "par_dd4a2cd02de64af8fa9b5f71f940c651"
+      ],
+      "child_ids": [
+        "chk_1a3b2b0148a39f6d225ee560a87eb784",
+        "chk_1c6fc2975cae494253e39b63a027e44b",
+        "chk_3f2155b03f8c65b75cb0ee18be582e26",
+        "chk_3ff18b3b173e7c8f9d8e5d6ebb2abccd"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "通过每端口速率与端口拆分兼容旧代以太网；可降 lane 速率（如 100 GbE 端口跑 40 GbE）或用 breakout 线拆 lane。",
+    "note": ""
+  },
+  {
+    "qid": "eval-171",
+    "question": "怎么验证 helm values 真的被应用到发布里了？",
+    "query_en": "How do you verify that Helm values were actually applied to a release?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Run the following command against the release you installed (example release name: network-operator) to show only the usersupplied values (what you passed via -f values.yaml):",
+      "Compare this output with your values.yaml.",
+      "If your keys and values show up as expected in the helm get values output, Helm has stored and applied them."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1b91822b401bb5461d6cbd7a899bc373"
+      ],
+      "child_ids": [
+        "chk_111e43abc8bd1f79e0ff9f0926c386e9"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "对已装 release 跑 helm get values 看用户传入值，再和自己那份 values.yaml 对比。",
+    "note": ""
+  },
+  {
+    "qid": "eval-172",
+    "question": "验证 SR-IOV 和 IB 资源配置时，从状态里看什么？",
+    "query_en": "When validating SR-IOV and IB resource configuration, what should you look for in the status output?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "After applying SR-IOV network node policy, IB network resource, and node pool configuration, you can see the status by running the following commands.",
+      "Keep in mind that the setup may take a while before it is complete.",
+      "In the above example we see that dgx-02 and dgx-03 are ready while dgx-01 and dgx-04 are still in process of draining."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_d190b3361196e6fa23592c1b97cac23e"
+      ],
+      "child_ids": [
+        "chk_14adfab377bdf9f464d6edc02d07ace5",
+        "chk_414df64a7fd9df60998877621a54e17e"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "看节点是 ready 还是仍在 draining；整套配置生效需要时间。",
+    "note": ""
+  },
+  {
+    "qid": "eval-173",
+    "question": "怎么查哪些驱动版本可用于数据中心？",
+    "query_en": "How do you find out which driver versions are certified for Datacenter use?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The Datacenter driver documentation lists all the driver versions available for installation that have been certified for Datacenter usage.",
+      "The list also contains release notes for each driver version."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_5dad3966e741e07f8d7abc2cd70d87ff",
+        "par_b0a15ff2ec21f581ea0cb5a7130686a8"
+      ],
+      "child_ids": [
+        "chk_4fc7116f0810397867259ad452b5ee12",
+        "chk_919f99698269a5480fcddd79f76e5733",
+        "chk_98f45c79c1ae5cea4222ba5d82c47d6a"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "查 Datacenter 驱动文档里的认证版本列表及各自 release notes。",
+    "note": ""
+  },
+  {
+    "qid": "eval-174",
+    "question": "Docker 客户端拉镜像前后分别会做什么事？",
+    "query_en": "What does the Docker client do before and after pulling an image?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Using the Docker client, a user can search for already-published images, and then pull them down to a host in order to build containers from them.",
+      "When an image is found in the registry, the Docker client verifies if the latest version of the image has already been downloaded.",
+      "If not, then it downloads the images, and stores them locally."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_88895187173c3744c6cec8c9de49a444"
+      ],
+      "child_ids": [
+        "chk_da27375b1d66d1ba89678711cd7eadc4"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "先在仓库里搜镜像、拉起时先确认本地是否已有最新版本，没有才下载并本地保存。",
+    "note": ""
+  },
+  {
+    "qid": "eval-175",
+    "question": "外部存储和高性能 NAS 的连接应该用哪类端口？",
+    "query_en": "Which port type should be used to connect external storage and high-speed NAS?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "In most configurations, the storage ports (ID 1 below) should be used for connecting to highspeed NAS storage, while the cluster ports (ID 2 below) should be used for communication between nodes."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_0ddaeca0d41d43e0d49b8eb710813848"
+      ],
+      "child_ids": [
+        "chk_49df3d3a75be919e446da165bc28935d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "存储端口（storage ports）接高性能 NAS，集群端口用于节点间通信。",
+    "note": ""
+  },
+  {
+    "qid": "eval-176",
+    "question": "Network Operator 在哪些场景下被验证过？",
+    "query_en": "In which scenarios has the Network Operator been validated?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "NVIDIA Network Operator has been validated in the following scenarios:"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_41d534d63f5feece7141033b2c36c6f5",
+        "par_8b4631d1edbc468f2b9cd300ba234efc",
+        "par_c58c66c81d1fbeb5a5b4c6ecd1bb623d",
+        "par_f9bce209de2645d63d6c2c55a99e4681"
+      ],
+      "child_ids": [
+        "chk_17576fb0c97ee2244e2142c6d3e85dfe",
+        "chk_2a43587a9fa0e248f080bafd991fe707",
+        "chk_640e6cfdad6661d229631814497e28e8",
+        "chk_683791472235bc786d5ee5501574f8e5"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "文档列出的验证场景（单机与组合部署）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-177",
+    "question": "怎么启用 systemd 模式的 SR-IOV 配置？",
+    "query_en": "How do you enable systemd-based SR-IOV configuration?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "To enable systemd SR-IOV configuration mode, specify the configurationMode option in the SriovOperatorConfig CRD:"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6bb31770d540ed6e6342e7e40b9b7abf",
+        "par_7b3ac6a13a26881feaab768c62c855f3",
+        "par_ae6a5d9afd2dcefbc85b2a1da8cbb45d",
+        "par_c4d8f79a067ce57db179a69557cb99d2"
+      ],
+      "child_ids": [
+        "chk_85abc8816bb3c30c8aed3a246b89b59c",
+        "chk_a2df52d94a0370f799a88de43d1ad24e",
+        "chk_a3a2411c8f9a06603972442e1b9ea4f1",
+        "chk_b08cf9e9fd3c618840a3e5538dacd271"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "在 SriovOperatorConfig CRD 里指定 configurationMode。",
+    "note": ""
+  },
+  {
+    "qid": "eval-178",
+    "question": "装 Network Operator 的第一步是什么？",
+    "query_en": "What is the first step when installing the Network Operator?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Create a namespace for the Network Operator.",
+      "Install the Network Operator in the namespace created in the previous step by creating the below objects."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_27b412970ab3c8372f76deff62cd74e3",
+        "par_32e7b997ca0390cc3a44adf21e038d38",
+        "par_bd06ba87d21f8d4cc29840bb87d74c7a",
+        "par_ff4d79f37bc9df5c736075e2509c25b3"
+      ],
+      "child_ids": [
+        "chk_343cf4524051baabea77e7dd3c32ef0e",
+        "chk_511172d26e1262055c5a554b9e27667c",
+        "chk_b7d0c90017f6989b69a82d69dd3837bf",
+        "chk_be104ec033cb1b5577272ee291d62817"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "先给它建一个 namespace，再在里面创建对象完成安装。",
+    "note": ""
+  },
+  {
+    "qid": "eval-179",
+    "question": "Slurm 相关配置失效时，文档给的临时办法是什么？",
+    "query_en": "What workaround does the documentation give when the Slurm-related configuration no longer works?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "As a workaround, install cm-hwloc2-local on the head node and in the software images (or compute nodes) used by Slurm."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_f5ae93dfdcd92973337b57efdc14766a"
+      ],
+      "child_ids": [
+        "chk_1e6480b898a1b178478648f989e0dc26"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "在 head 节点和 Slurm 用的软件镜像/计算节点里安装 cm-hwloc2-local。",
+    "note": ""
+  },
+  {
+    "qid": "eval-180",
+    "question": "BCM 的 ISO 有哪几种安装方式？",
+    "query_en": "Which installation methods are available for the BCM ISO?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Burn the BCM ISO to a DVD or to a bootable USB device.",
+      "The ISO can also be mounted as virtual media and installed using appliance BMC Virtual Console."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_cf85ebed08554502f9813624ef3542dc",
+        "par_ed4c97b76aebc625393b6ce815e7d600"
+      ],
+      "child_ids": [
+        "chk_6be8294fb2a07a16f20c8f3b949b017f",
+        "chk_d6d33eeefdb82bcfad4682604870b46d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "烧到 DVD / 可引导 U 盘，或用 BMC 虚拟控制台挂成虚拟介质。",
+    "note": ""
+  },
+  {
+    "qid": "eval-181",
+    "question": "装 BCM headnode 之前，存储介质要处于什么状态？",
+    "query_en": "What state must the headnode storage media be in before installing BCM?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Before starting the installation process it’s important to ensure the Headnode’s storage media are all in a freshly wiped state, and perform a BIOS configuration default.",
+      "This resets all boot devices/order priorities."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_ee28a78c35862bc955fa059c758fe216",
+        "par_f0a29d83fde7a7fbb3a1d65fc6fb4c19"
+      ],
+      "child_ids": [
+        "chk_9bf1e463ba5919bdcd4fba5fe56e7f0f",
+        "chk_9db3b0dda08e0fca12500a3767cd5bb9"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "全盘擦除干净，并把 BIOS 恢复默认（会重置引导设备顺序）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-182",
+    "question": "DGX BasePOD 对 NFS 存储有什么要求？",
+    "query_en": "What does DGX BasePOD require regarding NFS storage?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Because DGX BasePOD does not mandate the nature of the NFS storage, the configuration is outside the scope of this document.",
+      "This DGX BasePOD deployment uses the NFS export path provided in the BasePOD site survey."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_b046bc4ac0d4291c98708ce169233691",
+        "par_e4fa8927a6bfa27510ebc5057b760791"
+      ],
+      "child_ids": [
+        "chk_4ac13082d18b15eb5b3fc5084ecdd110",
+        "chk_f388e72cdb02d4a7af10bca202b5407c"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "不限定 NFS 存储形态，但要用站点勘察里给的导出路径。",
+    "note": ""
+  },
+  {
+    "qid": "eval-183",
+    "question": "怎么只重启一段计算节点上的 CMDaemon？",
+    "query_en": "How do you restart CMDaemon on only a range of compute nodes?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Restarting the CMDaemon on the head node of a cluster:",
+      "Restarting the CMDaemon on a sequence of compute nodes dgx001 to dgx040:"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_041d2131fea86db62c85db1a6d901aa4",
+        "par_1d1c49ef2d2697a60437a37605df4222"
+      ],
+      "child_ids": [
+        "chk_57b4ed0e03eb13e17338d799e16309cd",
+        "chk_6cdef290664216cd8491377c2d4986da",
+        "chk_ae6b028b1be361ac003c6437c847249b",
+        "chk_b966c24a4061d8fff98957dd1e6f5dd5"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "用 service cmd 的 init 脚本参数，按节点范围批量重启（如 dgx001 到 dgx040）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-184",
+    "question": "DGX SuperPOD 里所有节点是不是共用同一个基础 OS？DGX 节点的镜像怎么识别？",
+    "query_en": "Do all nodes in a DGX SuperPOD share the same base OS, and how is a DGX node image identified?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "In the DGX SuperPOD, all nodes managed by (meaning all management and DGX nodes) share the same base operating system (OS), with the DGX nodes including the customizations of DGX Base OS.",
+      "DGX nodes are provisioned with a copy of the DGX OS image, identified by the dgx- prefix in the image name."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_c1a5902ad1113aa42c17b6ea98f03edc",
+        "par_c90e035128a89b4fa70fcd62bd2030ca"
+      ],
+      "child_ids": [
+        "chk_aa7c7a5aa84cf763359cadad523cbe72",
+        "chk_abbe0ef5466b33743261053610e9b4b4",
+        "chk_bfb6cb7d5ddc0fc41a037c6b4e31c069"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "是，管理节点与 DGX 节点共用同一基础 OS；DGX 节点镜像名带 dgx- 前缀。",
+    "note": ""
+  },
+  {
+    "qid": "eval-185",
+    "question": "节点完全启动后能对本地文件系统做什么？镜像平时怎么改？",
+    "query_en": "What can you do with the local filesystem after a node is fully booted, and how are software images normally modified?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "After the node is fully booted, it is possible to instruct the node to re-synchronize its local filesystems with the software image.",
+      "Software images can be changed using regular Linux tools and commands (such as apt and chroot)."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_c1a5902ad1113aa42c17b6ea98f03edc",
+        "par_c90e035128a89b4fa70fcd62bd2030ca"
+      ],
+      "child_ids": [
+        "chk_aa7c7a5aa84cf763359cadad523cbe72",
+        "chk_abbe0ef5466b33743261053610e9b4b4",
+        "chk_bfb6cb7d5ddc0fc41a037c6b4e31c069"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "可让节点与软件镜像重新同步；镜像用 apt、chroot 等常规 Linux 工具修改。",
+    "note": ""
+  },
+  {
+    "qid": "eval-186",
+    "question": "在 BCM 里怎么克隆一个已有的监控 trigger？",
+    "query_en": "How do you clone an existing monitoring trigger in BCM?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Clickpath Monitoring>Triggers>Failing health checks>Clone can be used to configure a monitoring trigger by cloning an existing trigger."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_388516c82f29d30e4a99162c96e33268",
+        "par_973e834494998891410431af733f5c1b"
+      ],
+      "child_ids": [
+        "chk_17c96901342503f7d996f339b5955567",
+        "chk_1d89e476702c681c065af69f1e45555c",
+        "chk_27b34cfcf037575ff7eb18a49fe41e3a",
+        "chk_e8fd97af99bb76ba4441dc4ac5b74e86"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "Monitoring > Triggers > Failing health checks > Clone。",
+    "note": ""
+  },
+  {
+    "qid": "eval-187",
+    "question": "BCM 提供的两个建盘镜像命令分别适合什么场景？",
+    "query_en": "When are BCM's two disk-image creation commands appropriate?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "BCM provides two similar commands for creating a disk image:",
+      "It’s often employed when you have an image directory already prepared manually or as a copy of an image locally or from another cluster.",
+      "It’s particularly relevant when creating images for different distributions than the headnode or a different processor architecture."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1f492edb73b2b71e896bf125fd5e6505"
+      ],
+      "child_ids": [
+        "chk_38ce6f9afb33b6405b1ee74a9fcbde5a",
+        "chk_722be389b05f83aa7e8824a0a3c44357",
+        "chk_cb084a04e1eaafc709fac9bc6d591ff5"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "一个适合已有镜像目录/本地或其他集群的副本；另一个适合头节点之外的发行版或不同 CPU 架构。",
+    "note": ""
+  },
+  {
+    "qid": "eval-188",
+    "question": "在 cmsh 里怎么把镜像的内核版本换成新的？",
+    "query_en": "How do you set a new kernel version for an image in cmsh?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Go to *softwareimage* and select the image with the updated kernel:",
+      "Start typing `setkernelversion` and Hit the Tab key twice for tab completion to select the updated version.",
+      "Commit the kernel modification to the image."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_67cd140bf1ea36a3d5dd2e282eacf10f"
+      ],
+      "child_ids": [
+        "chk_35585bc8529997c2b672cade1ebe7036"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "进入 softwareimage 选镜像→setkernelversion（Tab 补全选版本）→提交修改。",
+    "note": ""
+  },
+  {
+    "qid": "eval-189",
+    "question": "同一个软件镜像能不能被多个 category 共用？",
+    "query_en": "Can several categories share the same software image?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Multiple categories can use the same image, and some properties of an image can be modified by category-specific settings, such as the disk layout, kernel parameters, etc."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_3667c149a82d38ff72b393447c735965"
+      ],
+      "child_ids": [
+        "chk_03aaa89899bf9c17f7ded7f3ccbad048"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "可以，且磁盘布局、内核参数等可按 category 覆盖。",
+    "note": ""
+  },
+  {
+    "qid": "eval-190",
+    "question": "软件订阅和永久许可在支持服务上有什么差别？",
+    "query_en": "How does support differ between software subscriptions and perpetual licenses?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Unless otherwise indicated by NVIDIA in this Agreement or an Order Form, Software Subscriptions include Enterprise Support, Maintenance and Updates.",
+      "Enterprise Support, Maintenance and Updates may be sold separately for Perpetual licenses."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_1a472453103801eee6b3e13da4207d49",
+        "par_50fcf515c51afadd8e2c3ed40d62d897"
+      ],
+      "child_ids": [
+        "chk_166c10b55451c6bc3961e89c543d17cd",
+        "chk_7ac5f8fa9c747256206d5b924eab93c7",
+        "chk_7f391aa1dd8189e2019614b14e9fe749",
+        "chk_82b6003640780ce37849c2911c6224c8",
+        "chk_91042174b766a08fd6c76f8afaed8807",
+        "chk_957da7965e1ad7364621df453a6929c9",
+        "chk_95e9f67df039f2e31377c624660b4672",
+        "chk_ade4bac1d0daac1bf05da3c8b03ae1d5",
+        "chk_cf73d5da6d74a53c0f830da6813b08d9",
+        "chk_e1a8d5c134891b69eff3e1e166a291b1",
+        "chk_f8abe23a9f43cf5e173e58a2af4d688a",
+        "chk_fc5626a2b31cf21335a7ca7a507c8eeb"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "订阅默认含 Enterprise Support/维护/更新；永久许可的支持与更新可单独购买。",
+    "note": ""
+  },
+  {
+    "qid": "eval-191",
+    "question": "DGX SuperPOD 在中国区的起订价格是多少？",
+    "query_en": "What is the starting price of DGX SuperPOD in China?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "价格类：语料只有产品与部署技术文档。"
+  },
+  {
+    "qid": "eval-192",
+    "question": "NGC 企业版一年的订阅费是多少？",
+    "query_en": "What is the annual subscription fee for NGC Enterprise?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "商务报价类：文档不给价格。"
+  },
+  {
+    "qid": "eval-193",
+    "question": "Mission Control 支持中文界面吗？",
+    "query_en": "Does Mission Control support a Chinese-language interface?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "本地化类：文档没有任何多语言界面说明。"
+  },
+  {
+    "qid": "eval-194",
+    "question": "DGX B300 机架在中国的交付周期是几周？",
+    "query_en": "What is the rack delivery lead time for DGX B300 in China, in weeks?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "交付周期类：没有任何地区性交付时间表。"
+  },
+  {
+    "qid": "eval-195",
+    "question": "DGX OS 7.5 的默认 root 口令是什么？",
+    "query_en": "What is the default root password for DGX OS 7.5?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [],
+      "child_ids": [],
+      "status": "negative",
+      "match_mode": "none"
+    },
+    "reference_answer": "",
+    "note": "凭据类：文档从不写默认口令。"
+  },
+  {
+    "qid": "eval-196",
+    "question": "模型越强大，为什么围绕它构建的 Harness 反而更关键？",
+    "query_en": "Why does the Harness built around a model matter more as the model gets stronger?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "恰恰相反，模型越强大，围绕模型构建的Harness 就越关键。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_47ffce5f8f8995ca22c47eb7b9b871cb"
+      ],
+      "child_ids": [
+        "chk_49067b449bccbe26a05740b83c3b71de",
+        "chk_e2908dad12500c564cc320f86034b21b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "模型越强，越需要工程外壳把能力导向可靠的任务执行，而不是限制能力本身。",
+    "note": ""
+  },
+  {
+    "qid": "eval-197",
+    "question": "模型厂商真正的竞争优势是什么？",
+    "query_en": "What is the real competitive advantage of model vendors?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "模型厂商的真正优势不是“让框架变薄”，而是能对模型与外围Harness 进行协同优化，持续迭代。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_47ffce5f8f8995ca22c47eb7b9b871cb"
+      ],
+      "child_ids": [
+        "chk_49067b449bccbe26a05740b83c3b71de",
+        "chk_e2908dad12500c564cc320f86034b21b"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "不是把框架做薄，而是能对模型与外围 Harness 协同优化并持续迭代。",
+    "note": ""
+  },
+  {
+    "qid": "eval-198",
+    "question": "Harness 里的约束、验证、纠正分别负责什么？",
+    "query_en": "What do constraint, verification, and correction each handle inside a Harness?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "做什么、不能做什么）、验证（检查Agent 做得对不对）和纠正（做错了怎么补救）。"
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_4b0a9080f755e063ff17071adc1513cd"
+      ],
+      "child_ids": [
+        "chk_627dc54f5db94eec2746447a84316302",
+        "chk_7a32df13c208d84b4d9c326c9e90a751",
+        "chk_8f7eccb7cbd0b644143604c4bcabbf03",
+        "chk_b7950aa8e6741fd7fecccde2aa4156cf",
+        "chk_c99a7306f1c536a7147fc8b128ee316d"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "约束规定能做什么不能做什么，验证检查做得对不对，纠正处理做错了怎么补救。",
+    "note": ""
+  },
+  {
+    "qid": "eval-199",
+    "question": "CPU 时间片指的是什么？",
+    "query_en": "What does a CPU time slice mean?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "It is the minimum amount of time that a process has access to the CPU before the kernel can switch to another task."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_0bafb5b62716b0c4dbb4c66210860f6e",
+        "par_388516c82f29d30e4a99162c96e33268",
+        "par_973e834494998891410431af733f5c1b"
+      ],
+      "child_ids": [
+        "chk_17c96901342503f7d996f339b5955567",
+        "chk_1d89e476702c681c065af69f1e45555c",
+        "chk_27b34cfcf037575ff7eb18a49fe41e3a",
+        "chk_52e09b278911cd8da37825a6629f6e72",
+        "chk_62ce9cd7b82dc270a170ae3d90a76824",
+        "chk_ae77b8a38bf5fa408f3822bdbd2e14c1",
+        "chk_e8fd97af99bb76ba4441dc4ac5b74e86"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "进程在被内核切换出去之前能占用 CPU 的最短时间。",
+    "note": ""
+  },
+  {
+    "qid": "eval-200",
+    "question": "机架的侧壁有什么强制要求？",
+    "query_en": "What is mandatory regarding rack side walls?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "multi_condition",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Side walls must be installed in all racks."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_6bd2c60d2a82e38e1e0765591b5092fc",
+        "par_e9003c6d03ab4328434c7ed18f6f1531"
+      ],
+      "child_ids": [
+        "chk_2f7554da9f11f1c13616ec6a0e21999e",
+        "chk_5ff093d27e15b1620445810f25aa9683"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "所有机架都必须安装侧壁。",
+    "note": ""
+  },
+  {
+    "qid": "eval-201",
+    "question": "DGX OS 版本早于哪个版本的系统，升级前必须先更新密钥？",
+    "query_en": "If a system runs a DGX OS version earlier than which release must the keys be updated before upgrading?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Attention: If your system is running a version **earlier** than DGX OS 4.12, you need to update the keys on the system."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_2df5fdb3c7aea0d6efdd5cedd6124e3f"
+      ],
+      "child_ids": [
+        "chk_6003133bc9114bebc179a7c1f74d3527",
+        "chk_a40d9cceffaabe2b03ba5f026ce559f1",
+        "chk_dd648fc8ff1ed12c35724deb26e6e128"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "早于 DGX OS 4.12。",
+    "note": ""
+  },
+  {
+    "qid": "eval-202",
+    "question": "DGX Spark 的可管理性基线划清了什么边界？",
+    "query_en": "What boundary does the DGX Spark manageability baseline draw?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "This section clarifies what is provided and supported as part of the DGX Spark manageability baseline versus what remains the responsibility of the enterprise IT environment."
+    ],
+    "gold_chunks": [],
+    "gold_points": {
+      "parent_ids": [
+        "par_ddfbefdf7fbf15ca4659c0b2fc4e19aa",
+        "par_e6ee20a9ea0ddbcd387095748c8ea579"
+      ],
+      "child_ids": [
+        "chk_b7459920d881d335e87fe66128e1335f",
+        "chk_e437286c3622e7218cb0bf727bad0eb8"
+      ],
+      "status": "ok",
+      "match_mode": "explicit"
+    },
+    "reference_answer": "划清「NVIDIA 提供并支持的部分」与「企业 IT 环境自己负责的部分」。",
+    "note": ""
   }
 ]

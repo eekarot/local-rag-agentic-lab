@@ -963,6 +963,39 @@ python -m src.eval_ablation run --include-zh-lexical  --out experiments/reports/
 
 **验收：** 能解释「为什么 D 的 78.3% 不能当成比 E 的 72.4% 更强」，以及为什么 `E@5` 会随融合深度变化（63.6% vs 58.7%）。
 
+### 实验 28：题库扩到 202 题 + D28 定案（D27c）
+
+```powershell
+python -m experiments.expand_questions_v2 dump --docs 26 --per-doc 7 --merge --only "dgx-spark/,bcm-"
+python -m experiments.expand_questions_v2 append
+python -m src.eval_bilingual check --min-total 190      # 成对率 100%、8/8 topic
+python -m src.eval_gold --write                          # ok 174 / ambiguous 0 / unmatched 0
+python -m src.eval_ablation run --out experiments/reports/d28_ablation_202.md
+```
+
+**扩题的两条机制**（不靠专注，靠机制）：
+
+1. `dump` 把父块正文切成「句子候选」并给稳定 key（`c0001…`），写题只引用 key
+   → `gold_spans` 100% 是语料原文，不可能抄错
+2. 多版本文档重复的样板句用 `max_parents` 显式声明 + note，不再当作脏数据
+
+**202 题最终口径（174 正 + 28 负）**：
+
+| 方案 | R@10 | hit@10 | MRR@10 | P50 |
+|---|---|---|---|---|
+| A 中文 dense | 65.7% ±6.6 | 74.7% | 0.531 | 18 ms |
+| B 英文 dense | 68.4% ±6.1 | 77.6% | 0.560 | 18 ms |
+| C 两路并集池 | 72.4% ±5.7 | 82.2% | 0.537 | 36 ms |
+| D +英文 BM25 池 | **85.1%** ±4.7 | **91.4%** | 0.543 | 147 ms |
+| E 三路 RRF | 79.3% ±5.3 | 87.4% | **0.603** | 147 ms |
+
+- **A vs E：R@10 +13.6 pt、23 胜 1 负、p<0.0001** —— 83 题时只有 p=0.0703，**扩题是它变显著的原因**
+- **A vs B：p=0.3833 打平** —— 英文 query 的价值不是"更准"，而是给 RRF 一路独立信号（C vs A p=0.0002）
+- **D 的池上限 85.1% vs E 的 79.3%** → 还有 5.8 pt 候选没被排进 top-10，这是 D31 reranker 的余量
+- **B05 定案**：中文 BM25 保留为可选第四路（池内 7 胜 0 负 p=0.0156；进 RRF 后 p=0.7266）
+
+**验收：** 能说清「为什么 83 题的 p=0.0703 变成 202 题的 p<0.0001 不能解读为效果变强了」。
+
 
 ## 重要说明
 

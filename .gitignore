@@ -37,3 +37,5 @@ venv/
 .env
 .DS_Store
 Thumbs.db
+# D27c 句子候选池（expand_questions_v2 dump 生成，可重建；选中的 span 已内嵌进 questions.json）
+experiments/_span_candidates.json
