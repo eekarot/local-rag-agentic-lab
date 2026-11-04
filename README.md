@@ -905,6 +905,38 @@ unmatched **0** / negative 18 → 可用 **83 题**；match_mode 全部 `exact`�
 
 **验收：** 能解释为什么 `hybrid` 的 Recall@10 更高但 Recall@4 更低，以及为什么这不矛盾。
 
+### 实验 26：新旧链路能不能直接比？（D27b 补充）
+
+**不能比聚合指标**——两份 baseline 有 5 处不可比：题集（48 vs 83 可判定）、索引
+（81,027 chunk vs 25,411 parent）、金标粒度（500-token chunk vs ~2k-token 父块）、
+模式定义（`hybrid_score` 已不存在）、融合方式（加权 vs RRF）。
+`evaluate compare --baseline experiments/baseline_old_81k.json` 只会说 `not_comparable`。
+
+唯一站得住的比法是**同一批题逐题配对**：
+
+```powershell
+python experiments/compare_chains.py `
+  --old-log logs/2026-11-02/20261102T143004-2188.jsonl `
+  --new-log logs/2026-11-04/20261104T113427-12fd.jsonl `
+  --map vector=dense,bm25=lexical,hybrid=hybrid
+```
+
+交集 **48 题**：
+
+| 旧 → 新 | k | 旧 hit | 新 hit | 旧独中 / 新独中 | p |
+|---|---|---|---|---|---|
+| vector → dense | 10 | 52.1% | **79.2%** | 1 / 14 | **0.0010** |
+| bm25 → lexical | 10 | 54.2% | 60.4% | 1 / 4 | 0.3750 |
+| hybrid → hybrid | 10 | 60.4% | **87.5%** | 2 / 15 | **0.0023** |
+
+- **语义路显著变好**，**词面路没显著变化**（jieba BM25 在 chunk 级就靠精确词匹配拿到大部分命中）
+- **增益不能全记成「检索变好了」**：父块约 2k token，比 500-token chunk 大，命中本来就更松，
+  方向对新链路有利 → 只能说"新链路在该口径下更强"
+- 顺带修掉一个**静默归零**bug：按命中 id 前缀（`par_` vs `path::chunk-`）判断金标空间，
+  否则用旧日志重算会得到全 0.0%，看着像「旧链路完全不可用」
+
+**验收：** 能说清为什么"新链路 hit@10 涨了 27 个点"不能直接写成"检索质量提升 27 个点"。
+
 
 ## 重要说明
 

@@ -114,13 +114,48 @@ def _cos_z(trace):
 
 # ---------------------------------------------------------------- 打分
 
-def score_traces(traces, questions, ks=(4, 10)) -> dict:
+def detect_gold_space(traces) -> str:
+    """判断这批日志的命中 id 属于哪个空间：`parent_points` 还是 `legacy_chunks`。
+
+    两套 id 长得不一样：新库父块是 `par_<32 hex>`，旧 81k 索引是 `path::chunk-0000`。
+    混用后果是**分数静默变 0**（上一版「优先 gold_points」就踩了：拿旧日志重算，
+    vector/bm25/hybrid 全部 0.0%，看着像「旧链路完全不行」，其实是 id 空间对不上）。
+    """
+    seen = 0
+    for trace in traces:
+        for hit in trace.get("hits") or []:
+            if not isinstance(hit, str):
+                continue
+            seen += 1
+            if not hit.startswith("par_"):
+                return "legacy_chunks"
+            if seen >= 200:
+                break
+        if seen >= 200:
+            break
+    return "parent_points" if seen else "legacy_chunks"
+
+
+def _gold_for(item, gold_space: str) -> set[str]:
+    points = set((item.get("gold_points") or {}).get("parent_ids") or [])
+    chunks = {chunk["id"] for chunk in item.get("gold_chunks") or [] if chunk.get("id")}
+    if gold_space == "parent_points":
+        return points
+    if gold_space == "legacy_chunks":
+        return chunks
+    # auto：谁有金标用谁（新库题两者都有，所以只有显式指定时才会走到这里）
+    return points or chunks
+
+
+def score_traces(traces, questions, ks=(4, 10), gold_space: str = "auto") -> dict:
     """逐 trace 算指标，并按 positive / negative / unmatched 分组。
 
     负样本没有 gold，不参与 Recall；它们单独返回，供 L2 的弃答判定使用，
     这里只保留 `first_rank=None` 与检索耗时，避免在 L1 里混入无法解释的数字。
     """
     by_qid = {item["qid"]: item for item in questions}
+    if gold_space == "auto":
+        gold_space = detect_gold_space(traces)
     positives, negatives, unmatched = [], [], []
 
     for trace in traces:
@@ -128,11 +163,7 @@ def score_traces(traces, questions, ks=(4, 10)) -> dict:
         if item is None:
             unmatched.append(trace.get("qid"))
             continue
-        # 新库链路（D20 之后）金标是父块 id，写在 gold_points.parent_ids；
-        # 旧 81k 链路用 gold_chunks。两套 id 空间不相交，必须按「有没有 gold_points」分流，
-        # 否则新库的 Recall 会因为拿旧 chunk id 去比而恒为 0。
-        points = (item.get("gold_points") or {}).get("parent_ids") or []
-        gold = set(points) if points else {chunk["id"] for chunk in item.get("gold_chunks") or []}
+        gold = _gold_for(item, gold_space)
         hits = trace.get("hits") or []
         row = {
             "qid": item["qid"],

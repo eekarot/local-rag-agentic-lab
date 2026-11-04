@@ -191,3 +191,51 @@ class TestAggregate(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GoldSpaceTest(unittest.TestCase):
+    """命中 id 属于哪个金标空间，必须自动判对——判错就是静默变 0。"""
+
+    def _trace(self, hits, qid="q1", mode="vector"):
+        return {"trace_id": f"t-{mode}", "qid": qid, "mode": mode, "k": 10,
+                "hits": hits, "latency_ms": 1.0}
+
+    def _question(self):
+        return {
+            "qid": "q1", "type": "fact",
+            "gold_chunks": [{"id": "md/a.md::chunk-0000", "grade": 2}],
+            "gold_points": {"parent_ids": ["par_" + "a" * 32]},
+        }
+
+    def test_detects_legacy_chunk_ids(self):
+        from src.eval_logs import detect_gold_space
+
+        self.assertEqual(detect_gold_space([self._trace(["md/a.md::chunk-0000"])]), "legacy_chunks")
+
+    def test_detects_parent_ids(self):
+        from src.eval_logs import detect_gold_space
+
+        self.assertEqual(detect_gold_space([self._trace(["par_" + "b" * 32])]), "parent_points")
+
+    def test_legacy_log_scores_against_gold_chunks_not_points(self):
+        from src.eval_logs import score_traces
+
+        scored = score_traces([self._trace(["md/a.md::chunk-0000"])], [self._question()], ks=(10,))
+        self.assertEqual(len(scored["positives"]), 1)
+        self.assertTrue(scored["positives"][0]["hit"][10])
+
+    def test_parent_log_scores_against_gold_points(self):
+        from src.eval_logs import score_traces
+
+        scored = score_traces([self._trace(["par_" + "a" * 32])], [self._question()], ks=(10,))
+        self.assertTrue(scored["positives"][0]["hit"][10])
+
+    def test_wrong_space_would_zero_out(self):
+        # 反向确认：显式指定错的空间，分数必须掉到 0（说明这个坑是真实的）
+        from src.eval_logs import score_traces
+
+        scored = score_traces(
+            [self._trace(["md/a.md::chunk-0000"])], [self._question()],
+            ks=(10,), gold_space="parent_points",
+        )
+        self.assertFalse(scored["positives"][0]["hit"][10])
