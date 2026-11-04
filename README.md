@@ -786,6 +786,41 @@ python -m src.eval_bilingual check --min-total 100   # CI：还有 draft 就失�
 
 **验收：** 能解释为什么 `query_en` 要分 `draft`/`reviewed` 两种状态，而不是生成完直接用。
 
+### 实验 23：英文 lexical 检索帮谁、伤谁（D25）
+
+```powershell
+python -m src.rag.store.lexical --questions experiments/questions.json --k 10
+python -m src.rag.store.lexical --questions experiments/questions.json --k 10 --keyword-only
+```
+
+先破一个常见误解：**Qdrant 的 full-text 不是 BM25**。`MatchText` 只回答"含不含这些词"，
+没有 idf 和长度归一化，`scroll` 按点 id 返回——拿它当前 10 名等于随机挑。所以这一路是
+**Qdrant 召回（过滤）+ 应用层 BM25 排序**，分词用英文规则而不用 jieba。
+
+| 样本 | 中文 query hit@10 | 英文 query hit@10 | 差值 |
+|---|---|---|---|
+| 全部可判定 83 题 | 46/83 = 55.42% | 57/83 = **68.67%** | +11 条 |
+| 关键词类 32 题 | 13/32 = 40.62% | 24/32 = **75.00%** | +11 条 / Recall **+32.55 pt** |
+
+但 **+11 是「赢 22 输 11」的净值**，分 topic 看方向相反：
+
+| topic | n | 中文 | 英文 |
+|---|---|---|---|
+| cross_chunk | 27 | 14 | **23** |
+| number_spec | 24 | 8 | **17** |
+| **zh_with_en_term** | 9 | **9** | 3 |
+| **concept_zh** | 6 | **4** | 2 |
+
+英文 lexical 在型号/数字/跨块题上大幅领先（`DGX B300`、`400 Gbps` 换语言写法不变），
+但在中文语料题上反而更差——中文 query 命中 9/9，英文 query 只剩 3/9，因为金标正文是中文字。
+
+**所以英文 lexical 是补充不是替代**，这就是 D24/D26 要三路并存的原因。
+
+**修掉的 bug**：`fulltext_filter` 第一版用 AND 语义，英文问句候选 **0 条**
+（要求 `per`、`direction` 同条出现）；改 OR (`should` + `min_should=1`) 后正常。
+
+**验收：** 能说出为什么"英文 query 更好"不能推导出"应该换成英文 query"。
+
 
 ## 重要说明
 

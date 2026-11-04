@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.6\
+> **文档版本**：2.7\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2115,7 +2115,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D22 | — | ✅ **已完成（2026-11-04）** 语言识别（`src/rag/lang/detect.py`：汉字数 /（汉字数 + 英文单词数）比 + 0.20 阈值） | `python -m unittest tests.test_lang_detect` **15 用例**；`python -m src.rag.lang.detect --questions experiments/questions.json` → **202 条样本（zh 101 / en 101）准确率 100.00%**（验收线 95%）；`HNSW 是什么？` → **zh**（ratio 0.75）、`DGX B300 装了几张 GPU？` → zh（0.5714）、`What is RRF?` → en、`8192` → unknown |
 | D23 | D22 | Query 翻译服务（Ollama + 严格 JSON + 术语/型号/数字保护 + 缓存 + 失败降级） | 200 条中文 query 翻译成功率 ≥98%；`DGX B300`、`8192`、`HNSW` 原样保留率 == 100%；模拟超时后仍返回原 query 且检索不中断（单测） |
 | D24 | D19,D23 | 三路召回编排（zh dense / en dense / en BM25） | 一次请求输出三路各自 Top50 与融合结果（debug 字段）；任一路可单独关闭且其余路结果与单独运行逐条一致 |
-| D25 | D15,D23 | 英文 lexical 检索（Qdrant full-text，输入英文 query） | 同一评估集上，英文 query + 英文 BM25 的关键词类命中数高于当前中文 query 版本（报绝对值与样本量） |
+| D25 | D15,D23 | ✅ **已完成（2026-11-04）** 英文 lexical（`src/rag/store/lexical.py`：`ensure_text_index` + `fulltext_filter`(OR) + `load_payloads`/`build_bm25`/`BM25Index` + CLI 中英对比）。**依赖已解除**：直接用评估集的 `query_en`（§17.11.3），不等 D23 翻译服务 | `python -m src.rag.store.lexical --questions experiments/questions.json --k 10` → 83 题可判定：中文 query **46/83（55.42%）** vs 英文 query **57/83（68.67%）**，**+11 条**；关键词类子集 32 题：**13/32（40.62%）vs 24/32（75.00%）**，+11 条 / Recall **+32.55 pt** |
 | D26 | D24 | 应用层 RRF 三路融合 + 跨列表按 `chunk_id` 去重 | 输出无重复 `chunk_id`；同 chunk 多路命中分数正确累加；单测覆盖 k=60、并列名次、空列表 |
 | D27 | D11,B02,B06 | ✅ **已完成（2026-11-04）** 评估集扩到 **101 条中英成对题**（`src/eval_bilingual.py` 校验骨架 + `experiments/expand_questions.py` 增量扩题） | `python -m src.eval_bilingual check --min-total 100` → **0 error**；`python -m src.eval_dataset check` → **0 error**；**成对率 100.00%（101/101）**、`topic` **8/8 覆盖**（concept_zh 6 / zh_with_en_term 9 / acronym_model 8 / number_spec 24 / paraphrase 6 / multi_condition 3 / cross_chunk 27 / no_answer 18）、`difficulty` easy 29 / normal 51 / hard 21、待审草稿 **0** |
 | D28 | D27,D26 | 消融矩阵 A–E 跑通并出报告 | A–E 每格给出 Recall@5/@10、MRR@10、nDCG@10、P50/P95、翻译耗时；配 McNemar / bootstrap CI |
@@ -2373,6 +2373,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D14 | ✅ 2026-11-02 | `src/rag/ingestion/embedding_text_report.py`（前缀统计 / 可重建性 / 父块 Recall@k / A-B 汇总 / 双 collection 跑分 + CLI）、`DocumentStore.parents_containing` / `documents_containing` | 前缀覆盖 100%（全语料 25,411 父块无缺 title/section）、可重建 100%；A/B 48 题：MRR +0.125、hit@10 +2.1pt、Recall@10 +0.9pt |
 | D27 | ✅ 2026-11-04 | `src/eval_bilingual.py`（8 类 topic 分类 / 成对率 / 术语保留率 / 草稿→过审状态机 / `check`）、`experiments/expand_questions.py`（+41 题，gold 由 `locate()` 自动定位） | 101 题、成对率 **100%**、topic **8/8**、两套 `check` 均 0 error；新题集 L1：`hybrid_score` Recall@10 **60.4%**，中文语料 79.6% vs 英文语料 42.7% |
 | D22 | ✅ 2026-11-04 | `src/rag/lang/detect.py`（`cjk_char_count` / `latin_word_count` / `language_ratio` / `detect` / `detect_batch` / `summarize` + CLI） | 评估集 202 条**准确率 100%**；混排样例 `HNSW 是什么？`→zh、`What is RRF?`→en、`8192`→unknown |
+| D25 | ✅ 2026-11-04 | `src/rag/store/lexical.py`（`tokenize_en` / `BM25Index` / `parent_hits` / `ensure_text_index` / `fulltext_filter` / `load_payloads` / CLI） | 83 题：中文 46/83 vs 英文 57/83（**+11**）；关键词类 32 题 **13/32 vs 24/32**；Qdrant text 索引 38,865 点建成功；修 AND→OR 语义 bug |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2454,6 +2455,44 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D25 实测：英文 lexical 帮英文语料、伤中文语料**
+
+做法上有个坑先说清楚：**Qdrant 的 full-text 是布尔匹配，不是 BM25**。`TextIndexParams` + `MatchText`
+只回答「这条 payload 含不含这些词」，没有 idf/长度归一化分数，`scroll` 还是按点 id 顺序返回——
+直接拿它当前 10 名等于随机挑。所以这一路拆成**Qdrant 召回（过滤）+ 应用层 BM25 排序**。
+分词刻意**不用 jieba**：英文路径用英文分词，中文问法进来只会剩型号/缩写（`HNSW 是什么` → `["hnsw"]`），
+这恰好就是 D25 要量的事。
+
+**修掉一个真 bug**：`fulltext_filter` 第一版用 `must`（AND 语义），英文问句
+`What is the peak speed of NDR InfiniBand per direction in a DGX SuperPOD?` 候选 **0 条**——
+它要求 `per`、`direction` 这些词在同一条 payload 里同时出现。改成 `should` + `min_should=1`（OR）后正常。
+过滤只负责「别把无关点捞进来」，排序交给 BM25。
+
+**验收（同一批题、同一条英文 lexical 路，只换 query 语言）**：
+
+| 样本 | 中文 query hit@10 | 英文 query hit@10 | 差值 |
+|---|---|---|---|
+| 全部可判定 83 题 | 46/83 = **55.42%**（Recall 50.00%） | 57/83 = **68.67%**（Recall 57.93%） | **+11 条** / Recall +7.93 pt |
+| 关键词类 32 题（number_spec + acronym_model） | 13/32 = **40.62%**（Recall 36.46%） | 24/32 = **75.00%**（Recall 69.01%） | **+11 条** / Recall **+32.55 pt** |
+
+**但这 11 条净增益背后是「赢 22 输 11」，不是单调变好**——分 topic 看方向完全不同：
+
+| topic | n | 中文 hit | 英文 hit | 仅中文中 | 仅英文中 |
+|---|---|---|---|---|---|
+| cross_chunk | 27 | 14 | **23** | 0 | 9 |
+| number_spec | 24 | 8 | **17** | 1 | 10 |
+| acronym_model | 8 | 5 | **7** | 0 | 2 |
+| **zh_with_en_term** | 9 | **9** | 3 | **6** | 0 |
+| concept_zh | 6 | **4** | 2 | 2 | 0 |
+| paraphrase | 6 | **4** | 3 | 1 | 0 |
+| multi_condition | 3 | 2 | 2 | 1 | 1 |
+
+* **英文 lexical 在 `cross_chunk` / `number_spec` / `acronym_model` 上大幅领先**（型号、数字、参数名跨语言后写法不变，英文问法直接命中）；
+* **在 `zh_with_en_term` / `concept_zh` 上反而更差**：这些题的金标在中文语料（`rag_basics.md` / `agent_basics.md`）里，
+  英文问法根本匹配不到中文字——中文 query 一次命中 9/9，英文 query 只剩 3/9。
+
+**结论**：英文 lexical 是**补充而不是替代**，这正好是 D24/D26 要三路并存（中文 dense 覆盖中文语料 + 英文 dense 跨语言 + 英文 lexical 抓型号数字）而不是「换成英文就完事」的理由。
 
 **D22 实测：语言识别为什么不能用「字符占比」**
 
@@ -2743,6 +2782,11 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.4                     2026-11-02              D14 落地：前缀覆盖/可重建性统计 + 有/无前缀 A/B。实测前缀主要
   2.5                     2026-11-04              D27 落地：评估集 60 → 101 条中英成对题（成对率 100%、topic 8/8、
   2.6                     2026-11-04              D22 落地：语言识别按「汉字数/(汉字数+英文单词数)」判定，
+  2.7                     2026-11-04              D25 落地：英文 lexical = Qdrant full-text 召回 + 应用层 BM25 排序
+                                                  （Qdrant full-text 只有布尔匹配、没有 BM25 分数）。修 AND→OR 语义 bug。
+                                                  83 题：中文 46/83 vs 英文 57/83（+11）；但赢 22 输 11——英文 lexical
+                                                  帮 cross_chunk/number_spec，伤 zh_with_en_term/concept_zh
+                                                  → 三路并存（D24/D26）而不是替换
                                                   阈值 0.20；评估集 202 条准确率 100%，HNSW 是什么？→zh。
                                                   记录「字符占比法在混排上不可靠」的实测数据
                                                   待审草稿 0）。新增 eval_bilingual（8 类 topic / 术语保留率 /
