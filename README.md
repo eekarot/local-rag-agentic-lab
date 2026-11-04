@@ -748,6 +748,44 @@ python -m src.rag.ingestion.embedding_text_report --dir data --from-gold --distr
 
 **验收：** 能解释为什么 MRR 的提升对 RAG 比 Recall@10 更有意义，以及前缀在什么场景下是负作用。
 
+### 实验 22：评估集扩到 101 条中英成对题（D27）
+
+```powershell
+python -m experiments.expand_questions --dry-run     # 扩题前先看 gold 能不能定位
+python -m experiments.expand_questions
+python -m src.eval_bilingual draft                   # 机翻草稿（status=draft）
+python -m src.eval_bilingual review --qid eval-009 --en "Why does the Agent Loop need a maximum step count?"
+python -m src.eval_bilingual check --min-total 100   # CI：还有 draft 就失败
+```
+
+| 项 | 值 |
+|---|---|
+| 题数 | **101**（原 60 + 新增 41） |
+| `query_en` 成对率 | **100.00%** |
+| `topic` 覆盖 | **8/8**（concept_zh / zh_with_en_term / acronym_model / number_spec / paraphrase / multi_condition / cross_chunk / no_answer） |
+| `difficulty` | easy 29 / normal 51 / hard 21 |
+| `check` | 两套校验均 **0 error** |
+
+**关键设计：`query_en` 有状态机。** 机翻只产出 `draft`，`check` 默认把 `draft` 当错误——
+评估集里混着未审的机翻，消融结论就分不清是「检索不行」还是「翻译不行」。
+
+新题集的 L1（旧 81k 索引）：
+
+| 模式 | Recall@10 | hit@10 | MRR@10 |
+|---|---|---|---|
+| vector | 52.1% | 60.2% | 0.396 |
+| bm25 | 41.9% | 48.2% | 0.358 |
+| hybrid | 54.7% | 62.7% | 0.373 |
+| hybrid_score | **60.4%** | **67.5%** | **0.421** |
+
+**最能说明 Phase 3 必要性的一个数**：同一条中文 query，问中文语料 Recall@10 **79.6%**，问英文语料只有 **42.7%**——
+差 36.9 个百分点。跨语言检索不是"锦上添花"，是当前最大的窟窿。
+
+**踩到的坑**：`qwen3.5:9b` 是思考型模型，`/api/chat` 不传 `think:false` 时 `message.content` 是**空串**，
+输出全在 `message.thinking` 里 → 「不报错但答案为空」或 300 s 超时。加上后单条 **1.1 s**。
+
+**验收：** 能解释为什么 `query_en` 要分 `draft`/`reviewed` 两种状态，而不是生成完直接用。
+
 
 ## 重要说明
 

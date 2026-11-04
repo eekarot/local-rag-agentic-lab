@@ -69,20 +69,31 @@ def embed_texts(texts):
     return embeddings
 
 
-def chat_full(messages, temperature=0, seed=None):
-    """调用 /api/chat，返回内容与 Ollama 自带的 token 统计（日志 review 用）。"""
+def chat_full(messages, temperature=0, seed=None, think=None, num_predict=None):
+    """调用 /api/chat，返回内容与 Ollama 自带的 token 统计（日志 review 用）。
+
+    `think=False` 用来关掉思考型模型（qwen3.5 等）的推理段：不关的话
+    `message.content` 会是空串、真正的输出全在 `message.thinking` 里，
+    表现为「调用不报错但答案是空的」，或者推理写太长直到 300 s 超时。
+    """
     options = {"temperature": temperature}
     if seed is not None:
         options["seed"] = seed
-    data = _post("/api/chat", {
+    if num_predict is not None:
+        options["num_predict"] = num_predict
+    payload = {
         "model": OLLAMA_CHAT_MODEL,
         "messages": messages,
         "stream": False,
         "options": options,
-    })
+    }
+    if think is not None:
+        payload["think"] = think
+    data = _post("/api/chat", payload)
     message = data.get("message") or {}
     return {
         "content": message.get("content", ""),
+        "thinking": message.get("thinking"),
         "model": data.get("model") or OLLAMA_CHAT_MODEL,
         "prompt_eval_count": data.get("prompt_eval_count"),
         "eval_count": data.get("eval_count"),
@@ -90,5 +101,6 @@ def chat_full(messages, temperature=0, seed=None):
     }
 
 
-def chat(messages, temperature=0, seed=None):
-    return chat_full(messages, temperature=temperature, seed=seed)["content"]
+def chat(messages, temperature=0, seed=None, think=None, num_predict=None):
+    return chat_full(messages, temperature=temperature, seed=seed,
+                     think=think, num_predict=num_predict)["content"]

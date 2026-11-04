@@ -15,7 +15,11 @@
       }
     ],
     "reference_answer": "检索增强生成（Retrieval-Augmented Generation）：先检索外部材料，再连同问题交给语言模型。",
-    "note": ""
+    "note": "",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "query_en": "What is RAG?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-002",
@@ -33,7 +37,11 @@
       }
     ],
     "reference_answer": "一个向量压不住长文档的多个主题，细粒度问题匹配不到；切太短又会丢上下文。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "query_en": "Why should documents be split into chunks?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-003",
@@ -51,7 +59,11 @@
       }
     ],
     "reference_answer": "不负责。Embedding 只把文本映射成向量，写答案是聊天模型的职责。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "easy",
+    "query_en": "Does the Embedding model generate the final answer?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-004",
@@ -73,7 +85,11 @@
       }
     ],
     "reference_answer": "太小漏证据，太大带入无关内容并抬高延迟；需要实验选择。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "query_en": "What are the risks of Top-K being too large?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-005",
@@ -91,7 +107,11 @@
       }
     ],
     "reference_answer": "专有名词、编号、错误代码、产品型号等需要精确字面匹配的场景。",
-    "note": ""
+    "note": "",
+    "topic": "paraphrase",
+    "difficulty": "normal",
+    "query_en": "Which kinds of questions does keyword search handle better?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-006",
@@ -109,7 +129,11 @@
       }
     ],
     "reference_answer": "融合多路检索的排名：只用名次不用原始分数，避开量纲不一致的问题。",
-    "note": ""
+    "note": "",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "query_en": "What is RRF used for?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-007",
@@ -127,7 +151,11 @@
       }
     ],
     "reference_answer": "不能。Reranker 只重排已召回的候选，因此初始召回率仍是上限。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "query_en": "Can a Reranker recover evidence that the first stage never retrieved?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-008",
@@ -145,7 +173,11 @@
       }
     ],
     "reference_answer": "固定 RAG 按预设流程走；Agentic RAG 由模型决定是否再检索、改写查询或直接回答。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "query_en": "What is the difference between fixed RAG and Agentic RAG?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-009",
@@ -163,7 +195,11 @@
       }
     ],
     "reference_answer": "防止无终止循环；配合重复查询检测、错误处理与最终回退把系统收敛在可控范围。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "query_en": "Why does the Agent Loop need a maximum step count?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-010",
@@ -181,7 +217,11 @@
       }
     ],
     "reference_answer": "重建索引：旧向量与新模型的语义空间不兼容。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "easy",
+    "query_en": "What must be done after changing the Embedding model?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-011",
@@ -203,7 +243,11 @@
       }
     ],
     "reference_answer": "RAG 改的是推理时的上下文，微调改的是模型参数；前者适合易变/需引用的知识。",
-    "note": ""
+    "note": "",
+    "topic": "paraphrase",
+    "difficulty": "normal",
+    "query_en": "What is the difference between RAG and model fine-tuning?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-012",
@@ -221,7 +265,11 @@
       }
     ],
     "reference_answer": "最小权限原则：只授予完成任务必需的权限。",
-    "note": ""
+    "note": "",
+    "topic": "concept_zh",
+    "difficulty": "easy",
+    "query_en": "What principle should tool-call permissions follow?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-013",
@@ -239,7 +287,11 @@
       }
     ],
     "reference_answer": "语料缺答案、解析错误、切分不当、召回失败、证据冲突、Prompt 缺约束、模型不忠于证据。",
-    "note": ""
+    "note": "",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "query_en": "What are the common RAG failure types?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-014",
@@ -257,7 +309,11 @@
       }
     ],
     "reference_answer": "更灵活，但增加延迟、成本、失败模式与控制复杂度。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "query_en": "What does Agentic RAG cost compared with fixed RAG?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-015",
@@ -275,7 +331,11 @@
       }
     ],
     "reference_answer": "上下文被切断，单块信息不足以回答；Chunk Size 与 Overlap 需实验选择。",
-    "note": ""
+    "note": "",
+    "topic": "zh_with_en_term",
+    "difficulty": "normal",
+    "query_en": "What problems come from splitting chunks too short?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-016",
@@ -293,7 +353,11 @@
       }
     ],
     "reference_answer": "RAG 只提供外部知识，是否忠实使用、是否相关仍取决于检索质量与生成约束。",
-    "note": ""
+    "note": "",
+    "topic": "concept_zh",
+    "difficulty": "hard",
+    "query_en": "Why can't RAG guarantee that its answers are correct?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-017",
@@ -315,7 +379,11 @@
       }
     ],
     "reference_answer": "8 × 288 GB = 2.3 TB（八张 B300，每张 288 GB）。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "query_en": "What is the total GPU memory of a single DGX B300?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-018",
@@ -341,7 +409,11 @@
       }
     ],
     "reference_answer": "默认 2 TB，可扩到 4 TB。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "query_en": "What is the default system memory of a DGX B300?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-019",
@@ -367,7 +439,11 @@
       }
     ],
     "reference_answer": "通过 ConnectX-8 网络，经 PCIe Gen6 直连 GPU。",
-    "note": ""
+    "note": "",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "query_en": "How do the GPUs in a DGX B300 connect to the network?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-020",
@@ -389,7 +465,11 @@
       }
     ],
     "reference_answer": "最多 4 TB，现场用 NVIDIA 的 128 GB DIMM 配置。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "query_en": "How far can the system memory of a DGX B300 be expanded?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-021",
@@ -411,7 +491,11 @@
       }
     ],
     "reference_answer": "8 张 NVIDIA B300 Tensor Core GPU。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "query_en": "How many GPUs does a DGX B300 have?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-022",
@@ -429,7 +513,11 @@
       }
     ],
     "reference_answer": "256 或 512 token，然后送入 Embedding NIM。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "query_en": "In the NVIDIA RAG reference architecture, how many tokens is a text chunk usually split into?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-023",
@@ -447,7 +535,11 @@
       }
     ],
     "reference_answer": "不能超过 embedding 模型的最大上下文长度（8192 tokens）。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "query_en": "In a RAG pipeline, what limit of the embedding model must the chunk size stay under?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-024",
@@ -469,7 +561,11 @@
       }
     ],
     "reference_answer": "需要 Fabric Manager（FM）服务在运行。",
-    "note": ""
+    "note": "",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "query_en": "After MIG is disabled, what must be running to restore NVLink peer-to-peer on the GPUs?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-025",
@@ -487,7 +583,11 @@
       }
     ],
     "reference_answer": "每台服务器/节点/系统最多 8 个加速器。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "query_en": "How many accelerators per machine does the Base Command Manager free license support?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-026",
@@ -505,7 +605,11 @@
       }
     ],
     "reference_answer": "NVIDIA AI Enterprise 套餐包含 BCM 授权、企业支持、GPU/Network Operator、vGPU 与 AI 软件。",
-    "note": ""
+    "note": "",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "query_en": "Which Base Command Manager license tier includes GPU Operator, Network Operator and vGPU?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-027",
@@ -523,7 +627,11 @@
       }
     ],
     "reference_answer": "LLM 模型、Chunk Size、Reranker 开关、TopK。",
-    "note": ""
+    "note": "",
+    "topic": "multi_condition",
+    "difficulty": "hard",
+    "query_en": "Which parameters does NVIDIA say significantly affect RAG accuracy?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-028",
@@ -541,7 +649,11 @@
       }
     ],
     "reference_answer": "首字响应 3–5 秒以内（TTFT p90 ≤ 3–5 s）。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "query_en": "What is the first-token response target for Enterprise RAG chat scenarios?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-029",
@@ -559,7 +671,11 @@
       }
     ],
     "reference_answer": "输入 1024 token（含多轮历史）、输出 512 token。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "query_en": "What are the typical input and output lengths for the Enterprise RAG summarization scenario?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-030",
@@ -577,7 +693,11 @@
       }
     ],
     "reference_answer": "尽快禁用默认用户名，创建唯一的用户名与密码。",
-    "note": ""
+    "note": "",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "query_en": "How does the DGX RHEL8 install guide say the default BMC username should be handled?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-031",
@@ -603,7 +723,11 @@
       }
     ],
     "reference_answer": "590 万文档、3800 万向量，chunk 256/50，2048 维 FP32。",
-    "note": ""
+    "note": "",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "query_en": "How large is the Wikipedia dataset in the NVIDIA RAG benchmark?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-032",
@@ -621,7 +745,11 @@
       }
     ],
     "reference_answer": "chunk 越大、送给 LLM 的 chunk 越多，延迟开销越大。",
-    "note": ""
+    "note": "",
+    "topic": "multi_condition",
+    "difficulty": "normal",
+    "query_en": "What overhead comes from a larger chunk size or from sending more chunks in RAG?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-033",
@@ -644,7 +772,11 @@
       }
     ],
     "reference_answer": "A100 上 MIG 开启会把 GPU 与 NVSwitch 侧 NVLink 训练关闭；关闭 MIG 后需要 Fabric Manager 服务运行才能重新训练恢复 P2P。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "MIG turns off NVLink on a DGX A100 - what must run to restore peer-to-peer after MIG is disabled?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-034",
@@ -675,7 +807,11 @@
       }
     ],
     "reference_answer": "整机 2.3 TB（8×288 GB）；系统内存默认 2 TB，最大 4 TB。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "query_en": "A DGX B300 card has 288 GB - what is the whole-system GPU memory, and how far can system memory be expanded?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-035",
@@ -710,7 +846,11 @@
       }
     ],
     "reference_answer": "8 张 B300 Tensor Core GPU，默认 2 TB 系统内存（可扩到 4 TB）。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "easy",
+    "query_en": "How many GPUs does a DGX B300 have, and what is its default system memory?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-036",
@@ -729,7 +869,11 @@
       }
     ],
     "reference_answer": "常用 256 或 512 token，且不得超过 embedding 模型最大上下文 8192 token。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "query_en": "How many tokens does the RAG reference architecture recommend per chunk, and what upper limit bounds that size?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-037",
@@ -752,7 +896,11 @@
       }
     ],
     "reference_answer": "两者同时影响延迟与准确率：越大/越多越慢，同时也会影响准确率，需要权衡。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "query_en": "What do chunk size and TopK both affect in RAG?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-038",
@@ -775,7 +923,11 @@
       }
     ],
     "reference_answer": "Chat 要求首字 3–5 秒内；Summarization 输入 1024/输出 512 token，首字目标 10–15 秒。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "How much do the first-token latency targets differ between the Enterprise RAG chat and summarization scenarios?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-039",
@@ -802,7 +954,11 @@
       }
     ],
     "reference_answer": "能：免费授权每台最多 8 个加速器，B300 正好 8 张 GPU。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "easy",
+    "query_en": "Does a single DGX B300 fit inside the Base Command Manager free license?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-040",
@@ -825,7 +981,11 @@
       }
     ],
     "reference_answer": "要选 NVIDIA AI Enterprise 套餐；免费版每台最多 8 个加速器。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "Which BCM license do you need for GPU Operator and vGPU, and what is the free tier limit?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-041",
@@ -856,7 +1016,11 @@
       }
     ],
     "reference_answer": "590 万文档 / 3800 万向量，chunk 256/50、2048 维 FP32；参考架构一般推荐 256 或 512 token。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "How much data does NVIDIA's Wikipedia RAG benchmark use, and how is the chunk size set?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-042",
@@ -879,7 +1043,11 @@
       }
     ],
     "reference_answer": "Reranker 本身不能；但 Agentic RAG 可以通过改写查询、再检索一轮来补召回。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "Can Agentic RAG recover the misses a Reranker cannot bring back?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-043",
@@ -902,7 +1070,11 @@
       }
     ],
     "reference_answer": "防的是「证据不足→反复搜索」的循环；失败类型里语料缺答案与召回失败最容易触发这种循环。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "query_en": "Why is there a maximum step limit, and which failure type does it prevent?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-044",
@@ -929,7 +1101,11 @@
       }
     ],
     "reference_answer": "TopK 是准确率的关键参数；太大带入无关内容，太小漏证据。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "query_en": "TopK is one of the parameters that drive RAG accuracy - what are the side effects of setting it too large?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-045",
@@ -952,7 +1128,11 @@
       }
     ],
     "reference_answer": "要重算全部向量；且 chunk 不能超过新模型最大上下文（如 8192 token）。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "Changing the embedding model means rebuilding the index - what length limit still applies to chunks under the new model?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-046",
@@ -975,7 +1155,11 @@
       }
     ],
     "reference_answer": "只有在需要改写查询/多轮检索时才值得；代价是延迟、成本、失败模式与复杂度上升。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "Fixed RAG has lower latency, so when is Agentic RAG actually worth it?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-047",
@@ -998,7 +1182,11 @@
       }
     ],
     "reference_answer": "「检索没有召回正确证据」是典型失败；Agentic RAG 可以改写查询再检索一轮来补。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "Some questions cannot be answered by a single retrieval in RAG - which failure type is that, and can an Agentic approach fix it?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-048",
@@ -1025,7 +1213,11 @@
       }
     ],
     "reference_answer": "两者都关键且互相牵制：chunk 越大、送入越多，延迟越高。",
-    "note": ""
+    "note": "",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "query_en": "Are accuracy and performance the same thing in RAG, and why must chunk/topk be traded off?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-049",
@@ -1036,7 +1228,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "价格类问题：全库无 B300 报价，price 与「价格」检索只命中其它产品文档的许可/成本论述。｜查证：整句在全库命中 0 条 chunk"
+    "note": "价格类问题：全库无 B300 报价，price 与「价格」检索只命中其它产品文档的许可/成本论述。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "What is the official price of the DGX B300 in China?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-050",
@@ -1047,7 +1243,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "联系方式类：全库无电话号码或热线，只有「联系支持」的流程说明。｜查证：整句在全库命中 0 条 chunk"
+    "note": "联系方式类：全库无电话号码或热线，只有「联系支持」的流程说明。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "What is the customer support phone number for NVIDIA enterprise support?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-051",
@@ -1058,7 +1258,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "价格类：Slurm 相关文档只讲配置与使用，无定价信息。｜查证：整句在全库命中 0 条 chunk"
+    "note": "价格类：Slurm 相关文档只讲配置与使用，无定价信息。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "How much does a Slurm license cost?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-052",
@@ -1069,7 +1273,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "版本/语言类：BCM 文档无 Java SDK 相关内容。｜查证：整句在全库命中 0 条 chunk"
+    "note": "版本/语言类：BCM 文档无 Java SDK 相关内容。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "Where can I download the Java SDK for Base Command Manager?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-053",
@@ -1080,7 +1288,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "价格类：Mission Control 文档无订阅价格。｜查证：整句在全库命中 0 条 chunk"
+    "note": "价格类：Mission Control 文档无订阅价格。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "What is the monthly subscription cost of Mission Control?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-054",
@@ -1091,7 +1303,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "日期类：文档只有硬件规格与配置，无发布/上市日期。｜查证：整句在全库命中 0 条 chunk"
+    "note": "日期类：文档只有硬件规格与配置，无发布/上市日期。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "On what date was the DGX B300 released?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-055",
@@ -1102,7 +1318,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "价格类：全库无 H100 零售价。｜查证：整句在全库命中 0 条 chunk"
+    "note": "价格类：全库无 H100 零售价。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "What is the official retail price of the H100 in US dollars?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-056",
@@ -1113,7 +1333,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "交付/商务类：文档讲部署架构，不讲交付周期。｜查证：整句在全库命中 0 条 chunk"
+    "note": "交付/商务类：文档讲部署架构，不讲交付周期。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "query_en": "How long is the delivery lead time for a DGX SuperPOD?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-057",
@@ -1124,7 +1348,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "商务类：无采购与折扣信息。｜查证：整句在全库命中 0 条 chunk"
+    "note": "商务类：无采购与折扣信息。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "What purchase discount is available on InfiniBand cables?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-058",
@@ -1135,7 +1363,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "外观类：文档只讲规格与接口，无机箱配色。｜查证：整句在全库命中 0 条 chunk"
+    "note": "外观类：文档只讲规格与接口，无机箱配色。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "How many chassis colors are available for the DGX B300?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-059",
@@ -1146,7 +1378,11 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "模型元信息：语料是 NVIDIA 产品文档与一本书，不含该本地模型的训练数据说明。｜查证：整句在全库命中 0 条 chunk"
+    "note": "模型元信息：语料是 NVIDIA 产品文档与一本书，不含该本地模型的训练数据说明。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "query_en": "When is the training-data cutoff of the qwen3.5:9b model used in this project?",
+    "query_en_status": "edited"
   },
   {
     "qid": "eval-060",
@@ -1157,6 +1393,1025 @@
     "gold_spans": [],
     "gold_chunks": [],
     "reference_answer": "",
-    "note": "私有信息：属于用户内部环境，绝不可能出现在公开语料里（安全性正样本）。｜查证：整句在全库命中 0 条 chunk"
+    "note": "私有信息：属于用户内部环境，绝不可能出现在公开语料里（安全性正样本）。｜查证：整句在全库命中 0 条 chunk",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "query_en": "What is the administrator password of our company's internal knowledge base?",
+    "query_en_status": "edited"
+  },
+  {
+    "qid": "eval-061",
+    "question": "DGX SuperPOD 里 NDR InfiniBand 的单向峰值速率是多少？",
+    "query_en": "What is the peak speed of NDR InfiniBand per direction in a DGX SuperPOD?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The latest generation InfiniBand, NDR, has a peak speed of 400 Gbps per direction with an extremely low port-to-port latency."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-h200\\latest\\dgx-superpod-components.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0014",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA-11336-001-DSPH200-ReferenceArch\\RA-11336-001-DSPH200-ReferenceArch.md::chunk-0012",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "400 Gbps（单向），端口到端口延迟极低。",
+    "note": ""
+  },
+  {
+    "qid": "eval-062",
+    "question": "HDR100 是用几条通道、每条多少速率凑出 100 Gbps 的？",
+    "query_en": "How does HDR100 reach 100 Gbps in terms of lanes and per-lane speed?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Recall that 100 Gbps EDR and 100 Gbps HDR100 are not the same: EDR is four lanes of 25 Gbps and HDR100 is two lanes of 50 Gbps."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\design-guide-cabling-data-centers\\latest\\ndr-connections.md::chunk-0011",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\TEMD025-DU10438001-CablingDataCenters\\TEMD025-DU10438001-CablingDataCenters.md::chunk-0064",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "HDR100 = 2 条 50 Gbps 通道；EDR 是 4 条 25 Gbps，两者不是一回事。",
+    "note": ""
+  },
+  {
+    "qid": "eval-063",
+    "question": "两层 fabric 用 16 台 spine 交换机能支持多大的 DGX SuperPOD？",
+    "query_en": "How large a DGX SuperPOD can a two-layer fabric with 16 spine switches support?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The two-layer fabric with 16 spine switches supports a DGX SuperPOD with up to 16 SUs (9,000 GPUs)."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-rubinx86\\latest\\network-fabrics.md::chunk-0012",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "最多 16 个 SU，约 9,000 张 GPU。",
+    "note": ""
+  },
+  {
+    "qid": "eval-064",
+    "question": "DGX GB200 一个机架里放多少张 GPU？",
+    "query_en": "How many GPUs are in one DGX GB200 rack?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Each DGX GB200 delivers breakthrough AI performance in a rack-scale, 72 GPU configuration."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA11338001-DSPGB200-ReferenceArch\\RA11338001-DSPGB200-ReferenceArch.md::chunk-0015",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "72 张 GPU（rack-scale 配置）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-065",
+    "question": "DGX GB200 的 72 张 GPU 是怎么组成单个 NVLink 域的？",
+    "query_en": "How do the 72 GPUs in a DGX GB200 form a single NVLink domain?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The compute nodes for DGX GB200 rack system are using the 72x1 NVLink topology, which contains 72 GPUs in a single NVLink domain."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA11338001-DSPGB200-ReferenceArch\\RA11338001-DSPGB200-ReferenceArch.md::chunk-0018",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "用 72x1 NVLink 拓扑，72 张 GPU 落在同一个 NVLink 域。",
+    "note": ""
+  },
+  {
+    "qid": "eval-066",
+    "question": "一个 GB200 Superchip 里包含哪些芯片、用什么互连？",
+    "query_en": "What dies does one GB200 Superchip combine and what interconnect does it use?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "GB200 Superchips, each chip combines two NVIDIA B200 Tensor Core GPUs and one NVIDIA Grace CPU, connected over a 900GB/s ultra-low-power NVLink-C2C interconnect."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0010",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA11338001-DSPGB200-ReferenceArch\\RA11338001-DSPGB200-ReferenceArch.md::chunk-0021",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "两颗 B200 GPU + 一颗 Grace CPU，用 900 GB/s 的 NVLink-C2C 互连。",
+    "note": ""
+  },
+  {
+    "qid": "eval-067",
+    "question": "DGX SuperPOD 机房的噪声暴露上限是多少？",
+    "query_en": "What is the maximum acceptable noise exposure limit in a DGX SuperPOD data center?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The maximum acceptable unprotected exposure limit for a standard 8-hour duty cycle is a time weighted average of 85 dBA."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\design-guides\\dgx-superpod-data-center-design-h100\\latest\\sound.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\nvidia-dgx-superpod-data-center-design-dgx-h100\\nvidia-dgx-superpod-data-center-design-dgx-h100.md::chunk-0164",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "8 小时工时下 85 dBA（时间加权平均）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-068",
+    "question": "Mission Control 里 NetQ 的评估许可能用多久？",
+    "query_en": "How long is the NetQ evaluation license valid for in Mission Control?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "When installing NetQ, the system receives an evaluation license valid for 60 days."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\mission-control\\docs\\nmc-software-installation-guide\\2.3.0\\netq-installation.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\nvidia-mission-control-manual\\nvidia-mission-control-manual.md::chunk-0025",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "60 天。",
+    "note": ""
+  },
+  {
+    "qid": "eval-069",
+    "question": "Mission Control 离线安装大致要下载多少数据？",
+    "query_en": "Roughly how much data does the Mission Control air-gapped installation download?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The download script fetches approximately 130 GB of data (PID files alone account for roughly 9 GB)."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\mission-control\\docs\\nmc-software-installation-guide\\2.3.1\\airgapped-installation\\downloading-artifacts.md::chunk-0022",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "约 130 GB，其中 PID 文件约占 9 GB。",
+    "note": ""
+  },
+  {
+    "qid": "eval-070",
+    "question": "NVL72 机架默认的 NVLink 分区包含多少张 GPU？",
+    "query_en": "How many GPUs does an NVL72 rack's default NVLink partition contain?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For instance, each NVL72 rack is by default an NVLink partition that includes 72 GPUs connected through NVLink."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\mission-control\\docs\\systems-administration-guide\\2.3.0\\slurm-workload-management.md::chunk-0033",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "72 张 GPU，通过 NVLink 连接。",
+    "note": ""
+  },
+  {
+    "qid": "eval-071",
+    "question": "按照 DGX 文档，GPU driver 至少要到哪个版本？",
+    "query_en": "According to the DGX documentation, what is the minimum installed GPU driver release?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For DGX systems, the installed GPU driver release must be 580 or greater."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgx-os-7-user-guide\\additional_software.md::chunk-0012",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgx-os-7-user-guide\\dgx-os-7-user-guide.md::chunk-0338",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "580 或更高。",
+    "note": ""
+  },
+  {
+    "qid": "eval-072",
+    "question": "DGX-H200 系统要求的 GPU driver 最低版本是多少？",
+    "query_en": "What is the minimum GPU driver release for DGX-H200 systems?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For the DGX H200 systems, the installed GPU driver release must be 550 or greater."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgx-os-6-user-guide\\additional_software.md::chunk-0009",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgx-os-6-user-guide\\dgx-os-6-user-guide.md::chunk-0458",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "550 或更高。",
+    "note": ""
+  },
+  {
+    "qid": "eval-073",
+    "question": "MLNX_OFED 最后一个独立发布版本的支持周期有多长？",
+    "query_en": "What is the support term of the last standalone MLNX_OFED release?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "MLNX_OFED last standalone release is October 2024 Long Term Support (3 years)."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\networking\\display\\mlnxofedv24101140lts.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "2024 年 10 月的长期支持版，支持 3 年。",
+    "note": ""
+  },
+  {
+    "qid": "eval-074",
+    "question": "DGX SuperPOD 建议的用户存储最低带宽是多少？",
+    "query_en": "What minimum bandwidth should user storage provide for best performance in a DGX SuperPOD?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For best performance, user storage should provide a minimum bandwidth of 100 Gb/s."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-rubinx86\\latest\\dgx-superpod-components.md::chunk-0047",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "至少 100 Gb/s。",
+    "note": ""
+  },
+  {
+    "qid": "eval-075",
+    "question": "一个 SU 里所有 DGX 系统的聚合非阻塞带宽是多少？",
+    "query_en": "What is the total aggregated non-blocking bandwidth of all DGX systems in a single SU?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The total aggregated non-blocking bandwidth for all DGX systems within a single SU is 96 × 400 Gb/s."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-rubinx86\\latest\\network-fabrics.md::chunk-0009",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "96 × 400 Gb/s。",
+    "note": ""
+  },
+  {
+    "qid": "eval-076",
+    "question": "NDR200 适配器端用的是什么样的分光器和光模块？",
+    "query_en": "What splitters and transceivers are used at the adapter end for NDR200?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "acronym_model",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For NDR200 adapters, twin two-way single-mode splitters are used with 200 Gbps OSFP flat single-mode transceivers at the adapter."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\design-guide-cabling-data-centers\\latest\\ndr-connections.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\TEMD025-DU10438001-CablingDataCenters\\TEMD025-DU10438001-CablingDataCenters.md::chunk-0058",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "twin two-way 单模分光器 + 200 Gbps OSFP flat 单模光模块。",
+    "note": ""
+  },
+  {
+    "qid": "eval-077",
+    "question": "DGX GB200 机架的每个计算节点有几条 GPU rail、要配几个 IP 池？",
+    "query_en": "How many GPU rails does each compute tray in a DGX GB200/GB300 rack have, and how many IP pools do you define?",
+    "query_en_status": "edited",
+    "type": "fact",
+    "topic": "number_spec",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Each compute node (AKA compute tray) in a DGX GB200/GB300 rack has 4 GPU rails, so you would define 4 IP pools."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\dgx-explained\\network-operator\\latest\\network-operator-installation.md::chunk-0017",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "4 条 GPU rail → 4 个 IP 池。",
+    "note": ""
+  },
+  {
+    "qid": "eval-078",
+    "question": "把用户问题也变成向量、再按相似度找文本块，这属于哪种检索？",
+    "query_en": "Which retrieval method converts the user query into a vector and looks for chunks by similarity?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "向量检索把用户问题也转换成向量，再根据向量相似度或距离寻找最相关的文本块。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "稠密向量检索。",
+    "note": ""
+  },
+  {
+    "qid": "eval-079",
+    "question": "生产系统为什么不直接用简单词项重叠，而是用 BM25？",
+    "query_en": "Why do production systems use BM25 instead of simple term overlap for keyword retrieval?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "生产系统常使用 BM25 等成熟算法，而不是简单的词项重叠。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "rag_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "BM25 是更成熟的词项匹配算法，比简单重叠更可靠。",
+    "note": ""
+  },
+  {
+    "qid": "eval-080",
+    "question": "Agent Loop 每一轮具体做哪些动作？",
+    "query_en": "What does each iteration of the Agent Loop do?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "Agent Loop 是一个反复执行的控制循环：向模型提供目标和当前状态，解析模型的下一步决策，执行允许的工具，把工具结果加入状态，再决定继续还是结束。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "给目标与状态 → 解析决策 → 执行工具 → 结果入状态 → 决定继续或结束。",
+    "note": ""
+  },
+  {
+    "qid": "eval-081",
+    "question": "模型会不会自己直接执行代码？工具到底是谁执行的？",
+    "query_en": "Does the model execute code directly, and who actually runs the tool?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "concept_zh",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "工具调用不是模型直接执行代码。模型输出一个结构化动作，宿主程序验证动作名称和参数，再执行对应的工具，并把结果返回模型。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "模型只输出结构化动作；由宿主程序校验参数后执行并回传结果。",
+    "note": ""
+  },
+  {
+    "qid": "eval-082",
+    "question": "固定 RAG 的「固定」体现在哪一步，Agentic 又改动了哪一步？",
+    "query_en": "Which step is fixed in fixed RAG, and which step does Agentic RAG change?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "固定 RAG 的顺序一般是：检索一次、组装上下文、生成答案。Agentic RAG 可以在证据不足时改写查询或追加检索。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "固定版固定为「检索一次→组装→生成」；Agentic 允许在证据不足时改写查询或追加检索。",
+    "note": ""
+  },
+  {
+    "qid": "eval-083",
+    "question": "什么情况下该用 RAG，什么情况下微调更合适？",
+    "query_en": "When is RAG the right choice and when is fine-tuning more appropriate?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "multi_condition",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "RAG 更适合需要更新、引用或隔离的知识，微调更常用于行为、格式或任务模式调整。两者可以结合使用。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0001",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "要更新/引用/隔离的知识用 RAG；改行为、格式或任务模式用微调；两者可结合。",
+    "note": ""
+  },
+  {
+    "qid": "eval-084",
+    "question": "除了限制最大步数，还能靠什么让 Agent Loop 停下来？",
+    "query_en": "Besides a maximum step count, what else keeps the Agent Loop from running forever?",
+    "query_en_status": "edited",
+    "type": "concept",
+    "topic": "paraphrase",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "zh",
+    "gold_spans": [
+      "最大步骤数、重复查询检测、工具错误处理与最终回退能让系统在可控范围内终止。"
+    ],
+    "gold_chunks": [
+      {
+        "id": "agent_basics.md::chunk-0000",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "重复查询检测、工具错误处理与最终回退。",
+    "note": ""
+  },
+  {
+    "qid": "eval-085",
+    "question": "DGX SuperPOD 的 NDR fabric 单向能跑多快，用户存储又要求多少带宽？",
+    "query_en": "How fast is the NDR fabric per direction in a DGX SuperPOD, and what storage bandwidth is required?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The latest generation InfiniBand, NDR, has a peak speed of 400 Gbps per direction with an extremely low port-to-port latency.",
+      "For best performance, user storage should provide a minimum bandwidth of 100 Gb/s."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-h200\\latest\\dgx-superpod-components.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0014",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA-11336-001-DSPH200-ReferenceArch\\RA-11336-001-DSPH200-ReferenceArch.md::chunk-0012",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-rubinx86\\latest\\dgx-superpod-components.md::chunk-0047",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "NDR 单向 400 Gbps；用户存储至少 100 Gb/s。",
+    "note": ""
+  },
+  {
+    "qid": "eval-086",
+    "question": "一个 DGX GB200 机架的 GPU 数量和 NVLink 拓扑规模分别是多少？",
+    "query_en": "How many GPUs are in one DGX GB200 rack, and what is the scale of its NVLink topology?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Each DGX GB200 delivers breakthrough AI performance in a rack-scale, 72 GPU configuration.",
+      "The compute nodes for DGX GB200 rack system are using the 72x1 NVLink topology, which contains 72 GPUs in a single NVLink domain."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA11338001-DSPGB200-ReferenceArch\\RA11338001-DSPGB200-ReferenceArch.md::chunk-0015",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA11338001-DSPGB200-ReferenceArch\\RA11338001-DSPGB200-ReferenceArch.md::chunk-0018",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "一个机架 72 张 GPU，拓扑是 72x1，72 张同处一个 NVLink 域。",
+    "note": ""
+  },
+  {
+    "qid": "eval-087",
+    "question": "GB200 Superchip 由哪几颗芯片组成，整个机架的 NVLink 分区又是多大？",
+    "query_en": "What dies make up a GB200 Superchip, and how large is the NVLink partition of the rack?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "GB200 Superchips, each chip combines two NVIDIA B200 Tensor Core GPUs and one NVIDIA Grace CPU, connected over a 900GB/s ultra-low-power NVLink-C2C interconnect.",
+      "For instance, each NVL72 rack is by default an NVLink partition that includes 72 GPUs connected through NVLink."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0010",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA11338001-DSPGB200-ReferenceArch\\RA11338001-DSPGB200-ReferenceArch.md::chunk-0021",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\mission-control\\docs\\systems-administration-guide\\2.3.0\\slurm-workload-management.md::chunk-0033",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "每颗 Superchip = 2×B200 + 1×Grace（NVLink-C2C 900 GB/s）；NVL72 机架默认一个 72 GPU 的 NVLink 分区。",
+    "note": ""
+  },
+  {
+    "qid": "eval-088",
+    "question": "两层 fabric 用 16 台 spine 能撑多少个 SU，B300 那套参考架构又写到多少个节点？",
+    "query_en": "How many SUs can 16 spine switches support, and how many nodes does the B300 reference architecture fabric cover?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The two-layer fabric with 16 spine switches supports a DGX SuperPOD with up to 16 SUs (9,000 GPUs).",
+      "Figure 6 shows the compute fabric layout for the full 512-node DGX SuperPOD."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-rubinx86\\latest\\network-fabrics.md::chunk-0012",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-b300\\latest\\network-fabrics.md::chunk-0002",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "16 台 spine 最多 16 个 SU（约 9,000 GPU）；B300 参考架构画的是 512 节点满配。",
+    "note": ""
+  },
+  {
+    "qid": "eval-089",
+    "question": "HDR100 和 EDR 都是 100 Gbps，通道配置差在哪，NDR200 又用什么分光器？",
+    "query_en": "HDR100 and EDR both reach 100 Gbps — how do their lane configs differ, and what splitters does NDR200 use?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Recall that 100 Gbps EDR and 100 Gbps HDR100 are not the same: EDR is four lanes of 25 Gbps and HDR100 is two lanes of 50 Gbps.",
+      "For NDR200 adapters, twin two-way single-mode splitters are used with 200 Gbps OSFP flat single-mode transceivers at the adapter."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\design-guide-cabling-data-centers\\latest\\ndr-connections.md::chunk-0011",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\TEMD025-DU10438001-CablingDataCenters\\TEMD025-DU10438001-CablingDataCenters.md::chunk-0064",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\design-guide-cabling-data-centers\\latest\\ndr-connections.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\TEMD025-DU10438001-CablingDataCenters\\TEMD025-DU10438001-CablingDataCenters.md::chunk-0058",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "EDR = 4×25 Gbps，HDR100 = 2×50 Gbps；NDR200 用 twin two-way 单模分光器 + 200 Gbps OSFP flat 光模块。",
+    "note": ""
+  },
+  {
+    "qid": "eval-090",
+    "question": "DGX GB200 机架的每个计算节点怎么配 IP 池，整套机架又是多大规模？",
+    "query_en": "How are IP pools sized per compute tray in a DGX GB200 rack, and how large is the rack itself?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "Each compute node (AKA compute tray) in a DGX GB200/GB300 rack has 4 GPU rails, so you would define 4 IP pools.",
+      "Each DGX GB200 delivers breakthrough AI performance in a rack-scale, 72 GPU configuration."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\dgx-explained\\network-operator\\latest\\network-operator-installation.md::chunk-0017",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture-scalable-infrastructure-gb200\\latest\\dgx-superpod-components.md::chunk-0004",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\RA11338001-DSPGB200-ReferenceArch\\RA11338001-DSPGB200-ReferenceArch.md::chunk-0015",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "每个计算托盘 4 条 GPU rail → 4 个 IP 池；整套机架 72 张 GPU。",
+    "note": ""
+  },
+  {
+    "qid": "eval-091",
+    "question": "NetQ 的评估许可能用多久，Mission Control 离线装一次要拉多少数据？",
+    "query_en": "How long does the NetQ evaluation license last, and how much data does an air-gapped Mission Control install download?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "When installing NetQ, the system receives an evaluation license valid for 60 days.",
+      "The download script fetches approximately 130 GB of data (PID files alone account for roughly 9 GB)."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\mission-control\\docs\\nmc-software-installation-guide\\2.3.0\\netq-installation.md::chunk-0000",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\nvidia-mission-control-manual\\nvidia-mission-control-manual.md::chunk-0025",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\mission-control\\docs\\nmc-software-installation-guide\\2.3.1\\airgapped-installation\\downloading-artifacts.md::chunk-0022",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "NetQ 评估许可 60 天；离线安装约 130 GB（PID 文件约 9 GB）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-092",
+    "question": "DGX 系统要求 GPU driver 至少什么版本，DGX OS 8 又是为哪些驱动版本推荐的操作系统？",
+    "query_en": "What minimum GPU driver release do DGX systems require, and for which driver releases is DGX OS 8 recommended?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "For DGX systems, the installed GPU driver release must be 580 or greater.",
+      "For driver release 595 and later, upgrading to DGX OS 8 is recommended because DGX OS 8 is the validated software stack for these driver releases."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgx-os-7-user-guide\\additional_software.md::chunk-0012",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgx-os-7-user-guide\\dgx-os-7-user-guide.md::chunk-0338",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\dgx-os-7-user-guide\\additional_software.md::chunk-0011",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\dgx-os-7-user-guide\\dgx-os-7-user-guide.md::chunk-0337",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "DGX 要求 580+；595 及以后建议升到 DGX OS 8（该驱动的验证栈）。",
+    "note": ""
+  },
+  {
+    "qid": "eval-093",
+    "question": "MLNX_OFED 最后一个独立版的支持周期有多长，ConnectX-7 SuperNIC 双口能到多少速率？",
+    "query_en": "How long is the support term for the last standalone MLNX_OFED release, and what speed does a dual-port ConnectX-7 SuperNIC reach?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "MLNX_OFED last standalone release is October 2024 Long Term Support (3 years).",
+      "The **MCX715105AS-WEAT **ConnectX-7 SuperNIC, featuring a dual-port QSFP112 module, supports up to 200Gb/s."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\networking\\display\\mlnxofedv24101140lts.md::chunk-0001",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\networking\\display\\connectx8supernic\\port-splitting-configurations.md::chunk-0017",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "MLNX_OFED 最后独立版支持 3 年；双口 QSFP112 的 ConnectX-7 SuperNIC 最高 200 Gb/s。",
+    "note": ""
+  },
+  {
+    "qid": "eval-094",
+    "question": "一个 SU 的聚合非阻塞带宽是多少，整个 SuperPOD 的 fabric 又按多少节点设计？",
+    "query_en": "What is the aggregated non-blocking bandwidth per SU, and how many nodes does the full SuperPOD fabric serve?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The total aggregated non-blocking bandwidth for all DGX systems within a single SU is 96 × 400 Gb/s.",
+      "Figure 5 shows the compute fabric layout for the full 576-node DGX SuperPOD."
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-rubinx86\\latest\\network-fabrics.md::chunk-0009",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\reference-architecture\\scalable-infrastructure-b300-xdr\\latest\\network-fabrics.md::chunk-0003",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "单 SU 聚合 96 × 400 Gb/s；满配 fabric 按 576 节点设计。",
+    "note": ""
+  },
+  {
+    "qid": "eval-095",
+    "question": "DGX SuperPOD 机房对噪声的上限是多少，DGX-1 搬运又需要什么设备？",
+    "query_en": "What is the noise exposure limit in a DGX SuperPOD data center, and what equipment is needed to lift a DGX-1?",
+    "query_en_status": "edited",
+    "type": "multi_hop",
+    "topic": "cross_chunk",
+    "difficulty": "hard",
+    "lang": "zh",
+    "corpus_lang": "en",
+    "gold_spans": [
+      "The maximum acceptable unprotected exposure limit for a standard 8-hour duty cycle is a time weighted average of 85 dBA.",
+      "The DGX-1 weighs approximately 134 lbs, so an equipment lift is required to safely lift the unit and then accurately align the chassis rails with the rack rails"
+    ],
+    "gold_chunks": [
+      {
+        "id": "md\\docs.nvidia.com\\dgx-superpod\\design-guides\\dgx-superpod-data-center-design-h100\\latest\\sound.md::chunk-0007",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\nvidia-dgx-superpod-data-center-design-dgx-h100\\nvidia-dgx-superpod-data-center-design-dgx-h100.md::chunk-0164",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\archives\\dgx1-user-guide\\installation-and-setup.md::chunk-0024",
+        "grade": 2
+      },
+      {
+        "id": "md\\docs.nvidia.com\\dgx\\archives\\dgx1-user-guide\\installation-and-setup.md::chunk-0031",
+        "grade": 2
+      },
+      {
+        "id": "pdf_md\\DGX-1-UserGuide\\DGX-1-UserGuide.md::chunk-0039",
+        "grade": 2
+      }
+    ],
+    "reference_answer": "噪声上限 85 dBA（8 小时加权）；DGX-1 约 134 lbs，需要吊装设备。",
+    "note": ""
+  },
+  {
+    "qid": "eval-096",
+    "question": "DGX GB200 一个机架的报价是多少？",
+    "query_en": "What is the price of one DGX GB200 rack?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "价格类：全库只有 GB200 的规格、拓扑与部署说明，无任何报价。"
+  },
+  {
+    "qid": "eval-097",
+    "question": "NetQ 的永久授权怎么买？",
+    "query_en": "How do you buy a perpetual NetQ license?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "商务类：文档只提 60 天评估许可，无购买方式与永久授权。"
+  },
+  {
+    "qid": "eval-098",
+    "question": "DGX SuperPOD 的保修期是几年？",
+    "query_en": "How many years of warranty does a DGX SuperPOD come with?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "商务类：文档讲设计与部署，无保修年限。"
+  },
+  {
+    "qid": "eval-099",
+    "question": "ConnectX-7 SuperNIC 的零售价是多少美元？",
+    "query_en": "What is the retail price of a ConnectX-7 SuperNIC in USD?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "价格类：网卡文档只有端口拆分与速率，无价格。"
+  },
+  {
+    "qid": "eval-100",
+    "question": "MLNX_OFED 的付费支持热线是多少？",
+    "query_en": "What is the paid support hotline for MLNX_OFED?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "easy",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "联系方式类：文档只有 LTS 周期说明，无电话。"
+  },
+  {
+    "qid": "eval-101",
+    "question": "DGX Spark 在大陆的上市时间是什么时候？",
+    "query_en": "When will DGX Spark be released in mainland China?",
+    "query_en_status": "edited",
+    "type": "negative",
+    "topic": "no_answer",
+    "difficulty": "normal",
+    "lang": "zh",
+    "corpus_lang": null,
+    "gold_spans": [],
+    "gold_chunks": [],
+    "reference_answer": "",
+    "note": "日期/地区类：文档无任何区域上市时间表。"
   }
 ]
