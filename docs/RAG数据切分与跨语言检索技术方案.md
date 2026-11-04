@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.7\
+> **文档版本**：2.8\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2113,7 +2113,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | 编号 | 依赖 | 任务 | 验收方式 |
 |---|---|---|---|
 | D22 | — | ✅ **已完成（2026-11-04）** 语言识别（`src/rag/lang/detect.py`：汉字数 /（汉字数 + 英文单词数）比 + 0.20 阈值） | `python -m unittest tests.test_lang_detect` **15 用例**；`python -m src.rag.lang.detect --questions experiments/questions.json` → **202 条样本（zh 101 / en 101）准确率 100.00%**（验收线 95%）；`HNSW 是什么？` → **zh**（ratio 0.75）、`DGX B300 装了几张 GPU？` → zh（0.5714）、`What is RRF?` → en、`8192` → unknown |
-| D23 | D22 | Query 翻译服务（Ollama + 严格 JSON + 术语/型号/数字保护 + 缓存 + 失败降级） | 200 条中文 query 翻译成功率 ≥98%；`DGX B300`、`8192`、`HNSW` 原样保留率 == 100%；模拟超时后仍返回原 query 且检索不中断（单测） |
+| D23 | D22 | ✅ **已完成（2026-11-04）** 翻译服务（`src/rag/translate/{terms,cache,service}.py`：严格 JSON + 术语保护 + SQLite 缓存 + 四态降级 `ok`/`cached`/`skipped`/`passthrough_terms`/`passthrough_error`，**永不抛异常**） | `python -m src.rag.translate.service --questions experiments/questions.json` → **202 条中文 query 成功率 100.00%**（验收线 98%，190 冷 + 12 缓存，621.7 s）；**术语保留率 100%**（101/101 全为 1.0，min=1.0）；缓存二次运行 **202/202 命中、0.2 s（3100×）**；`python -m unittest tests.test_translate` **20 用例**（含超时降级、漏术语回退、真模型 2 例） |
 | D24 | D19,D23 | 三路召回编排（zh dense / en dense / en BM25） | 一次请求输出三路各自 Top50 与融合结果（debug 字段）；任一路可单独关闭且其余路结果与单独运行逐条一致 |
 | D25 | D15,D23 | ✅ **已完成（2026-11-04）** 英文 lexical（`src/rag/store/lexical.py`：`ensure_text_index` + `fulltext_filter`(OR) + `load_payloads`/`build_bm25`/`BM25Index` + CLI 中英对比）。**依赖已解除**：直接用评估集的 `query_en`（§17.11.3），不等 D23 翻译服务 | `python -m src.rag.store.lexical --questions experiments/questions.json --k 10` → 83 题可判定：中文 query **46/83（55.42%）** vs 英文 query **57/83（68.67%）**，**+11 条**；关键词类子集 32 题：**13/32（40.62%）vs 24/32（75.00%）**，+11 条 / Recall **+32.55 pt** |
 | D26 | D24 | 应用层 RRF 三路融合 + 跨列表按 `chunk_id` 去重 | 输出无重复 `chunk_id`；同 chunk 多路命中分数正确累加；单测覆盖 k=60、并列名次、空列表 |
@@ -2374,6 +2374,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D27 | ✅ 2026-11-04 | `src/eval_bilingual.py`（8 类 topic 分类 / 成对率 / 术语保留率 / 草稿→过审状态机 / `check`）、`experiments/expand_questions.py`（+41 题，gold 由 `locate()` 自动定位） | 101 题、成对率 **100%**、topic **8/8**、两套 `check` 均 0 error；新题集 L1：`hybrid_score` Recall@10 **60.4%**，中文语料 79.6% vs 英文语料 42.7% |
 | D22 | ✅ 2026-11-04 | `src/rag/lang/detect.py`（`cjk_char_count` / `latin_word_count` / `language_ratio` / `detect` / `detect_batch` / `summarize` + CLI） | 评估集 202 条**准确率 100%**；混排样例 `HNSW 是什么？`→zh、`What is RRF?`→en、`8192`→unknown |
 | D25 | ✅ 2026-11-04 | `src/rag/store/lexical.py`（`tokenize_en` / `BM25Index` / `parent_hits` / `ensure_text_index` / `fulltext_filter` / `load_payloads` / CLI） | 83 题：中文 46/83 vs 英文 57/83（**+11**）；关键词类 32 题 **13/32 vs 24/32**；Qdrant text 索引 38,865 点建成功；修 AND→OR 语义 bug |
+| D23 | ✅ 2026-11-04 | `src/rag/translate/terms.py`（`protect_tokens`/`missing_terms`/`retention`）、`cache.py`（SQLite，键含 model+version）、`service.py`（`TranslateService`/`parse_json_reply`/`ollama_provider`/CLI）；`ollama_client.chat*` 加 `fmt`(JSON 模式) | 202 条成功率 **100%**、术语保留 **100%**、缓存 **3100×**、超时全部降级为原文 |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2455,6 +2456,48 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D23 实测：翻译服务（严格 JSON + 术语保护 + 缓存 + 降级）**
+
+定位：中文 query 进来 → 翻成英文 → 喂给英文 Dense / 英文 lexical 两路（D24/D26）。
+它**不能让检索因为翻译而失败**，所以每个分支都返回一个可用 query：
+
+| 情况 | 返回 | `status` |
+|---|---|---|
+| 正常翻出且术语齐全 | 英文译文 | `ok` |
+| 缓存命中 | 英文译文 | `cached` |
+| 输入本来就是英文 | 原文 | `skipped` |
+| 漏型号/数字（重试后仍漏） | **原文** | `passthrough_terms` |
+| 超时/报错/回包解析不了 | **原文** | `passthrough_error` |
+
+**验收结果**：
+
+| 项 | 值 |
+|---|---|
+| 样本 | **202 条**（101 条唯一中文问法 + 101 条「在 NVIDIA 文档里，…」前缀变体） |
+| 成功率 | **202/202 = 100.00%**（验收线 98%）；190 条冷翻 + 12 条缓存 |
+| 冷跑耗时 | **621.7 s**（≈3.08 s/query） |
+| 术语保留率 | **100%**（101/101 题全为 1.0，min = 1.0；`DGX B300`/`8192`/`HNSW`/`ef_construct` 全部原样） |
+| 漏术语回退 | 0 条；调用失败回退 0 条 |
+| 缓存二次运行 | **202/202 命中，0.2 s** → 相对冷跑 **3100×** |
+| 与人工 `query_en` 的一致性 | 词元 Jaccard **p50 0.600 / p10 0.400，零重叠 0/101** |
+
+一致性这行是刻意加的：成功率 100% 只说明「没崩」，说明不了「翻对了」。机器译文与人工 `query_en`
+在 `What is RAG?` 这种题上逐字相同，在 `Why are documents split into chunks?` 与
+`Why should documents be split into chunks?` 这种题上词元重叠 0.6 左右——**语义一致但措辞不同**，
+这也正是 D28 消融要用人工 `query_en`（而不是机器译文）当英文路输入的原因。
+
+**踩到的四个坑（都是真 bug，不是配置问题）**：
+
+1. **提示词漏进译文**：想把「这些 token 必须原样保留」塞进提示（先塞 user，后塞 system），
+   模型直接把它当正文输出——`What is HNSW? (Must keep these tokens verbatim: HNSW)`，
+   而**术语检查照样通过**（`HNSW` 确实在里面），脏译文就这么混进检索了。
+   最终方案：提示只写通用规则，**不给 token 清单**；出门后校验 + 不达标重试。
+2. **温度 0 重试必然无用**：同一 prompt + 温度 0 只会拿到同一段文本。重试改成 **温度 0.4**。
+3. **Windows 上 `with sqlite3.connect(...)` 只提交不关闭**：临时目录清理直接
+   `PermissionError: [WinError 32]`。缓存改成自己管 `close()`。
+4. **`cls.provider = 函数` 会变成绑定方法**：`self.provider(texts)` 把测试实例当第一个参数塞进去，
+   provider 签名不匹配 → 被降级逻辑吞掉 → 测试「通过」但结果全是原文。用 `staticmethod` 包一层。
 
 **D25 实测：英文 lexical 帮英文语料、伤中文语料**
 
@@ -2783,6 +2826,10 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.5                     2026-11-04              D27 落地：评估集 60 → 101 条中英成对题（成对率 100%、topic 8/8、
   2.6                     2026-11-04              D22 落地：语言识别按「汉字数/(汉字数+英文单词数)」判定，
   2.7                     2026-11-04              D25 落地：英文 lexical = Qdrant full-text 召回 + 应用层 BM25 排序
+  2.8                     2026-11-04              D23 落地：Query 翻译服务（严格 JSON + 术语保护 + SQLite 缓存 +
+                                                  四态降级，永不抛异常）。202 条成功率 100%、术语保留 100%、
+                                                  缓存 3100×。四个真 bug：提示词漏进译文（术语检查照样过）、
+                                                  温度 0 重试无效、Windows sqlite 不关闭、cls.provider 变绑定方法
                                                   （Qdrant full-text 只有布尔匹配、没有 BM25 分数）。修 AND→OR 语义 bug。
                                                   83 题：中文 46/83 vs 英文 57/83（+11）；但赢 22 输 11——英文 lexical
                                                   帮 cross_chunk/number_spec，伤 zh_with_en_term/concept_zh

@@ -69,7 +69,7 @@ def embed_texts(texts):
     return embeddings
 
 
-def chat_full(messages, temperature=0, seed=None, think=None, num_predict=None):
+def chat_full(messages, temperature=0, seed=None, think=None, num_predict=None, fmt=None):
     """调用 /api/chat，返回内容与 Ollama 自带的 token 统计（日志 review 用）。
 
     `think=False` 用来关掉思考型模型（qwen3.5 等）的推理段：不关的话
@@ -89,6 +89,8 @@ def chat_full(messages, temperature=0, seed=None, think=None, num_predict=None):
     }
     if think is not None:
         payload["think"] = think
+    if fmt is not None:
+        payload["format"] = fmt
     data = _post("/api/chat", payload)
     message = data.get("message") or {}
     return {
@@ -101,6 +103,6 @@ def chat_full(messages, temperature=0, seed=None, think=None, num_predict=None):
     }
 
 
-def chat(messages, temperature=0, seed=None, think=None, num_predict=None):
+def chat(messages, temperature=0, seed=None, think=None, num_predict=None, fmt=None):
     return chat_full(messages, temperature=temperature, seed=seed,
-                     think=think, num_predict=num_predict)["content"]
+                     think=think, num_predict=num_predict, fmt=fmt)["content"]

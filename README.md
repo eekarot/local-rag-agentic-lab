@@ -821,6 +821,45 @@ python -m src.rag.store.lexical --questions experiments/questions.json --k 10 --
 
 **验收：** 能说出为什么"英文 query 更好"不能推导出"应该换成英文 query"。
 
+### 实验 24：Query 翻译服务（D23）
+
+```powershell
+python -m src.rag.translate.service --text "HNSW 是什么？"
+python -m src.rag.translate.service --questions experiments/questions.json --json out.json
+```
+
+| 项 | 值 |
+|---|---|
+| 样本 | 202 条（101 条唯一中文问法 + 101 条前缀变体） |
+| 成功率 | **100.00%**（验收线 98%） |
+| 术语保留率 | **100%**（min = 1.0，`DGX B300`/`8192`/`HNSW`/`ef_construct` 全原样） |
+| 冷跑 | 621.7 s（≈3.08 s/query） |
+| 缓存 | 二次运行 **202/202 命中、0.2 s** → **3100×** |
+| 与人工 `query_en` 词元 Jaccard | p50 **0.600** / p10 0.400，零重叠 0/101 |
+
+结构上有五个出口，**永不抛异常**——翻译挂了最多少一路召回，不能把检索打挂：
+
+| 情况 | 返回 | status |
+|---|---|---|
+| 正常 | 英文译文 | `ok` |
+| 缓存命中 | 英文译文 | `cached` |
+| 本来就是英文 | 原文 | `skipped` |
+| 漏型号/数字 | **原文** | `passthrough_terms` |
+| 超时/报错 | **原文** | `passthrough_error` |
+
+**四个真 bug（都值得记住）：**
+
+1. **提示词漏进译文**——把"这些 token 必须原样保留"塞进提示（user 或 system 都试过），
+   模型直接当正文翻出来：`What is HNSW? (Must keep these tokens verbatim: HNSW)`。
+   更糟的是**术语检查照样通过**（`HNSW` 在里面），脏译文能一路混进检索。
+   → 提示只写通用规则，不给 token 清单，改成本地校验 + 重试。
+2. **温度 0 重试必然无效** —— 同 prompt 同温度只会拿到同一段文本，重试改成 **温度 0.4**。
+3. **Windows `with sqlite3.connect(...)` 只提交不关闭** → 临时目录清理 `WinError 32`。
+4. **`cls.provider = 函数` 变成绑定方法** → 测试实例被当第一个参数塞进 provider，
+   异常被降级逻辑吞掉，测试"通过"但结果全是原文。用 `staticmethod` 包一层。
+
+**验收：** 能解释为什么"漏术语时要回退中文原文"而不是"用漏了术语的译文继续检索"。
+
 
 ## 重要说明
 
