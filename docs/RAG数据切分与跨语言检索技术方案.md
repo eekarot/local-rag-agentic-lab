@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.5\
+> **文档版本**：2.6\
 > **日期**：2026-11-02\
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。\
@@ -2112,7 +2112,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | 编号 | 依赖 | 任务 | 验收方式 |
 |---|---|---|---|
-| D22 | — | 语言识别（zh/en，含"中文+英文术语"混排） | 60 题 + 20 条英文 query 上判定准确率 ≥95%；`"HNSW 是什么"` 必须判为 zh |
+| D22 | — | ✅ **已完成（2026-11-04）** 语言识别（`src/rag/lang/detect.py`：汉字数 /（汉字数 + 英文单词数）比 + 0.20 阈值） | `python -m unittest tests.test_lang_detect` **15 用例**；`python -m src.rag.lang.detect --questions experiments/questions.json` → **202 条样本（zh 101 / en 101）准确率 100.00%**（验收线 95%）；`HNSW 是什么？` → **zh**（ratio 0.75）、`DGX B300 装了几张 GPU？` → zh（0.5714）、`What is RRF?` → en、`8192` → unknown |
 | D23 | D22 | Query 翻译服务（Ollama + 严格 JSON + 术语/型号/数字保护 + 缓存 + 失败降级） | 200 条中文 query 翻译成功率 ≥98%；`DGX B300`、`8192`、`HNSW` 原样保留率 == 100%；模拟超时后仍返回原 query 且检索不中断（单测） |
 | D24 | D19,D23 | 三路召回编排（zh dense / en dense / en BM25） | 一次请求输出三路各自 Top50 与融合结果（debug 字段）；任一路可单独关闭且其余路结果与单独运行逐条一致 |
 | D25 | D15,D23 | 英文 lexical 检索（Qdrant full-text，输入英文 query） | 同一评估集上，英文 query + 英文 BM25 的关键词类命中数高于当前中文 query 版本（报绝对值与样本量） |
@@ -2372,6 +2372,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | D20 | ✅ 2026-11-02 | `scripts/ingest.py --dir data --limit 10000`（全链路）；`IngestState.forget_document_id` + `Indexer.delete_document(state=...)` + `scripts/ingest.py --delete` 补上「删除→状态表同步→可重建」闭环 | 全语料 1467 篇 → 38,865 点 / 0 失败 / 1992 s；hit@5 8/10、回溯 10/10；删除后重建精确回到 38,865 |
 | D14 | ✅ 2026-11-02 | `src/rag/ingestion/embedding_text_report.py`（前缀统计 / 可重建性 / 父块 Recall@k / A-B 汇总 / 双 collection 跑分 + CLI）、`DocumentStore.parents_containing` / `documents_containing` | 前缀覆盖 100%（全语料 25,411 父块无缺 title/section）、可重建 100%；A/B 48 题：MRR +0.125、hit@10 +2.1pt、Recall@10 +0.9pt |
 | D27 | ✅ 2026-11-04 | `src/eval_bilingual.py`（8 类 topic 分类 / 成对率 / 术语保留率 / 草稿→过审状态机 / `check`）、`experiments/expand_questions.py`（+41 题，gold 由 `locate()` 自动定位） | 101 题、成对率 **100%**、topic **8/8**、两套 `check` 均 0 error；新题集 L1：`hybrid_score` Recall@10 **60.4%**，中文语料 79.6% vs 英文语料 42.7% |
+| D22 | ✅ 2026-11-04 | `src/rag/lang/detect.py`（`cjk_char_count` / `latin_word_count` / `language_ratio` / `detect` / `detect_batch` / `summarize` + CLI） | 评估集 202 条**准确率 100%**；混排样例 `HNSW 是什么？`→zh、`What is RRF?`→en、`8192`→unknown |
 
 **Token 口径（D05 产出，后续 D06–D12 直接用）**
 
@@ -2453,6 +2454,29 @@ Overlap 实测：前 100 对相邻 chunk 的 overlap **100% 落在 [50,70]**（p
 | 600 | 114 | 280 | 2.46 | 360 | 6.4% | 0.00% |
 
 结论：**Child 的粒度被 Parent 的大小卡住了**——`min_tokens=200` 下 202 个 Parent 只切出 332 个 Child（1.64），大量 Child 就是整个 Parent，碎块率因此 14.76%。把 `min_tokens` 提到 **400** 能把碎块率砍半（14.3% → 7.0%）、重复归零，代价是 `section_path` 变粗（合并取共同前缀）。这条作为 **B07 待定决策**提交，必须等 D28 的检索级消融确认收益后再改默认值，不能凭 chunking 指标拍板。
+
+**D22 实测：语言识别为什么不能用「字符占比」**
+
+混排的形态是「中文问句里夹型号/缩写」，不是均衡双语。实测这些问法的**字母数并不比汉字少**：
+
+| 问法 | 汉字 | 字母 | 汉字字符占比 |
+|---|---|---|---|
+| `HNSW 是什么？` | 3 | 4 | 42.9% |
+| `DGX B300 装了几张 GPU？` | 4 | 7 | 36.4% |
+| `NVLink 和 PCIe 有什么区别？` | 6 | 10 | 37.5% |
+
+按字符占比判语言，阈值稍高就会把这些中文问法判成 en；路由判错 → 中文问法被送去英文 BM25 → 关键词全部丢失。
+所以判据改成**汉字数 /（汉字数 + 英文单词数）**，按「词」而不是「字母」计：
+
+| 问法 | 汉字 | 英文单词 | ratio | 判定 |
+|---|---|---|---|---|
+| `HNSW 是什么？` | 3 | 1 | 0.75 | **zh** |
+| `DGX B300 装了几张 GPU？` | 5 | 3 | 0.5714 | **zh** |
+| `Why should documents be split into chunks?` | 0 | 7 | 0.0 | en |
+| `8192` | 0 | 0 | None | unknown |
+
+阈值 0.20；验收样本 **202 条（评估集 101 条中文问法 + 101 条 `query_en`）→ 准确率 100.00%**（验收线 95%）。
+`unknown`（既无汉字也无英文单词）单独成一类而不是硬塞进 zh/en——路由遇到它就不该假装知道语言。
 
 **D27 实测：评估集从 60 条扩到 101 条中英成对题**
 
@@ -2718,6 +2742,9 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.3                     2026-11-02              D20 端到端 DoD：全语料 1467 篇 → 38,865 点 / 0 失败 /
   2.4                     2026-11-02              D14 落地：前缀覆盖/可重建性统计 + 有/无前缀 A/B。实测前缀主要
   2.5                     2026-11-04              D27 落地：评估集 60 → 101 条中英成对题（成对率 100%、topic 8/8、
+  2.6                     2026-11-04              D22 落地：语言识别按「汉字数/(汉字数+英文单词数)」判定，
+                                                  阈值 0.20；评估集 202 条准确率 100%，HNSW 是什么？→zh。
+                                                  记录「字符占比法在混排上不可靠」的实测数据
                                                   待审草稿 0）。新增 eval_bilingual（8 类 topic / 术语保留率 /
                                                   draft→reviewed 状态机 / check）与 expand_questions 增量扩题。
                                                   修 qwen3.5:9b 思考型模型需 think:false（否则答案为空/超时）。
