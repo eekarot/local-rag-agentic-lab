@@ -14,7 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Sequence
 
-from .citations import ABSTAIN_PATTERNS
+from .citations import ABSTAIN_PATTERNS, detect_abstain as _detect_abstain
 
 #: 方案 §4.9 的七条规则（原文照搬，只在前面加一句「编号从哪来」）
 SYSTEM_RULES: tuple[str, ...] = (
@@ -130,6 +130,9 @@ def build_messages(
 
 
 def detect_abstain(answer: str) -> bool:
-    """模型自己说「证据不足」也算弃答（与 `PromptBundle.abstained` 合起来统计弃答率）。"""
-    lowered = (answer or "").lower()
-    return any(pattern in lowered for pattern in ABSTAIN_PATTERNS)
+    """模型自己说「无法回答/证据不足」也算弃答（与 `PromptBundle.abstained` 合起来统计）。
+
+    判定细则收敛在 `citations.detect_abstain`：弱信号只看开头，避免把「正文里
+    转述『证据不足』」的完整答案误判成弃答（N12）。
+    """
+    return _detect_abstain(answer)

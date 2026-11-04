@@ -21,11 +21,55 @@ CITATION_PATTERN = re.compile(
 #: 反例：括号里写了「证据」但不是数字 → 记 malformed
 MALFORMED_PATTERN = re.compile(r"[\[【]\s*证据\s*([^\]】]*)\s*[\]】]")
 
-ABSTAIN_PATTERNS = (
-    "证据不足", "知识库未提供", "知识库中没有", "无法从证据",
-    "insufficient evidence", "no evidence", "not enough evidence",
-    "cannot be determined from the provided",
+#: 结论型信号：只在这些词出现在**开头或结尾**时才算弃答（结论通常在这两处）
+ABSTAIN_STRONG = (
+    "知识库未提供", "知识库中没有", "知识库中未提供", "未提供足够", "没有提供足够", "没有足够证据",
+    "无法从证据", "无法回答", "无法找到", "无法确认", "无法确定", "不足以回答",
+    "insufficient evidence", "not enough evidence", "cannot answer", "cannot find",
+    "cannot determine", "cannot be determined from the provided",
 )
+
+#: 弱信号：**只认一句话式的极简弃答**（开头就是它、且整段很短）
+ABSTAIN_WEAK = ("证据不足", "no evidence")
+
+#: 兼容旧名（外部按整组匹配的地方仍然可用）
+ABSTAIN_PATTERNS = ABSTAIN_STRONG + ABSTAIN_WEAK
+
+#: 弱信号当作弃答的最大答案长度（字符）：超过就认为是在正常作答中引用该词
+ABSTAIN_TERSE_CHARS = 40
+
+#: 结论区：首尾各取几个句子参与强信号匹配。
+#: 实测 40 条答案：edge=3 是拐点（2 会漏掉「末尾倒数第三句下结论」的 eval-058，
+#: 4 会把正文里转述的 eval-015 误判），所以取 3。
+ABSTAIN_EDGE_SENTENCES = 3
+
+_SENTENCE_END = "。！？!?;" + chr(10)
+
+
+def _edge_text(text: str, sentences: int = ABSTAIN_EDGE_SENTENCES) -> str:
+    """取答案的「首 N 句 + 末 N 句」：结论在这两处，正文中间的多是转述（N12）。"""
+    parts = [piece for piece in re.split("[" + re.escape(_SENTENCE_END) + "]", text) if piece.strip()]
+    if len(parts) <= 2 * sentences:
+        return text
+    return " ".join(parts[:sentences] + parts[-sentences:])
+
+
+def detect_abstain(text: str, *, terse_chars: int = ABSTAIN_TERSE_CHARS) -> bool:
+    """模型是否在弃答。
+
+    强信号（"无法找到"/"知识库中未提供"…）只看**首尾两句**——完整答案的正文里经常出现
+    "无法确定『哪家公司？』" 这类转述（实测 eval-015 被误判）。
+    弱信号（"证据不足"）只认极简回答的开头，因为它在长文里几乎总是被引内容。
+    """
+    lowered = (text or "").lower().strip()
+    if not lowered:
+        return False
+    if any(pattern in _edge_text(lowered) for pattern in ABSTAIN_STRONG):
+        return True
+    if len(lowered) > terse_chars:
+        return False
+    head = lowered.strip().lstrip("，。:：、,.:;；!！?？")
+    return any(head.startswith(pattern) for pattern in ABSTAIN_WEAK)
 
 
 @dataclass
@@ -94,8 +138,7 @@ def parse_citations(text: str, *, k: int | None = None) -> CitationReport:
         if not CITATION_PATTERN.fullmatch(match.group(0)):
             report.malformed.append(match.group(0))
 
-    lowered = body.lower()
-    report.abstained = any(pattern in lowered for pattern in ABSTAIN_PATTERNS)
+    report.abstained = detect_abstain(body)
     return report
 
 

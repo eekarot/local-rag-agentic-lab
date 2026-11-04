@@ -53,10 +53,27 @@ def load_parent_records(store_path: str | Path | None = None) -> list[dict[str, 
             "parent_index": row["parent_index"],
             "text": row["content"] or "",
             "title": row["title"],
-            "section_path": row["section_path"],
+            # parents.section_path 落库是 JSON 文本；原样传下去会让 assemble() 把字符串
+            # 按字符拆开（N11：prompt 里每块头部变成 " > 深 > 入 > …"）
+            "section_path": _path_list(row["section_path"]),
             "source": row["source_uri"],
         })
     return out
+
+
+def _path_list(raw: Any) -> list[str]:
+    """把库里的 JSON 文本转成 list[str]；None/坏数据一律退化成空列表。"""
+    if isinstance(raw, list):
+        return [str(item) for item in raw]
+    if not raw:
+        return []
+    try:
+        parsed = json.loads(raw)
+    except (TypeError, ValueError):
+        return []
+    if not isinstance(parsed, list):
+        return []
+    return [str(item) for item in parsed]
 
 
 def _parents_stamp(store_path: str | Path | None = None) -> str:

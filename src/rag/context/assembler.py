@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -27,6 +28,23 @@ MAX_SEAM_CHARS = 400
 
 #: 接缝最短匹配长度：太短（如 8 个字）会误判，实测 24 字符已能稳定命中重叠段
 MIN_SEAM_CHARS = 24
+
+
+def _path_list(raw: Any) -> list[str]:
+    """`section_path` 的规范化：list 直接用；JSON 文本解析；其余退化成空列表。
+
+    上游（`load_parent_records`）已经会解析，这里再写一次是因为**字符串被 `list()`
+    拆成字符是静默失败**——不报错，只是 prompt 里多出几百个孤立字符（N11）。
+    """
+    if isinstance(raw, list):
+        return [str(item) for item in raw]
+    if isinstance(raw, str) and raw.strip():
+        try:
+            parsed = json.loads(raw)
+        except ValueError:
+            return []
+        return [str(item) for item in parsed] if isinstance(parsed, list) else []
+    return []
 
 
 @dataclass
@@ -320,7 +338,7 @@ def assemble(
             parent_indexes=[int(item["record"].get("parent_index")) for item in group
                             if isinstance(item["record"].get("parent_index"), int)],
             chunk_ids=[item["parent_id"] for item in group],
-            section_path=list(head["record"].get("section_path") or []),
+            section_path=_path_list(head["record"].get("section_path")),
             source_uri=str(head["record"].get("source_uri") or ""),
             title=str(head["record"].get("title") or ""),
             text=text,
