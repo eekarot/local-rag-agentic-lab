@@ -155,6 +155,33 @@ python -m src.ask "问题" --k 5 --sources all    # 少给几块证据 / 列全�
 python -m src.ask "问题" --json                 # 机器可读输出
 ```
 
+### 并发与限流（HTTP 服务的默认值）
+
+生成很慢（实测 p50 **53.5 s**、单次 12–25 s），且 CPU 上跑 9B 是算力独占：并发不会让 10 个人各快 10 倍，
+只会让 10 个人一起等更久。所以服务端**一次只生成一个，其余排队，排不下就明确拒绝**。
+
+| 参数 | 默认 | 含义 |
+|---|---|---|
+| `RAG_MAX_INFLIGHT` | 1 | 同时生成的上限 |
+| `RAG_MAX_QUEUE` | 2 | 排队位（1 跑 + 2 排 = 最多 3 个进来） |
+| `RAG_QUEUE_TIMEOUT` | 120 s | 排队多久没轮到就放弃（>2× 生成 p50） |
+| `RAG_RETRY_AFTER` | 60 s | 429 里的 `Retry-After`（≈生成 p50，回来大概率能直接进） |
+| `RAG_RETRIEVE_MAX_INFLIGHT` | 4 | `/retrieve` 独立并发（检索是纯 CPU 短任务，不能被生成饿死） |
+
+拒绝时是这样（不是 500，也不是无限等）：
+
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+
+{"detail": "生成队列已满（1 个在跑 + 2 个排队），请 60 s 后重试（Retry-After: 60）。"}
+```
+
+实测（4 个并发 `/ask`）：**第 4 个 0.22 s 拿到 429**；同一时刻 `/retrieve` 仍 200（2.5 s）；
+`/health` 的 `queue` 字段能直接看到 `inflight / waiting / served / rejected_full / rejected_timeout`。
+
+`retrieve_only=true` 不调模型，**不占生成名额** —— 批量检索不会把问答堵死。
+
 ### 没有 Ollama 时会发生什么（降级）
 
 向量模型（`bge-m3`）不在时，服务**不会整个挂掉**：三路检索里 `dense_zh` / `dense_en` 自动停用，

@@ -115,3 +115,7 @@ class HealthResponse(BaseModel):
     routes: list[str] = Field(default_factory=list)
     rerank_enabled: bool = True
     generation_enabled: bool = True
+    queue: dict[str, Any] = Field(
+        default_factory=dict,
+        description="生成队列快照：inflight / waiting / served / rejected_full / rejected_timeout",
+    )

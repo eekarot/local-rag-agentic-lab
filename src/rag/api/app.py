@@ -26,6 +26,7 @@ from typing import Any, Callable, Mapping
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse
 
+from .queue import QueueFullError, QueueTimeoutError, make_queue_from_env, SingleFlightQueue
 from ..ask.pipeline import (
     DEFAULT_BUDGET,
     DEFAULT_K,
@@ -67,7 +68,23 @@ class ApiDeps:
     translate: TranslateFn = lambda question: ("zh", None)   # noqa: E731 - 默认不做翻译
     routes: tuple[str, ...] = ("dense_zh", "dense_en", "lexical_en")
     version: str = API_VERSION
+    #: 两条队列**分开**：生成慢且吃内存（单飞），检索快且纯 CPU（可并发）。
+    #: 合成一条会让批量检索把问答堵死，也会让一次生成把检索饿死。
+    ask_queue: Any = None
+    retrieve_queue: Any = None
     extra: dict[str, Any] = field(default_factory=dict)
+
+    def queue_for(self, kind: str) -> Any:
+        """没注入就按默认建一个（测试注入假的，生产按环境变量）。"""
+        explicit = self.ask_queue if kind == "ask" else self.retrieve_queue
+        if explicit is not None:
+            return explicit
+        if kind == "ask":
+            self.ask_queue = make_queue_from_env()
+        else:
+            self.retrieve_queue = make_queue_from_env(
+                prefix="RAG_RETRIEVE", concurrency=4, queue=2, timeout_s=5.0, name="检索")
+        return self.ask_queue if kind == "ask" else self.retrieve_queue
 
 
 # -- 生产装配（懒加载） ----------------------------------------------------
@@ -124,6 +141,9 @@ def production_deps() -> ApiDeps:
             reranker=CrossEncoderReranker(config=RerankConfig()),
             ask=lambda messages: ollama_client.chat(messages, temperature=0.0, think=False),
             translate=translate,
+            ask_queue=make_queue_from_env(),
+            retrieve_queue=make_queue_from_env(
+                prefix="RAG_RETRIEVE", concurrency=4, queue=2, timeout_s=5.0, name="检索"),
         )
         return _LAZY_DEPS
 
@@ -146,6 +166,16 @@ def _paths(raw: Any) -> list[str]:
     return []
 
 
+def _busy(prefix: str, exc: QueueFullError | QueueTimeoutError) -> HTTPException:
+    """429：**明确拒绝并告诉对方多久后回来**，不把人塞进注定超时的长队。"""
+    retry_after = int(getattr(exc, "retry_after_s", 1) or 1)
+    return HTTPException(
+        status_code=429,
+        detail=f"{prefix}{exc}".strip(),
+        headers={"Retry-After": str(retry_after)},
+    )
+
+
 def _failed(prefix: str, exc: Exception) -> HTTPException:
     """统一 500：保留异常类型与消息，方便调用方与日志对账。"""
     return HTTPException(status_code=500, detail=f"{prefix}{type(exc).__name__}: {exc}")
@@ -166,6 +196,13 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
               summary="完整问答：检索 → 重排 → 组装 → 生成 → 引用体检")
     def ask_endpoint(request: AskRequest) -> AskResponse:
         current = get_deps()
+        # `retrieve_only` 不调模型 → 不占生成名额（否则一次批量检索能把问答堵死）
+        ticket = None
+        if not request.retrieve_only:
+            try:
+                ticket = current.queue_for("ask").acquire()
+            except (QueueFullError, QueueTimeoutError) as exc:
+                raise _busy("生成队列已满：", exc) from exc
         try:
             language, query_en = current.translate(request.question)
             result = answer_query(
@@ -183,6 +220,9 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
             )
         except Exception as exc:                       # noqa: BLE001 - 统一转 500 + 可读 detail
             raise _failed("问答失败：", exc) from exc
+        finally:
+            if ticket is not None:
+                ticket.release()
 
         payload = result.as_dict()
         # `as_dict()` 里 blocks 是**数量**（CLI 只需数量），HTTP 客户端要块本体才能自己渲染引用
@@ -202,6 +242,10 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
     ) -> RetrieveResponse:
         current = get_deps()
         try:
+            ticket = current.queue_for("retrieve").acquire()
+        except (QueueFullError, QueueTimeoutError) as exc:
+            raise _busy("检索队列已满：", exc) from exc
+        try:
             language, query_en = current.translate(q)
             outcome = retrieve_with_meta(
                 q, retriever=current.retriever, parents=current.parents,
@@ -211,6 +255,8 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
             ranked = outcome.hits
         except Exception as exc:                       # noqa: BLE001
             raise _failed("检索失败：", exc) from exc
+        finally:
+            ticket.release()
 
         hits: list[RetrieveHit] = []
         for position, hit in enumerate(ranked[:k], start=1):
@@ -247,6 +293,7 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
             routes=list(current.routes),
             rerank_enabled=bool(getattr(getattr(current.reranker, "config", None), "enabled", True)),
             generation_enabled=current.ask is not None,
+            queue=current.queue_for("ask").snapshot(),
         )
 
     @app.exception_handler(Exception)

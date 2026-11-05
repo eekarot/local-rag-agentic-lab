@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.21
+> **文档版本**：2.22
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2177,6 +2177,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | O4a | B14 | ✅ **已完成（2026-11-05）** 流式底层：`ollama_client.chat_stream()`（NDJSON 逐行解析，跳空行/非 JSON 行、`{"error"}` 转异常、`finally` 关上游响应）＋ `pipeline.answer_query_stream()`（事件 `sources → delta* → done`，失败时 `error` 带半截正文） | `python -m unittest tests.test_streaming` **13 用例**；真机：`chat_stream` 66 段 / 首字 12.6 s / 总 14.9 s；整链真机 **sources @ 4,992 ms（6 块 / 2,987 tok）→ 首字 @ 9,658 ms → done @ 17,665 ms**，`timings.first_delta_ms=4,666.7`、`generate_ms=12,672.3`、`cited=[2,1]`、`abstained=False` |
 | O-D3 | B12 | ✅ **已完成（2026-11-05）** 检索降级三件套（`src/rag/retrieval/degrade.py` + 编排层容错）：① `guarded()` + `Breaker`（失败即打开，TTL 30 s，到期半开）；② 编排层单路容错——`dense_zh` 抛异常不再带走 `lexical_en`（改造前该目录**一个 `except` 都没有**）；③ `DegradedInfo{reason, missing, fix, detail, routes}` 一路传到 CLI / `/retrieve` / `/ask` / SSE `sources`。**判定只认异常类型**（`CapabilityError` / `CircuitOpenError` 的 `.capability`），不靠错误文本里有没有 `ollama`（N12 教训） | `python -m unittest tests.test_degradation` **21 用例**；真机（Ollama 指死端口）同一个进程连问三次：**2029 ms → 0 ms → 0 ms**（第 2、3 次被熔断挡住，不再白烧 2.9 s 重试）；`RAG_BREAKER_TTL=2` 半开验证：① 2055 ms 打开 → ② 17 ms 挡住 → ③ 2 s 后 5679 ms **自动恢复**、`degraded=None`、`blocks=3`（不用重启服务）；中文问题降级时 `route_hits` 全 0（`lexical_en` 只吃英文分词），英文 query 仍能出 3 块 |
 ## 17.8 依赖序（执行批次）与里程碑
+| O4b | B14 | ✅ **已完成（2026-11-05）** 有界队列 + 单飞（`src/rag/api/queue.py`）：`MAX_INFLIGHT=1 / MAX_QUEUE=2 / QUEUE_TIMEOUT=120 s / RETRY_AFTER=60 s`（均可环境变量覆盖）；准入失败 → **429 + `Retry-After` + 说明可用 `/retrieve`**；`retrieve_only=true` **不占生成名额**；`/retrieve` 走**独立队列**（4 并发，避免被生成饿死）；`/health` 透出队列快照 | `python -m unittest tests.test_api_queue` **12 用例**；真机 4 并发 `/ask`：**req4 → 429 / 0.22 s**（队列满，立刻拒）、req6=req2/req3 排队 → 429、req1 → 200 / 24.5 s；生成期间 `/retrieve` → **200 / 2.5 s**；`/health` 快照 `inflight=1 waiting=2 rejected_full=1`；改默认值后 2 并发 → **req1 200/12.9 s、req2 200/25.4 s**（真被排队服务，而非 429） |
 
 下表是按下表的依赖关系算出的**最长路径分层**：同一批次内的项互不依赖，可并行开工；下一批次必须等上一批次对应依赖完成。
 （例如 D09 需要 D06 与 D08，而 D08 在 W2，所以 D09 落到 W3。）
@@ -2375,6 +2376,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N18** | 降级在真实路径上**完全没生效**：`build_default_retriever(warmup_texts=...)` 的热身直接调 `embedder.encode_queries()`，**绕过 guarded 包装**且异常不捕获 → Ollama 没起时 CLI 在 setup 阶段就 `EmbeddingBackendError` 崩掉，`degraded` 一行都打不出来 | 已修（真机跑出来的）：热身走 `embed()`（同一份熔断），并改为 best-effort——失败打一行 `[warmup] 跳过（向量模型不可用：CapabilityError）`继续启动，让后续请求走降级。热身是**优化**不是前提 |
 ## 17.10 迁移影响：改造后哪些资产会失效
+| **N19** | 队列默认值**不自洽**：`QUEUE_TIMEOUT=20 s` 而生成 p50 **53.5 s**、实测单次 24.5 s → 排队者 100% 在 20.2 s 收到 429，`MAX_QUEUE=2` 形同虚设（等于「只放 1 个，其余全拒」，却对外宣称有 2 个排队位） | 已修（4 并发真机跑出来的）：拆成两个数——`QUEUE_TIMEOUT=120 s`（>2×p50，排到才算数）与 `RETRY_AFTER=60 s`（≈p50，让客户端回来大概率能直接进）；用例 `test_retry_after_defaults_to_expected_service_time_not_timeout` 锁死这两个值的关系 |
 
 | 资产 | 影响 | 处置 |
 |---|---|---|
@@ -3283,6 +3285,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.19                    2026-11-05              O4a 流式底层（chat_stream + answer_query_stream）：sources 早到 ~4.7 s，
   2.20                    2026-11-05              运维探测层 probes（一份实现三处复用，三级严重度 + 每条失败带 fix）；
   2.21                    2026-11-05              检索降级三件套：单路容错 + 熔断（TTL 半开）+ DegradedInfo 全链路；
+  2.22                    2026-11-05              O4b 有界队列 + 单飞（429 + Retry-After，检索/生成两条队列分开）；
+                                                 修 N19（排队超时 < 生成 p50 → max_queue 形同虚设）
                                                  修 N18（热身绕过熔断导致降级根本没生效）
                                                  python -m src.doctor 自检七项；修 N17「给错药」（serve vs pull）
                                                  首字 9.7 s、全文 17.7 s（真机实测）
