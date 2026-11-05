@@ -54,6 +54,11 @@ def _installed_models():
         return []
 
 
+def installed_models():
+    """已安装的模型名列表（公开别名：doctor / 探针用，别去摸下划线函数）。"""
+    return _installed_models()
+
+
 def embed_texts(texts):
     """调用 Ollama /api/embed，输入字符串列表，返回向量列表。"""
     if not texts:

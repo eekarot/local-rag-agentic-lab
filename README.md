@@ -57,6 +57,8 @@ pip install -r requirements.txt
 python -c "import qdrant_client, onnxruntime, tokenizers, pypdf; print('deps ok')"
 ```
 
+装完依赖先跑一次 `python -m src.doctor`：缺什么、该跑哪条命令，它会直接列出来（下面第 2–4 步要装的东西都在里面，详见文末「自检与排障」）。
+
 ### 第 2 步：启动 Qdrant
 
 ```bash
@@ -183,6 +185,54 @@ curl -s -X POST localhost:8000/api/v1/ask   -H "Content-Type: application/json" 
   或把 body 写进文件后 `--data-binary @body.json`；
 - **只能单 worker**：`--workers 1`（默认）。多 worker 会各自加载一份 945 MB 的 reranker；
 - 流式（SSE）与并发队列限制在下一批（O4），当前的 `/ask` 是一次性返回。
+
+### 自检与排障：`python -m src.doctor`
+
+一条命令查七项：Qdrant / 向量模型 / 生成模型 / 词表 / 重排 / 父块 / 语料目录。
+
+```bash
+python -m src.doctor          # 人类可读
+python -m src.doctor --json   # 给脚本用（stdout 只留 JSON）
+```
+
+全绿时：
+
+```
+[ok] 全部就绪
+  ✓ qdrant       rag_chunks_v1：38865 点
+  ✓ embed_model  bge-m3 可用，维度 1024
+  ✓ chat_model   qwen3.5:9b 已安装
+  ✓ tokenizer    分词器可用（「健康检查」→ 3 tokens）
+  ✓ reranker     已启用（mmarco-mMiniLMv2，首次调用自动下载 449 MB；离线需 HF_HUB_OFFLINE）
+  ✓ parents      父块 25411 个（启动时加载，重建库后需重启）
+  ✓ data_dir     1468 个文件（.md/.txt/.pdf）
+```
+
+坏掉时（这里把 Ollama 指到一个没在跑的端口）：
+
+```
+[down] 检索不可用
+  ✓ qdrant       rag_chunks_v1：38865 点
+  ✗ embed_model  调用失败：RuntimeError: 无法调用 Ollama API：http://127.0.0.1:11999/api/embed
+      修复：ollama serve  # 先确认 Ollama 在跑（桌面版/服务均可）
+      修复：ollama pull bge-m3  # 向量模型必须与建库时一致：bge-m3（换模型需整库重建）
+  · chat_model   未安装 qwen3.5:9b（已安装：无）
+      修复：ollama pull qwen3.5:9b
+  ✓ tokenizer    分词器可用（「健康检查」→ 3 tokens）
+```
+
+三种状态与退出码：
+
+| 状态 | 含义 | 退出码 |
+|---|---|---|
+| `ok` | 全部就绪 | 0 |
+| `degraded` | 能检索、不能生成（只缺生成模型） | 0 |
+| `down` | 检索都跑不起来（缺向量库/向量模型/词表/父块） | 1 |
+
+符号：`✓` 正常，`✗` 硬失败，`·` 可降级或缺省。
+
+> **为什么向量模型不能随便换**：索引用 `bge-m3`（1024 维）建。换成 768 维模型会直接报错，
+> 但换成**另一个 1024 维模型不会报错**，只会让检索结果悄悄变差。`doctor` 就是为了替你抓这一类。
 
 ### 常见故障
 

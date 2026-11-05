@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.19
+> **文档版本**：2.20
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2172,6 +2172,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 ---
 | O3 | B14 | ✅ **已完成（2026-11-05）** HTTP 层：`src/rag/api/{app,schemas}.py` —— `POST /api/v1/ask`、`GET /api/v1/retrieve`、`GET /health`，Pydantic v2 契约进 `/openapi.json`；`create_app(deps=...)` 依赖注入（16 例测试 0.12 s 跑完，不连 Qdrant/Ollama/ONNX）；生产装配懒加载（import 时不加载模型）；端点写成 `def`（`answer_query` 同步阻塞，`async def` 会卡死事件循环） | `python -m unittest tests.test_api` **16 用例 / 0.12 s**；`curl /health` → `parents=25411`；`POST /api/v1/ask` 实测 `http=200`、`cited=[2,1]`、`oob=[]`、`generate_ms≈10369`；`/retrieve` 冷 17.9 s → 热 5.2 s（其中约 4 s 是翻译层重试）；`retrieve_only=true` 时 `llm_called=false` |
 
+| O-D1 | B12 | ✅ **已完成（2026-11-05）** 探测层 `src/rag/ops/probes.py`：**一份实现三处复用**（`/health`、`doctor`、检索降级）。`Check(name, ok, detail, fix, optional, info)` 三级严重度——硬失败 `down` / 可降级 `degraded`（只有生成模型缺席）/ 信息项 `info`（`data/` 为空只意味着不能再建库，不影响已在跑的检索）。约定：**探测不许抛**（它恰好在很多件都坏了的时候被调用）、**每条失败带可复制 `fix`**、全部依赖注入 | `python -m unittest tests.test_ops_probes` **28 用例**；真机 `probe_embed_model` → `bge-m3 可用，维度 1024`；维度不符（768 ≠ 1024）必须失败——换模型不报错、只会让相似度全错 | 
+| O-D2 | B12 | ✅ **已完成（2026-11-05）** `python -m src.doctor`（`src/rag/ops/doctor.py` + 薄启动器）：六项必查 + 语料目录，**装配逐项惰性**（词表炸掉不影响 Qdrant/Ollama/父块的结论） | `python -m src.doctor` → 七行全 ✓、`exit=0`；`OLLAMA_BASE_URL` 指死端口 → `[down]`、`embed_model ✗` 且 `fix` 先给 `ollama serve`（不是 `ollama pull`）、`exit=1`；`OLLAMA_CHAT_MODEL=llama3:8b` → `[degraded]`、`exit=0`；`RAG_TOKENIZER_PATH` 指空文件 → `tokenizer ✗` 且 `fix` 原样带出 curl；`--json` → stdout 纯 JSON |
 | O4a | B14 | ✅ **已完成（2026-11-05）** 流式底层：`ollama_client.chat_stream()`（NDJSON 逐行解析，跳空行/非 JSON 行、`{"error"}` 转异常、`finally` 关上游响应）＋ `pipeline.answer_query_stream()`（事件 `sources → delta* → done`，失败时 `error` 带半截正文） | `python -m unittest tests.test_streaming` **13 用例**；真机：`chat_stream` 66 段 / 首字 12.6 s / 总 14.9 s；整链真机 **sources @ 4,992 ms（6 块 / 2,987 tok）→ 首字 @ 9,658 ms → done @ 17,665 ms**，`timings.first_delta_ms=4,666.7`、`generate_ms=12,672.3`、`cited=[2,1]`、`abstained=False` |
 ## 17.8 依赖序（执行批次）与里程碑
 
@@ -2368,6 +2370,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N16** | 全套件偶发 1 例 ERROR：`tests/test_search.ServerSearchTest.test_ann_recall_is_high_on_10k` → `httpcore.ConnectTimeout [WinError 10060]`。该用例连真实 Qdrant（1 万点 upsert，单跑 21.7 s），走 httpx；环境里出现 `http_proxy` 时会打到代理，因此是**环境相关的偶发**，不是代码回归（单跑通过，重跑全套件也通过） | 已记录，不修：这正是 B03/E03「测试分层 + 慢跑标记」的理由——CI 必须默认跳过依赖真实服务/模型的用例（`RAG_RUN_SLOW=1` 才跑），否则开源后第一次 CI 就是红的 |
 ---
+| **N17** | 探测层第一版把「Ollama 没起」当成「模型没拉」：`embed_model` 失败时只给 `ollama pull bge-m3`，但在服务没起的情况下这条也会失败，用户会连撞两次墙 | 已修（doctor 真机场景 1 打出来的）：按错误文本区分——`无法调用 Ollama / Connection / refused / timed out / Max retries` 属「服务没起」→ `fix` 先 `ollama serve` 再 `ollama pull`；其余才单给 pull。用例 `test_ollama_down_prefers_serve_over_pull` |
 
 ## 17.10 迁移影响：改造后哪些资产会失效
 
@@ -3276,6 +3279,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.17                    2026-11-05              开源基线决策 B11–B14（Apache-2.0 / 不携语料 / 不做一键安装 / HTTP 有界队列 + SSE）；
   2.18                    2026-11-05              O3 HTTP 层（FastAPI 三端点 + Pydantic 契约 + 依赖注入 + 懒装配）；
   2.19                    2026-11-05              O4a 流式底层（chat_stream + answer_query_stream）：sources 早到 ~4.7 s，
+  2.20                    2026-11-05              运维探测层 probes（一份实现三处复用，三级严重度 + 每条失败带 fix）；
+                                                 python -m src.doctor 自检七项；修 N17「给错药」（serve vs pull）
                                                  首字 9.7 s、全文 17.7 s（真机实测）
                                                  N15 弃答判定加「证据侧主语」+ 剥引用标记（HTTP 端到端打出来的）
                                                  O1 空语料引导 + O7 旧链收口（legacy/）+ README 重写为可跟做
