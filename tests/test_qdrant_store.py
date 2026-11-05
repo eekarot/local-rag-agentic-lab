@@ -231,5 +231,34 @@ class ServerCollectionTest(unittest.TestCase):
         self.assertEqual(hits[0].payload["document_id"], "doc_b")
 
 
+class MakeClientProxyTest(unittest.TestCase):
+    """httpx 默认信任系统代理（Windows 注册表），本机 Qdrant 会被绕到代理上 → 随机超时。"""
+
+    def test_local_urls_do_not_use_system_proxy(self):
+        from src.rag.store.qdrant_store import is_local_url, make_client
+
+        self.assertTrue(is_local_url("http://localhost:6333"))
+        self.assertTrue(is_local_url("http://127.0.0.1:6333"))
+        self.assertTrue(is_local_url("http://127.1.2.3:6333"))
+        self.assertFalse(is_local_url("https://qdrant.example.com:6333"))
+
+        client = make_client("http://localhost:6333", timeout=1)
+        try:
+            # qdrant-client 1.16 的层级：QdrantClient._client(QdrantRemote).openapi_client(SyncApis).client(httpx)
+            httpx_client = client._client.openapi_client.client._client
+            self.assertFalse(httpx_client.trust_env, "本机地址必须直连")
+        finally:
+            client.close()
+
+    def test_remote_url_keeps_environment_proxy(self):
+        from src.rag.store.qdrant_store import make_client
+
+        client = make_client("https://qdrant.example.com:6333", timeout=1)
+        try:
+            self.assertTrue(client._client.openapi_client.client._client.trust_env, "远端可能真的需要代理")
+        finally:
+            client.close()
+
+
 if __name__ == "__main__":
     unittest.main()

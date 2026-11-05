@@ -29,6 +29,7 @@ import json
 import os
 import sys
 import uuid
+from urllib.parse import urlsplit
 from typing import Any, Iterable, Mapping
 
 from qdrant_client import QdrantClient, models
@@ -85,9 +86,31 @@ def qdrant_url() -> str:
     return os.environ.get("QDRANT_URL", DEFAULT_URL)
 
 
+#: 本地地址：**不许走代理**（见 `make_client` 的注释）
+LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "0.0.0.0", "::1", "[::1]"})
+
+
+def is_local_url(url: str) -> bool:
+    """判断是不是本机地址（`localhost` / `127.x` / `::1`）。"""
+    try:
+        host = urlsplit(url).hostname or ""
+    except ValueError:
+        return False
+    return host in LOCAL_HOSTS or host.startswith("127.")
+
+
 def make_client(url: str | None = None, timeout: float | int = 10, **kwargs: Any) -> QdrantClient:
-    """建客户端。`timeout` 会被测试用来快速判活（3 秒）。"""
-    return QdrantClient(url=url or qdrant_url(), timeout=timeout, **kwargs)
+    """建客户端。`timeout` 会被测试用来快速判活（3 秒）。
+
+    本机地址默认 `trust_env=False`：httpx 会**信任系统代理**（Windows 读注册表 IE 设置，
+    国内机器上常被 Clash/v2ray 之类设成 `127.0.0.1:7897`），于是 `localhost:6333`
+    的请求也会绕到代理上，表现为随机 `ConnectTimeout`（N16/N20 就是这么来的）。
+    连本机 Qdrant 走代理永远是错的，所以这里强制直连；远端地址保持默认（云上可能真需要代理）。
+    """
+    resolved = url or qdrant_url()
+    if is_local_url(resolved):
+        kwargs.setdefault("trust_env", False)
+    return QdrantClient(url=resolved, timeout=timeout, **kwargs)
 
 
 def point_id_for(chunk_id: str) -> str:

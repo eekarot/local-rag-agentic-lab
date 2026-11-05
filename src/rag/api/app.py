@@ -19,19 +19,23 @@
 
 from __future__ import annotations
 
+import os
 import threading
+import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping
 
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from .queue import QueueFullError, QueueTimeoutError, make_queue_from_env, SingleFlightQueue
+from .streaming import SSE_HEADERS, StreamBridge, sse_comment, sse_event
 from ..ask.pipeline import (
     DEFAULT_BUDGET,
     DEFAULT_K,
     DEFAULT_POOL,
     answer_query,
+    answer_query_stream,
     retrieve_with_meta,
 )
 from .schemas import (
@@ -72,6 +76,10 @@ class ApiDeps:
     #: 合成一条会让批量检索把问答堵死，也会让一次生成把检索饿死。
     ask_queue: Any = None
     retrieve_queue: Any = None
+    #: SSE 心跳间隔（秒）：反代会掐断长时间无数据的连接
+    heartbeat_s: float = 15.0
+    #: 单次流式请求的总时长上限（秒）：超时发 `error(status=504, partial=...)`
+    request_timeout_s: float = 300.0
     extra: dict[str, Any] = field(default_factory=dict)
 
     def queue_for(self, kind: str) -> Any:
@@ -141,6 +149,8 @@ def production_deps() -> ApiDeps:
             reranker=CrossEncoderReranker(config=RerankConfig()),
             ask=lambda messages: ollama_client.chat(messages, temperature=0.0, think=False),
             translate=translate,
+            heartbeat_s=float(os.getenv("RAG_HEARTBEAT", "15")),
+            request_timeout_s=float(os.getenv("RAG_REQUEST_TIMEOUT", "300")),
             ask_queue=make_queue_from_env(),
             retrieve_queue=make_queue_from_env(
                 prefix="RAG_RETRIEVE", concurrency=4, queue=2, timeout_s=5.0, name="检索"),
@@ -281,6 +291,104 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
             candidates=outcome.candidates,
             degraded=outcome.degraded.as_dict() if outcome.degraded else None,
         )
+
+    @app.get("/api/v1/ask/stream", tags=["rag"],
+             summary="流式问答（SSE）：queued → sources → delta* → done / error",
+             response_class=StreamingResponse,
+             responses={200: {"content": {"text/event-stream": {}}}})
+    async def ask_stream_endpoint(
+        request: Request,
+        q: str = Query(min_length=1, max_length=2000, description="问题"),
+        k: int = Query(default=DEFAULT_K, ge=1, le=50),
+        pool: int = Query(default=DEFAULT_POOL, ge=1, le=200),
+        budget: int = Query(default=DEFAULT_BUDGET, ge=500, le=32000),
+        rerank: bool = Query(default=True),
+    ) -> StreamingResponse:
+        """用 GET 是为了浏览器 `EventSource` 能直接用（它只能发 GET、不能带 body）。
+
+        HTTP 状态一旦开始流就是 200，**之后的失败用 `error` 事件表达**（带 `status`）。
+        """
+        current = get_deps()
+        snapshot = current.queue_for("ask").snapshot()
+
+        def factory():
+            ask_queue = current.queue_for("ask")
+            try:
+                ticket = ask_queue.acquire()
+            except (QueueFullError, QueueTimeoutError) as exc:
+                yield {
+                    "event": "error",
+                    "data": {
+                        "status": 429,
+                        "detail": str(exc),
+                        "retry_after_s": int(getattr(exc, "retry_after_s", 1) or 1),
+                        "retryable": True,
+                        "partial": "",
+                    },
+                }
+                return
+            try:
+                language, query_en = current.translate(q)
+                yield from answer_query_stream(
+                    q,
+                    retriever=current.retriever,
+                    parents=current.parents,
+                    counter=current.counter,
+                    reranker=current.reranker,
+                    ask=current.ask,
+                    query_en=query_en,
+                    k=k, pool=pool, budget=budget, rerank=rerank,
+                )
+            finally:
+                ticket.release()
+
+        bridge = StreamBridge(factory)
+
+        async def event_stream():
+            partial: list[str] = []
+            yield sse_event("queued", {
+                "inflight": snapshot["inflight"],
+                "waiting": snapshot["waiting"],
+                "max_inflight": snapshot["max_inflight"],
+                "max_queue": snapshot["max_queue"],
+                "retry_after_s": snapshot["retry_after_s"],
+                # 名额已满 → 大概率要排一会儿，先说清楚，别让人对着空白等
+                "will_wait": snapshot["inflight"] >= snapshot["max_inflight"],
+            })
+            bridge.start()
+            started = time.monotonic()
+            last_beat = started
+            try:
+                while True:
+                    if await request.is_disconnected():
+                        break
+                    event = bridge.get(0.05)
+                    if event is None:
+                        now = time.monotonic()
+                        if now - started > current.request_timeout_s:
+                            yield sse_event("error", {
+                                "status": 504,
+                                "detail": f"生成超时（>{current.request_timeout_s:.0f} s）",
+                                "retryable": True,
+                                "partial": "".join(partial),
+                            })
+                            break
+                        if now - last_beat >= current.heartbeat_s:
+                            last_beat = now
+                            yield sse_comment("ping")
+                        continue
+                    if event["event"] == "delta":
+                        partial.append(event["data"].get("text", ""))
+                    yield sse_event(event["event"], event["data"])
+                    if event["event"] in ("done", "error"):
+                        break
+            finally:
+                # 断开（或被取消）→ 关掉线程里的生成器 → 关闭 Ollama 连接
+                bridge.cancel()
+                bridge.join(5.0)
+
+        return StreamingResponse(event_stream(), media_type="text/event-stream",
+                                 headers=dict(SSE_HEADERS))
 
     @app.get("/health", response_model=HealthResponse, tags=["ops"],
              summary="存活探针（O5 会扩成逐项就绪检查）")

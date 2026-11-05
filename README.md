@@ -155,6 +155,51 @@ python -m src.ask "问题" --k 5 --sources all    # 少给几块证据 / 列全�
 python -m src.ask "问题" --json                 # 机器可读输出
 ```
 
+### 流式问答（SSE）
+
+生成一次要十几到几十秒。流式的价值不是「显得快」，而是**证据先到**：检索 + 重排只要 1–5 s，
+那时就能告诉用户「我会从这 3 块里答」，然后正文再一段段出来（实测 `sources` 4.99 s、首字 9.66 s、结束 17.67 s）。
+
+```bash
+curl -N "localhost:8000/api/v1/ask/stream?q=chunk%20size&k=3"
+```
+
+```
+event: queued
+data: {"inflight":0,"waiting":0,"max_inflight":1,"max_queue":2,"will_wait":false,"retry_after_s":60}
+
+event: sources
+data: {"blocks":3,"context_tokens":1674,"degraded":null,"sources":[…]}
+
+event: delta
+data: {"text":"切"}
+
+…（每个 token 一条 delta）
+
+event: done
+data: {"answer":"…","cited":[2,1],"timings":{…}}
+```
+
+浏览器直接用（`EventSource` 只能发 GET，所以这个端点就是 GET）：
+
+```js
+const es = new EventSource('/api/v1/ask/stream?q=' + encodeURIComponent('chunk size'));
+es.addEventListener('sources', e => showSources(JSON.parse(e.data)));
+es.addEventListener('delta', e => append(JSON.parse(e.data).text));
+es.addEventListener('done', e => { es.close(); renderCitations(JSON.parse(e.data)); });
+```
+
+三条只有长连接才会踩到的坑，都已经处理：
+
+| 情况 | 行为 |
+|---|---|
+| 用户关页面 / 断网 | **立刻取消生成**（`chat_stream` 的连接被关）。否则生成继续烧 50 s，队列名额很快被僵尸占满 |
+| 反代缓存 / 长时间无数据 | 每 **15 s** 发一行 `: ping`（SSE 注释，不产生事件）；响应头带 `X-Accel-Buffering: no` |
+| 生成超时 | 发 `error` 且带 `status: 504` 与 `partial`（**已生成的部分不丢**），`sources` 早在前面发过了 |
+
+流里失败不会再改 HTTP 状态码（一开始就是 200），所以失败一律用 `error` 事件表达，
+队列满时是 `error` 里带 `status: 429` + `retry_after_s`。
+
 ### 并发与限流（HTTP 服务的默认值）
 
 生成很慢（实测 p50 **53.5 s**、单次 12–25 s），且 CPU 上跑 9B 是算力独占：并发不会让 10 个人各快 10 倍，
