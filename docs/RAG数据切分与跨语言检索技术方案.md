@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.17
+> **文档版本**：2.18
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2170,6 +2170,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | O1 | B13 | ✅ **已完成（2026-11-05）** 空语料引导：`data/README.md` + `data/.gitkeep` + `IngestPipeline` 空目录/`--only` 落空两套指引（`empty_corpus_hint` / `missing_only_keys_hint`）+ `--dry-run` 列前 10 个文件名 | `python -m unittest tests.test_ingest_empty_corpus` **10 用例**；空目录实跑 `python scripts/ingest.py --dir <空目录>` 打印 5 行指引、`failed=0`、**exit 0**；有文件时不误报（`summary.hint` 为空）；`--only md/nope.md` 只给路径写法提示 |
 | O7 | — | ✅ **已完成（2026-11-05）** 旧链收口：`src/rag.py` → `legacy/legacy_rag_cli.py`、`src/agentic_rag.py` → `legacy/legacy_agentic_rag.py`（**原位置被 `src/rag/` 包遮蔽，早已无法作为 `src.rag` 导入**），改绝对导入；`build_index`/`retrieve`/`bm25` 保留但加 `.. deprecated::` 文件头 + 运行横幅（写 stderr，不污染 stdout） | `python -m src.rag` 报 `No module named src.rag.__main__`（旧代码不可达，故移走）；`python -m py_compile legacy/*.py` ok；`rg -n "python -m src.rag$" README.md` **0 命中**；README 新增 `## Legacy` 段并只指向两条新命令 |
 ---
+| O3 | B14 | ✅ **已完成（2026-11-05）** HTTP 层：`src/rag/api/{app,schemas}.py` —— `POST /api/v1/ask`、`GET /api/v1/retrieve`、`GET /health`，Pydantic v2 契约进 `/openapi.json`；`create_app(deps=...)` 依赖注入（16 例测试 0.12 s 跑完，不连 Qdrant/Ollama/ONNX）；生产装配懒加载（import 时不加载模型）；端点写成 `def`（`answer_query` 同步阻塞，`async def` 会卡死事件循环） | `python -m unittest tests.test_api` **16 用例 / 0.12 s**；`curl /health` → `parents=25411`；`POST /api/v1/ask` 实测 `http=200`、`cited=[2,1]`、`oob=[]`、`generate_ms≈10369`；`/retrieve` 冷 17.9 s → 热 5.2 s（其中约 4 s 是翻译层重试）；`retrieve_only=true` 时 `llm_called=false` |
 
 ## 17.8 依赖序（执行批次）与里程碑
 
@@ -2362,6 +2363,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **N13** | 弃答判定的**固定短语清单**本身就漏：同一批 20 条负样本里出现 `未包含 / 未找到 / 未提供 / 未直接提供 / 无法查询到 / 无法提供` **六种写法**，清单只覆盖其中一半 → 负样本弃答率被低估 35 pt | 已修：改成「否定 ∧ 缺失谓词 + 位置关系」的组合判据（`_ABSENCE_PATTERN`）；**注意不能放单字「不」**——「证据不足时改写查询」会被判成「不 + 查询」（有用例） |
 | **N14** | 引用解析不认区间：`[证据 1-7]` 被记成 malformed（真实输出里出现过，eval-137） | 已修：`CITATION_PATTERN` 支持 `1-7 / 1–7 / 1~7 / 1至7`，展开上限 `MAX_RANGE_SPAN=20`（防 `[证据 1-9999]`），跨度超限仍记 malformed；3 个用例覆盖展开/越界/畸形 |
 
+| **N15** | 弃答判定再次误报：`无法包含` 满足「否定 + 缺失」的**句法形状**，但「单个块可能无法包含完整的上下文信息 [证据 2]」在描述 chunk 容量 → 真实 HTTP 调用返回 `abstained=true` 却带完整答案与引用（引用标记里的「证据」两字还满足了主语检查） | 已修（O3 端到端打出来的）：谓词分两类——`无法回答/无法确定` 属**答不了**（主语天然是「答」，不需额外主语）；`未包含/未提供/未找到` 属**内容描述**，必须在**同一句**出现证据侧主语（`知识库/文档/资料/证据/语料/检索到/原文/材料/…`），且判主语前先 `strip_citation_marks()` 剥掉 `[证据 n]`。回归：40 条已落盘答案重算 → 负样本弃答 **18/20**、正样本误弃答 **2/20**，与 l2_d33b 文档值完全一致；`tests/test_abstain_detection.py` 增至 11 例 |
 
 ---
 
@@ -3270,6 +3272,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.15                    2026-11-04              单条 query 端到端追踪（experiments/trace_query.py）；修 N11 section_path 被按字符拆、
   2.16                    2026-11-04              E07 问答入口 src/ask.py + D33b 引用纪律（精确率 21.67% → 38.46%）；
   2.17                    2026-11-05              开源基线决策 B11–B14（Apache-2.0 / 不携语料 / 不做一键安装 / HTTP 有界队列 + SSE）；
+  2.18                    2026-11-05              O3 HTTP 层（FastAPI 三端点 + Pydantic 契约 + 依赖注入 + 懒装配）；
+                                                 N15 弃答判定加「证据侧主语」+ 剥引用标记（HTTP 端到端打出来的）
                                                  O1 空语料引导 + O7 旧链收口（legacy/）+ README 重写为可跟做
                                                  B03 定案不迁 pytest；N12 判据重写、N13/N14 修掉
                                                  N12 弃答判定子串误判（错误自信率 45% → 5%，40 条答案重新计分）

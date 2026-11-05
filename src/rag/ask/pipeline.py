@@ -84,8 +84,14 @@ class AskResult:
 
 
 def retrieve_ranked(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
-                    counter, reranker, pool: int = DEFAULT_POOL) -> tuple[list[RerankHit], int, dict[str, int]]:
-    """三路召回 → RRF → 重排。返回 (重排后的命中, 融合候选数, 每路命中数)。"""
+                    counter, reranker, pool: int = DEFAULT_POOL,
+                    rerank: bool = True) -> tuple[list[RerankHit], int, dict[str, int]]:
+    """三路召回 → RRF → 重排。返回 (候选列表, 融合候选数, 每路命中数)。
+
+    `rerank=False` 时**直接返回 RRF 顺序**，不碰 encoder：
+    HTTP 层要能按请求关重排（`{"rerank": false}`），而不去改变共享的 reranker 状态
+    ——那个方向一改就会在多请求下互相踩。
+    """
     result = retriever.retrieve(question, k=pool)
     routes = {name: list(route.ids)[:pool] for name, route in result.routes.items()}
     fused = rrf_fuse_routes(routes, rrf_k=RRF_K, top_k=pool)
@@ -95,15 +101,20 @@ def retrieve_ranked(question: str, *, retriever, parents: Mapping[str, Mapping[s
         text = (parents.get(hit.parent_id) or {}).get("text", "")
         item = RerankHit(chunk_id=hit.parent_id, parent_id=hit.parent_id, text=text,
                          score=hit.score, rank=rank)
-        # 父块 p50 约 700 token，直接截 256 只看得到标题 → 先按 query 挑窗口再重排
-        item.fields["window"] = best_window(text, question, max_tokens=reranker.config.max_length,
-                                           counter=counter)
         hits.append(item)
 
+    route_hits = {name: len(ids) for name, ids in routes.items()}
+    if not rerank:
+        return hits, len(fused), route_hits
+
+    for item in hits:
+        # 父块 p50 约 700 token，直接截 256 只看得到标题 → 先按 query 挑窗口再重排
+        item.fields["window"] = best_window(item.text, question,
+                                            max_tokens=reranker.config.max_length,
+                                            counter=counter)
     ranked = rerank_hits(question, hits, encoder=reranker.encoder, config=reranker.config,
                          top_n=pool, stats=reranker.stats,
                          text_getter=lambda hit: hit.fields["window"])
-    route_hits = {name: len(ids) for name, ids in routes.items()}
     return ranked, len(fused), route_hits
 
 
@@ -119,13 +130,15 @@ def answer_query(
     k: int = DEFAULT_K,
     pool: int = DEFAULT_POOL,
     budget: int = DEFAULT_BUDGET,
+    rerank: bool = True,
 ) -> AskResult:
     """跑完整条链路。`ask=None` 表示「只检索不生成」（`--retrieve-only`）。"""
     timings: dict[str, float] = {}
 
     started = time.perf_counter()
     ranked, candidates, route_hits = retrieve_ranked(question, retriever=retriever, parents=parents,
-                                                    counter=counter, reranker=reranker, pool=pool)
+                                                    counter=counter, reranker=reranker, pool=pool,
+                                                    rerank=rerank)
     timings["retrieve_rerank_ms"] = (time.perf_counter() - started) * 1000
 
     started = time.perf_counter()

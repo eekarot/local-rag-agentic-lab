@@ -153,6 +153,37 @@ python -m src.ask "问题" --k 5 --sources all    # 少给几块证据 / 列全�
 python -m src.ask "问题" --json                 # 机器可读输出
 ```
 
+### 第 7 步（可选）：HTTP 服务
+
+命令行之外，同一套链路也跑在 HTTP 上（FastAPI，自动生成 OpenAPI 文档）：
+
+```bash
+python -m uvicorn src.rag.api.app:app --host 127.0.0.1 --port 8000
+```
+
+打开 <http://127.0.0.1:8000/docs> 可以直接在页面上试；也可以命令行调：
+
+```bash
+curl -s localhost:8000/health
+curl -s "localhost:8000/api/v1/retrieve?q=chunk%20size&k=3&debug=true"
+curl -s -X POST localhost:8000/api/v1/ask   -H "Content-Type: application/json"   -d '{"question": "what is chunk size?", "retrieve_only": true}'
+```
+
+| 端点 | 用途 | 会调模型吗 |
+|---|---|---|
+| `POST /api/v1/ask` | 完整问答：检索 → 重排 → 组装 → 生成 → 引用体检 | 会（除非 `retrieve_only=true`） |
+| `GET /api/v1/retrieve` | 只检索，返回融合+重排后的候选（含 `rrf_rank` 与 `rerank_score`） | 不会 |
+| `GET /health` | 存活探针：父块数、路由、重排是否启用 | 不会 |
+
+几个实测注意事项：
+
+- **首次请求慢 15–18 s**：依赖（Qdrant 连接、25k 父块、ONNX 重排模型）在第一次请求时才装配，
+  之后 `/retrieve` 约 1–5 s，`/ask` 主要是生成 10–50 s；
+- **Windows 上用 curl 发中文会乱码**（终端编码问题，不是服务端）：改用 `/docs` 页面，
+  或把 body 写进文件后 `--data-binary @body.json`；
+- **只能单 worker**：`--workers 1`（默认）。多 worker 会各自加载一份 945 MB 的 reranker；
+- 流式（SSE）与并发队列限制在下一批（O4），当前的 `/ask` 是一次性返回。
+
 ### 常见故障
 
 | 现象 | 原因 | 处理 |

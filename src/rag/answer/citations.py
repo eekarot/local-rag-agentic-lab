@@ -52,6 +52,31 @@ ABSTAIN_WEAK = ("证据不足", "no evidence")
 #: 兼容旧名（外部按整组匹配的地方仍然可用）
 ABSTAIN_PATTERNS = _NEGATION + _ABSENCE + ABSTAIN_WEAK
 
+#: 「答不了」类谓词：它们的主语天然就是"回答/证据"，**不需要**再要求证据侧主语。
+#: 「无法回答」「无法确定」= 直接放弃；而「无法包含」「未提供」= 描述某份资料的**内容**，
+#: 只有在主语是知识库/文档时才算弃答（N15）。
+_ANSWER_LEVEL_ABSENCE = ("回答", "确定", "确认", "answer", "determine", "confirm")
+
+#: 证据侧主语（N15）：缺失主张必须落在这些词上才算「知识库答不了」
+#: 引用标记本身：`[证据 2]`、`【证据 2,3】`、`[evidence 1]`。判主语前必须先剥掉，
+#: 否则「单个块无法包含完整的上下文信息 [证据 2]」会因为标记里的"证据"两字被当成弃答。
+_CITATION_MARK = re.compile(
+    r"[\[【（(]\s*(?:证据|evidence)\s*[0-9０-９,，、\-–—~至\s]*[\]】）)]",
+    re.IGNORECASE,
+)
+
+
+def strip_citation_marks(text: str) -> str:
+    """去掉引用标记，只留正文（判"谁在缺"时用）。"""
+    return _CITATION_MARK.sub(" ", text or "")
+
+
+#: 证据侧主语（N15）：缺失主张必须落在这些词上才算「知识库答不了」
+_EVIDENCE_SCOPE = (
+    "知识库", "文档", "资料", "证据", "语料", "检索到", "检索结果", "原文", "材料",
+    "knowledge base", "document", "source", "corpus", "passage", "material",
+)
+
 #: 弱信号当作弃答的最大答案长度（字符）：超过就认为是在正常作答中引用该词
 ABSTAIN_TERSE_CHARS = 40
 
@@ -76,22 +101,49 @@ def opening_sentences(text: str, sentences: int = ABSTAIN_EDGE_SENTENCES) -> lis
 
 
 def claims_absence(text: str) -> bool:
-    """这段话是否在声称「证据里没有 X」：**否定词在前、缺失谓词紧随（≤6 字）**。"""
+    """这段话在句法上是否「否定词在前、缺失谓词紧随（≤6 字）」。
+
+    注意：这只是**形状**，不是结论。`_ABSENCE` 里的 `包含/提供` 也是普通动词，
+    「单个块无法包含完整的上下文」句法完全成立，但它描述的是 chunk 的容量，
+    不是在说"知识库里没有"。要判弃答请用 `claims_scoped_absence()`。
+    """
     return bool(_ABSENCE_PATTERN.search(text or ""))
+
+
+def claims_scoped_absence(text: str) -> bool:
+    """「证据里没有 X」——**缺失主张必须落在证据/资料这个主语上**（N15）。
+
+    事故来源（O3 端到端）：HTTP 返回 `abstained=true`，答案却完整并带引用，
+    触发句是「当切分片段过小时，单个块可能无法包含完整的上下文信息 [证据 2]」。
+
+    所以判据从「否定 + 缺失」升级成「否定 + 缺失 + **同句出现证据侧主语**」。
+    主语词表刻意**不含** `上下文` / `context` / `evidence`：
+    - 「无法包含完整的上下文信息」里的"上下文"是被描述的客体，不是主语；
+    - 英文句尾的 `[evidence 1]` 是引用标记，不是主语（否则英文反例当场破功）。
+    """
+    lowered = strip_citation_marks(text).lower()
+    for match in _ABSENCE_PATTERN.finditer(lowered):
+        predicate = match.group(2).lower()
+        if predicate in _ANSWER_LEVEL_ABSENCE:
+            return True                      # "无法回答/无法确定"：主语本来就是"答"
+        if any(token in lowered for token in _EVIDENCE_SCOPE):
+            return True                      # "知识库未包含 X"：主语是证据侧
+    return False
 
 
 def detect_abstain(text: str, *, terse_chars: int = ABSTAIN_TERSE_CHARS) -> bool:
     """模型是否在弃答。
 
-    判据（N12 修正后定稿）：**开头 3 句里有"否定 + 缺失"**，或者整段很短且开头就是
-    "证据不足"。反例都写成用例了：
+    判据（N12 + N13 + N15 定稿）：**开头 3 句里有"否定 + 缺失 + 证据侧主语"**，
+    或者整段很短且开头就是"证据不足"。反例都写成用例了：
     - 「模型反复认为证据不足并不断搜索」→ 正文转述，不是弃答；
-    - 「如果 chunk 太小，无法确定『哪家公司？』」→ 正文举例，且在第 4 句之后。
+    - 「如果 chunk 太小，无法确定『哪家公司？』」→ 正文举例，且在第 4 句之后；
+    - 「单个块可能无法包含完整的上下文信息」→ 描述容量，不是弃答（N15）。
     """
     lowered = (text or "").lower().strip()
     if not lowered:
         return False
-    if any(claims_absence(sentence) for sentence in opening_sentences(lowered)):
+    if any(claims_scoped_absence(sentence) for sentence in opening_sentences(lowered)):
         return True
     if len(lowered) > terse_chars:
         return False

@@ -54,5 +54,45 @@ class CitationReportTest(unittest.TestCase):
         self.assertTrue(parse_citations("证据不足，无法回答。", k=3).abstained)
 
 
+class AbsenceScopeTest(unittest.TestCase):
+    """N15：弃答判定必须**分辨"谁缺"**——是"证据里没有 X"，不是"这个块装不下 X"。
+
+    真实事故（2026-11-05，O3 的 HTTP 端到端）：`/api/v1/ask` 返回 `abstained=true`，
+    但答案完整、引用了 [证据 2] 和 [证据 1]。触发句是——
+
+        「当切分片段（chunk）过小时，单个块可能无法包含完整的上下文信息 [证据 2]。」
+
+    `无法` + `包含` 满足了「否定 + 缺失」的句法形状，但这句在**描述 chunk 的容量**，
+    跟"知识库答不了"毫无关系。所以判据再加一条：**缺失主张必须落在证据/资料这个主语上**。
+    """
+
+    def test_content_capacity_sentence_is_not_abstain(self):
+        from src.rag.answer.citations import detect_abstain
+
+        answer = (
+            "切分过短主要会带来以下问题："
+            "当切分片段（chunk）过小时，单个块可能无法包含完整的上下文信息 [证据 2]。"
+        )
+        self.assertFalse(detect_abstain(answer))
+
+    def test_capability_sentence_about_code_is_not_abstain(self):
+        from src.rag.answer.citations import detect_abstain
+
+        self.assertFalse(detect_abstain("这种写法的单线程实现无法提供更高的吞吐量 [证据 1]。"))
+
+    def test_absence_about_knowledge_base_is_abstain(self):
+        from src.rag.answer.citations import detect_abstain
+
+        self.assertTrue(detect_abstain("根据提供的知识库内容，未包含 NVIDIA 客服电话信息。"))
+        self.assertTrue(detect_abstain("检索到的证据中没有找到该产品的零售价。"))
+        self.assertTrue(detect_abstain("现有文档未提供该型号的保修年限。"))
+
+    def test_absence_about_documents_in_english_is_abstain(self):
+        from src.rag.answer.citations import detect_abstain
+
+        self.assertTrue(detect_abstain("The provided documents do not contain the pricing information."))
+        self.assertFalse(detect_abstain("A smaller chunk cannot contain the full context [evidence 1]."))
+
+
 if __name__ == "__main__":
     unittest.main()

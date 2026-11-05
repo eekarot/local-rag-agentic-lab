@@ -19,3 +19,9 @@ qdrant-client==1.16.2
 onnxruntime>=1.18.0
 # 已安装版本 2.4.0 —— 按文件名从 HuggingFace 拉 reranker 的 onnx/tokenizer（缓存落在 storage/models）
 huggingface_hub>=0.24.0
+
+# 已安装版本 0.162.0 / 0.54.0 —— O3 的 HTTP 层。
+# 注意：**只能单 worker 跑**（`--workers 1`）：reranker 常驻 ~945 MB，多 worker 会各加载一份；
+# 且 Qdrant/ONNX 的并发在 CPU 上只会互相拖慢（B14 定案，详见 src/rag/api/app.py 顶部注释）
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
