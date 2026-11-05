@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.23
+> **文档版本**：2.24
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2183,6 +2183,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 下表是按下表的依赖关系算出的**最长路径分层**：同一批次内的项互不依赖，可并行开工；下一批次必须等上一批次对应依赖完成。
 | O4d | B14 | ✅ **已完成（2026-11-05）** 最小聊天页 `GET /`（`src/rag/api/webui.py`，内联 HTML+JS）：零依赖、**不引任何 CDN**（内网/断网可开）、EventSource 直连 `/api/v1/ask/stream`、渲染降级横幅 / 来源表 / 引用与分段耗时；「停止」= `es.close()` → 服务端取消生成 | `python -m unittest tests.test_webui` **4 用例**（含「不许引外部资源」「流地址必须真存在」）；真机 `GET /` → `200 / text/html / 7,658 B`，页面所连的流实测 `queued → sources → 336 delta → done` |
 （例如 D09 需要 D06 与 D08，而 D08 在 W2，所以 D09 落到 W3。）
+| O6 | — | ✅ **已完成（2026-11-05）** 依赖/配置清单：`.env.example`（**36 个变量**，9 组，每行带默认值 + 分组注释）、`requirements-dev.txt`（`-r requirements.txt` + 显式 `httpx`）、`tests/test_dev_env_manifest.py` **7 用例**把「文档 ↔ 代码」锁死（代码读了没写、写了没人读、默认值漂移**三种都挂**）；顺带修：`doctor` 原来自写 `getenv("RAG_DATA_DIR", "data")`，与 `config.DATA_DIR`（`ROOT/data`）不一致，换目录启动就查错地方；检索队列的 `Retry-After` 由默认 60 s 改为显式 1 s（按 N19 口径 ≈ 检索时长） | `python -m unittest tests.test_dev_env_manifest` **7 OK**；从 `%TEMP%` 里 import `default_deps().data_dir` → `C:\...\local-rag-agentic-lab\data`（绝对路径，不再随 CWD 漂移）；`python -m src.doctor` 真机 7 行全 ✓ exit 0 |
 
 | 批次 | 可并行开工 | 前置来自 |
 |---|---|---|
@@ -3289,6 +3290,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.21                    2026-11-05              检索降级三件套：单路容错 + 熔断（TTL 半开）+ DegradedInfo 全链路；
   2.22                    2026-11-05              O4b 有界队列 + 单飞（429 + Retry-After，检索/生成两条队列分开）；
   2.23                    2026-11-05              O4c SSE 端点：StreamBridge（线程↔事件循环）+ 断开取消 + 15 s 心跳 +
+  2.24                    2026-11-05              O6 依赖/配置清单：.env.example（36 变量）+ requirements-dev.txt + 一致性用例
+                                                 新增 docs/ROADMAP.md（剩余工作项与验收口径）
                                                  新增 GET / 聊天页（零依赖、离线可用）
                                                  附带修 N20（本机 Qdrant 被 Windows 系统代理劫持 = N16 真根因）
                                                  超时保留已发内容（error.status=504 + partial）

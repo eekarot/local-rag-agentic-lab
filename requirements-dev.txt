@@ -1,0 +1,13 @@
+# 开发/测试依赖（运行本仓库自带的 unittest 套件需要）
+#
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+# 为什么单独一份：FastAPI 的 TestClient 依赖 httpx，但它**不是**运行时依赖 ——
+# 现在是 qdrant-client 顺手装进来的（pip show httpx → Required-by: qdrant-client）。
+# 只要哪天 qdrant-client 换了 HTTP 栈，套件就会莫名其妙 ImportError。
+# 显式声明一次，把这条隐式契约变成明写的。
+
+-r requirements.txt
+
+# 已安装版本 0.28.1 —— TestClient / 流式用例（SSE）都靠它
+httpx>=0.27.0

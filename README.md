@@ -51,6 +51,13 @@ pip install -r requirements.txt
 
 > PowerShell 若禁止执行脚本，不要激活，直接用 `.\.venv\Scripts\python.exe` 代替下文的 `python`。
 
+只想**跑起来**用上面这两行就够。想跑测试套件再加一行（`httpx` 是 TestClient / SSE 用例的依赖，
+它现在是被 `qdrant-client` 顺手装进来的，所以这里显式声明，避免哪天它换 HTTP 栈就 ImportError）：
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 **验证**（必须打印 `deps ok`）：
 
 ```bash
@@ -199,6 +206,30 @@ es.addEventListener('done', e => { es.close(); renderCitations(JSON.parse(e.data
 
 流里失败不会再改 HTTP 状态码（一开始就是 200），所以失败一律用 `error` 事件表达，
 队列满时是 `error` 里带 `status: 429` + `retry_after_s`。
+
+### 能调什么（全部开关在一张表里）
+
+所有可调项都是环境变量，**默认值摊开在仓库根的 `.env.example`**（36 个，分 9 组：
+
+```
+cp .env.example .env      # 只是给你看和抄，本仓库不自动读 .env
+```
+
+分组：路径 / Ollama / 向量库 / 切分与词表 / 向量调用 / 检索与融合 / 降级熔断 /
+队列（生成 + 检索）/ 流式 / 日志 / 测试开关。
+
+最常改的四个：
+
+| 变量 | 默认 | 什么时候改 |
+|---|---|---|
+| `OLLAMA_CHAT_MODEL` | `qwen3.5:9b` | 机器带不动 9B，换小的 |
+| `RAG_EMBED_MAX_CHARS` | `8192` | 单块很长被截断时 |
+| `RAG_LOG_LEVEL` | `detail` | 只想留摘要用 `summary`，压测时 `off` |
+| `RAG_OLLAMA_CHECK` | `0` | 想跑连真实 Ollama 的用例时设 `1` |
+
+> `.env.example` 与代码的一致性由 `tests/test_dev_env_manifest.py` 保证：
+> 代码读了却没写进文件的变量、文件里写了但没人读的变量、默认值和代码不一致的变量，
+> 三种都会让用例失败。
 
 ### 并发与限流（HTTP 服务的默认值）
 

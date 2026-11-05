@@ -127,7 +127,7 @@ def default_deps() -> DoctorDeps:
     全部包成工厂——`python -m src.doctor` 在**什么都没装好的机器上**也必须能跑出报告。
     """
     from src import ollama_client
-    from src.config import OLLAMA_CHAT_MODEL, OLLAMA_EMBED_MODEL, STORAGE_DIR
+    from src.config import DATA_DIR, OLLAMA_CHAT_MODEL, OLLAMA_EMBED_MODEL, STORAGE_DIR
     from src.rag.store.qdrant_store import make_client
 
     def parents() -> Mapping[str, Any]:
@@ -159,7 +159,7 @@ def default_deps() -> DoctorDeps:
         counter_factory=counter,
         reranker_factory=reranker,
         parents_factory=parents,
-        data_dir=Path(os.getenv("RAG_DATA_DIR", "data")),
+        data_dir=DATA_DIR,
     )
 
 

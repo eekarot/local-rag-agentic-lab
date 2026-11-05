@@ -92,7 +92,8 @@ class ApiDeps:
             self.ask_queue = make_queue_from_env()
         else:
             self.retrieve_queue = make_queue_from_env(
-                prefix="RAG_RETRIEVE", concurrency=4, queue=2, timeout_s=5.0, name="检索")
+                prefix="RAG_RETRIEVE", concurrency=4, queue=2, timeout_s=5.0,
+                retry_after_s=1.0, name="检索")
         return self.ask_queue if kind == "ask" else self.retrieve_queue
 
 
@@ -154,7 +155,8 @@ def production_deps() -> ApiDeps:
             request_timeout_s=float(os.getenv("RAG_REQUEST_TIMEOUT", "300")),
             ask_queue=make_queue_from_env(),
             retrieve_queue=make_queue_from_env(
-                prefix="RAG_RETRIEVE", concurrency=4, queue=2, timeout_s=5.0, name="检索"),
+                prefix="RAG_RETRIEVE", concurrency=4, queue=2, timeout_s=5.0,
+                retry_after_s=1.0, name="检索"),
         )
         return _LAZY_DEPS
 
