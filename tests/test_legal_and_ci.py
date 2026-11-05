@@ -80,5 +80,24 @@ class WorkflowTest(unittest.TestCase):
             self.assertIn(os_name, self.text)
 
 
+class ChangelogTest(unittest.TestCase):
+    """发版时最容易漂的就是版本号：代码说 0.1.0、CHANGELOG 还写着 0.0.x。
+
+    所以让用例去比：`src/rag/api/app.py` 的 `API_VERSION` 必须出现在 CHANGELOG 里。
+    """
+
+    def test_changelog_covers_the_current_api_version(self):
+        from src.rag.api.app import API_VERSION
+
+        text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        self.assertIn(f"## v{API_VERSION}", text,
+                      f"CHANGELOG 没有 v{API_VERSION} 这一节（改了版本号就补一节）")
+
+    def test_changelog_says_what_is_not_included(self):
+        text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        for must in ("不包含", "已知限制", "语料"):
+            self.assertIn(must, text, f"发版说明必须写清边界：缺 {must}")
+
+
 if __name__ == "__main__":
     unittest.main()

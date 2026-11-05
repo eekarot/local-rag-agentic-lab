@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.29
+> **文档版本**：2.30
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2160,7 +2160,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | 编号 | 依赖 | 任务 | 验收方式 |
 |---|---|---|---|
 | E01 | — | YAML + Pydantic Settings 收敛全部参数 | `depth / rrf_k / alpha / top_k / ef_search / chunk_size` 均来自 YAML；`rg -n "depth=3" src/` 与 `rg -n "alpha=" src/` 均无命中 |
-| E02 | D20 | FastAPI 四端点 + Pydantic schema | `POST /api/v1/ask` 返回 `answer` + `sources`；`/retrieve?debug=true` 含三路候选数；OpenAPI 文档可访问 |
+| E02 | D20 | ✅ **已完成（2026-11-05，形状与当初设想不同，见右栏）** HTTP 层：`POST /api/v1/ask`（`answer` + `sources` + 引用体检 + `degraded`）、`GET /api/v1/retrieve`（`route_hits` 三路候选数 + `degraded`）、`GET /api/v1/ask/stream`（SSE，O4c）、`GET /health`（O5 探针）、`GET /`（浏览器聊天页，O4d）；Pydantic schema 全在 `src/rag/api/schemas.py`，OpenAPI 在 `/docs` | `tests/test_api.py` 16 + `test_api_stream.py` 9 + `test_api_queue.py` 12 + `test_api_health.py` 7 + `test_webui.py` 4；真机：`/ask` 引用 `[2,1]`、流式 `queued → sources → 336 delta → done`、`/health` 六项全 ✓ 热 0.65 s、断连后 `inflight 1→0`。**放弃的**：`?debug=true` 改成独立端点（GET 语义更清楚） |
 | E04 | O3/O4/O5 | ✅ **已完成（2026-11-05）** 干净克隆验收：`git clone` 到临时目录 + 全新 venv（`pip install -r requirements.txt -r requirements-dev.txt`，**67 s**）+ 默认套件 → **941 用例 OK (skipped=83)，17 s**（无 storage/、无 pymupdf、无 .env）；随后按 README 第 3–7 步走通：下载词表 17 MB → 放 2 md + 1 pdf → `scripts/ingest.py` 建库（PDF 失败并给出 AGPL 与安装命令）→ `src.ask` 检索 31 s / 生成 47 s（引用 [1,2]、越界 0）→ `GET /` 200 7,658 B、`/health` 六项全 ✓、SSE `queued → sources → …` 跑通 | 过程中逮到 4 个真问题：**N26** 跳过理由撒谎、**N27** 集合名写死（撞库）、**N28** 换集合后静默漏文档、**N29** 来源路径永远为空；另有 37 个用例因缺 17 MB 词表 ERROR（已加 `tests/_tokenizer_fixture.py` 字符级替身，真实词表存在时不干预） |
 
 | E06 | — | 目录结构与脚本迁移（`src/rag/*`、`scripts/*`、`config/*`） | 目录与 §6 一致；README 命令同步；旧入口保留一个版本周期并在 README 标注 deprecated |
@@ -2400,6 +2400,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | `src/raglog.py`、`src/eval_*.py`、`tests/`（45 用例） | **不失效，是差异化资产** | 直接接入新 pipeline（E04）；指标/日志口径继续沿用 |
 | **N30** | 干净克隆的第一条命令就崩：`scripts/ingest.py --dir data` 抛 `TokenizerUnavailable` 堆栈 ——空目录引导（O1）排在 `build_pipeline` 之后，而建管线要先加载 17 MB 词表；同时 `data/README.md`、`.gitkeep` 命中 `**/*.md`，让「空语料」判定成「有文件」 | 最该说话的路径被一个不该挡路的依赖挡住了。已修：`discover_corpus()` 跳过扫描根目录的占位文件（子目录 README 仍是正当语料）；`_no_work()` 在建管线**之前**给指引并顺带提示下词表；CLI 捕获 `TokenizerUnavailable` → 打印原文（含 curl）+ exit 1，不再堆栈；4 条子进程级用例（空目录 / 只有占位文件 / 有文件但缺词表 / tokenizer CLI）——这是唯一能真正证明「干净环境」的方式 |
 | 60 题评估集与 5 组探针结果 | 指标不可与改造后直接比较 | 作为"改造前基线"存档，仅用于说明改造收益的方向与量级 |
+| **N31** | 发版最容易漂的是版本号：`API_VERSION` 改了、CHANGELOG 还停在上一版 | `ChangelogTest` 让用例去比 `src/rag/api/app.py` 的 `API_VERSION` 必须出现在 CHANGELOG 里，并要求写清「不包含」与「已知限制」——发版说明不写边界，等于让人一个个试 |
 
 
 ## 17.11 决策记录（ADR）
@@ -3307,6 +3308,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.27                    2026-11-05              A4/O8 法务与 CI：LICENSE + NOTICE + CONTRIBUTING + workflow
   2.28                    2026-11-05              A5/E04 干净克隆验收（14 s 全绿 + 七步走通）
   2.29                    2026-11-05              A5 收尾：真·干净环境三条命令不崩（N30 占位文件 + 缺词表）+ 用例数校正
+  2.30                    2026-11-05              A6：tag v0.1.0 + CHANGELOG（含「不包含」与「已知限制」）+ E02 收口
+                                                 + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空
                                                  + N25 PyMuPDF 从硬依赖改为可选（AGPL 与 Apache-2.0 冲突）

@@ -28,7 +28,7 @@
 | A3 | **E03 测试分层** | ✅ 已完成：默认 **909 用例 / 33.9 s / 不联网**（把 URL 指到死端口仍全绿）；`RAG_RUN_SLOW=1` 全套 346 s 全绿；8 个模块挂 `@slow`；分层守卫（AST）防回归 | ✅ |
 | A4 | **O8 法务与 CI** | ✅ 已完成：`LICENSE`(Apache-2.0 全文) + `NOTICE`(模型归属 + PyMuPDF AGPL 例外) + `CONTRIBUTING.md` + `.github/workflows/tests.yml`(3 平台，只跑默认套件，URL 指向死端口)；`tests/test_legal_and_ci.py` 10 用例 | ✅ |
 | A5 | **干净克隆验收** | ✅ 已完成：clone + 全新 venv（装依赖 67 s）+ 默认套件 **941 用例 / 17 s / 无 storage、无 pymupdf、无 .env**；README 第 3–7 步全部走通（建库、检索、生成、`/`、`/health` 六项、SSE） | ✅ |
-| A6 | **tag `v0.1.0`** | 依赖 A1–A5 全绿；`git tag -l` 出现 `v0.1.0` | ⬜ |
+| A6 | **tag `v0.1.0`** | ✅ 已完成：`git tag -l` → `v0.1.0`（annotated，带能力边界）；`CHANGELOG.md` 写明包含/不包含/已知限制，版本号由 `ChangelogTest` 守护 | ✅ |
 
 > A3 是 A5 的前置：不联网的套件才可能在 CI 上稳定跑绿。
 > `E02`（FastAPI 四端点 + schema）实际已被 O3 / O4c / O4d 覆盖，随 A6 一并把文档状态改勾。
