@@ -39,6 +39,22 @@ from .errors import CollectionMismatchError, QdrantUnavailableError, VectorStore
 # --- 与方案 §3.5 / D15 验收口径绑定的常量 -------------------------------
 
 COLLECTION_NAME = "rag_chunks_v1"
+
+
+
+#: 集合名的环境变量（部署时用它把多套知识库放在同一个 Qdrant 上）：
+#:
+#: 踩坑（A5 干净克隆验收）：集合名原来只有常量，于是 clone 到临时目录按 README
+#: 建库，写进的是**正式集合** —— 正式库从 38,865 点变 38,871 点，而且不报任何错，
+#: 只是检索结果里混进了别的语料。同一台机器上放「测试 / 预发 / 生产」三套库很常见，
+#: 撞库必须能被配置解开，不能靠「记得先改代码」。
+COLLECTION_ENV = "RAG_COLLECTION"
+
+
+def default_collection() -> str:
+    """当前生效的集合名：`RAG_COLLECTION` > 历史默认 `rag_chunks_v1`。"""
+    return (os.getenv(COLLECTION_ENV) or "").strip() or COLLECTION_NAME
+
 VECTOR_SIZE = 1024                      # bge-m3 dense 维度
 DISTANCE = "Cosine"
 HNSW_M = 16

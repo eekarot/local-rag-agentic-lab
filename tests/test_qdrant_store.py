@@ -31,7 +31,7 @@ from src.rag.store.qdrant_store import (
     point_id_for,
     qdrant_url,
 )
-from tests._slow import run_slow, slow
+from tests._slow import run_slow, server_skip_reason, slow
 
 
 def _server_available() -> bool:
@@ -136,7 +136,7 @@ class SpecConstantsTest(unittest.TestCase):
         )
 
 
-@unittest.skipUnless(SERVER, f"Qdrant 服务端不可达（{qdrant_url()}），跳过服务端用例")
+@unittest.skipUnless(SERVER, server_skip_reason("服务端用例", qdrant_url()))
 @slow
 class ServerCollectionTest(unittest.TestCase):
     def setUp(self):

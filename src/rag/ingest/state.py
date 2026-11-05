@@ -66,6 +66,12 @@ CREATE TABLE IF NOT EXISTS ingest_state (
 );
 CREATE INDEX IF NOT EXISTS idx_state_stage ON ingest_state(stage);
 
+-- 状态表属于哪个集合（换集合 = 换一整套库，旧进度不能带过去）
+CREATE TABLE IF NOT EXISTS ingest_meta (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS ingest_failures (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     doc_key    TEXT NOT NULL,
@@ -83,14 +89,44 @@ CREATE INDEX IF NOT EXISTS idx_failures_doc ON ingest_failures(doc_key);
 class IngestState:
     """导入状态表。单进程顺序写（摄取不并发写同一个文档）。"""
 
-    def __init__(self, path: str | os.PathLike[str]):
+    def __init__(self, path: str | os.PathLike[str], *, collection: str | None = None):
+        """`collection`：状态表归属的集合。**换集合必须重建**，否则新集合会静默漏文档。
+
+        踩坑（A5 干净克隆验收）：状态键只有 `doc_key`，不看集合。用
+        `RAG_COLLECTION=新集合` 建库时，管线看到旧集合里的「已完成」就全部 skip，
+        输出还是 `ok`，但新集合几乎是空的 —— 静默半成品比报错危险得多。
+        """
         self.path = Path(path)
+        self.collection = collection
+        self.collection_switched = False
+        self.collection_adopted = False
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self._connect() as conn:
             conn.executescript(SCHEMA)
+            self._bind_collection(conn)
             columns = {row["name"] for row in conn.execute("PRAGMA table_info(ingest_failures)")}
             if "resolution" not in columns:   # 老库补列（SQLite 不支持 IF NOT EXISTS）
                 conn.execute("ALTER TABLE ingest_failures ADD COLUMN resolution TEXT")
+
+    def _bind_collection(self, conn) -> None:
+        """把状态表绑定到当前集合；不一致就清空进度（并置 `collection_switched`）。"""
+        if not self.collection:
+            return
+        row = conn.execute("SELECT value FROM ingest_meta WHERE key = 'collection'").fetchone()
+        current = row["value"] if row is not None else None
+        if current is None:
+            # 老库（这次改动之前建的）没有 meta 记录：**认领**现有进度，
+            # 不能反过来清库 —— 那会让所有老用户升级后白跑一遍全量建库（实测 2,000 s）。
+            rows = conn.execute("SELECT COUNT(*) AS n FROM ingest_state").fetchone()["n"]
+            conn.execute("INSERT INTO ingest_meta (key, value) VALUES ('collection', ?)",
+                         (self.collection,))
+            self.collection_adopted = int(rows) > 0
+            return
+        if current == self.collection:
+            return
+        conn.execute("DELETE FROM ingest_state")
+        conn.execute("UPDATE ingest_meta SET value = ? WHERE key = 'collection'", (self.collection,))
+        self.collection_switched = True
 
     @contextmanager
     def _connect(self):

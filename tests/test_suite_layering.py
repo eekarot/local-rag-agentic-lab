@@ -74,6 +74,41 @@ class ImportTimeProbeTest(unittest.TestCase):
         self.assertEqual(missing, [], f"这些模块的 @slow 标记被删了：{missing}")
 
 
+class SkipReasonTest(unittest.TestCase):
+    """跳过理由不许撒谎：开关没开 ≠ 服务没起（A5 干净克隆时逮到的 29 条冤枉话）。"""
+
+    SERVER_MODULES = ["test_search", "test_indexer", "test_qdrant_store",
+                      "test_embedding_text_report"]
+
+    def test_server_modules_explain_the_real_reason(self):
+        from tests import _slow
+
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("RAG_RUN_SLOW", None)
+            os.environ.pop("RAG_OLLAMA_CHECK", None)
+            reason = _slow.server_skip_reason("某用例", "http://localhost:6333")
+        self.assertIn("RAG_RUN_SLOW", reason, "开关没开时，理由必须指向开关")
+        self.assertNotIn("不可达", reason, "Qdrant 活得好好的，不要冤枉它")
+
+    def test_reason_points_at_the_server_only_when_switch_is_on(self):
+        from tests import _slow
+
+        with mock.patch.dict(os.environ, {"RAG_RUN_SLOW": "1"}):
+            reason = _slow.server_skip_reason("某用例", "http://localhost:6333")
+        self.assertIn("不可达", reason)
+        self.assertIn("localhost:6333", reason)
+
+    def test_server_modules_go_through_the_helper(self):
+        """源码层面别再把理由写死：必须走 server_skip_reason。"""
+        for name in self.SERVER_MODULES:
+            source = (TESTS_DIR / f"{name}.py").read_text(encoding="utf-8")
+            self.assertIn("server_skip_reason", source, f"{name} 没用跳过理由 helper")
+            for line in source.splitlines():
+                if "skipUnless(SERVER" in line:
+                    self.assertIn("server_skip_reason", line,
+                                  f"{name} 的跳过理由没走 helper：{line.strip()}")
+
+
 class SwitchTest(unittest.TestCase):
     def test_run_slow_reads_both_names(self):
         from tests import _slow

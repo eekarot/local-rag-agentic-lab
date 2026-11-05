@@ -14,6 +14,12 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
+
+from tests._tokenizer_fixture import ensure_tokenizer
+
+# 干净克隆里没有 17 MB 真词表（A5 逮到 37 个 ERROR）：没有真词表时挂上替身
+ensure_tokenizer()
 
 
 def _write(items) -> Path:
@@ -47,6 +53,12 @@ class ValidateGoldPointsToleranceTest(unittest.TestCase):
         from src import eval_dataset
 
         self.module = eval_dataset
+        # 这几个用例只关心「命中不到 / 命中多处时算错误还是警告」，不需要真的 81k 旧索引；
+        # 而旧索引在 storage/ 里（被 gitignore）—— 干净克隆上直接 RuntimeError（A5 逮到）。
+        # 给一个空索引：`locate()` 自然返回「命中不到」，正是用例要的前置条件。
+        patcher = mock.patch.object(eval_dataset, "load_index", lambda: {"records": []})
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_missing_span_is_error_without_gold_points(self):
         path = _write([_item()])
@@ -72,7 +84,6 @@ class ThresholdTest(unittest.TestCase):
 
     def test_threshold_constant_is_documented(self):
         from src import eval_dataset
-
         # 阈值本身不变（≥5 篇重复才需要人看），变的是「已有映射时是否算错误」
         self.assertEqual(eval_dataset.SPAN_HIT_ERROR_THRESHOLD, 5)
 

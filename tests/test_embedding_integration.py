@@ -1,4 +1,4 @@
-"""D13 真模型集成测试：只在 `RAG_OLLAMA_CHECK=1` 且 Ollama 可达时运行。
+"""D13 真模型集成测试：只在 `RAG_RUN_SLOW=1`（旧名 `RAG_OLLAMA_CHECK=1`）且 Ollama 可达时运行。
 
 单元测试用的是 `FakeBackend`（能验机制，不能验「bge-m3 真的返回 1024 维有限向量」）。
 这里补三件 FakeBackend 验不了的事：
@@ -31,7 +31,7 @@ def _ollama_ready() -> bool:
         return False
 
 
-@unittest.skipUnless(_ollama_ready(), "需要 RAG_OLLAMA_CHECK=1 且 Ollama 可达")
+@unittest.skipUnless(_ollama_ready(), "需要 RAG_RUN_SLOW=1 且 Ollama 可达（`RAG_OLLAMA_CHECK=1` 仍作旧名兼容）")
 class RealModelTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

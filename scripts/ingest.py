@@ -46,7 +46,7 @@ from src.rag.ingest.state import IngestState  # noqa: E402
 from src.rag.store.document_store import DocumentStore  # noqa: E402
 from src.rag.store.index_versions import IndexVersions  # noqa: E402
 from src.rag.store.indexer import Indexer  # noqa: E402
-from src.rag.store.qdrant_store import COLLECTION_NAME, ensure_collection, make_client  # noqa: E402
+from src.rag.store.qdrant_store import default_collection, ensure_collection, make_client  # noqa: E402
 
 STATE_PATH = STORAGE_DIR / "ingest" / "state.sqlite3"
 DOCUMENT_DB = STORAGE_DIR / "documents.sqlite3"
@@ -56,8 +56,11 @@ VERSIONS_DB = STORAGE_DIR / "index_versions.sqlite3"
 def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingService, IngestState]:
     client = make_client()
     ensure_collection(client, args.collection)
-    state = IngestState(args.state or STATE_PATH)
+    state = IngestState(args.state or STATE_PATH, collection=args.collection)
     store = DocumentStore(args.document_db or DOCUMENT_DB)
+    if getattr(state, "collection_switched", False):
+        print(f"[ingest] 状态表原属于别的集合，已按「全新库」重建（当前集合 {args.collection}）",
+              file=sys.stderr)
     embedder = EmbeddingService(cache_path=args.cache or (STORAGE_DIR / "cache" / "embeddings.sqlite3"))
     versions = IndexVersions(args.versions or VERSIONS_DB)
     indexer = Indexer(
@@ -72,7 +75,8 @@ def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingServi
     return pipeline, client, embedder, state
 
 
-def main(argv: list[str] | None = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
+    """把参数定义抽出来，用例才能验证「默认值服从环境变量」（A5 撞库之后加的）。"""
     parser = argparse.ArgumentParser(prog="ingest", description="端到端摄入：文件 → Qdrant + Document Store")
     parser.add_argument("--dir", type=Path, default=ROOT / "data", help="语料根目录")
     parser.add_argument("--patterns", nargs="*", default=list(DEFAULT_PATTERNS), help="文件通配符")
@@ -80,7 +84,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only", nargs="*", default=None, help="只处理这些 doc_key（相对 --dir 的路径）")
     parser.add_argument("--force", action="store_true", help="忽略已完成状态，强制重做")
     parser.add_argument("--dry-run", action="store_true", help="只发现不写入")
-    parser.add_argument("--collection", default=COLLECTION_NAME)
+    parser.add_argument("--collection", default=default_collection())
     parser.add_argument("--state", type=Path, default=None)
     parser.add_argument("--document-db", type=Path, default=None)
     parser.add_argument("--cache", type=Path, default=None)
@@ -95,6 +99,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--delete", nargs="*", default=None,
                         help="删除这些 doc_key（Qdrant + Store + 状态表一起清），之后可重跑重建")
     parser.add_argument("--json", action="store_true", help="输出 JSON（便于脚本消费）")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
     args = parser.parse_args(argv)
 
     lines: list[str] = []
@@ -104,7 +113,7 @@ def main(argv: list[str] | None = None) -> int:
         if not args.json:
             print(message, flush=True)
 
-    state = IngestState(args.state or STATE_PATH)
+    state = IngestState(args.state or STATE_PATH, collection=args.collection)
     if args.status:
         print(json.dumps(state.stats(), ensure_ascii=False, indent=2))
         counts = state.stage_counts()

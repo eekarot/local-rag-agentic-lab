@@ -31,7 +31,7 @@ from src.rag.store.search import (
     qdrant_search,
 )
 from src.rag.store.qdrant_store import VECTOR_SIZE, make_client, point_id_for, qdrant_url
-from tests._slow import run_slow, slow
+from tests._slow import run_slow, server_skip_reason, slow
 
 SCROLL = 1000
 
@@ -86,7 +86,7 @@ class RecallMetricTest(unittest.TestCase):
         self.assertEqual(ann_recall([1], [1, 2, 3, 4]), 0.25)
 
 
-@unittest.skipUnless(SERVER, f"Qdrant 服务端不可达（{qdrant_url()}），跳过 D19 服务端用例")
+@unittest.skipUnless(SERVER, server_skip_reason("D19 服务端用例", qdrant_url()))
 @slow
 class ServerSearchTest(unittest.TestCase):
     def setUp(self):

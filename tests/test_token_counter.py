@@ -16,6 +16,11 @@ from tokenizers import Tokenizer, models, pre_tokenizers
 from src.rag.ingestion.errors import TokenizerUnavailable
 from src.rag.ingestion.tokenizer import TokenCounter, cli_main
 
+from tests._tokenizer_fixture import ensure_tokenizer
+
+# 干净克隆里没有 17 MB 真词表（A5 逮到 37 个 ERROR）：自检时挂上替身
+ensure_tokenizer()
+
 
 def build_tiny_tokenizer(path):
     vocab = {"[UNK]": 0, "a": 1, "b": 2, "c": 3, "hello": 4, "world": 5}

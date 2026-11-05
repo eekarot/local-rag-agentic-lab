@@ -59,6 +59,11 @@ def load_parent_records(store_path: str | Path | None = None) -> list[dict[str, 
             # parents.section_path 落库是 JSON 文本；原样传下去会让 assemble() 把字符串
             # 按字符拆开（N11：prompt 里每块头部变成 " > 深 > 入 > …"）
             "section_path": _path_list(row["section_path"]),
+            # 键名必须是 `source_uri`：组装器读的是 record["source_uri"]。
+            # 原先写成 "source"，于是每个块的来源路径都是空串 —— CLI 来源表只有标题、
+            # 网页端「来源」列全空、SSE 的 sources 事件里 source_uri: ""（A5 以陌生人
+            # 视角看来源表才发现）。`source` 保留给老调用方。
+            "source_uri": row["source_uri"],
             "source": row["source_uri"],
         })
     return out
@@ -150,11 +155,11 @@ def build_default_retriever(
     ——D28 报延迟前必须热身，这是硬要求。
     """
     from ..embedding.service import EmbeddingService
-    from ..store.qdrant_store import COLLECTION_NAME, make_client
+    from ..store.qdrant_store import default_collection, make_client
     from ..store.search import qdrant_search
 
     client = make_client(timeout=180)
-    collection = collection or COLLECTION_NAME
+    collection = collection or default_collection()
     embedder = EmbeddingService()
     parents = load_parent_records(store_path)
 

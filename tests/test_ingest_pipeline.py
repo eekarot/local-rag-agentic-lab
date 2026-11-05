@@ -17,6 +17,11 @@ import numpy as np
 from src.rag.ingest.pipeline import IngestPipeline
 from src.rag.ingest.state import IngestState, Stage
 
+from tests._tokenizer_fixture import ensure_tokenizer
+
+# 干净克隆里没有 17 MB 真词表（A5 逮到 37 个 ERROR）：自检时挂上替身
+ensure_tokenizer()
+
 
 class FakeEmbedder:
     def __init__(self, fail_on: str | None = None):

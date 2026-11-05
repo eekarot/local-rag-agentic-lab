@@ -1,7 +1,7 @@
 """D05 集成测试：真实 BGE-M3 词表 + Ollama 计数对齐。
 
 默认跳过（需要 storage/tokenizer/bge-m3/tokenizer.json 与运行中的 Ollama）：
-    set RAG_OLLAMA_CHECK=1 && python -m unittest tests.test_token_counter_integration -v
+    RAG_RUN_SLOW=1 python -m unittest tests.test_token_counter_integration -v
 
 第一个用例是需求本身（误差 ≤2%）；
 第二个用例是**负向对照**——拿另一个模型的计数来比，必须判为不一致，
@@ -69,7 +69,7 @@ class RealVocabTest(unittest.TestCase):
         self.assertFalse(out.endswith(" ") and not text[len(out)].isspace())
 
 
-@unittest.skipUnless(RUN_OLLAMA, "设置 RAG_OLLAMA_CHECK=1 才跑（依赖 Ollama 服务）")
+@unittest.skipUnless(RUN_OLLAMA, "设置 RAG_RUN_SLOW=1 才跑（依赖 Ollama 服务；`RAG_OLLAMA_CHECK=1` 仍作旧名兼容）")
 @unittest.skipUnless(DEFAULT_TOKENIZER_PATH.is_file(), "缺少 bge-m3 tokenizer.json")
 @slow
 class OllamaAlignmentTest(unittest.TestCase):

@@ -16,6 +16,7 @@
 """
 
 import json
+import tempfile
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -194,6 +195,76 @@ class PersistenceTest(unittest.TestCase):
                                                chunker_version="c1", embedding_version="e1"))
             finally:
                 second.close()
+
+
+class CollectionSwitchTest(unittest.TestCase):
+    """换集合 = 换一整套库；状态表不能把旧集合的「已完成」带过去。
+
+    踩坑（A5 干净克隆验收，接着 RAG_COLLECTION 之后）：用 `RAG_COLLECTION=新集合`
+    建库，`ingest` 却报 `skipped=N` —— 状态表的键只有 `doc_key`，不看集合，
+    于是新集合里几乎没有点，而输出看起来「一切正常」。这类静默半成品比报错危险得多。
+    """
+
+    def setUp(self):
+        from src.rag.ingest.state import IngestState
+
+        self.IngestState = IngestState
+        self.tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self.tmp.name) / "state.sqlite3"
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _mark_done(self, state, key="a.md"):
+        state.begin(key)
+        state.complete(key, document_version="sha256:x", chunker_version="v1",
+                       embedding_version="bge-m3-v1")
+
+    def test_same_collection_keeps_progress(self):
+        state = self.IngestState(self.path, collection="rag_a")
+        self._mark_done(state)
+        again = self.IngestState(self.path, collection="rag_a")
+        self.assertFalse(again.collection_switched)
+        self.assertTrue(again.is_done("a.md", document_version="sha256:x",
+                                      chunker_version="v1", embedding_version="bge-m3-v1"))
+
+    def test_switching_collection_invalidates_progress(self):
+        state = self.IngestState(self.path, collection="rag_a")
+        self._mark_done(state)
+        switched = self.IngestState(self.path, collection="rag_b")
+        self.assertTrue(switched.collection_switched, "换集合必须让管线知道要重建")
+        self.assertFalse(switched.is_done("a.md", document_version="sha256:x",
+                                          chunker_version="v1", embedding_version="bge-m3-v1"),
+                         "旧集合的完成记录不能算到新集合头上")
+
+    def test_switching_back_also_rebuilds(self):
+        """A → B → A：旧记录已被清掉，回到 A 也得重建（否则会漏文档）。"""
+        self.IngestState(self.path, collection="rag_a")
+        self._mark_done(self.IngestState(self.path, collection="rag_a"))
+        self.IngestState(self.path, collection="rag_b")
+        back = self.IngestState(self.path, collection="rag_a")
+        self.assertTrue(back.collection_switched)
+        self.assertFalse(back.is_done("a.md", document_version="sha256:x",
+                                      chunker_version="v1", embedding_version="bge-m3-v1"))
+
+    def test_without_collection_argument_behaves_as_before(self):
+        """老调用（不传 collection）不能因为这次改动而清库。"""
+        state = self.IngestState(self.path)
+        self._mark_done(state)
+        plain = self.IngestState(self.path)
+        self.assertFalse(plain.collection_switched)
+        self.assertTrue(plain.is_done("a.md", document_version="sha256:x",
+                                      chunker_version="v1", embedding_version="bge-m3-v1"))
+
+    def test_legacy_state_is_adopted_not_cleared(self):
+        """升级前建的老库没有 meta：认领给当前集合，不能把进度清掉（否则全量重跑）。"""
+        legacy = self.IngestState(self.path)          # 老调用：不传 collection，不写 meta
+        self._mark_done(legacy)
+        adopted = self.IngestState(self.path, collection="rag_chunks_v1")
+        self.assertFalse(adopted.collection_switched)
+        self.assertTrue(adopted.collection_adopted, "应该认领，而不是当作新库")
+        self.assertTrue(adopted.is_done("a.md", document_version="sha256:x",
+                                       chunker_version="v1", embedding_version="bge-m3-v1"))
 
 
 if __name__ == "__main__":

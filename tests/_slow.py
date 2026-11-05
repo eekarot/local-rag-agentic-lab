@@ -35,3 +35,16 @@ SLOW_HINT = ("慢/联网用例已跳过（默认套件不联网）。要跑：RA
 
 #: 挂在 TestCase 上：`@slow`
 slow = unittest.skipUnless(run_slow(), SLOW_HINT)
+
+
+def server_skip_reason(subject: str, url: str | None = None) -> str:
+    """跳过理由必须说**真原因**：开关没开 vs 服务没起，是两件事。
+
+    踩坑（A5 干净克隆时发现）：四个服务端模块的跳过理由原先一律写
+    「Qdrant 服务端不可达（http://localhost:6333）」，于是默认套件里 29 个跳过
+    全在冤枉 Qdrant —— 它其实好好活着，只是 `RAG_RUN_SLOW` 没开。
+    照着这条提示去 `docker start` 的人，会白折腾一圈（N17 同类：给错药比不给药更浪费时间）。
+    """
+    if not run_slow():
+        return SLOW_HINT
+    return f"Qdrant 服务端不可达（{url or '?'}），跳过{subject}"

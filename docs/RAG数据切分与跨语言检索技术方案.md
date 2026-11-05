@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.27
+> **文档版本**：2.28
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2161,8 +2161,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | E01 | — | YAML + Pydantic Settings 收敛全部参数 | `depth / rrf_k / alpha / top_k / ef_search / chunk_size` 均来自 YAML；`rg -n "depth=3" src/` 与 `rg -n "alpha=" src/` 均无命中 |
 | E02 | D20 | FastAPI 四端点 + Pydantic schema | `POST /api/v1/ask` 返回 `answer` + `sources`；`/retrieve?debug=true` 含三路候选数；OpenAPI 文档可访问 |
-| E03 | B03 | ✅ **已完成（2026-11-05）** 测试分层（**保留 stdlib unittest**，不迁 pytest）：`tests/_slow.py` 给慢/联网用例挂 `@slow`（`RAG_RUN_SLOW=1` 才跑，`RAG_OLLAMA_CHECK` 作历史别名继续认）；被分层的 8 个模块：`test_search` / `test_indexer` / `test_qdrant_store` / `test_embedding_text_report` / `test_translate.RealProviderTest` / `test_token_counter_integration` / `test_recursive_splitter_real`；**导入期探测也走开关**（`SERVER = run_slow() and _server_available()`），否则「跳过」仍要白花 3 s 并重新依赖 Qdrant | `python -m unittest discover -s tests` → **909 用例 OK (skipped=50)，33.9 s**（墙钟 40 s，修前 395 s）；把 `QDRANT_URL`/`OLLAMA_BASE_URL` 指到 `127.0.0.1:1` 再跑 → **仍全绿**（证明默认套件不联网）；`RAG_RUN_SLOW=1` 全套 → 909 OK (skipped=5)，346 s |
-| E05 | E04,D27 | 新基线重立 + 回归门禁 | 生成新 `baseline.json`；人为劣化时 `compare` 返回 exit 1 |
+| E04 | O3/O4/O5 | ✅ **已完成（2026-11-05）** 干净克隆验收：`git clone` 到临时目录 + 全新 venv（`pip install -r requirements.txt -r requirements-dev.txt`，**67 s**）+ 默认套件 → **921 用例 OK (skipped=83)，14 s**（无 storage/、无 pymupdf、无 .env）；随后按 README 第 3–7 步走通：下载词表 17 MB → 放 2 md + 1 pdf → `scripts/ingest.py` 建库（PDF 失败并给出 AGPL 与安装命令）→ `src.ask` 检索 31 s / 生成 47 s（引用 [1,2]、越界 0）→ `GET /` 200 7,658 B、`/health` 六项全 ✓、SSE `queued → sources → …` 跑通 | 过程中逮到 4 个真问题：**N26** 跳过理由撒谎、**N27** 集合名写死（撞库）、**N28** 换集合后静默漏文档、**N29** 来源路径永远为空；另有 37 个用例因缺 17 MB 词表 ERROR（已加 `tests/_tokenizer_fixture.py` 字符级替身，真实词表存在时不干预） |
+
 | E06 | — | 目录结构与脚本迁移（`src/rag/*`、`scripts/*`、`config/*`） | 目录与 §6 一致；README 命令同步；旧入口保留一个版本周期并在 README 标注 deprecated |
 | E07 | D35 | ✅ **已完成（2026-11-04）** 产品问答入口：`python -m src.ask "问题"`（链路抽到 `src/rag/ask/pipeline.py`，评估器与产品共用一份代码） | `python -m unittest tests.test_ask_cli` **20 用例**；真实问答跑通（中文/英文/负样本/`--retrieve-only`）；`--json` 输出可被脚本消费；`src/eval_answer.answer_one` 改为调用同一 `answer_query()`，**40 题重跑结果与旧实现一致**（口径未漂移） |
 
@@ -2393,6 +2393,10 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | `storage/index.json` + `embeddings.npy` | 被 Qdrant 取代 | 保留为"精确检索基准"，D19/D36 需要它算 ANN Recall |
 | **N25** | **法务级问题**：`pymupdf` 是 AGPL-3.0/商业双授权（本机元数据实测 `Dual Licensed - GNU AFFERO GPL 3.0 or Arti…`），却是 `requirements.txt` 的**硬依赖**，且 `pdf_parser` 在**导入期**就 `raise IngestionError` | AGPL 是网络服务级 copyleft，把硬依赖分发给闭源使用者等于让整个项目变成 AGPL，与 B11（Apache-2.0）冲突。已修：① 移到 `requirements-pdf.txt`（可选）；② `load_pymupdf()` 惰性导入，缺它时 md/txt 完全不受影响，报错写明「装什么 + 什么许可证」；③ `tests/test_pdf_optional_dependency.py` 3 用例：子进程屏蔽 pymupdf 后 import 必须成功、调用必须给可操作报错（含 `pip install` 与 `AGPL`）、NOTICE 必须写到这条 |
 | `src/retrieve.py` 的 4 个模式 | 由三路召回 + RRF 取代 | `hybrid`/`hybrid_score` 保留作消融对照组（方案 §11.4 的 E 组） |
+| **N26** | 默认套件里 29 条跳过写着「Qdrant 服务端不可达（http://localhost:6333）」（因为 `SERVER = run_slow() and _server_available()`，开关没开时理由却是服务挂了） | 照着这条去 `docker start` 的人白折腾一圈（N17 同类：给错药比不给药更浪费时间）。已加 `tests/_slow.py: server_skip_reason()`：开关没开就说开关；四个服务端模块改走它，`SkipReasonTest` 3 用例锁住「理由里必须有 RAG_RUN_SLOW 且不许说不可达」 |
+| **N27** | 集合名是常量 `COLLECTION_NAME`（无 env、`ask`/HTTP 连 `--collection` 都没有）：A5 把仓库 clone 到临时目录按 README 建库，写进的是**正式集合**，38,865 → 38,871 点，而且不报错，只是检索结果里混进别的语料 | 同一台机器放「测试/预发/生产」三套库是常态，撞库必须能被配置解开。已加 `RAG_COLLECTION`（`qdrant_store.default_collection()`）+ 装配层/ingest/探针全部改走它；`tests/test_collection_config.py` 6 用例（默认值、env 覆盖、空白回退、装配层不许用常量、ingest 默认值、探针读取）+ `.env.example` 同步（清单相等用例兜底） |
+| **N28** | 换集合后 `ingest` 全部 `skipped`、新集合几乎是空的但输出 `ok`：状态键只有 `doc_key`，不看集合 | 静默半成品比报错危险。已改：`IngestState(path, collection=...)` 用 `ingest_meta` 记账 ——首次认领老进度（否则升级后白跑 2,000 s 全量重建）、集合变了就清空进度并置 `collection_switched`，CLI 在 stderr 说明「已按全新库重建」。`CollectionSwitchTest` 5 用例（同集合保进度 / 换集合失效 / 换回也要重建 / 不传 collection 不变 / 老库认领） |
+| **N29** | `load_parent_records()` SQL 里 JOIN 了 `documents.source_uri`，写进 dict 的键却叫 `source`，而组装器读 `record["source_uri"]` → **每个块的来源路径永远是空串** | 表现：CLI 来源表只有标题、网页端「来源」列全空、SSE `sources` 事件里 `source_uri: ""`；「看起来能用」但用户没法回到原文（A5 以陌生人视角看来源表才发现）。已修键名（`source` 保留兼容）+ 2 用例（父块记录必须带 source_uri、组装出的块必须带） |
 | `src/raglog.py`、`src/eval_*.py`、`tests/`（45 用例） | **不失效，是差异化资产** | 直接接入新 pipeline（E04）；指标/日志口径继续沿用 |
 | 60 题评估集与 5 组探针结果 | 指标不可与改造后直接比较 | 作为"改造前基线"存档，仅用于说明改造收益的方向与量级 |
 
@@ -3300,6 +3304,9 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.25                    2026-11-05              A1/O5 /health 复用探针 + 修 N21（localhost→::1 每次连接白等 2 s）
   2.26                    2026-11-05              A3/E03 测试分层：@slow + RAG_RUN_SLOW（默认套件 395→33.9 s 且不联网）
   2.27                    2026-11-05              A4/O8 法务与 CI：LICENSE + NOTICE + CONTRIBUTING + workflow
+  2.28                    2026-11-05              A5/E04 干净克隆验收（14 s 全绿 + 七步走通）
+                                                 + N26 跳过理由撒谎、N27 集合名写死撞库、
+                                                 + N28 换集合静默漏文档、N29 来源路径永远为空
                                                  + N25 PyMuPDF 从硬依赖改为可选（AGPL 与 Apache-2.0 冲突）
                                                  + N23 分层守卫（AST）+ N24 词表进程级缓存
                                                  + 修 N22（探针给的 fix 命令指向不存在的模块）

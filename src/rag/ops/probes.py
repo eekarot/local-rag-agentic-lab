@@ -25,7 +25,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
-from src.rag.store.qdrant_store import COLLECTION_NAME, VECTOR_SIZE
+from src.rag.store.qdrant_store import VECTOR_SIZE, default_collection
 
 
 @dataclass(frozen=True)
@@ -107,8 +107,9 @@ def _first_line(text: str) -> str:
 # ---------------------------------------------------------------- 单项探测
 
 
-def probe_qdrant(*, client, collection: str = COLLECTION_NAME) -> Check:
+def probe_qdrant(*, client, collection: str | None = None) -> Check:
     """向量库：连得上 + collection 存在 + 点数 > 0。"""
+    collection = collection or default_collection()
     fix = (
         f"docker compose up -d qdrant  # 起库（镜像 v1.16.2，与 qdrant-client 同 minor）\n"
         f"python scripts/ingest.py --dir data  # 建库（先把文档按 data/README.md 放进 data/）"
@@ -231,7 +232,7 @@ def run_probes(
     counter,
     reranker,
     parents: Mapping[str, Any],
-    collection: str = COLLECTION_NAME,
+    collection: str | None = None,
     expected_dim: int = VECTOR_SIZE,
     embed_model: str = "bge-m3",
 ) -> ProbeReport:

@@ -17,8 +17,15 @@ from pathlib import Path
 
 from src.rag.context.assembler import assemble
 from src.rag.ingestion.tokenizer import TokenCounter
+
+from tests._tokenizer_fixture import test_tokenizer_path
 from src.rag.retrieval.store_wiring import load_parent_records
 from src.rag.store.document_store import DocumentStore
+
+from tests._tokenizer_fixture import ensure_tokenizer
+
+# 干净克隆里没有 17 MB 真词表（A5 逮到 37 个 ERROR）：自检时挂上替身
+ensure_tokenizer()
 
 
 def _seed(db: Path, section_path=("深入理解AI Agent", "第3 章用户记忆和知识库")):
@@ -100,6 +107,54 @@ class AssemblerSectionPathTest(unittest.TestCase):
         assembled = assemble([{"parent_id": "par_1"}], self._parents(["A", "B"]),
                              counter=TokenCounter(), budget=6000)
         self.assertEqual(assembled.blocks[0].section_path, ["A", "B"])
+
+
+class ParentRecordsSourceUriTest(unittest.TestCase):
+    """父块记录必须带 `source_uri` —— 否则引用卡片永远指不回原文文件。
+
+    踩坑（A5 干净克隆验收时，以陌生人视角看「来源表」发现）：`load_parent_records()`
+    SQL 里明明 JOIN 了 `documents.source_uri`，但写进 dict 的键叫 `"source"`，
+    而组装器读的是 `record.get("source_uri")` → 每个块的来源路径都是空串。
+    表现：CLI 来源表只有标题、网页端「来源」列全空、SSE 的 `sources` 事件里
+    `source_uri: ""`。功能「看起来在」，但用户没法点回原文。
+    """
+
+    def test_parent_records_expose_source_uri(self):
+        import sqlite3
+        import tempfile
+        from pathlib import Path as _Path
+
+        from src.rag.retrieval.store_wiring import load_parent_records
+        from src.rag.store.document_store import DocumentStore
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _Path(tmp) / "documents.sqlite3"
+            store = DocumentStore(path)
+            with store._connect() as conn:            # noqa: SLF001 - 同包内部结构
+                conn.execute("INSERT INTO documents (document_id, source_uri, file_name, file_type,"
+                             " document_version, parser_version, status)"
+                             " VALUES ('doc_x', 'md/产品手册/安装.md', '安装.md', 'md',"
+                             " 'sha256:x', 'v1', 'active')")
+                conn.execute("INSERT INTO parents (parent_id, document_id, document_version, language,"
+                             " title, section_path, content, token_count, source_start, source_end,"
+                             " chunker_version, parent_index)"
+                             " VALUES ('par_x', 'doc_x', 'sha256:x', 'zh', '标题', '[]', '正文',"
+                             " 2, NULL, NULL, 'v1', 0)")
+            rows = load_parent_records(path)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0].get("source_uri"), "md/产品手册/安装.md",
+                         "父块记录缺 source_uri：引用卡片无法回溯原文")
+
+    def test_assembled_block_carries_source_uri(self):
+        from src.rag.context.assembler import assemble
+
+        parents = {"par_1": {"id": "par_1", "chunk_id": "par_1", "document_id": "doc_1",
+                             "parent_index": 0, "text": "正文内容", "title": "标题",
+                             "section_path": ["章节"], "source_uri": "md/安装.md"}}
+        hits = [{"chunk_id": "chk_1", "parent_id": "par_1", "score": 0.5}]
+        context = assemble(hits, parents=parents, counter=TokenCounter(test_tokenizer_path()),
+                           budget=1000)
+        self.assertEqual(context.blocks[0].source_uri, "md/安装.md")
 
 
 if __name__ == "__main__":

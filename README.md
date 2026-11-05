@@ -103,6 +103,10 @@ python -m src.rag.ingestion.tokenizer count "HNSW 是什么"
 
 > 已有词表的话，用 `RAG_TOKENIZER_PATH=/path/to/tokenizer.json` 指过去即可，不必重复下载。
 
+> **同一台机器上放多套库**（测试 / 预发 / 生产）：用 `RAG_COLLECTION` 换集合名，
+> 默认 `rag_chunks_v1`。换集合等于换一整套库 —— `ingest` 会发现状态表属于别的集合，
+> 按「全新库」重建并在 stderr 说明；不换就不受影响。
+
 ### 第 4 步：放你自己的文档
 
 仓库**不携带任何语料**（版权 + 体积 + 与你无关）。把 Markdown / TXT / PDF 放进 `data/`：
