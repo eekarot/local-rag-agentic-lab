@@ -9,12 +9,15 @@ stamp = `sha256(parent_count:max(source_end))`。语料没变就不重建（约 
 
 from __future__ import annotations
 
+import os
+
 import hashlib
 import json
 import time
 from pathlib import Path
 from typing import Any, Callable, Sequence
 
+from .degrade import Breaker, guarded
 from .orchestrator import MultiRouteRetriever
 from .routes import (
     ROUTE_DENSE_EN,
@@ -138,6 +141,7 @@ def build_default_retriever(
     include_zh_lexical: bool = False,
     warmup_texts: Sequence[str] = (),
     log: Callable[[str], None] = print,
+    breaker: Breaker | None = None,
 ) -> MultiRouteRetriever:
     """三路（可选四路）真实装配：`dense_zh` + `dense_en` + `lexical_en`（+ `lexical_zh`）。
 
@@ -161,14 +165,26 @@ def build_default_retriever(
             for result in results
         ]
 
+    # 两路 dense **共用一个 embed 能力 + 一个熔断**：Ollama 挂掉时一次失败就够，
+    # 不该每个请求、每路各等 2.9 s（requests 的重试），也不该让两个 breaker 各自半开
+    embed_breaker = breaker or Breaker(ttl_s=float(os.getenv("RAG_BREAKER_TTL", "30")))
+
     def embed(texts):
         return embedder.encode_queries(list(texts))
 
+    embed = guarded(embed, embed_breaker, capability="embed_model")
+
     if warmup_texts:
+        # 热身是**优化**不是前提：Ollama 没起时它必然失败，此时应带着已打开的熔断
+        # 继续启动（后续 dense 路自动跳过），而不是让整个 CLI / 服务起不来
         started = time.perf_counter()
-        embedder.encode_queries(list(dict.fromkeys(warmup_texts)))
-        log(f"[warmup] 预编码 {len(set(warmup_texts))} 条 query / "
-            f"{time.perf_counter() - started:.1f} s")
+        try:
+            embed(list(dict.fromkeys(warmup_texts)))
+            log(f"[warmup] 预编码 {len(set(warmup_texts))} 条 query / "
+                f"{time.perf_counter() - started:.1f} s")
+        except Exception as exc:                  # noqa: BLE001
+            log(f"[warmup] 跳过（向量模型不可用：{type(exc).__name__}）"
+                f"｜dense 两路将降级，lexical 仍可用")
 
     routes = [
         DenseRoute(name=ROUTE_DENSE_ZH, embedder=embed, searcher=searcher,
@@ -188,4 +204,6 @@ def build_default_retriever(
         routes.append(JiebaLexicalRoute(index=zh_index, records=zh_records,
                                         name=ROUTE_LEXICAL_ZH, input_lang="zh"))
 
-    return MultiRouteRetriever(routes, rrf_k=rrf_k)
+    retriever = MultiRouteRetriever(routes, rrf_k=rrf_k)
+    retriever.breaker = embed_breaker          # 供 /health、doctor 读当前状态
+    return retriever

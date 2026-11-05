@@ -45,6 +45,9 @@ class RouteResult:
     query_used: str = ""
     note: str = ""
     candidates: int = 0
+    #: 这一路失败时的错误文本（`TypeError: ...` / `CircuitOpenError: ...`）。
+    #: **留在这里而不是吞掉**：降级判定要靠它区分「缺模型」与「普通 bug」。
+    error: str = ""
 
     @property
     def ids(self) -> list[str]:

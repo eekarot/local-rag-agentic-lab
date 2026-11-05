@@ -155,6 +155,32 @@ python -m src.ask "问题" --k 5 --sources all    # 少给几块证据 / 列全�
 python -m src.ask "问题" --json                 # 机器可读输出
 ```
 
+### 没有 Ollama 时会发生什么（降级）
+
+向量模型（`bge-m3`）不在时，服务**不会整个挂掉**：三路检索里 `dense_zh` / `dense_en` 自动停用，
+`lexical_en`（英文关键词）继续工作，答案旁边明确告诉你降级了。
+
+```bash
+python -m src.ask "Ollama 停掉时还能不能检索" --retrieve-only
+```
+
+```
+[降级] embed_unavailable：CapabilityError: 调用 Ollama embedding 失败（model=bge-m3）…
+  停用的路：dense_en, dense_zh
+  修复：ollama serve  # 先确认 Ollama 在跑（桌面版/服务均可）
+  修复：ollama pull bge-m3  # 向量模型必须与建库时一致：bge-m3（换模型需整库重建）
+```
+
+三条要知道的：
+
+1. **失败只烧一次**：第一次失败后熔断 30 秒（`RAG_BREAKER_TTL`），期间不再发请求 ——
+   实测连问三次是 `2029 ms → 0 ms → 0 ms`，而不是每次都白等 3 秒的重试；
+2. **会自动恢复**：`ollama serve` 起好后不用重启服务，熔断到期自动半开重试（实测 2 s 后恢复正常、`degraded=None`）；
+3. **中文问题降级后基本搜不到**：`lexical_en` 用的是英文分词，中文 query 几乎匹配不上；
+   英文关键词仍可用。降级只是「不至于 500」，不是「等价能力」。
+
+HTTP 侧同一个信息在 `degraded` 字段里（`/api/v1/retrieve` 与 `/api/v1/ask` 都有，正常时为 `null`）。
+
 ### 第 7 步（可选）：HTTP 服务
 
 命令行之外，同一套链路也跑在 HTTP 上（FastAPI，自动生成 OpenAPI 文档）：

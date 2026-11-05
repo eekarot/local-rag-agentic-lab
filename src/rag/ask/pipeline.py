@@ -64,6 +64,8 @@ class AskResult:
     timings: dict[str, float] = field(default_factory=dict)
     route_hits: dict[str, int] = field(default_factory=dict)
     llm_called: bool = False
+    #: 检索降级信息（缺向量模型 / 某一路故障）。`None` = 全部正常
+    degraded: Any = None
 
     def as_dict(self) -> dict[str, Any]:
         """JSON 友好（`report` 展开成标量，避免 CLI 输出不可序列化）。"""
@@ -85,7 +87,18 @@ class AskResult:
             "timings": {key: round(value, 1) for key, value in self.timings.items()},
             "route_hits": dict(self.route_hits),
             "llm_called": self.llm_called,
+            "degraded": self.degraded.as_dict() if self.degraded else None,
         }
+
+
+@dataclass
+class RetrievalOutcome:
+    """检索段的结果 + **降级标记**。`degraded` 非空表示这次少了几路。"""
+
+    hits: list[RerankHit] = field(default_factory=list)
+    candidates: int = 0
+    route_hits: dict[str, int] = field(default_factory=dict)
+    degraded: Any = None
 
 
 def retrieve_ranked(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
@@ -97,7 +110,17 @@ def retrieve_ranked(question: str, *, retriever, parents: Mapping[str, Mapping[s
     HTTP 层要能按请求关重排（`{"rerank": false}`），而不去改变共享的 reranker 状态
     ——那个方向一改就会在多请求下互相踩。
     """
+    outcome = retrieve_with_meta(question, retriever=retriever, parents=parents, counter=counter,
+                                 reranker=reranker, pool=pool, rerank=rerank)
+    return outcome.hits, outcome.candidates, outcome.route_hits
+
+
+def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
+                       counter, reranker, pool: int = DEFAULT_POOL,
+                       rerank: bool = True) -> RetrievalOutcome:
+    """`retrieve_ranked()` 的带元数据版本：多返回 `degraded`（缺能力 / 某路故障）。"""
     result = retriever.retrieve(question, k=pool)
+    degraded = getattr(result, "degraded", None)
     routes = {name: list(route.ids)[:pool] for name, route in result.routes.items()}
     fused = rrf_fuse_routes(routes, rrf_k=RRF_K, top_k=pool)
 
@@ -110,7 +133,8 @@ def retrieve_ranked(question: str, *, retriever, parents: Mapping[str, Mapping[s
 
     route_hits = {name: len(ids) for name, ids in routes.items()}
     if not rerank:
-        return hits, len(fused), route_hits
+        return RetrievalOutcome(hits=hits, candidates=len(fused), route_hits=route_hits,
+                                degraded=degraded)
 
     for item in hits:
         # 父块 p50 约 700 token，直接截 256 只看得到标题 → 先按 query 挑窗口再重排
@@ -120,7 +144,8 @@ def retrieve_ranked(question: str, *, retriever, parents: Mapping[str, Mapping[s
     ranked = rerank_hits(question, hits, encoder=reranker.encoder, config=reranker.config,
                          top_n=pool, stats=reranker.stats,
                          text_getter=lambda hit: hit.fields["window"])
-    return ranked, len(fused), route_hits
+    return RetrievalOutcome(hits=ranked, candidates=len(fused), route_hits=route_hits,
+                            degraded=degraded)
 
 
 def answer_query(
@@ -141,9 +166,9 @@ def answer_query(
     timings: dict[str, float] = {}
 
     started = time.perf_counter()
-    ranked, candidates, route_hits = retrieve_ranked(question, retriever=retriever, parents=parents,
-                                                    counter=counter, reranker=reranker, pool=pool,
-                                                    rerank=rerank)
+    outcome = retrieve_with_meta(question, retriever=retriever, parents=parents, counter=counter,
+                                 reranker=reranker, pool=pool, rerank=rerank)
+    ranked, candidates, route_hits = outcome.hits, outcome.candidates, outcome.route_hits
     timings["retrieve_rerank_ms"] = (time.perf_counter() - started) * 1000
 
     started = time.perf_counter()
@@ -188,6 +213,7 @@ def answer_query(
         timings=timings,
         route_hits=route_hits,
         llm_called=called,
+        degraded=outcome.degraded,
     )
 
 
@@ -195,6 +221,9 @@ def render_cli(result: AskResult, *, show_sources: int = 5, max_answer_chars: in
                list_blocks: bool = False) -> str:
     """终端输出：答案 → 引用 → 来源表 → 耗时。给人看的，不复用 `AssembledContext.render()`。"""
     lines: list[str] = []
+    if result.degraded is not None:
+        lines.append(result.degraded.render().strip())
+        lines.append("")
     lines.append(f"问题：{result.question}")
     if result.question_en:
         lines.append(f"英文：{result.question_en}")
@@ -279,10 +308,11 @@ def answer_query_stream(
     timings: dict[str, float] = {}
 
     started = time.perf_counter()
-    ranked, candidates, route_hits = retrieve_ranked(
+    outcome = retrieve_with_meta(
         question, retriever=retriever, parents=parents, counter=counter,
         reranker=reranker, pool=pool, rerank=rerank,
     )
+    ranked, candidates, route_hits = outcome.hits, outcome.candidates, outcome.route_hits
     timings["retrieve_rerank_ms"] = (time.perf_counter() - started) * 1000
 
     started = time.perf_counter()
@@ -306,6 +336,8 @@ def answer_query_stream(
             "candidates": candidates,
             "route_hits": dict(route_hits),
             "language": bundle.language,
+            # 降级信息**必须随 sources 早发**：这是客户端决定要不要提示「结果可能不全」的唯一依据
+            "degraded": outcome.degraded.as_dict() if outcome.degraded else None,
             "sources": source_rows(blocks),
         },
     }
@@ -366,5 +398,6 @@ def answer_query_stream(
         timings=timings,
         route_hits=route_hits,
         llm_called=called,
+        degraded=outcome.degraded,
     )
     yield {"event": "done", "data": result.as_dict()}

@@ -26,7 +26,13 @@ from typing import Any, Callable, Mapping
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse
 
-from ..ask.pipeline import DEFAULT_BUDGET, DEFAULT_K, DEFAULT_POOL, answer_query, retrieve_ranked
+from ..ask.pipeline import (
+    DEFAULT_BUDGET,
+    DEFAULT_K,
+    DEFAULT_POOL,
+    answer_query,
+    retrieve_with_meta,
+)
 from .schemas import (
     AskRequest,
     AskResponse,
@@ -197,11 +203,12 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
         current = get_deps()
         try:
             language, query_en = current.translate(q)
-            ranked, candidates, route_hits = retrieve_ranked(
+            outcome = retrieve_with_meta(
                 q, retriever=current.retriever, parents=current.parents,
                 counter=current.counter, reranker=current.reranker,
                 pool=pool, rerank=rerank,
             )
+            ranked = outcome.hits
         except Exception as exc:                       # noqa: BLE001
             raise _failed("检索失败：", exc) from exc
 
@@ -224,8 +231,9 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
             question_en=query_en,
             language=language,
             hits=hits,
-            route_hits=route_hits,
-            candidates=candidates,
+            route_hits=outcome.route_hits,
+            candidates=outcome.candidates,
+            degraded=outcome.degraded.as_dict() if outcome.degraded else None,
         )
 
     @app.get("/health", response_model=HealthResponse, tags=["ops"],

@@ -72,6 +72,11 @@ class AskResponse(BaseModel):
     context_tokens: int = 0
     candidates: int = Field(default=0, description="RRF 融合后的候选数")
     route_hits: dict[str, int] = Field(default_factory=dict, description="每路召回命中数")
+    degraded: dict[str, Any] | None = Field(
+        default=None,
+        description="检索降级信息（缺向量模型 / 某一路故障）；null = 全部正常。"
+                    "非 null 时 `answer` 的可信度会下降，客户端应提示用户。",
+    )
     timings: dict[str, float] = Field(default_factory=dict, description="分段耗时（毫秒）")
     llm_called: bool = False
 
@@ -94,6 +99,11 @@ class RetrieveResponse(BaseModel):
     language: str = "zh"
     hits: list[RetrieveHit] = Field(default_factory=list)
     route_hits: dict[str, int] = Field(default_factory=dict)
+    degraded: dict[str, Any] | None = Field(
+        default=None,
+        description="检索降级信息（缺向量模型 / 某一路故障）；null = 全部正常。"
+                    "`reason=embed_unavailable` 时只剩 lexical 路，结果会明显变差。",
+    )
     candidates: int = 0
     timings: dict[str, float] = Field(default_factory=dict)
 

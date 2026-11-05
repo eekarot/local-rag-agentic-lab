@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.20
+> **文档版本**：2.21
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2175,6 +2175,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | O-D1 | B12 | ✅ **已完成（2026-11-05）** 探测层 `src/rag/ops/probes.py`：**一份实现三处复用**（`/health`、`doctor`、检索降级）。`Check(name, ok, detail, fix, optional, info)` 三级严重度——硬失败 `down` / 可降级 `degraded`（只有生成模型缺席）/ 信息项 `info`（`data/` 为空只意味着不能再建库，不影响已在跑的检索）。约定：**探测不许抛**（它恰好在很多件都坏了的时候被调用）、**每条失败带可复制 `fix`**、全部依赖注入 | `python -m unittest tests.test_ops_probes` **28 用例**；真机 `probe_embed_model` → `bge-m3 可用，维度 1024`；维度不符（768 ≠ 1024）必须失败——换模型不报错、只会让相似度全错 | 
 | O-D2 | B12 | ✅ **已完成（2026-11-05）** `python -m src.doctor`（`src/rag/ops/doctor.py` + 薄启动器）：六项必查 + 语料目录，**装配逐项惰性**（词表炸掉不影响 Qdrant/Ollama/父块的结论） | `python -m src.doctor` → 七行全 ✓、`exit=0`；`OLLAMA_BASE_URL` 指死端口 → `[down]`、`embed_model ✗` 且 `fix` 先给 `ollama serve`（不是 `ollama pull`）、`exit=1`；`OLLAMA_CHAT_MODEL=llama3:8b` → `[degraded]`、`exit=0`；`RAG_TOKENIZER_PATH` 指空文件 → `tokenizer ✗` 且 `fix` 原样带出 curl；`--json` → stdout 纯 JSON |
 | O4a | B14 | ✅ **已完成（2026-11-05）** 流式底层：`ollama_client.chat_stream()`（NDJSON 逐行解析，跳空行/非 JSON 行、`{"error"}` 转异常、`finally` 关上游响应）＋ `pipeline.answer_query_stream()`（事件 `sources → delta* → done`，失败时 `error` 带半截正文） | `python -m unittest tests.test_streaming` **13 用例**；真机：`chat_stream` 66 段 / 首字 12.6 s / 总 14.9 s；整链真机 **sources @ 4,992 ms（6 块 / 2,987 tok）→ 首字 @ 9,658 ms → done @ 17,665 ms**，`timings.first_delta_ms=4,666.7`、`generate_ms=12,672.3`、`cited=[2,1]`、`abstained=False` |
+| O-D3 | B12 | ✅ **已完成（2026-11-05）** 检索降级三件套（`src/rag/retrieval/degrade.py` + 编排层容错）：① `guarded()` + `Breaker`（失败即打开，TTL 30 s，到期半开）；② 编排层单路容错——`dense_zh` 抛异常不再带走 `lexical_en`（改造前该目录**一个 `except` 都没有**）；③ `DegradedInfo{reason, missing, fix, detail, routes}` 一路传到 CLI / `/retrieve` / `/ask` / SSE `sources`。**判定只认异常类型**（`CapabilityError` / `CircuitOpenError` 的 `.capability`），不靠错误文本里有没有 `ollama`（N12 教训） | `python -m unittest tests.test_degradation` **21 用例**；真机（Ollama 指死端口）同一个进程连问三次：**2029 ms → 0 ms → 0 ms**（第 2、3 次被熔断挡住，不再白烧 2.9 s 重试）；`RAG_BREAKER_TTL=2` 半开验证：① 2055 ms 打开 → ② 17 ms 挡住 → ③ 2 s 后 5679 ms **自动恢复**、`degraded=None`、`blocks=3`（不用重启服务）；中文问题降级时 `route_hits` 全 0（`lexical_en` 只吃英文分词），英文 query 仍能出 3 块 |
 ## 17.8 依赖序（执行批次）与里程碑
 
 下表是按下表的依赖关系算出的**最长路径分层**：同一批次内的项互不依赖，可并行开工；下一批次必须等上一批次对应依赖完成。
@@ -2372,6 +2373,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 ---
 | **N17** | 探测层第一版把「Ollama 没起」当成「模型没拉」：`embed_model` 失败时只给 `ollama pull bge-m3`，但在服务没起的情况下这条也会失败，用户会连撞两次墙 | 已修（doctor 真机场景 1 打出来的）：按错误文本区分——`无法调用 Ollama / Connection / refused / timed out / Max retries` 属「服务没起」→ `fix` 先 `ollama serve` 再 `ollama pull`；其余才单给 pull。用例 `test_ollama_down_prefers_serve_over_pull` |
 
+| **N18** | 降级在真实路径上**完全没生效**：`build_default_retriever(warmup_texts=...)` 的热身直接调 `embedder.encode_queries()`，**绕过 guarded 包装**且异常不捕获 → Ollama 没起时 CLI 在 setup 阶段就 `EmbeddingBackendError` 崩掉，`degraded` 一行都打不出来 | 已修（真机跑出来的）：热身走 `embed()`（同一份熔断），并改为 best-effort——失败打一行 `[warmup] 跳过（向量模型不可用：CapabilityError）`继续启动，让后续请求走降级。热身是**优化**不是前提 |
 ## 17.10 迁移影响：改造后哪些资产会失效
 
 | 资产 | 影响 | 处置 |
@@ -3280,6 +3282,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.18                    2026-11-05              O3 HTTP 层（FastAPI 三端点 + Pydantic 契约 + 依赖注入 + 懒装配）；
   2.19                    2026-11-05              O4a 流式底层（chat_stream + answer_query_stream）：sources 早到 ~4.7 s，
   2.20                    2026-11-05              运维探测层 probes（一份实现三处复用，三级严重度 + 每条失败带 fix）；
+  2.21                    2026-11-05              检索降级三件套：单路容错 + 熔断（TTL 半开）+ DegradedInfo 全链路；
+                                                 修 N18（热身绕过熔断导致降级根本没生效）
                                                  python -m src.doctor 自检七项；修 N17「给错药」（serve vs pull）
                                                  首字 9.7 s、全文 17.7 s（真机实测）
                                                  N15 弃答判定加「证据侧主语」+ 剥引用标记（HTTP 端到端打出来的）
