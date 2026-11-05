@@ -261,7 +261,11 @@ HTTP 侧同一个信息在 `degraded` 字段里（`/api/v1/retrieve` 与 `/api/v
 python -m uvicorn src.rag.api.app:app --host 127.0.0.1 --port 8000
 ```
 
-打开 <http://127.0.0.1:8000/docs> 可以直接在页面上试；也可以命令行调：
+**打开 <http://127.0.0.1:8000/> 就是聊天页**：输入问题 → 流式出正文 → 下面列出引用了哪几块证据
+（含路径、来源文件、检索/首字/生成耗时；没有依据时会明确弃答）。页面上「停止」会同时取消服务端生成。
+
+也可以打开 <http://127.0.0.1:8000/docs> 用 Swagger 调，或命令行：
+
 
 ```bash
 curl -s localhost:8000/health

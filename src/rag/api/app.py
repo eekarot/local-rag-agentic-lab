@@ -26,10 +26,11 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping
 
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 
 from .queue import QueueFullError, QueueTimeoutError, make_queue_from_env, SingleFlightQueue
 from .streaming import SSE_HEADERS, StreamBridge, sse_comment, sse_event
+from .webui import render as render_webui
 from ..ask.pipeline import (
     DEFAULT_BUDGET,
     DEFAULT_K,
@@ -201,6 +202,11 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
 
     def get_deps() -> ApiDeps:
         return deps if deps is not None else production_deps()
+
+    @app.get("/", response_class=HTMLResponse, include_in_schema=False)
+    def index() -> HTMLResponse:
+        """最小聊天页（零依赖、离线可用）：打开就能问，流式显示并列出引用来源。"""
+        return HTMLResponse(render_webui())
 
     @app.post("/api/v1/ask", response_model=AskResponse, tags=["rag"],
               summary="完整问答：检索 → 重排 → 组装 → 生成 → 引用体检")

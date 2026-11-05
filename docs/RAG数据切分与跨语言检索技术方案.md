@@ -2181,6 +2181,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | O4c | B14 | ✅ **已完成（2026-11-05）** SSE 端点 `GET /api/v1/ask/stream`（GET 是为了浏览器 `EventSource` 能直接用）：五事件 `queued → sources → delta* → done`，失败走 `error{status,...}`；`src/rag/api/streaming.py` 的 `StreamBridge` 把**同步生成器放线程**、事件经有界队列（64）交给事件循环；`request.is_disconnected()` + `GeneratorExit` 双路取消；15 s 心跳走 SSE 注释行 `: ping`；超时发 `error(status=504, partial=已生成部分)` | `python -m unittest tests.test_api_stream` **9 用例**；真机 `curl -N`：`queued → sources(3 块/1674 tok) → 288 个 delta → done`，`cited` 与 `degraded=null` 正常；**断开取消**实测：流中途 kill 客户端 3 s 后 `/health.queue.inflight` 由 1 → 0、`served` +1，紧接着的 `/ask` 仍 200（13.7 s），名额确实归还 |
 下表是按下表的依赖关系算出的**最长路径分层**：同一批次内的项互不依赖，可并行开工；下一批次必须等上一批次对应依赖完成。
+| O4d | B14 | ✅ **已完成（2026-11-05）** 最小聊天页 `GET /`（`src/rag/api/webui.py`，内联 HTML+JS）：零依赖、**不引任何 CDN**（内网/断网可开）、EventSource 直连 `/api/v1/ask/stream`、渲染降级横幅 / 来源表 / 引用与分段耗时；「停止」= `es.close()` → 服务端取消生成 | `python -m unittest tests.test_webui` **4 用例**（含「不许引外部资源」「流地址必须真存在」）；真机 `GET /` → `200 / text/html / 7,658 B`，页面所连的流实测 `queued → sources → 336 delta → done` |
 （例如 D09 需要 D06 与 D08，而 D08 在 W2，所以 D09 落到 W3。）
 
 | 批次 | 可并行开工 | 前置来自 |
@@ -3288,6 +3289,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.21                    2026-11-05              检索降级三件套：单路容错 + 熔断（TTL 半开）+ DegradedInfo 全链路；
   2.22                    2026-11-05              O4b 有界队列 + 单飞（429 + Retry-After，检索/生成两条队列分开）；
   2.23                    2026-11-05              O4c SSE 端点：StreamBridge（线程↔事件循环）+ 断开取消 + 15 s 心跳 +
+                                                 新增 GET / 聊天页（零依赖、离线可用）
                                                  附带修 N20（本机 Qdrant 被 Windows 系统代理劫持 = N16 真根因）
                                                  超时保留已发内容（error.status=504 + partial）
                                                  修 N19（排队超时 < 生成 p50 → max_queue 形同虚设）
