@@ -25,7 +25,7 @@
 |---|---|---|---|
 | A1 | **O5 `/health` 复用 probes** | ✅ 已完成：六项探针 + `fix`；停库 → `status=down` 且 HTTP **200**；热请求 0.65–0.81 s（`tests/test_api_health.py` 7 用例）| ✅ |
 | A2 | **O6 依赖/配置清单** | ✅ 已完成：`.env.example` 36 变量 / `requirements-dev.txt` / `tests/test_dev_env_manifest.py` 7 用例（集合相等 + 默认值不漂移 + qdrant 版本纪律）| ✅ |
-| A3 | **E03 测试分层** | ✅ 已完成：默认 **909 用例 / 33.9 s / 不联网**（把 URL 指到死端口仍全绿）；`RAG_RUN_SLOW=1` 全套 346 s 全绿；8 个模块挂 `@slow`；分层守卫（AST）防回归 | ✅ |
+| A3 | **E03 测试分层** | ✅ 已完成：默认 **943 用例 / 33 s / 不联网**（把 URL 指到死端口仍全绿）；`RAG_RUN_SLOW=1` 全套 346 s 全绿；8 个模块挂 `@slow`；分层守卫（AST）防回归 | ✅ |
 | A4 | **O8 法务与 CI** | ✅ 已完成：`LICENSE`(Apache-2.0 全文) + `NOTICE`(模型归属 + PyMuPDF AGPL 例外) + `CONTRIBUTING.md` + `.github/workflows/tests.yml`(3 平台，只跑默认套件，URL 指向死端口)；`tests/test_legal_and_ci.py` 10 用例 | ✅ |
 | A5 | **干净克隆验收** | ✅ 已完成：clone + 全新 venv（装依赖 67 s）+ 默认套件 **941 用例 / 17 s / 无 storage、无 pymupdf、无 .env**；README 第 3–7 步全部走通（建库、检索、生成、`/`、`/health` 六项、SSE） | ✅ |
 | A6 | **tag `v0.1.0`** | ✅ 已完成：`git tag -l` → `v0.1.0`（annotated，带能力边界）；`CHANGELOG.md` 写明包含/不包含/已知限制，版本号由 `ChangelogTest` 守护 | ✅ |
