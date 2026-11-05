@@ -1,0 +1,76 @@
+本地 RAG Agentic Lab
+Copyright 2026 The local-rag-agentic-lab Authors
+
+本产品包含由第三方开发的软件，其许可证如下。
+
+================================================================================
+一、本项目自身的许可证
+================================================================================
+
+本仓库的**源代码与文档**采用 Apache License 2.0（见 LICENSE）。
+选择它的理由：明示的专利授权 + 专利报复终止条款，企业法务不需要自己推演，
+也允许商业使用、修改与再分发（改动需标注，保留 NOTICE）。
+
+================================================================================
+二、本仓库**不再分发**的运行时资产（由你自己下载，许可证归属于其作者）
+================================================================================
+
+以下资产不在本仓库中，需要你自己拉取；它们的许可证与本项目的 Apache-2.0 无关，
+请自行确认是否满足你的使用场景：
+
+  bge-m3（BAAI）                                  MIT
+    └ 用途：文档与 query 的向量化（1024 维，建库口径）；`ollama pull bge-m3`
+    └ 模型卡：https://huggingface.co/BAAI/bge-m3
+
+  mmarco-mMiniLMv2-L12-H384-v1（cross-encoder）    Apache-2.0
+    └ 用途：检索结果重排；首次运行时由 huggingface_hub 自动下载约 449 MB
+    └ 模型卡：https://huggingface.co/cross-encoder/mmarco-mMiniLMv2-L12-H384-v1
+
+  Qwen 系列对话模型（默认 qwen3.5:9b）            Apache-2.0（以模型卡为准）
+    └ 用途：答案生成；`ollama pull qwen3.5:9b`。可换成任何 Ollama 模型，许可证随你换的那个
+
+  bge-m3 tokenizer.json                           随 BAAI/bge-m3（MIT）
+    └ 用途：token 计数与切分预算（不跑推理）；见 README 第 3 步
+
+本仓库**不携带任何语料**。你用自己文档建库时，请确认你对该文档有使用权。
+
+================================================================================
+三、必须知道的例外：PyMuPDF 是 AGPL-3.0，不是 Apache-2.0
+================================================================================
+
+  PyMuPDF（`pymupdf` / 旧导入名 `fitz`）         AGPL-3.0 或 商业授权（双授权）
+    └ 用途：PDF 的版面解析（页码、字号、bbox、页眉页脚剔除）
+    └ 本项目**不默认安装**它：它放在 `requirements-pdf.txt` 里，代码对其做惰性导入，
+      只解析 md/txt 的用户完全不受影响（`tests/test_pdf_optional_dependency.py` 守着这条）
+
+  如果你把它作为**硬依赖**分发，或对外提供网络服务，AGPL-3.0 的 copyleft 会延伸到你
+  的服务；这与本项目的 Apache-2.0 定位冲突。三种处理方式：
+
+    1. 只用 md/txt：不装 PyMuPDF，什么都不用管；
+    2. 需要 PDF 解析但闭源商用：购买 PyMuPDF 商业授权（Artifex）；
+    3. 能接受 AGPL：那就把它当 AGPL 组件用，并遵守 AGPL 的分发义务。
+
+  只想拿到纯文本、不要版面信息的话，`requirements.txt` 里的 `pypdf`（BSD-3-Clause）
+  本身够用；本项目选 PyMuPDF 是因为 pypdf 拿不到字号/坐标，标题层级与页脚剔除无从判断。
+
+================================================================================
+四、主要运行时依赖
+================================================================================
+
+  包                  许可证                        用途
+  ------------------  ----------------------------  ----------------------------
+  requests            Apache-2.0                    Ollama HTTP 客户端
+  numpy               BSD-3-Clause（含 0BSD/MIT/Zlib）向量与矩阵运算
+  pypdf               BSD-3-Clause                  PDF 纯文本兜底
+  jieba               MIT                           中文分词（旧链 BM25）
+  tokenizers          Apache-2.0                    BGE-M3 词表的 token 计数
+  pymupdf             AGPL-3.0 / 商业（**可选**）    PDF 版面解析（见第三节）
+  qdrant-client       Apache-2.0                    向量库客户端（==1.16.2）
+  onnxruntime         MIT                           重排模型推理后端
+  huggingface_hub     Apache-2.0                    按需下载重排模型
+  fastapi             MIT                           HTTP 层
+  uvicorn             BSD-3-Clause                  ASGI 服务器
+  httpx               BSD-3-Clause                  仅开发/测试（TestClient）
+
+  Qdrant 本体（Docker 镜像 qdrant/qdrant）是独立进程，许可证为 Apache-2.0；
+  Ollama 本体（单独安装）为 MIT。二者都不随本仓库分发。

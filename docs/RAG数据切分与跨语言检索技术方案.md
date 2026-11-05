@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.26
+> **文档版本**：2.27
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2183,6 +2183,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | O4d | B14 | ✅ **已完成（2026-11-05）** 最小聊天页 `GET /`（`src/rag/api/webui.py`，内联 HTML+JS）：零依赖、**不引任何 CDN**（内网/断网可开）、EventSource 直连 `/api/v1/ask/stream`、渲染降级横幅 / 来源表 / 引用与分段耗时；「停止」= `es.close()` → 服务端取消生成 | `python -m unittest tests.test_webui` **4 用例**（含「不许引外部资源」「流地址必须真存在」）；真机 `GET /` → `200 / text/html / 7,658 B`，页面所连的流实测 `queued → sources → 336 delta → done` |
 （例如 D09 需要 D06 与 D08，而 D08 在 W2，所以 D09 落到 W3。）
 | O5 | — | ✅ **已完成（2026-11-05）** `/health` 复用 probes 六项：每条带可复制 `fix`，整体状态取最差项（硬失败 `down` / 可升级 `degraded` / 全绿 `ok`），**HTTP 永远 200**（探活返 5xx 会被 LB 摘掉，反而看不到诊断）；探针自身抛异常也转成一条失败项（`_safe_probes`）；生产装配复用 `doctor.default_deps()` 并**缓存构造结果**（不缓存则每次探活重载 17 MB 词表）| `tests/test_api_health.py` **7 用例**；真机：全绿 `ok` + 六项 ✓（热 0.65–0.81 s）；`docker stop rag-qdrant` → `status=down`、**HTTP 仍 200**、`blocking_fixes` 带起库与建库两条命令；`docker start` 后回 `ok` |
+| O8 | B11 | ✅ **已完成（2026-11-05）** 法务与 CI：`LICENSE`（Apache-2.0 全文，202 行）+ `NOTICE`（运行时下载的模型归属 + PyMuPDF 的 AGPL 例外 + 主要依赖许可证明细）+ `CONTRIBUTING.md`（5 条不可商量的规矩、分层判定表、提交自检）+ `.github/workflows/tests.yml`（3 平台 × py3.12，只跑默认套件，**显式把 QDRANT_URL/OLLAMA_BASE_URL 指向死端口**——万一有人加联网用例就立刻红）| `tests/test_legal_and_ci.py` **10 用例**（LICENSE 条款齐、NOTICE 覆盖模型与 AGPL、workflow 不许开慢用例/不许装 PDF 栈/必须指向死端口/三平台）；全套件默认 OK |
 | O6 | — | ✅ **已完成（2026-11-05）** 依赖/配置清单：`.env.example`（**36 个变量**，9 组，每行带默认值 + 分组注释）、`requirements-dev.txt`（`-r requirements.txt` + 显式 `httpx`）、`tests/test_dev_env_manifest.py` **7 用例**把「文档 ↔ 代码」锁死（代码读了没写、写了没人读、默认值漂移**三种都挂**）；顺带修：`doctor` 原来自写 `getenv("RAG_DATA_DIR", "data")`，与 `config.DATA_DIR`（`ROOT/data`）不一致，换目录启动就查错地方；检索队列的 `Retry-After` 由默认 60 s 改为显式 1 s（按 N19 口径 ≈ 检索时长） | `python -m unittest tests.test_dev_env_manifest` **7 OK**；从 `%TEMP%` 里 import `default_deps().data_dir` → `C:\...\local-rag-agentic-lab\data`（绝对路径，不再随 CWD 漂移）；`python -m src.doctor` 真机 7 行全 ✓ exit 0 |
 
 | 批次 | 可并行开工 | 前置来自 |
@@ -2390,6 +2391,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | `experiments/baseline.json`（`3e08ef4c1c4f058e`） | `content_hash` 变，`compare` 会判 `not_comparable` | 按 E05 重立基线；旧基线归档保留，禁止混比 |
 | **N24** | `TokenCounter` 每次构造都 `Tokenizer.from_file` 重新解析 17 MB 词表（约 **0.75 s**）：`test_ingest_pipeline` 26 次构造吃掉 **19 s**（默认套件 20% 预算），`doctor` 每次探测也新建一个 | 已修：进程级缓存，键为 `(路径, mtime_ns, size)`，解析放锁外（重复解析一次比串行更划算）；实测 `test_token_counter` 4.2→0.57 s、`test_ingest_pipeline`+`test_ingest_empty_corpus` 31.7→6.0 s；`TokenizerCacheTest` 锁死「同一文件复用」与「文件被重写要重新解析」 |
 | `storage/index.json` + `embeddings.npy` | 被 Qdrant 取代 | 保留为"精确检索基准"，D19/D36 需要它算 ANN Recall |
+| **N25** | **法务级问题**：`pymupdf` 是 AGPL-3.0/商业双授权（本机元数据实测 `Dual Licensed - GNU AFFERO GPL 3.0 or Arti…`），却是 `requirements.txt` 的**硬依赖**，且 `pdf_parser` 在**导入期**就 `raise IngestionError` | AGPL 是网络服务级 copyleft，把硬依赖分发给闭源使用者等于让整个项目变成 AGPL，与 B11（Apache-2.0）冲突。已修：① 移到 `requirements-pdf.txt`（可选）；② `load_pymupdf()` 惰性导入，缺它时 md/txt 完全不受影响，报错写明「装什么 + 什么许可证」；③ `tests/test_pdf_optional_dependency.py` 3 用例：子进程屏蔽 pymupdf 后 import 必须成功、调用必须给可操作报错（含 `pip install` 与 `AGPL`）、NOTICE 必须写到这条 |
 | `src/retrieve.py` 的 4 个模式 | 由三路召回 + RRF 取代 | `hybrid`/`hybrid_score` 保留作消融对照组（方案 §11.4 的 E 组） |
 | `src/raglog.py`、`src/eval_*.py`、`tests/`（45 用例） | **不失效，是差异化资产** | 直接接入新 pipeline（E04）；指标/日志口径继续沿用 |
 | 60 题评估集与 5 组探针结果 | 指标不可与改造后直接比较 | 作为"改造前基线"存档，仅用于说明改造收益的方向与量级 |
@@ -3297,6 +3299,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.24                    2026-11-05              O6 依赖/配置清单：.env.example（36 变量）+ requirements-dev.txt + 一致性用例
   2.25                    2026-11-05              A1/O5 /health 复用探针 + 修 N21（localhost→::1 每次连接白等 2 s）
   2.26                    2026-11-05              A3/E03 测试分层：@slow + RAG_RUN_SLOW（默认套件 395→33.9 s 且不联网）
+  2.27                    2026-11-05              A4/O8 法务与 CI：LICENSE + NOTICE + CONTRIBUTING + workflow
+                                                 + N25 PyMuPDF 从硬依赖改为可选（AGPL 与 Apache-2.0 冲突）
                                                  + N23 分层守卫（AST）+ N24 词表进程级缓存
                                                  + 修 N22（探针给的 fix 命令指向不存在的模块）
                                                  新增 docs/ROADMAP.md（剩余工作项与验收口径）

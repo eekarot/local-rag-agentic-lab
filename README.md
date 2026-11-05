@@ -51,6 +51,12 @@ pip install -r requirements.txt
 
 > PowerShell 若禁止执行脚本，不要激活，直接用 `.\.venv\Scripts\python.exe` 代替下文的 `python`。
 
+想解析 **PDF** 还要再装一个（**许可证不同，见文末「许可证」**）：
+
+```bash
+pip install -r requirements-pdf.txt     # PyMuPDF：AGPL-3.0 / 商业双授权，不装也能用 md/txt
+```
+
 只想**跑起来**用上面这两行就够。想跑测试套件再加一行（`httpx` 是 TestClient / SSE 用例的依赖，
 它现在是被 `qdrant-client` 顺手装进来的，所以这里显式声明，避免哪天它换 HTTP 栈就 ImportError）：
 
@@ -461,6 +467,24 @@ local-rag-agentic-lab/
 ├── tests/                    # stdlib unittest，754 用例
 └── docs/                     # 设计文档（切分与检索方案 / 评估与日志设计）
 ```
+
+## 许可证
+
+**本仓库的源代码与文档是 Apache-2.0**（见 [`LICENSE`](LICENSE)）。选它而不是 MIT，
+是为了那两条**明示的专利授权与专利报复终止**条款——企业法务不用自己推演能不能用；
+你可以商业使用、修改、再分发，改动需标注并保留 [`NOTICE`](NOTICE)。
+
+三件必须知道的事（细节都在 [`NOTICE`](NOTICE)）：
+
+| 资产 | 许可证 | 说明 |
+|---|---|---|
+| `bge-m3` / `mmarco-mMiniLMv2` / Qwen 系列 | MIT / Apache-2.0 / Apache-2.0 | **运行时由你自己下载**（`ollama pull` / HuggingFace），本仓库不重新分发 |
+| **PyMuPDF**（PDF 版面解析） | **AGPL-3.0 或 商业授权** | **不是默认依赖**：它只装在 `requirements-pdf.txt` 里，代码惰性导入。装它并对外提供服务 = 你的服务要遵守 AGPL；闭源商用请买 Artifex 授权，或只用 md/txt |
+| 本仓库的语料 | — | **不携带任何语料**（版权 + 体积 + 与你的业务无关），只留 `data/README.md` 说明放置规则 |
+
+为什么 PDF 这块要单独说：pypdf 只给「一串文本」，拿不到字号和坐标，标题层级与页眉页脚
+剔除都无从判断；PyMuPDF 能拿到 `block → line → span` 三层结构，代价是 AGPL。
+这个取舍写在 [`NOTICE`](NOTICE) 第三节，改动前请先读。
 
 ## Legacy：旧链（仅存档，不要用于新工程）
 

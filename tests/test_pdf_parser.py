@@ -14,7 +14,12 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import pymupdf
+try:                       # pymupdf 现在是可选依赖（AGPL，见 NOTICE 第三节）
+    import pymupdf
+    HAVE_PYMUPDF = True
+except ImportError:        # pragma: no cover - 干净环境下 PDF 用例整体跳过
+    pymupdf = None
+    HAVE_PYMUPDF = False
 
 from src.config import DATA_DIR
 from src.rag.ingestion.errors import IngestionError
@@ -40,6 +45,7 @@ def build_pdf(path, pages):
     return str(path)
 
 
+@unittest.skipUnless(HAVE_PYMUPDF, "需要 pymupdf：pip install -r requirements-pdf.txt")
 class SyntheticPdfTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -162,6 +168,7 @@ class SyntheticPdfTest(unittest.TestCase):
 
 
 @unittest.skipUnless(REAL_PDF.exists(), f"缺少真实 PDF {REAL_PDF}")
+@unittest.skipUnless(HAVE_PYMUPDF, "需要 pymupdf：pip install -r requirements-pdf.txt")
 class RealPdfTest(unittest.TestCase):
     PAGES = 30
 
@@ -206,6 +213,7 @@ class RealPdfTest(unittest.TestCase):
         self.assertEqual(pages, sorted(pages))
 
 
+@unittest.skipUnless(HAVE_PYMUPDF, "需要 pymupdf：pip install -r requirements-pdf.txt")
 class CliReportTest(unittest.TestCase):
     """D04 验收要的「30 页人工表」由 report 子命令生成。"""
 
@@ -243,6 +251,7 @@ class CliReportTest(unittest.TestCase):
             self.assertIn("页码范围", out.getvalue())
 
 
+@unittest.skipUnless(HAVE_PYMUPDF, "需要 pymupdf：pip install -r requirements-pdf.txt")
 class RegistryTest(unittest.TestCase):
     def setUp(self):
         reset_registry()

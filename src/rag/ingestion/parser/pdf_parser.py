@@ -28,15 +28,33 @@ from ..block import DocumentBlock
 from ..errors import IngestionError
 from .base import BaseParser
 
-try:  # pymupdf 1.x 的导入名是 fitz；2.x 起推荐 pymupdf
-    import pymupdf
-except ImportError:  # pragma: no cover
+#: pymupdf 是**可选依赖**（许可证是 AGPL-3.0 / 商业双授权，不是 Apache-2.0）。
+#: 所以这里做惰性导入：只解析 md/txt 的用户不该被牵连（见 NOTICE 与
+#: tests/test_pdf_optional_dependency.py）。
+_PYMUPDF: Any = None
+
+
+def load_pymupdf() -> Any:
+    """按需导入 pymupdf（1.x 叫 `fitz`，2.x 起叫 `pymupdf`），失败时报「装什么 + 什么许可证」。"""
+    global _PYMUPDF
+    if _PYMUPDF is not None:
+        return _PYMUPDF
     try:
-        import fitz as pymupdf  # type: ignore
-    except ImportError as exc:  # pragma: no cover
-        raise IngestionError(
-            "PDF 解析需要 pymupdf：python -m pip install pymupdf"
-        ) from exc
+        import pymupdf as module
+    except ImportError:
+        try:
+            import fitz as module  # type: ignore
+        except ImportError as exc:
+            raise IngestionError(
+                "解析 PDF 需要 pymupdf（本仓库不默认安装）："
+                "python -m pip install -r requirements-pdf.txt"
+                + chr(10)
+                + "注意：PyMuPDF 的许可证是 AGPL-3.0 / 商业双授权，与本仓库的 Apache-2.0 不同；"
+                "商用闭源场景请自行购买授权，或只用纯文本（pypdf）模式。"
+            ) from exc
+    _PYMUPDF = module
+    return module
+
 
 #: 判定标题的最小字号比值
 HEADING_RATIOS = ((2.0, 1), (1.5, 2), (1.15, 3))
@@ -76,7 +94,7 @@ class PdfParser(BaseParser):
         if not file_path.exists():
             raise IngestionError(f"PDF 文件不存在：{file_path}")
         try:
-            document = pymupdf.open(str(file_path))
+            document = load_pymupdf().open(str(file_path))
         except Exception as exc:  # noqa: BLE001 - pymupdf 抛的异常类型不稳定
             raise IngestionError(f"无法作为 PDF 打开：{file_path}（{exc}）") from exc
 

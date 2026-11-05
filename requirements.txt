@@ -5,8 +5,9 @@ jieba>=0.42.1
 # 已安装版本 0.23.3 —— 只用来加载 BGE-M3 的 tokenizer.json 做 token 计数，
 # 不跑模型推理（向量仍走 Ollama /api/embed，见决策 B01）
 tokenizers>=0.20.0
-# 已安装版本 2.0 —— PDF 版面解析（页码、字号、bbox）。1.x 的导入名是 fitz，代码两种都兼容
-pymupdf>=1.24.0
+# PDF 版面解析（页码、字号、bbox）不在这里：PyMuPDF 是 AGPL-3.0/商业双授权，
+# 与本仓库 Apache-2.0 冲突 → 移到可选文件 requirements-pdf.txt（见 NOTICE 第三节）。
+# 不装它也能用：md/txt 照常解析，PDF 走 requirements.txt 里的 pypdf 纯文本模式。
 
 # 已安装版本 1.16.2 —— 向量库客户端。**必须与服务端镜像同 minor**：
 # 实测 client 1.20 连 server 1.15 会告警 incompatibility（major 必须相同、minor 差 ≤1）；

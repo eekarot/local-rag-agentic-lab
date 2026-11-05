@@ -1,0 +1,19 @@
+# PDF 解析依赖（**可选**，且许可证与本仓库不同）
+#
+#   pip install -r requirements-pdf.txt
+#
+# 为什么单独一份：PyMuPDF 的许可证是 **AGPL-3.0 或商业授权**（不是 Apache-2.0）。
+# AGPL 是网络服务级 copyleft —— 把它当硬依赖分发，会让整个项目在法务上变成 AGPL，
+# 与 B11 定案（本项目 Apache-2.0，让别人能随便用）冲突。
+#
+# 所以：
+#   * 不装它，md/txt 一切正常（代码对 pymupdf 做惰性导入，见 NOTICE 第三节）；
+#   * 要解析 PDF 才装；
+#   * 商用闭源请自行购买 Artifex 的商业授权，或接受 AGPL 的分发义务。
+#
+# 只想要 PDF 纯文本、不要页码/字号/bbox 的话，requirements.txt 里的 pypdf
+# （BSD-3-Clause）本身够用，不必装这个。
+
+# 已安装版本 2.0 —— PDF 版面块解析（page.get_text("dict") 给 block/line/span + 字号 + bbox）。
+# 1.x 的导入名是 fitz，代码两种都兼容。
+pymupdf>=1.24.0

@@ -1,0 +1,65 @@
+# CI：只跑**默认套件**（不联网、<60 s）
+#
+# 刻意不做的事：
+#   * 不跑慢用例（`RAG_RUN_SLOW=1`）：那需要 Qdrant + Ollama + 17 MB 词表 + 449 MB 重排模型，
+#     GitHub runner 上要么装不下（磁盘/内存），要么跑成 6 分钟以上且极易抖动
+#     （N16/N20 两次偶发失败都是「连真实服务」的用例带来的）；
+#   * 不装 requirements-pdf.txt：PyMuPDF 是 AGPL-3.0，CI 用它没必要（PDF 用例会自动跳过）；
+#   * 不配 pip 缓存之外的任何 secret：默认套件不访问网络。
+#
+# 想验证真实服务链路，就在自己机器上跑：见 README「跑测试」一节。
+
+name: tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  default-suite:
+    name: ${{ matrix.os }} / py${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: 默认套件（不联网，期望 <60 s）
+        env:
+          PYTHONIOENCODING: utf-8
+          # 指向死端口：默认套件不该碰这两个服务。万一有人加了联网用例，
+          # CI 会立刻红，而不是「runner 上恰好有服务」而蒙混过关。
+          QDRANT_URL: http://127.0.0.1:1
+          OLLAMA_BASE_URL: http://127.0.0.1:1
+        run: python -m unittest discover -s tests
+
+      - name: 法务与清单完整性
+        if: runner.os == 'Linux'
+        run: |
+          test -f LICENSE && grep -q "Apache License" LICENSE
+          test -f NOTICE && grep -q "AGPL" NOTICE
+          test -f .env.example
+          python -m unittest tests.test_dev_env_manifest tests.test_suite_layering tests.test_legal_and_ci
