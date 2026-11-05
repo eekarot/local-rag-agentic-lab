@@ -10,7 +10,9 @@ INDEX_PATH = STORAGE_DIR / "index.json"
 EMBEDDINGS_PATH = STORAGE_DIR / "embeddings.npy"
 QUESTIONS_PATH = ROOT_DIR / "experiments" / "questions.json"
 
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+# 用 `127.0.0.1` 而不是 `localhost`：Windows 上 localhost 先解析到 `::1`，而 Ollama
+# 只听 IPv4，于是每次**新建连接**都要先等 IPv6 超时（实测 2083 ms vs 49 ms）。
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
 OLLAMA_CHAT_MODEL = os.getenv("OLLAMA_CHAT_MODEL", "qwen3.5:9b")
 OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "bge-m3")
 # 换 embedding 模型必须重建索引（python -m src.build_index），否则维度不符会直接报错。

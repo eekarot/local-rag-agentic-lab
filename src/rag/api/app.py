@@ -22,7 +22,7 @@ from __future__ import annotations
 import os
 import threading
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Callable, Mapping
 
 from fastapi import FastAPI, HTTPException, Query, Request
@@ -81,6 +81,9 @@ class ApiDeps:
     heartbeat_s: float = 15.0
     #: 单次流式请求的总时长上限（秒）：超时发 `error(status=504, partial=...)`
     request_timeout_s: float = 300.0
+    #: `/health` 的探针执行器（返回 `ProbeReport`）。**未注入 = 不探**
+    #: ——16 个 api 用例不该为了 /health 去连 Qdrant/Ollama
+    probe_runner: Any = None
     extra: dict[str, Any] = field(default_factory=dict)
 
     def queue_for(self, kind: str) -> Any:
@@ -151,6 +154,7 @@ def production_deps() -> ApiDeps:
             reranker=CrossEncoderReranker(config=RerankConfig()),
             ask=lambda messages: ollama_client.chat(messages, temperature=0.0, think=False),
             translate=translate,
+            probe_runner=_default_probe_runner(),
             heartbeat_s=float(os.getenv("RAG_HEARTBEAT", "15")),
             request_timeout_s=float(os.getenv("RAG_REQUEST_TIMEOUT", "300")),
             ask_queue=make_queue_from_env(),
@@ -187,6 +191,60 @@ def _busy(prefix: str, exc: QueueFullError | QueueTimeoutError) -> HTTPException
         detail=f"{prefix}{exc}".strip(),
         headers={"Retry-After": str(retry_after)},
     )
+
+
+def _safe_probes(deps: ApiDeps):
+    """跑探针并把**探针自己的崩溃**也变成一条失败项。
+
+    探针恰好是在「很多东西都坏了」的时候被调用；这里再抛异常，
+    就等于在最需要诊断信息的时刻把诊断换成一个 500。
+    """
+    from src.rag.ops.probes import Check, ProbeReport
+
+    runner = getattr(deps, "probe_runner", None)
+    if runner is None:
+        return None
+    try:
+        return runner()
+    except Exception as exc:                              # noqa: BLE001 - 有意兜住
+        return ProbeReport([Check(
+            name="probes", ok=False,
+            detail=f"探测本身抛出 {type(exc).__name__}: {exc}",
+            fix="这是 bug，请带上这段 text 报 issue；先用 python -m src.doctor 看更完整的报告",
+        )])
+
+
+def _default_probe_runner():
+    """生产装配：复用 `doctor` 的惰性工厂，并把**构造结果缓存住**。
+
+    不缓存的话，每次 `/health` 都要重新加载 17 MB 词表（约 0.3 s）——
+    探活被轮询时这笔开销完全没必要。缓存只针对「构造」，探测本身每次都真跑。
+    """
+    from src.rag.ops import doctor as doctor_module
+
+    base = doctor_module.default_deps()
+
+    def cached(factory):
+        box: dict[str, Any] = {}
+
+        def get():
+            if "value" not in box:
+                box["value"] = factory()
+            return box["value"]
+
+        return get
+
+    cached_deps = replace(
+        base,
+        client_factory=cached(base.client_factory),
+        counter_factory=cached(base.counter_factory),
+        reranker_factory=cached(base.reranker_factory),
+    )
+
+    def runner():
+        return doctor_module.build_probes(cached_deps)
+
+    return runner
 
 
 def _failed(prefix: str, exc: Exception) -> HTTPException:
@@ -402,9 +460,13 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
              summary="存活探针（O5 会扩成逐项就绪检查）")
     def health_endpoint() -> HealthResponse:
         current = get_deps()
+        report = _safe_probes(current)
         return HealthResponse(
-            status="ok",
+            status=report.status if report is not None else "ok",
             version=current.version,
+            checks=[check.as_dict() for check in report.checks] if report is not None else [],
+            blocking_fixes=report.blocking_fixes if report is not None else [],
+            degraded_fixes=report.degraded_fixes if report is not None else [],
             parents=len(current.parents),
             routes=list(current.routes),
             rerank_enabled=bool(getattr(getattr(current.reranker, "config", None), "enabled", True)),

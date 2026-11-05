@@ -111,10 +111,11 @@ class ProbeQdrantTest(unittest.TestCase):
         self.assertEqual(check.fix, "")
 
     def test_missing_collection_tells_where_to_start(self):
+        # 修过：原来断言的是不存在的 `src.ingest`，真实入口是 scripts/ingest.py
         check = probe_qdrant(client=FakeQdrant({}))
         self.assertFalse(check.ok)
         self.assertIn("rag_chunks_v1", check.detail)
-        self.assertIn("src.ingest", check.fix)
+        self.assertIn("scripts/ingest.py", check.fix)
 
     def test_empty_collection_is_not_ok(self):
         check = probe_qdrant(client=FakeQdrant({"rag_chunks_v1": 0}))
@@ -302,6 +303,36 @@ class ReportTest(unittest.TestCase):
         check = Check(name="x", ok=True, detail="d")
         with self.assertRaises(Exception):
             check.ok = False
+
+
+class FixCommandsExistTest(unittest.TestCase):
+    """探针给出的每一条 `fix` 都必须是**能跑的**命令。
+
+    反例（2026-11-05 实测）：三条 fix 写着 `python -m src.ingest --data-dir data/`，
+    而这个模块根本不存在（真实入口是 `python scripts/ingest.py --dir data`）——
+    用户在最需要帮助的时候照着敲，得到 `No module named src.ingest`。
+    给错药比不给药更浪费时间（N17 同款）。
+    """
+
+    def test_referenced_entry_points_exist(self):
+        import re
+        from pathlib import Path as _Path
+
+        root = _Path(__file__).resolve().parents[1]
+        sources = [root / "src" / "rag" / "ops" / "probes.py",
+                   root / "src" / "rag" / "ops" / "doctor.py",
+                   root / "src" / "rag" / "api" / "app.py"]
+        missing = []
+        for path in sources:
+            text = path.read_text(encoding="utf-8")
+            for module in re.findall(r"python -m (src[\w.]*)", text):
+                target = root / module.replace(".", "/")
+                if not (target.with_suffix(".py").exists() or (target / "__init__.py").exists()):
+                    missing.append(f"{path.name}: python -m {module}")
+            for script in re.findall(r"python (scripts/[\w./-]+\.py)", text):
+                if not (root / script).exists():
+                    missing.append(f"{path.name}: python {script}")
+        self.assertEqual(missing, [], "fix 里引用了不存在的入口：" + "；".join(missing))
 
 
 if __name__ == "__main__":

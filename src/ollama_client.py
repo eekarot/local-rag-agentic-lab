@@ -1,9 +1,28 @@
 import json
+import threading
 
 import requests
 from .config import OLLAMA_BASE_URL, OLLAMA_CHAT_MODEL, OLLAMA_EMBED_MODEL
 
 TIMEOUT = 300
+
+#: 每线程一个 `requests.Session`（连接复用）。
+#:
+#: 这不是"优化"，是修一个每次调用都白交的税：`requests.post(...)` 每次新建连接，
+#: 而 Windows 上 `localhost` 先解析到 `::1`、Ollama 只听 `127.0.0.1`，
+#: 于是**每条请求**都要先吃一次约 2 s 的 IPv6 超时再回落 IPv4（实测
+#: localhost→2083 ms / 127.0.0.1→49 ms）。不共享一个 Session 的话，
+#: 一次问答（翻译 + 向量 + 生成）就白花好几秒。
+_LOCAL = threading.local()
+
+
+def _session() -> requests.Session:
+    """当前线程的 Session（懒创建）。"""
+    session = getattr(_LOCAL, "session", None)
+    if session is None:
+        session = requests.Session()
+        _LOCAL.session = session
+    return session
 
 
 def _post(path, payload):
@@ -11,7 +30,7 @@ def _post(path, payload):
     env_var = "OLLAMA_EMBED_MODEL" if path.endswith("/embed") else "OLLAMA_CHAT_MODEL"
     model = payload.get("model", "?")
     try:
-        response = requests.post(url, json=payload, timeout=TIMEOUT)
+        response = _session().post(url, json=payload, timeout=TIMEOUT)
         response.raise_for_status()
         return response.json()
     except requests.HTTPError as exc:
@@ -45,7 +64,7 @@ def _post(path, payload):
 def _installed_models():
     """列出 Ollama 已安装的模型，用于把报错信息变成可执行的下一步。"""
     try:
-        response = requests.get(
+        response = _session().get(
             f"{OLLAMA_BASE_URL.rstrip('/')}/api/tags", timeout=5
         )
         response.raise_for_status()
@@ -147,7 +166,7 @@ def chat_stream(messages, temperature=0, seed=None, think=None, num_predict=None
     if response is None and _lines is None:
         url = f"{OLLAMA_BASE_URL.rstrip('/')}/api/chat"
         try:
-            response = requests.post(url, json=payload, timeout=TIMEOUT, stream=True)
+            response = _session().post(url, json=payload, timeout=TIMEOUT, stream=True)
             response.raise_for_status()
         except requests.HTTPError as exc:
             detail = (getattr(response, "text", "") or "").strip()[:200]

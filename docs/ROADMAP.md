@@ -22,7 +22,7 @@
 
 | # | 项 | 验收（命令 → 期望值） | 状态 |
 |---|---|---|---|
-| A1 | **O5 `/health` 复用 probes** | `curl localhost:8000/health` → 六项探针状态 + 每项 `fix`；`docker compose stop qdrant` 后 → `status=degraded` 且 HTTP 仍 **200**（不是 500） | ⬜ |
+| A1 | **O5 `/health` 复用 probes** | ✅ 已完成：六项探针 + `fix`；停库 → `status=down` 且 HTTP **200**；热请求 0.65–0.81 s（`tests/test_api_health.py` 7 用例）| ✅ |
 | A2 | **O6 依赖/配置清单** | ✅ 已完成：`.env.example` 36 变量 / `requirements-dev.txt` / `tests/test_dev_env_manifest.py` 7 用例（集合相等 + 默认值不漂移 + qdrant 版本纪律）| ✅ |
 | A3 | **E03 测试分层** | `python -m unittest discover -s tests` → **<60 s 且不联网**（当前 373 s，5 个用例连真实服务）；`RAG_RUN_SLOW=1 python -m unittest discover -s tests/slow` → 真实 Qdrant/Ollama 用例全绿 | ⬜ |
 | A4 | **O8 法务与 CI** | `LICENSE`（Apache-2.0 全文）+ `NOTICE`（`bge-m3` / `mmarco-mMiniLMv2` 运行时下载，许可证归属另计）+ `CONTRIBUTING.md` + `.github/workflows/tests.yml` 在干净环境跑绿 | ⬜ |
@@ -64,6 +64,7 @@
 | D3 | **N9 PDF `source_start/end` 全 NULL** | PDF 无法定位到页/字符偏移 |
 | D4 | **N10 `embedding_model` 空串** | payload 记不下「这份索引是哪个模型建的」 |
 | D5 | **citation_precision 38.46%** | 真实水平。比任何新功能都更影响可用性：引用错比不给引用更糟 |
+| D6 | **Qdrant 里积了 42 个遗留测试集合**（共 45 个 collection，只有 `rag_chunks_v1` 是正式的）| 重启要恢复全部集合：实测 `docker start` 到可服务花 **>60 s**。需要：用例结束即删 + `scripts/cleanup_test_collections.py` |
 
 ## E. 性能账（已量化、未优化）
 

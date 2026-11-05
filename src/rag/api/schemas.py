@@ -108,9 +108,26 @@ class RetrieveResponse(BaseModel):
     timings: dict[str, float] = Field(default_factory=dict)
 
 
+class CheckOut(BaseModel):
+    """一条探针结果（与 `src/rag/ops/probes.Check` 一一对应）。"""
+
+    name: str = Field(description="qdrant / embed_model / chat_model / tokenizer / reranker / parents")
+    ok: bool
+    detail: str = Field(description="一句话现状：点数量、维度、版本号，或失败原因")
+    fix: str = Field(default="", description="可直接复制的修复命令（失败时非空）")
+    optional: bool = Field(default=False, description="True = 挂了只是不能生成，检索仍可用")
+    info: bool = Field(default=False, description="True = 纯信息项，不影响可用性")
+
+
 class HealthResponse(BaseModel):
-    status: str = Field(description="ok / degraded")
+    status: str = Field(description="ok / degraded（能检索不能生成）/ down（检索不可用）")
     version: str
+    checks: list[CheckOut] = Field(
+        default_factory=list,
+        description="六项外部依赖探针；未注入探针的场合为空列表（单测装配）",
+    )
+    blocking_fixes: list[str] = Field(default_factory=list, description="硬失败的修复命令")
+    degraded_fixes: list[str] = Field(default_factory=list, description="可降级的修复命令")
     parents: int = Field(description="已加载的父块数（启动时一次性读入内存）")
     routes: list[str] = Field(default_factory=list)
     rerank_enabled: bool = True

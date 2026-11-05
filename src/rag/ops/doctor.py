@@ -75,9 +75,13 @@ def _lazy_call(factory: Callable[[], Any]) -> Callable[[], Any]:
     return call
 
 
-def run(deps: DoctorDeps) -> ProbeReport:
-    """六项必查 + 单独的语料目录项（`data/` 为空不影响已在跑的检索）。"""
-    report = run_probes(
+def build_probes(deps: DoctorDeps) -> ProbeReport:
+    """只跑六项「服务能不能用」的探针（不含 `data/`）。
+
+    `/health` 复用这份：语料目录与一个**正在运行**的服务是否健康无关，
+    而且它要 glob 上千个文件，不该出现在被轮询的探活里。
+    """
+    return run_probes(
         qdrant=_LazyClient(deps.client_factory),
         embed=deps.embed,
         list_models=deps.list_models,
@@ -87,6 +91,11 @@ def run(deps: DoctorDeps) -> ProbeReport:
         parents=_LazyParents(deps.parents_factory),
         embed_model=deps.embed_model,
     )
+
+
+def run(deps: DoctorDeps) -> ProbeReport:
+    """六项必查 + 单独的语料目录项（`data/` 为空不影响已在跑的检索）。"""
+    report = build_probes(deps)
     report.checks.append(probe_data_dir(deps.data_dir))
     return report
 

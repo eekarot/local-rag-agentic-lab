@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.24
+> **文档版本**：2.25
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2183,6 +2183,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 下表是按下表的依赖关系算出的**最长路径分层**：同一批次内的项互不依赖，可并行开工；下一批次必须等上一批次对应依赖完成。
 | O4d | B14 | ✅ **已完成（2026-11-05）** 最小聊天页 `GET /`（`src/rag/api/webui.py`，内联 HTML+JS）：零依赖、**不引任何 CDN**（内网/断网可开）、EventSource 直连 `/api/v1/ask/stream`、渲染降级横幅 / 来源表 / 引用与分段耗时；「停止」= `es.close()` → 服务端取消生成 | `python -m unittest tests.test_webui` **4 用例**（含「不许引外部资源」「流地址必须真存在」）；真机 `GET /` → `200 / text/html / 7,658 B`，页面所连的流实测 `queued → sources → 336 delta → done` |
 （例如 D09 需要 D06 与 D08，而 D08 在 W2，所以 D09 落到 W3。）
+| O5 | — | ✅ **已完成（2026-11-05）** `/health` 复用 probes 六项：每条带可复制 `fix`，整体状态取最差项（硬失败 `down` / 可升级 `degraded` / 全绿 `ok`），**HTTP 永远 200**（探活返 5xx 会被 LB 摘掉，反而看不到诊断）；探针自身抛异常也转成一条失败项（`_safe_probes`）；生产装配复用 `doctor.default_deps()` 并**缓存构造结果**（不缓存则每次探活重载 17 MB 词表）| `tests/test_api_health.py` **7 用例**；真机：全绿 `ok` + 六项 ✓（热 0.65–0.81 s）；`docker stop rag-qdrant` → `status=down`、**HTTP 仍 200**、`blocking_fixes` 带起库与建库两条命令；`docker start` 后回 `ok` |
 | O6 | — | ✅ **已完成（2026-11-05）** 依赖/配置清单：`.env.example`（**36 个变量**，9 组，每行带默认值 + 分组注释）、`requirements-dev.txt`（`-r requirements.txt` + 显式 `httpx`）、`tests/test_dev_env_manifest.py` **7 用例**把「文档 ↔ 代码」锁死（代码读了没写、写了没人读、默认值漂移**三种都挂**）；顺带修：`doctor` 原来自写 `getenv("RAG_DATA_DIR", "data")`，与 `config.DATA_DIR`（`ROOT/data`）不一致，换目录启动就查错地方；检索队列的 `Retry-After` 由默认 60 s 改为显式 1 s（按 N19 口径 ≈ 检索时长） | `python -m unittest tests.test_dev_env_manifest` **7 OK**；从 `%TEMP%` 里 import `default_deps().data_dir` → `C:\...\local-rag-agentic-lab\data`（绝对路径，不再随 CWD 漂移）；`python -m src.doctor` 真机 7 行全 ✓ exit 0 |
 
 | 批次 | 可并行开工 | 前置来自 |
@@ -2382,7 +2383,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N20** | 本机 Qdrant 被系统代理劫持（N16 的真根因）：Windows 注册表里配了 `127.0.0.1:7897` 代理，httpx 默认 `trust_env=True` 会把 `localhost:6333` 的请求也送进代理 → 随机 20 s 超时，而用户看到的是「Qdrant 挂了」 | 已修：`make_client()` 用 `is_local_url()` 判断，本机强制 `trust_env=False`（连本机走代理永远是错的），远端保留系统代理（云上可能真需要）。顺带更快：`get_collections()` 1127 ms → 731 ms |
 | 资产 | 影响 | 处置 |
+| **N21** | `localhost` 在 Windows 先解析 `::1`，而 Ollama 只听 IPv4 → **每次新建连接**都先吃约 2 s 超时；`ollama_client` 又每条请求 `requests.post(...)` 不复用连接，于是**每一次 Ollama 调用都白交 2 s**（实测 `localhost/api/tags` 2083 ms vs `127.0.0.1` 49 ms）| 已修：① 每线程一个 `requests.Session()`（连接复用）；② 默认地址改回环字面量 `http://127.0.0.1:11434`。实测 `installed_models` **2083→35 ms**、`embed_texts` **2145→102 ms**、`/health` 热 **4.6→0.65 s**、CLI setup **13.9→7.0 s**、retrieve 热 **5.2→1.0 s**；`tests/test_ollama_session.py` 5 用例锁死（线程内复用 / 跨线程不共享 / 必须走 Session / 不用 localhost）|
 |---|---|---|
+| **N22** | 探针的 `fix` 写着 `python -m src.ingest --data-dir data/`，而这个模块**不存在**（真实入口 `python scripts/ingest.py --dir data`）→ 用户在库挂掉时照抄命令，得到 `No module named src.ingest`。同类还有 `python -m src.ops.doctor`（真实是 `python -m src.doctor`）| 已修：三处 `fix` 改为真实入口；新增 `FixCommandsExistTest`：扫 probes/doctor/app 里所有 `python -m src.X` 与 `python scripts/Y.py`，断言目标真实存在——再写错就挂用例 |
 | `experiments/questions.json` 的 `gold_chunks` | 重切分后 chunk id 全变（B02） | 用 `build_questions.py` 重新定位；`gold_spans` 不变，可复用 |
 | `experiments/baseline.json`（`3e08ef4c1c4f058e`） | `content_hash` 变，`compare` 会判 `not_comparable` | 按 E05 重立基线；旧基线归档保留，禁止混比 |
 | `storage/index.json` + `embeddings.npy` | 被 Qdrant 取代 | 保留为"精确检索基准"，D19/D36 需要它算 ANN Recall |
@@ -3291,6 +3294,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.22                    2026-11-05              O4b 有界队列 + 单飞（429 + Retry-After，检索/生成两条队列分开）；
   2.23                    2026-11-05              O4c SSE 端点：StreamBridge（线程↔事件循环）+ 断开取消 + 15 s 心跳 +
   2.24                    2026-11-05              O6 依赖/配置清单：.env.example（36 变量）+ requirements-dev.txt + 一致性用例
+  2.25                    2026-11-05              A1/O5 /health 复用探针 + 修 N21（localhost→::1 每次连接白等 2 s）
+                                                 + 修 N22（探针给的 fix 命令指向不存在的模块）
                                                  新增 docs/ROADMAP.md（剩余工作项与验收口径）
                                                  新增 GET / 聊天页（零依赖、离线可用）
                                                  附带修 N20（本机 Qdrant 被 Windows 系统代理劫持 = N16 真根因）

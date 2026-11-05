@@ -1,4 +1,4 @@
-"""运行时就绪探测：**一份实现，三处复用**（`/health`、`python -m src.ops.doctor`、检索降级判定）。
+"""运行时就绪探测：**一份实现，三处复用**（`/health`、`python -m src.doctor`、检索降级判定）。
 
 设计动机（来自开源评估的实测）：用户起不来的时候，最没用的是「500 Internal Server Error」，
 第二没用的是「qdrant 不可用」。有用的是：
@@ -111,7 +111,7 @@ def probe_qdrant(*, client, collection: str = COLLECTION_NAME) -> Check:
     """向量库：连得上 + collection 存在 + 点数 > 0。"""
     fix = (
         f"docker compose up -d qdrant  # 起库（镜像 v1.16.2，与 qdrant-client 同 minor）\n"
-        f"python -m src.ingest --data-dir data/  # 建库（先把文档按 data/README.md 放进 data/）"
+        f"python scripts/ingest.py --dir data  # 建库（先把文档按 data/README.md 放进 data/）"
     )
     try:
         names = [c.name for c in client.get_collections().collections]
@@ -197,10 +197,10 @@ def probe_parents(parents: Mapping[str, Any]) -> Check:
         count = len(parents or {})
     except Exception as exc:                      # noqa: BLE001 - 探测不许抛
         return Check("parents", False, f"父块加载失败：{type(exc).__name__}: {_first_line(str(exc))}",
-                     "python -m src.ingest --data-dir data/  # 建库后重启服务")
+                     "python scripts/ingest.py --dir data  # 建库后重启服务")
     if not count:
         return Check("parents", False, "父块 0 个：建库没做或加载失败",
-                     "python -m src.ingest --data-dir data/  # 然后把文档放进 data/ 再重启服务")
+                     "python scripts/ingest.py --dir data  # 然后把文档放进 data/ 再重启服务")
     return Check("parents", True, f"父块 {count} 个（启动时加载，重建库后需重启）")
 
 

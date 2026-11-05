@@ -319,6 +319,40 @@ curl -s -X POST localhost:8000/api/v1/ask   -H "Content-Type: application/json" 
 - **只能单 worker**：`--workers 1`（默认）。多 worker 会各自加载一份 945 MB 的 reranker；
 - 流式（SSE）与并发队列限制在下一批（O4），当前的 `/ask` 是一次性返回。
 
+### 服务自检：`GET /health`
+
+`/health` 与 `doctor` 跑**同一套探针**（一份实现，两处复用），区别只是它给监控用：
+
+```bash
+curl -s localhost:8000/health
+```
+
+```json
+{
+  "status": "down",
+  "checks": [
+    {"name": "qdrant", "ok": false, "detail": "连不上 Qdrant：…目标计算机积极拒绝…",
+     "fix": "docker compose up -d qdrant  # 起库",
+     "optional": false, "info": false}
+  ],
+  "blocking_fixes": ["docker compose up -d qdrant  # 起库", "python scripts/ingest.py --dir data  # 建库"],
+  "degraded_fixes": [],
+  "parents": 25411,
+  "queue": {"inflight": 0, "waiting": 0, "served": 0}
+}
+```
+
+三条与监控有关的约定：
+
+| 约定 | 为什么 |
+|---|---|
+| **HTTP 永远 200**，状态看 `status` 字段 | 返 5xx 会被负载均衡直接摘掉，你就再也看不到「哪一项坏了」 |
+| `status` 取最差项：`ok` / `degraded`（能检索不能生成）/ `down` | 「聊天模型没拉」不该让检索端点一起被摘 |
+| 每条失败都带 `fix` | 与 `doctor` 共用探针，所以提示永远一致 |
+
+实测：全绿时热请求 **0.65–0.81 s**（词表、父块这类昂贵构造会缓存）；`docker stop rag-qdrant` 后
+`status=down` 且 HTTP 仍 200；`docker start` 后自动回 `ok`。
+
 ### 自检与排障：`python -m src.doctor`
 
 一条命令查七项：Qdrant / 向量模型 / 生成模型 / 词表 / 重排 / 父块 / 语料目录。
@@ -377,6 +411,7 @@ python -m src.doctor --json   # 给脚本用（stdout 只留 JSON）
 | `找不到 tokenizer.json` | 第 3 步没做 | 按第 3 步下载，或设 `RAG_TOKENIZER_PATH` |
 | `client version ... incompatible` | Qdrant 镜像与客户端 minor 不一致 | 用仓库自带 `docker-compose.yml`（1.16.2） |
 | `发现 0 个文件` | `data/` 里没有文档 | 见 [`data/README.md`](data/README.md) |
+| 每次调用 Ollama 都慢 2 s | Windows 上 `localhost` 先解析 `::1`，Ollama 只听 IPv4。`OLLAMA_BASE_URL` 用 `http://127.0.0.1:11434`（本仓库默认已是），并走复用连接的 Session |
 | 首次运行卡住 1 分钟 | 首次要从 HuggingFace 拉 449 MB 重排模型 | 等它下完（缓存进 `storage/models`）；或 `--no-rerank` |
 
 ## 项目结构
