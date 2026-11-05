@@ -26,6 +26,7 @@ from src.rag.store.qdrant_store import (
     point_id_for,
     qdrant_url,
 )
+from tests._slow import run_slow, slow
 
 
 def _server_available() -> bool:
@@ -36,7 +37,7 @@ def _server_available() -> bool:
         return False
 
 
-SERVER = _server_available()
+SERVER = run_slow() and _server_available()   # 默认不探：省 3 s 且不联网
 DOC_A = "doc_" + "a" * 32
 DOC_B = "doc_" + "b" * 32
 
@@ -121,6 +122,7 @@ def make_children(parents, version="sha256:v1", per_parent=2, tag="v1"):
 
 
 @unittest.skipUnless(SERVER, f"Qdrant 服务端不可达（{qdrant_url()}），跳过 D16 用例")
+@slow
 class IndexerTestBase(unittest.TestCase):
     def setUp(self):
         self.client = make_client(timeout=15)

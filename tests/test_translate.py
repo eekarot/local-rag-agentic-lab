@@ -18,6 +18,7 @@ from src.rag.translate.service import (
     parse_json_reply,
 )
 from src.rag.translate.terms import missing_terms, protect_tokens, retention
+from tests._slow import run_slow, slow
 
 
 class TermsTest(unittest.TestCase):
@@ -172,6 +173,7 @@ class ServiceTest(unittest.TestCase):
         self.assertEqual(self._service(_Provider()).translate([]), [])
 
 
+@slow
 class RealProviderTest(unittest.TestCase):
     """真跑 Ollama：术语原样保留必须 100%。"""
 

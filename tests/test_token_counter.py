@@ -236,5 +236,54 @@ class CliTest(unittest.TestCase):
             cli_main([])
 
 
+class TokenizerCacheTest(unittest.TestCase):
+    """同一个 `tokenizer.json` 只该从磁盘解析一次。
+
+    实测代价：17 MB 词表 `Tokenizer.from_file` 约 0.75 s。`test_ingest_pipeline` 里
+    26 次构造就吃掉 **19 s**（默认套件 20% 的预算）；`doctor` 每次探测也会新建一个。
+    词表文件在进程生命周期内不会变，按「路径 + mtime + size」缓存即可。
+    """
+
+    @staticmethod
+    def _write(path: str) -> str:
+        from tokenizers import Tokenizer, models, pre_tokenizers
+
+        tokenizer = Tokenizer(models.WordLevel(vocab={"hi": 0, "there": 1, "[UNK]": 2}, unk_token="[UNK]"))
+        tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+        tokenizer.save(path)
+        return path
+
+    def test_same_file_is_parsed_once(self):
+        import os
+        import tempfile
+        import time
+
+        from src.rag.ingestion.tokenizer import TokenCounter
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(os.path.join(tmp, "t.json"))
+            first = TokenCounter(path)
+            started = time.perf_counter()
+            second = TokenCounter(path)
+            elapsed = time.perf_counter() - started
+        self.assertIs(first._tokenizer, second._tokenizer, "同一个词表文件必须复用已解析对象")
+        self.assertLess(elapsed, 0.05, f"第二次构造不该再从磁盘解析（{elapsed*1000:.0f} ms）")
+
+    def test_rewritten_file_is_reloaded(self):
+        """词表被重写（mtime 变了）必须重新解析，否则会读到旧内容。"""
+        import os
+        import tempfile
+
+        from src.rag.ingestion.tokenizer import TokenCounter
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "t.json")
+            self._write(path)
+            first = TokenCounter(path)
+            os.utime(path, (0, 0))          # 模拟被替换（mtime 回退）
+            second = TokenCounter(path)
+        self.assertIsNot(first._tokenizer, second._tokenizer)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -31,6 +31,7 @@ from src.rag.store.search import (
     qdrant_search,
 )
 from src.rag.store.qdrant_store import VECTOR_SIZE, make_client, point_id_for, qdrant_url
+from tests._slow import run_slow, slow
 
 SCROLL = 1000
 
@@ -43,7 +44,7 @@ def _server_available() -> bool:
         return False
 
 
-SERVER = _server_available()
+SERVER = run_slow() and _server_available()   # 默认不探：省 3 s 且不联网
 
 
 class PrecisionTest(unittest.TestCase):
@@ -86,6 +87,7 @@ class RecallMetricTest(unittest.TestCase):
 
 
 @unittest.skipUnless(SERVER, f"Qdrant 服务端不可达（{qdrant_url()}），跳过 D19 服务端用例")
+@slow
 class ServerSearchTest(unittest.TestCase):
     def setUp(self):
         from qdrant_client import models

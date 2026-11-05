@@ -9,7 +9,8 @@
 
 ```
 分支 master · 34 个提交 · 无 remote · 无 tag
-全套件 python -m unittest discover -s tests → 879 用例 OK (skipped=5)，373 s
+默认套件 python -m unittest discover -s tests → 909 用例 OK (skipped=50)，33.9 s（不联网）
+全套 RAG_RUN_SLOW=1 … → 909 用例 OK (skipped=5)，346 s
 
 已落地链路：
   解析 → 切分 → 父块 → bge-m3 向量 → Qdrant(38,865 点) + 英文 BM25
@@ -24,7 +25,7 @@
 |---|---|---|---|
 | A1 | **O5 `/health` 复用 probes** | ✅ 已完成：六项探针 + `fix`；停库 → `status=down` 且 HTTP **200**；热请求 0.65–0.81 s（`tests/test_api_health.py` 7 用例）| ✅ |
 | A2 | **O6 依赖/配置清单** | ✅ 已完成：`.env.example` 36 变量 / `requirements-dev.txt` / `tests/test_dev_env_manifest.py` 7 用例（集合相等 + 默认值不漂移 + qdrant 版本纪律）| ✅ |
-| A3 | **E03 测试分层** | `python -m unittest discover -s tests` → **<60 s 且不联网**（当前 373 s，5 个用例连真实服务）；`RAG_RUN_SLOW=1 python -m unittest discover -s tests/slow` → 真实 Qdrant/Ollama 用例全绿 | ⬜ |
+| A3 | **E03 测试分层** | ✅ 已完成：默认 **909 用例 / 33.9 s / 不联网**（把 URL 指到死端口仍全绿）；`RAG_RUN_SLOW=1` 全套 346 s 全绿；8 个模块挂 `@slow`；分层守卫（AST）防回归 | ✅ |
 | A4 | **O8 法务与 CI** | `LICENSE`（Apache-2.0 全文）+ `NOTICE`（`bge-m3` / `mmarco-mMiniLMv2` 运行时下载，许可证归属另计）+ `CONTRIBUTING.md` + `.github/workflows/tests.yml` 在干净环境跑绿 | ⬜ |
 | A5 | **干净克隆验收** | `git clone` 到临时目录 + 全新 venv + `unittest discover`（期望 OK、<60 s、不联网）+ README 七步逐条走通 | ⬜ |
 | A6 | **tag `v0.1.0`** | 依赖 A1–A5 全绿；`git tag -l` 出现 `v0.1.0` | ⬜ |

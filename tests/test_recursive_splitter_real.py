@@ -15,6 +15,7 @@ from contextlib import redirect_stdout
 from src.config import STORAGE_DIR
 from src.rag.ingestion.recursive_chunker import cli_main, recursive_split
 from src.rag.ingestion.tokenizer import DEFAULT_TOKENIZER_PATH, TokenCounter
+from tests._slow import run_slow, slow
 
 VOCAB_AVAILABLE = DEFAULT_TOKENIZER_PATH.exists()
 INDEX_PATH = STORAGE_DIR / "index.json"
@@ -56,6 +57,7 @@ def load_real_documents(n=40, chunks_per_doc=8, seed=7):
 
 
 @unittest.skipUnless(VOCAB_AVAILABLE, f"缺少真词表 {DEFAULT_TOKENIZER_PATH}")
+@slow
 class RealVocabSplitterTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -148,6 +150,7 @@ class RealVocabSplitterTest(unittest.TestCase):
         self.assertLess(ratio, 0.10, f"碎块率 {ratio:.1%} 过高，merge 策略需要调整")
 
 
+@slow
 class SplitterCliTest(unittest.TestCase):
     """验收命令要能当一行命令跑，期望值写死在断言里。"""
 

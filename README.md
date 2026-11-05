@@ -207,6 +207,25 @@ es.addEventListener('done', e => { es.close(); renderCitations(JSON.parse(e.data
 流里失败不会再改 HTTP 状态码（一开始就是 200），所以失败一律用 `error` 事件表达，
 队列满时是 `error` 里带 `status: 429` + `retry_after_s`。
 
+### 跑测试：默认 34 秒、不联网
+
+```bash
+python -m unittest discover -s tests          # 909 用例，34 s，纯单测（不需要 Qdrant/Ollama）
+RAG_RUN_SLOW=1 python -m unittest discover -s tests    # 全套含真实服务，约 6 分钟
+```
+
+分层规则只有一条：**碰真实服务或大模型的用例挂 `@slow`**（真实 Qdrant / Ollama / 17 MB 词表 /
+449 MB 重排模型）。默认套件里它们是 `skipped`，所以：
+
+| 场景 | 默认套件 | 加 `RAG_RUN_SLOW=1` |
+|---|---|---|
+| 刚克隆、什么都没起 | ✅ 全绿（skip 50） | ❌ 大量失败 |
+| 有 Qdrant + Ollama | ✅ 全绿 | ✅ 全绿（skipped=5） |
+| CI | ✅ 34 s | 不建议（要起服务） |
+
+这条规矩由 `tests/test_suite_layering.py` 守着：它用 AST 检查有没有模块在**导入期**就探真实服务
+（那会让「跳过」也变慢、并重新依赖外部进程）。你新写的用例如果这么干，会立刻红。
+
 ### 能调什么（全部开关在一张表里）
 
 所有可调项都是环境变量，**默认值摊开在仓库根的 `.env.example`**（36 个，分 9 组：

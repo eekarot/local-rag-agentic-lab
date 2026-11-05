@@ -13,6 +13,7 @@ Ollama 的计数只用于抽样校验（见 ``verify_against_ollama``）。
 """
 
 import os
+import threading
 import statistics
 from pathlib import Path
 from typing import Any, Callable, Sequence
@@ -42,6 +43,10 @@ DEFAULT_MAX_ABS_TOKEN_DIFF = 2
 
 EmbedFn = Callable[[Sequence[str]], dict[str, Any]]
 
+#: 进程级词表缓存：`(路径, mtime_ns, size) -> Tokenizer`（见 `TokenCounter._load`）
+_TOKENIZER_CACHE: dict[tuple[str, int, int], Tokenizer] = {}
+_TOKENIZER_LOCK = threading.Lock()
+
 
 class TokenCounter:
     """BGE-M3 口径的 token 计数器。
@@ -58,6 +63,12 @@ class TokenCounter:
 
     @staticmethod
     def _load(path: Path) -> Tokenizer:
+        """解析词表（**带进程级缓存**：17 MB 的 `Tokenizer.from_file` 约 0.75 s）。
+
+        词表在进程生命周期内不会变，但构造点不少（CLI、doctor、每个 IngestPipeline、
+        测试里的二十几次），不加缓存时单这一项就能吃掉默认套件 20% 的时间。
+        缓存键带上 `mtime_ns + size`：文件真被换掉时仍会重新解析。
+        """
         if not path.is_file():
             raise TokenizerUnavailable(
                 f"找不到 tokenizer.json：{path}\n"
@@ -65,7 +76,17 @@ class TokenCounter:
                 f"  curl -sL -o \"{path}\" \"{MODELSCOPE_URL}\"\n"
                 f"或用环境变量 {TOKENIZER_PATH_ENV} 指向已有文件。"
             )
-        return Tokenizer.from_file(str(path))
+        stat = path.stat()
+        key = (str(path.resolve()), stat.st_mtime_ns, stat.st_size)
+        with _TOKENIZER_LOCK:
+            cached = _TOKENIZER_CACHE.get(key)
+            if cached is not None:
+                return cached
+        # 解析放锁外：0.75 s 的活不该把其它线程也一起卡住；重复解析一次比串行更划算
+        tokenizer = Tokenizer.from_file(str(path))
+        with _TOKENIZER_LOCK:
+            _TOKENIZER_CACHE[key] = tokenizer
+        return tokenizer
 
     def count(self, text: str) -> int:
         """内容 token 数（不含 BOS/EOS）。空白文本记 0。"""

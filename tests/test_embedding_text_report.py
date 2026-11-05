@@ -16,6 +16,7 @@ from src.rag.ingestion.embedding_text_report import (
 )
 from src.rag.ingestion.parent_builder import build_embedding_text
 from src.rag.store.qdrant_store import VECTOR_SIZE, make_client
+from tests._slow import run_slow, slow
 
 
 def _child(text, content="正文", section=("RAG", "HNSW"), title="RAG 指南"):
@@ -164,7 +165,7 @@ def _server_available():
         return False
 
 
-SERVER = _server_available()
+SERVER = run_slow() and _server_available()   # 默认不探：省 3 s 且不联网
 
 
 class _DeterministicEmbedder:
@@ -187,6 +188,7 @@ class _DeterministicEmbedder:
 
 
 @unittest.skipUnless(SERVER, "Qdrant 服务端不可达，跳过 D14 服务端用例")
+@slow
 class RunAbServerTest(unittest.TestCase):
     """两种口径真的各建一个 collection，报告要能算出差异。"""
 

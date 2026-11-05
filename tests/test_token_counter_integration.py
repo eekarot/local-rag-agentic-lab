@@ -14,6 +14,7 @@ import unittest
 from pathlib import Path
 
 from src.rag.ingestion.tokenizer import DEFAULT_TOKENIZER_PATH, TokenCounter
+from tests._slow import run_slow, slow
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 INDEX_PATH = ROOT_DIR / "storage" / "index.json"
@@ -29,6 +30,7 @@ def sample_texts(n=SAMPLE_SIZE):
 
 
 @unittest.skipUnless(DEFAULT_TOKENIZER_PATH.is_file(), "缺少 bge-m3 tokenizer.json")
+@slow
 class RealVocabTest(unittest.TestCase):
     def test_counts_real_chunks_in_expected_range(self):
         counter = TokenCounter()
@@ -69,6 +71,7 @@ class RealVocabTest(unittest.TestCase):
 
 @unittest.skipUnless(RUN_OLLAMA, "设置 RAG_OLLAMA_CHECK=1 才跑（依赖 Ollama 服务）")
 @unittest.skipUnless(DEFAULT_TOKENIZER_PATH.is_file(), "缺少 bge-m3 tokenizer.json")
+@slow
 class OllamaAlignmentTest(unittest.TestCase):
     def test_bge_m3_alignment_on_real_chunks(self):
         counter = TokenCounter()

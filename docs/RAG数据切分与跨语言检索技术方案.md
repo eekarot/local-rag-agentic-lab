@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.25
+> **文档版本**：2.26
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2161,8 +2161,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | E01 | — | YAML + Pydantic Settings 收敛全部参数 | `depth / rrf_k / alpha / top_k / ef_search / chunk_size` 均来自 YAML；`rg -n "depth=3" src/` 与 `rg -n "alpha=" src/` 均无命中 |
 | E02 | D20 | FastAPI 四端点 + Pydantic schema | `POST /api/v1/ask` 返回 `answer` + `sources`；`/retrieve?debug=true` 含三路候选数；OpenAPI 文档可访问 |
-| E03 | B03 | 测试体系分层（**B03 定案：不迁 pytest**，保留 stdlib unittest） | 现有用例不迁移，只做分层与慢跑标记：`python -m unittest discover -s tests` 仍全绿（当前 **731 用例 / 400 s**）；新增 `tests/slow/` 放真实模型/真库用例，默认不跑、用 `RAG_RUN_SLOW=1` 打开 |
-| E04 | D20 | 日志与评估资产迁移（保留 `raglog` 与 L1 评估，接新 pipeline） | 新 pipeline 产出同类事件（`retrieve`/`prompt`/`generate`）；`measure` 能对新日志出报告 |
+| E03 | B03 | ✅ **已完成（2026-11-05）** 测试分层（**保留 stdlib unittest**，不迁 pytest）：`tests/_slow.py` 给慢/联网用例挂 `@slow`（`RAG_RUN_SLOW=1` 才跑，`RAG_OLLAMA_CHECK` 作历史别名继续认）；被分层的 8 个模块：`test_search` / `test_indexer` / `test_qdrant_store` / `test_embedding_text_report` / `test_translate.RealProviderTest` / `test_token_counter_integration` / `test_recursive_splitter_real`；**导入期探测也走开关**（`SERVER = run_slow() and _server_available()`），否则「跳过」仍要白花 3 s 并重新依赖 Qdrant | `python -m unittest discover -s tests` → **909 用例 OK (skipped=50)，33.9 s**（墙钟 40 s，修前 395 s）；把 `QDRANT_URL`/`OLLAMA_BASE_URL` 指到 `127.0.0.1:1` 再跑 → **仍全绿**（证明默认套件不联网）；`RAG_RUN_SLOW=1` 全套 → 909 OK (skipped=5)，346 s |
 | E05 | E04,D27 | 新基线重立 + 回归门禁 | 生成新 `baseline.json`；人为劣化时 `compare` 返回 exit 1 |
 | E06 | — | 目录结构与脚本迁移（`src/rag/*`、`scripts/*`、`config/*`） | 目录与 §6 一致；README 命令同步；旧入口保留一个版本周期并在 README 标注 deprecated |
 | E07 | D35 | ✅ **已完成（2026-11-04）** 产品问答入口：`python -m src.ask "问题"`（链路抽到 `src/rag/ask/pipeline.py`，评估器与产品共用一份代码） | `python -m unittest tests.test_ask_cli` **20 用例**；真实问答跑通（中文/英文/负样本/`--retrieve-only`）；`--json` 输出可被脚本消费；`src/eval_answer.answer_one` 改为调用同一 `answer_query()`，**40 题重跑结果与旧实现一致**（口径未漂移） |
@@ -2387,7 +2386,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|
 | **N22** | 探针的 `fix` 写着 `python -m src.ingest --data-dir data/`，而这个模块**不存在**（真实入口 `python scripts/ingest.py --dir data`）→ 用户在库挂掉时照抄命令，得到 `No module named src.ingest`。同类还有 `python -m src.ops.doctor`（真实是 `python -m src.doctor`）| 已修：三处 `fix` 改为真实入口；新增 `FixCommandsExistTest`：扫 probes/doctor/app 里所有 `python -m src.X` 与 `python scripts/Y.py`，断言目标真实存在——再写错就挂用例 |
 | `experiments/questions.json` 的 `gold_chunks` | 重切分后 chunk id 全变（B02） | 用 `build_questions.py` 重新定位；`gold_spans` 不变，可复用 |
+| **N23** | 分层若只靠「记得加 skip」，下一轮改动就会悄悄破掉（有人加一行导入期 `SERVER = _server_available()`，全套件就多 3 s 并重新依赖 Qdrant，而且没有任何东西报警）| 已加 `tests/test_suite_layering.py`：**AST 只查模块级调用**（函数体内不管，那才是假件该覆盖的），命中 `make_client/get_collections/installed_models/embed_texts/…` 且没有 `run_slow` 短路就失败；另断言 8 个慢模块的 `@slow` 标记不许被删、开关两个环境变量都认。**验证过守卫真的会响**：临时塞一个导入期探 Qdrant 的模块 → 立即报 `['test_zzz_violation.py: get_collections() 行 6, …']` |
 | `experiments/baseline.json`（`3e08ef4c1c4f058e`） | `content_hash` 变，`compare` 会判 `not_comparable` | 按 E05 重立基线；旧基线归档保留，禁止混比 |
+| **N24** | `TokenCounter` 每次构造都 `Tokenizer.from_file` 重新解析 17 MB 词表（约 **0.75 s**）：`test_ingest_pipeline` 26 次构造吃掉 **19 s**（默认套件 20% 预算），`doctor` 每次探测也新建一个 | 已修：进程级缓存，键为 `(路径, mtime_ns, size)`，解析放锁外（重复解析一次比串行更划算）；实测 `test_token_counter` 4.2→0.57 s、`test_ingest_pipeline`+`test_ingest_empty_corpus` 31.7→6.0 s；`TokenizerCacheTest` 锁死「同一文件复用」与「文件被重写要重新解析」 |
 | `storage/index.json` + `embeddings.npy` | 被 Qdrant 取代 | 保留为"精确检索基准"，D19/D36 需要它算 ANN Recall |
 | `src/retrieve.py` 的 4 个模式 | 由三路召回 + RRF 取代 | `hybrid`/`hybrid_score` 保留作消融对照组（方案 §11.4 的 E 组） |
 | `src/raglog.py`、`src/eval_*.py`、`tests/`（45 用例） | **不失效，是差异化资产** | 直接接入新 pipeline（E04）；指标/日志口径继续沿用 |
@@ -3295,6 +3296,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.23                    2026-11-05              O4c SSE 端点：StreamBridge（线程↔事件循环）+ 断开取消 + 15 s 心跳 +
   2.24                    2026-11-05              O6 依赖/配置清单：.env.example（36 变量）+ requirements-dev.txt + 一致性用例
   2.25                    2026-11-05              A1/O5 /health 复用探针 + 修 N21（localhost→::1 每次连接白等 2 s）
+  2.26                    2026-11-05              A3/E03 测试分层：@slow + RAG_RUN_SLOW（默认套件 395→33.9 s 且不联网）
+                                                 + N23 分层守卫（AST）+ N24 词表进程级缓存
                                                  + 修 N22（探针给的 fix 命令指向不存在的模块）
                                                  新增 docs/ROADMAP.md（剩余工作项与验收口径）
                                                  新增 GET / 聊天页（零依赖、离线可用）
