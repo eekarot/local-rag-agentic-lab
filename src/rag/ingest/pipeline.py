@@ -53,6 +53,33 @@ def _pattern_labels(patterns: Sequence[str]) -> list[str]:
     return labels
 
 
+#: 仓库自带的占位文件：它们不是语料。`data/README.md` 是放置规则说明，
+#: `.gitkeep` 是空目录占位。不排除的话，用户第一次建库会把说明文档也塞进知识库，
+#: 而「空目录引导」也会误判成「有文件」（A5 真·干净环境实测）。
+PLACEHOLDER_NAMES = ("README.md", ".gitkeep")
+
+
+def is_placeholder(path: Path, data_dir: Path) -> bool:
+    """只排除**扫描根目录下**的占位文件；子目录里的 README.md 是正当语料。"""
+    path = Path(path)
+    try:
+        if path.parent.resolve() != Path(data_dir).resolve():
+            return False
+    except OSError:                                   # pragma: no cover - 路径不可解析
+        return False
+    return path.name in PLACEHOLDER_NAMES
+
+
+def discover_corpus(data_dir: Path | str, patterns: Sequence[str] = DEFAULT_PATTERNS) -> list[Path]:
+    """按扩展名发现语料，**相对路径排序**（断点恢复要可复现），并跳过占位文件。"""
+    root = Path(data_dir)
+    found: set[Path] = set()
+    for pattern in patterns:
+        found.update(p for p in root.glob(pattern) if p.is_file())
+    return sorted((p for p in found if not is_placeholder(p, root)),
+                  key=lambda p: p.relative_to(root).as_posix())
+
+
 def empty_corpus_hint(
     data_dir: Path | str, patterns: Sequence[str] = DEFAULT_PATTERNS
 ) -> list[str]:
@@ -168,11 +195,8 @@ class IngestPipeline:
     # -- 发现 -----------------------------------------------------------
 
     def discover(self) -> list[Path]:
-        """按扩展名发现文件，返回**相对路径排序**的稳定顺序（断点恢复要可复现）。"""
-        found: set[Path] = set()
-        for pattern in self.patterns:
-            found.update(p for p in self.data_dir.glob(pattern) if p.is_file())
-        return sorted(found, key=lambda p: p.relative_to(self.data_dir).as_posix())
+        """按扩展名发现文件（相对路径排序；跳过根目录的占位文件）。"""
+        return discover_corpus(self.data_dir, self.patterns)
 
     # -- 主流程 ---------------------------------------------------------
 

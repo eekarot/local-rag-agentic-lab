@@ -192,5 +192,45 @@ class NoTokenizerYetTest(unittest.TestCase):
         self.assertIn("RAG_TOKENIZER_PATH", combined, "必须给替代做法")
 
 
+class PlaceholderAndTokenizerGateTest(unittest.TestCase):
+    """`data/` 里只有我们自己的 README.md / .gitkeep 时，等于空语料。
+
+    实测（A5 真·干净环境）：`data/README.md` 命中了 `**/*.md`，于是「空目录引导」
+    判定为「有文件」，接着建管线 → 缺词表 → 一屏 TokenizerUnavailable 堆栈。
+     rookie 看到的是崩溃，不是「该放哪」。
+
+    另一半：**有文件但没词表**时，报错也不能是堆栈 —— 该说的话（下载命令）异常里都有。
+    """
+
+    def _run(self, argv, env_extra):
+        env = dict(os.environ)
+        env.update(env_extra)
+        env["PYTHONIOENCODING"] = "utf-8"
+        return subprocess.run([sys.executable, *argv], cwd=str(ROOT), env=env,
+                              capture_output=True, text=True, encoding="utf-8",
+                              errors="replace", timeout=120)
+
+    def test_readme_only_dir_counts_as_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            Path(tmp, "README.md").write_text("放置规则说明", encoding="utf-8")
+            Path(tmp, ".gitkeep").write_text("", encoding="utf-8")
+            result = self._run(["scripts/ingest.py", "--dir", tmp, "--dry-run"],
+                               {"RAG_TOKENIZER_PATH": str(Path(tmp) / "nope.json")})
+        combined = result.stdout + result.stderr
+        self.assertNotIn("Traceback", combined, combined[-400:])
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("没有可导入的文件", combined)
+
+    def test_missing_tokenizer_with_files_is_a_message_not_a_stack(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            Path(tmp, "a.md").write_text("# 标题" + chr(10) + "正文", encoding="utf-8")
+            result = self._run(["scripts/ingest.py", "--dir", tmp],
+                               {"RAG_TOKENIZER_PATH": str(Path(tmp) / "nope.json")})
+        combined = result.stdout + result.stderr
+        self.assertNotIn("Traceback", combined, f"有文件但缺词表时报错也不该是堆栈：{combined[-400:]}")
+        self.assertNotEqual(result.returncode, 0, "缺依赖要返回非零")
+        self.assertIn("curl", combined)
+
+
 if __name__ == "__main__":
     unittest.main()

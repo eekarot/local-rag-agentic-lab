@@ -41,7 +41,8 @@ if str(ROOT) not in sys.path:
 
 from src.config import STORAGE_DIR  # noqa: E402
 from src.rag.embedding.service import EmbeddingService  # noqa: E402
-from src.rag.ingest.pipeline import DEFAULT_PATTERNS, IngestPipeline  # noqa: E402
+from src.rag.ingest.pipeline import DEFAULT_PATTERNS, IngestPipeline, IngestSummary  # noqa: E402
+from src.rag.ingestion.errors import TokenizerUnavailable  # noqa: E402
 from src.rag.ingest.state import IngestState  # noqa: E402
 from src.rag.store.document_store import DocumentStore  # noqa: E402
 from src.rag.store.index_versions import IndexVersions  # noqa: E402
@@ -97,12 +98,9 @@ def _no_work(args, lines: list[str]) -> bool:
     用户按 README 跑第一条命令时，会在「该放哪」的指引之前先吃到一屏
     `TokenizerUnavailable` 堆栈（A5 真·干净环境实测）。指引比堆栈有用得多。
     """
-    from src.rag.ingest.pipeline import empty_corpus_hint, missing_only_keys_hint
+    from src.rag.ingest.pipeline import discover_corpus, empty_corpus_hint, missing_only_keys_hint
 
-    found: set[Path] = set()
-    for pattern in args.patterns:
-        found.update(p for p in Path(args.dir).glob(pattern) if p.is_file())
-    discovered = sorted(found, key=lambda p: p.relative_to(args.dir).as_posix())
+    discovered = discover_corpus(args.dir, args.patterns)
     if not discovered:
         lines.extend(empty_corpus_hint(args.dir, args.patterns))
         _hint_tokenizer_if_missing(lines)
@@ -181,7 +179,13 @@ def main(argv: list[str] | None = None) -> int:
                 print(chr(10).join(lines))
             return 0
 
-    pipeline, client, embedder, state = build_pipeline(args, log=log)
+    try:
+        pipeline, client, embedder, state = build_pipeline(args, log=log)
+    except TokenizerUnavailable as exc:
+        # 缺词表是**新建库最常见的第二种失败**（第一种是空 data/）。异常文案已经写清
+        # 下载命令，不该以堆栈形式出现 —— 用户会以为是自己装错了（A5 真·干净环境实测）。
+        print(str(exc), file=sys.stderr)
+        return 1
     if args.delete:
         indexer = pipeline.indexer
         for key in args.delete:
