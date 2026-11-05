@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.28
+> **文档版本**：2.29
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2161,7 +2161,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 |---|---|---|---|
 | E01 | — | YAML + Pydantic Settings 收敛全部参数 | `depth / rrf_k / alpha / top_k / ef_search / chunk_size` 均来自 YAML；`rg -n "depth=3" src/` 与 `rg -n "alpha=" src/` 均无命中 |
 | E02 | D20 | FastAPI 四端点 + Pydantic schema | `POST /api/v1/ask` 返回 `answer` + `sources`；`/retrieve?debug=true` 含三路候选数；OpenAPI 文档可访问 |
-| E04 | O3/O4/O5 | ✅ **已完成（2026-11-05）** 干净克隆验收：`git clone` 到临时目录 + 全新 venv（`pip install -r requirements.txt -r requirements-dev.txt`，**67 s**）+ 默认套件 → **921 用例 OK (skipped=83)，14 s**（无 storage/、无 pymupdf、无 .env）；随后按 README 第 3–7 步走通：下载词表 17 MB → 放 2 md + 1 pdf → `scripts/ingest.py` 建库（PDF 失败并给出 AGPL 与安装命令）→ `src.ask` 检索 31 s / 生成 47 s（引用 [1,2]、越界 0）→ `GET /` 200 7,658 B、`/health` 六项全 ✓、SSE `queued → sources → …` 跑通 | 过程中逮到 4 个真问题：**N26** 跳过理由撒谎、**N27** 集合名写死（撞库）、**N28** 换集合后静默漏文档、**N29** 来源路径永远为空；另有 37 个用例因缺 17 MB 词表 ERROR（已加 `tests/_tokenizer_fixture.py` 字符级替身，真实词表存在时不干预） |
+| E04 | O3/O4/O5 | ✅ **已完成（2026-11-05）** 干净克隆验收：`git clone` 到临时目录 + 全新 venv（`pip install -r requirements.txt -r requirements-dev.txt`，**67 s**）+ 默认套件 → **941 用例 OK (skipped=83)，17 s**（无 storage/、无 pymupdf、无 .env）；随后按 README 第 3–7 步走通：下载词表 17 MB → 放 2 md + 1 pdf → `scripts/ingest.py` 建库（PDF 失败并给出 AGPL 与安装命令）→ `src.ask` 检索 31 s / 生成 47 s（引用 [1,2]、越界 0）→ `GET /` 200 7,658 B、`/health` 六项全 ✓、SSE `queued → sources → …` 跑通 | 过程中逮到 4 个真问题：**N26** 跳过理由撒谎、**N27** 集合名写死（撞库）、**N28** 换集合后静默漏文档、**N29** 来源路径永远为空；另有 37 个用例因缺 17 MB 词表 ERROR（已加 `tests/_tokenizer_fixture.py` 字符级替身，真实词表存在时不干预） |
 
 | E06 | — | 目录结构与脚本迁移（`src/rag/*`、`scripts/*`、`config/*`） | 目录与 §6 一致；README 命令同步；旧入口保留一个版本周期并在 README 标注 deprecated |
 | E07 | D35 | ✅ **已完成（2026-11-04）** 产品问答入口：`python -m src.ask "问题"`（链路抽到 `src/rag/ask/pipeline.py`，评估器与产品共用一份代码） | `python -m unittest tests.test_ask_cli` **20 用例**；真实问答跑通（中文/英文/负样本/`--retrieve-only`）；`--json` 输出可被脚本消费；`src/eval_answer.answer_one` 改为调用同一 `answer_query()`，**40 题重跑结果与旧实现一致**（口径未漂移） |
@@ -2398,6 +2398,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **N28** | 换集合后 `ingest` 全部 `skipped`、新集合几乎是空的但输出 `ok`：状态键只有 `doc_key`，不看集合 | 静默半成品比报错危险。已改：`IngestState(path, collection=...)` 用 `ingest_meta` 记账 ——首次认领老进度（否则升级后白跑 2,000 s 全量重建）、集合变了就清空进度并置 `collection_switched`，CLI 在 stderr 说明「已按全新库重建」。`CollectionSwitchTest` 5 用例（同集合保进度 / 换集合失效 / 换回也要重建 / 不传 collection 不变 / 老库认领） |
 | **N29** | `load_parent_records()` SQL 里 JOIN 了 `documents.source_uri`，写进 dict 的键却叫 `source`，而组装器读 `record["source_uri"]` → **每个块的来源路径永远是空串** | 表现：CLI 来源表只有标题、网页端「来源」列全空、SSE `sources` 事件里 `source_uri: ""`；「看起来能用」但用户没法回到原文（A5 以陌生人视角看来源表才发现）。已修键名（`source` 保留兼容）+ 2 用例（父块记录必须带 source_uri、组装出的块必须带） |
 | `src/raglog.py`、`src/eval_*.py`、`tests/`（45 用例） | **不失效，是差异化资产** | 直接接入新 pipeline（E04）；指标/日志口径继续沿用 |
+| **N30** | 干净克隆的第一条命令就崩：`scripts/ingest.py --dir data` 抛 `TokenizerUnavailable` 堆栈 ——空目录引导（O1）排在 `build_pipeline` 之后，而建管线要先加载 17 MB 词表；同时 `data/README.md`、`.gitkeep` 命中 `**/*.md`，让「空语料」判定成「有文件」 | 最该说话的路径被一个不该挡路的依赖挡住了。已修：`discover_corpus()` 跳过扫描根目录的占位文件（子目录 README 仍是正当语料）；`_no_work()` 在建管线**之前**给指引并顺带提示下词表；CLI 捕获 `TokenizerUnavailable` → 打印原文（含 curl）+ exit 1，不再堆栈；4 条子进程级用例（空目录 / 只有占位文件 / 有文件但缺词表 / tokenizer CLI）——这是唯一能真正证明「干净环境」的方式 |
 | 60 题评估集与 5 组探针结果 | 指标不可与改造后直接比较 | 作为"改造前基线"存档，仅用于说明改造收益的方向与量级 |
 
 
@@ -3305,6 +3306,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.26                    2026-11-05              A3/E03 测试分层：@slow + RAG_RUN_SLOW（默认套件 395→33.9 s 且不联网）
   2.27                    2026-11-05              A4/O8 法务与 CI：LICENSE + NOTICE + CONTRIBUTING + workflow
   2.28                    2026-11-05              A5/E04 干净克隆验收（14 s 全绿 + 七步走通）
+  2.29                    2026-11-05              A5 收尾：真·干净环境三条命令不崩（N30 占位文件 + 缺词表）+ 用例数校正
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空
                                                  + N25 PyMuPDF 从硬依赖改为可选（AGPL 与 Apache-2.0 冲突）
