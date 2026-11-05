@@ -75,6 +75,47 @@ def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingServi
     return pipeline, client, embedder, state
 
 
+def _hint_tokenizer_if_missing(lines: list[str]) -> None:
+    """空目录指引之外再补一条：词表没下的话，下一条命令还会失败，一次说完。
+
+    干净克隆的典型顺序是「空 data/ → 下词表 → 建库」。只讲前一半，用户会在
+    第二条命令上再撞一次墙（A5 实测）。
+    """
+    from src.rag.ingestion.errors import TokenizerUnavailable
+    from src.rag.ingestion.tokenizer import TokenCounter
+
+    try:
+        TokenCounter()
+    except TokenizerUnavailable as exc:
+        lines.extend(str(exc).splitlines())
+
+
+def _no_work(args, lines: list[str]) -> bool:
+    """空语料 / `--only` 没匹配：先给指引并返回 True，**不建管线**。
+
+    为什么要前置：建管线会初始化 `TokenCounter`（17 MB 词表）。干净克隆里还没下词表，
+    用户按 README 跑第一条命令时，会在「该放哪」的指引之前先吃到一屏
+    `TokenizerUnavailable` 堆栈（A5 真·干净环境实测）。指引比堆栈有用得多。
+    """
+    from src.rag.ingest.pipeline import empty_corpus_hint, missing_only_keys_hint
+
+    found: set[Path] = set()
+    for pattern in args.patterns:
+        found.update(p for p in Path(args.dir).glob(pattern) if p.is_file())
+    discovered = sorted(found, key=lambda p: p.relative_to(args.dir).as_posix())
+    if not discovered:
+        lines.extend(empty_corpus_hint(args.dir, args.patterns))
+        _hint_tokenizer_if_missing(lines)
+        return True
+    if args.only:
+        present = {p.relative_to(args.dir).as_posix() for p in discovered}
+        missing = [key for key in args.only if key not in present]
+        if missing:
+            lines.extend(missing_only_keys_hint(missing))
+            return True
+    return False
+
+
 def build_parser() -> argparse.ArgumentParser:
     """把参数定义抽出来，用例才能验证「默认值服从环境变量」（A5 撞库之后加的）。"""
     parser = argparse.ArgumentParser(prog="ingest", description="端到端摄入：文件 → Qdrant + Document Store")
@@ -126,6 +167,19 @@ def main(argv: list[str] | None = None) -> int:
         rows = state.failures(unresolved_only=not args.retry_failed)
         print(json.dumps(rows, ensure_ascii=False, indent=2))
         return 0
+
+    # 空语料/没匹配（O1）是**第一次运行的最常见情形**，必须在 build_pipeline 之前判定：
+    # 建管线要初始化 TokenCounter（17 MB 词表），干净克隆里它还不存在，于是用户在
+    # 「该放哪」的指引之前先吃到一屏 TokenizerUnavailable 堆栈（A5 真·干净环境实测）。
+    if not args.status and not args.failures and not args.delete and not args.retry_failed:
+        if _no_work(args, lines):
+            if args.json:
+                print(json.dumps({"discovered": 0, "skipped": 0, "indexed": 0, "failed": 0,
+                                  "documents": 0, "parents": 0, "children": 0}, ensure_ascii=False,
+                                 indent=2))
+            else:
+                print(chr(10).join(lines))
+            return 0
 
     pipeline, client, embedder, state = build_pipeline(args, log=log)
     if args.delete:

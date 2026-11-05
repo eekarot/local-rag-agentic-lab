@@ -227,7 +227,14 @@ def cli_main(argv: Sequence[str] | None = None) -> int:
     verify.add_argument("--index", default="storage/index.json", help="样本来自哪个索引文件")
 
     args = parser.parse_args(argv)
-    counter = TokenCounter(args.tokenizer)
+    try:
+        counter = TokenCounter(args.tokenizer)
+    except TokenizerUnavailable as exc:
+        # 干净克隆里 README 第 3 步的**验证命令**最先撞上它。原始异常已经写清了
+        # 「装什么 / 怎么装 / 能不能用别的路径」，唯独不该以堆栈的形式出现
+        # —— 用户会以为是自己装错了（A5 真·干净环境实测）。
+        print(str(exc), file=sys.stderr)
+        return 1
 
     if args.command == "count":
         if args.text == "-":

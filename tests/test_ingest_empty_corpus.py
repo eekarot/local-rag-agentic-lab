@@ -11,7 +11,14 @@
 前者要教怎么放文件，后者要教路径怎么写（相对 `--dir`）。
 """
 
+import os
+import subprocess
+import sys
+import tempfile
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -139,6 +146,50 @@ class EmptyCorpusHintTest(unittest.TestCase):
         self.assertIn("md/a.md", text)
         self.assertIn("pdf/b.pdf", text)
         self.assertIn("相对", text, "要说明 key 是相对 --dir 的路径")
+
+
+class NoTokenizerYetTest(unittest.TestCase):
+    """干净克隆的**第一条命令**不能炸（A5 最后一步在真·干净环境里逮到的）。
+
+    场景：git clone 完、没下 17 MB 词表，直接按 README 跑
+    `python scripts/ingest.py --dir data`。原实现先建管线（`TokenCounter()` 在这里初始化），
+    于是用户在「空目录引导」之前先吃到一屏 `TokenizerUnavailable` 堆栈 ——
+    明明知道该说什么（该放哪 / 支持什么格式 / 下词表的 curl），却说成了崩溃。
+
+    另一条同类：`python -m src.rag.ingestion.tokenizer count "x"` 也直接抛堆栈，
+    而这正是 README 第 3 步让人跑的**验证**命令。
+    """
+
+    def _run(self, argv, env_extra):
+        env = dict(os.environ)
+        env.update(env_extra)
+        env["PYTHONIOENCODING"] = "utf-8"
+        return subprocess.run([sys.executable, *argv], cwd=str(ROOT), env=env,
+                              capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
+
+    def test_empty_dir_without_tokenizer_still_gives_the_hint(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self._run(
+                ["scripts/ingest.py", "--dir", tmp, "--dry-run"],
+                {"RAG_TOKENIZER_PATH": str(Path(tmp) / "nope.json")},
+            )
+        combined = result.stdout + result.stderr
+        self.assertNotIn("Traceback", combined, f"第一条命令就崩了：{combined[-500:]}")
+        self.assertEqual(result.returncode, 0, "空目录不是错误（B13/E07 定案 exit 0）")
+        self.assertIn("没有可导入的文件", combined, "必须告诉用户「该放哪」")
+        self.assertIn("curl", combined, "必须给下词表的命令，而不是让他自己猜")
+
+    def test_tokenizer_cli_without_tokenizer_explains_how_to_get_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self._run(
+                ["-m", "src.rag.ingestion.tokenizer", "count", "测试"],
+                {"RAG_TOKENIZER_PATH": str(Path(tmp) / "nope.json")},
+            )
+        combined = result.stdout + result.stderr
+        self.assertNotIn("Traceback", combined, f"诊断命令不该抛堆栈：{combined[-400:]}")
+        self.assertNotEqual(result.returncode, 0, "拿不到 token 数就该返回非零")
+        self.assertIn("curl", combined, "必须给下载命令")
+        self.assertIn("RAG_TOKENIZER_PATH", combined, "必须给替代做法")
 
 
 if __name__ == "__main__":
