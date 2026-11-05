@@ -30,6 +30,22 @@ DEFAULT_K = 10
 DEFAULT_BUDGET = 6000
 
 
+def source_rows(blocks: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """上下文块 → 来源行（CLI 打印、JSON 输出、流式 `sources` 事件共用一份映射）。"""
+    return [
+        {
+            "index": block.get("index"),
+            "document_id": block.get("document_id"),
+            "parent_ids": list(block.get("parent_ids") or []),
+            "parent_indexes": list(block.get("parent_indexes") or []),
+            "section_path": list(block.get("section_path") or []),
+            "source_uri": block.get("source_uri"),
+            "title": block.get("title"),
+        }
+        for block in blocks
+    ]
+
+
 @dataclass
 class AskResult:
     """一次问答的全部可交付信息（CLI 打印、JSON 输出、评估计分都从这里取）。"""
@@ -65,18 +81,7 @@ class AskResult:
             "out_of_range": list(self.report.out_of_range),
             "malformed": list(self.report.malformed),
             "parse_rate": round(self.report.parse_rate, 4),
-            "sources": [
-                {
-                    "index": block.get("index"),
-                    "document_id": block.get("document_id"),
-                    "parent_ids": list(block.get("parent_ids") or []),
-                    "parent_indexes": list(block.get("parent_indexes") or []),
-                    "section_path": list(block.get("section_path") or []),
-                    "source_uri": block.get("source_uri"),
-                    "title": block.get("title"),
-                }
-                for block in self.sources
-            ],
+            "sources": source_rows(self.sources),
             "timings": {key: round(value, 1) for key, value in self.timings.items()},
             "route_hits": dict(self.route_hits),
             "llm_called": self.llm_called,
@@ -236,3 +241,130 @@ def render_cli(result: AskResult, *, show_sources: int = 5, max_answer_chars: in
     lines.append(f"上下文：{len(result.blocks)} 块 / {result.context_tokens} token"
                  f"｜候选 {result.candidates} 条｜各路命中 {result.route_hits}")
     return "\n".join(lines)
+
+
+# -- 流式（O4a）------------------------------------------------------------
+
+#: 流式事件名。HTTP 层（O4c）直接把它映射成 SSE 的 `event:` 名，不另起一套词表
+STREAM_EVENTS = ("sources", "delta", "done", "error")
+
+
+def answer_query_stream(
+    question: str,
+    *,
+    retriever,
+    parents: Mapping[str, Mapping[str, Any]],
+    counter,
+    reranker,
+    ask: Callable[[list[dict[str, str]]], Any] | None,
+    query_en: str | None = None,
+    k: int = DEFAULT_K,
+    pool: int = DEFAULT_POOL,
+    budget: int = DEFAULT_BUDGET,
+    rerank: bool = True,
+):
+    """流式版 `answer_query()`：先吐 `sources`，再吐 `delta`，最后 `done`。
+
+    与同步版的关系：**同一条链路、同一套组装与引用体检**，只是把生成段拆成增量。
+    没有复用 `answer_query()` 是因为它必须"等全文"才能解析引用，而流式的价值就在
+    那 50 s 里先把来源给出去。
+
+    三个不变量（`tests/test_streaming.py` 盯着）：
+    1. `sources` 一定先于任何 `delta`；
+    2. `done.answer == "".join(delta.text)`（**当且仅当真的调了模型**）；
+    3. 调用方 `close()` 会通过 `finally` 关掉上游生成器 —— SSE 客户端断开时不能白烧算力。
+
+    弃答（无证据）与只检索两条捷径都**不产生 delta**：前者直接给结论，后者根本没有正文。
+    """
+    timings: dict[str, float] = {}
+
+    started = time.perf_counter()
+    ranked, candidates, route_hits = retrieve_ranked(
+        question, retriever=retriever, parents=parents, counter=counter,
+        reranker=reranker, pool=pool, rerank=rerank,
+    )
+    timings["retrieve_rerank_ms"] = (time.perf_counter() - started) * 1000
+
+    started = time.perf_counter()
+    assembled: AssembledContext = assemble(
+        [{"parent_id": hit.parent_id, "score": hit.score, "rerank_score": hit.rerank_score}
+         for hit in ranked[:k]],
+        parents, counter=counter, budget=budget,
+    )
+    timings["assemble_ms"] = (time.perf_counter() - started) * 1000
+
+    started = time.perf_counter()
+    bundle: PromptBundle = build_messages(question, assembled)
+    timings["prompt_ms"] = (time.perf_counter() - started) * 1000
+
+    blocks = [block.as_dict() for block in assembled.blocks]
+    yield {
+        "event": "sources",
+        "data": {
+            "blocks": len(blocks),
+            "context_tokens": assembled.tokens,
+            "candidates": candidates,
+            "route_hits": dict(route_hits),
+            "language": bundle.language,
+            "sources": source_rows(blocks),
+        },
+    }
+
+    answer_parts: list[str] = []
+    first_delta_ms: float | None = None
+    called = False
+    timings["generate_ms"] = 0.0
+
+    if bundle.abstained:                      # 没有证据 → 不调模型（D33），也不发 delta
+        answer_parts.append(bundle.messages[0]["content"])
+    elif ask is not None:
+        started = time.perf_counter()
+        stream = ask(bundle.messages)
+        called = True
+        try:
+            for piece in stream:
+                if not piece:
+                    continue
+                if first_delta_ms is None:
+                    first_delta_ms = (time.perf_counter() - started) * 1000
+                answer_parts.append(piece)
+                yield {"event": "delta", "data": {"text": piece}}
+        except Exception as exc:              # noqa: BLE001 - 生成中途失败要保住半截
+            timings["generate_ms"] = (time.perf_counter() - started) * 1000
+            yield {
+                "event": "error",
+                "data": {
+                    "detail": f"{type(exc).__name__}: {exc}",
+                    "retryable": True,
+                    "partial": "".join(answer_parts),
+                    "timings": {key: round(value, 1) for key, value in timings.items()},
+                },
+            }
+            return
+        finally:
+            # 消费者 close() 时这里会把上游生成器也关掉（Ollama 连接随之释放）
+            close = getattr(stream, "close", None)
+            if callable(close):
+                close()
+        timings["generate_ms"] = (time.perf_counter() - started) * 1000
+
+    answer = "".join(answer_parts)
+    report = parse_citations(answer, k=len(blocks) or None)
+    timings["first_delta_ms"] = first_delta_ms or 0.0
+    result = AskResult(
+        question=question,
+        question_en=query_en,
+        language=bundle.language,
+        answer=answer,
+        abstained=bool(bundle.abstained or report.abstained),
+        abstain_reason=bundle.reason,
+        blocks=blocks,
+        sources=resolve_sources(report, blocks),
+        report=report,
+        context_tokens=assembled.tokens,
+        candidates=candidates,
+        timings=timings,
+        route_hits=route_hits,
+        llm_called=called,
+    )
+    yield {"event": "done", "data": result.as_dict()}

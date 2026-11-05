@@ -1,3 +1,5 @@
+import json
+
 import requests
 from .config import OLLAMA_BASE_URL, OLLAMA_CHAT_MODEL, OLLAMA_EMBED_MODEL
 
@@ -106,3 +108,75 @@ def chat_full(messages, temperature=0, seed=None, think=None, num_predict=None, 
 def chat(messages, temperature=0, seed=None, think=None, num_predict=None, fmt=None):
     return chat_full(messages, temperature=temperature, seed=seed,
                      think=think, num_predict=num_predict, fmt=fmt)["content"]
+
+
+def chat_stream(messages, temperature=0, seed=None, think=None, num_predict=None,
+                *, _lines=None, _response=None):
+    """流式调用 `/api/chat`：逐段 yield `message.content`（生成器的用法见 O4c 的 SSE 端点）。
+
+    Ollama 的流式返回是 **NDJSON**：一行一个 JSON，最后一行 `{"done": true}`。
+    三个必须处理的现实情况：
+
+    - **空行与心跳行**：Ollama 会夹空行，直接 `json.loads` 会炸；
+    - **非 JSON 行**：反代（nginx/cloudflared）出问题时可能插一段 HTML 502，跳过即可，
+      不能把整段回答废掉；
+    - **`{"error": ...}`**：模型不存在之类，必须以异常暴露，否则表现为"答案莫名其妙是空的"。
+
+    `_lines` / `_response` 只为测试注入：单测不该起 HTTP 服务。
+    **`finally` 里一定 `close()` 上游响应**——SSE 客户端断开时，不关它 9B 会继续烧完。
+    """
+    payload = {
+        "model": OLLAMA_CHAT_MODEL,
+        "messages": messages,
+        "stream": True,
+        "options": {"temperature": temperature},
+    }
+    if seed is not None:
+        payload["options"]["seed"] = seed
+    if num_predict is not None:
+        payload["options"]["num_predict"] = num_predict
+    if think is not None:
+        payload["think"] = think
+
+    response = _response
+    if response is None and _lines is None:
+        url = f"{OLLAMA_BASE_URL.rstrip('/')}/api/chat"
+        try:
+            response = requests.post(url, json=payload, timeout=TIMEOUT, stream=True)
+            response.raise_for_status()
+        except requests.HTTPError as exc:
+            detail = (getattr(response, "text", "") or "").strip()[:200]
+            raise RuntimeError(
+                f"Ollama 流式接口返回 HTTP {getattr(response, 'status_code', '?')}：{detail or '无响应体'}"
+                + chr(10) + f"请求地址：{url}，模型：{OLLAMA_CHAT_MODEL!r}"
+            ) from exc
+        except requests.RequestException as exc:
+            raise RuntimeError(
+                f"无法调用 Ollama 流式接口：{url}"
+                + chr(10) + f"请确认 Ollama 正在运行。原始错误：{exc}"
+            ) from exc
+
+    try:
+        lines = _lines if _lines is not None else response.iter_lines()
+        for raw in lines:
+            if not raw:
+                continue
+            text = raw.decode("utf-8", "ignore") if isinstance(raw, (bytes, bytearray)) else str(raw)
+            text = text.strip()
+            if not text:
+                continue
+            try:
+                data = json.loads(text)
+            except ValueError:
+                continue                      # 反代插进来的非 JSON 行：跳过，不废整段
+            if data.get("error"):
+                raise RuntimeError(f"Ollama 流式返回错误：{data['error']}")
+            piece = (data.get("message") or {}).get("content") or ""
+            if piece:
+                yield piece
+            if data.get("done"):
+                break
+    finally:
+        close = getattr(response, "close", None)
+        if callable(close):
+            close()

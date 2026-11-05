@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.18
+> **文档版本**：2.19
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2172,6 +2172,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 ---
 | O3 | B14 | ✅ **已完成（2026-11-05）** HTTP 层：`src/rag/api/{app,schemas}.py` —— `POST /api/v1/ask`、`GET /api/v1/retrieve`、`GET /health`，Pydantic v2 契约进 `/openapi.json`；`create_app(deps=...)` 依赖注入（16 例测试 0.12 s 跑完，不连 Qdrant/Ollama/ONNX）；生产装配懒加载（import 时不加载模型）；端点写成 `def`（`answer_query` 同步阻塞，`async def` 会卡死事件循环） | `python -m unittest tests.test_api` **16 用例 / 0.12 s**；`curl /health` → `parents=25411`；`POST /api/v1/ask` 实测 `http=200`、`cited=[2,1]`、`oob=[]`、`generate_ms≈10369`；`/retrieve` 冷 17.9 s → 热 5.2 s（其中约 4 s 是翻译层重试）；`retrieve_only=true` 时 `llm_called=false` |
 
+| O4a | B14 | ✅ **已完成（2026-11-05）** 流式底层：`ollama_client.chat_stream()`（NDJSON 逐行解析，跳空行/非 JSON 行、`{"error"}` 转异常、`finally` 关上游响应）＋ `pipeline.answer_query_stream()`（事件 `sources → delta* → done`，失败时 `error` 带半截正文） | `python -m unittest tests.test_streaming` **13 用例**；真机：`chat_stream` 66 段 / 首字 12.6 s / 总 14.9 s；整链真机 **sources @ 4,992 ms（6 块 / 2,987 tok）→ 首字 @ 9,658 ms → done @ 17,665 ms**，`timings.first_delta_ms=4,666.7`、`generate_ms=12,672.3`、`cited=[2,1]`、`abstained=False` |
 ## 17.8 依赖序（执行批次）与里程碑
 
 下表是按下表的依赖关系算出的**最长路径分层**：同一批次内的项互不依赖，可并行开工；下一批次必须等上一批次对应依赖完成。
@@ -2365,6 +2366,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N15** | 弃答判定再次误报：`无法包含` 满足「否定 + 缺失」的**句法形状**，但「单个块可能无法包含完整的上下文信息 [证据 2]」在描述 chunk 容量 → 真实 HTTP 调用返回 `abstained=true` 却带完整答案与引用（引用标记里的「证据」两字还满足了主语检查） | 已修（O3 端到端打出来的）：谓词分两类——`无法回答/无法确定` 属**答不了**（主语天然是「答」，不需额外主语）；`未包含/未提供/未找到` 属**内容描述**，必须在**同一句**出现证据侧主语（`知识库/文档/资料/证据/语料/检索到/原文/材料/…`），且判主语前先 `strip_citation_marks()` 剥掉 `[证据 n]`。回归：40 条已落盘答案重算 → 负样本弃答 **18/20**、正样本误弃答 **2/20**，与 l2_d33b 文档值完全一致；`tests/test_abstain_detection.py` 增至 11 例 |
 
+| **N16** | 全套件偶发 1 例 ERROR：`tests/test_search.ServerSearchTest.test_ann_recall_is_high_on_10k` → `httpcore.ConnectTimeout [WinError 10060]`。该用例连真实 Qdrant（1 万点 upsert，单跑 21.7 s），走 httpx；环境里出现 `http_proxy` 时会打到代理，因此是**环境相关的偶发**，不是代码回归（单跑通过，重跑全套件也通过） | 已记录，不修：这正是 B03/E03「测试分层 + 慢跑标记」的理由——CI 必须默认跳过依赖真实服务/模型的用例（`RAG_RUN_SLOW=1` 才跑），否则开源后第一次 CI 就是红的 |
 ---
 
 ## 17.10 迁移影响：改造后哪些资产会失效
@@ -3273,6 +3275,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.16                    2026-11-04              E07 问答入口 src/ask.py + D33b 引用纪律（精确率 21.67% → 38.46%）；
   2.17                    2026-11-05              开源基线决策 B11–B14（Apache-2.0 / 不携语料 / 不做一键安装 / HTTP 有界队列 + SSE）；
   2.18                    2026-11-05              O3 HTTP 层（FastAPI 三端点 + Pydantic 契约 + 依赖注入 + 懒装配）；
+  2.19                    2026-11-05              O4a 流式底层（chat_stream + answer_query_stream）：sources 早到 ~4.7 s，
+                                                 首字 9.7 s、全文 17.7 s（真机实测）
                                                  N15 弃答判定加「证据侧主语」+ 剥引用标记（HTTP 端到端打出来的）
                                                  O1 空语料引导 + O7 旧链收口（legacy/）+ README 重写为可跟做
                                                  B03 定案不迁 pytest；N12 判据重写、N13/N14 修掉
