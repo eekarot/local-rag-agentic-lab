@@ -7,7 +7,7 @@
 > 所以你按同样的命令跑不出同样的数字 —— 它只能当**方法参考**看：
 > 每一步在验证什么、用什么命令量、期望看到什么样的输出形态。
 >
-> **当前可比对的数字只有一份**：[`../docs/baseline-k8s-v1.json`](../docs/baseline-k8s-v1.json)，
+> **当前可比对的数字只有一份**：[`baseline-k8s-v1.json`](baseline-k8s-v1.json)，
 > 数据集是随仓库发布的 Kubernetes 官方文档中英对照（`datasets/k8s-zh-en-v1/`），
 > 见 README 的「基准数据集」与「基准结果」两节。
 >
