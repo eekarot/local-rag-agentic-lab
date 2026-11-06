@@ -17,6 +17,8 @@ data/*
 !data/.gitkeep
 
 # 评估产物：报告、基线、探针结果都由 measure / 探针脚本生成
+# 根目录 reports/ 是 D27 的实验证据（两份已随仓库提交，见 docs/evidence/），新生成的不要再进仓库
+/reports/
 experiments/reports/
 experiments/probes/
 experiments/baseline.json

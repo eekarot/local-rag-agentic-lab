@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "build_index (module)",
-      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "python": "${command:python.interpreterPath}",
       "type": "debugpy",
       "request": "launch",
       "module": "src.build_index",
@@ -16,7 +16,7 @@
     },
     {
       "name": "rag (module)",
-      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "python": "${command:python.interpreterPath}",
       "type": "debugpy",
       "request": "launch",
       "module": "src.rag",
@@ -29,7 +29,7 @@
     },
     {
       "name": "agentic_rag (module)",
-      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "python": "${command:python.interpreterPath}",
       "type": "debugpy",
       "request": "launch",
       "module": "src.agentic_rag",
@@ -42,7 +42,7 @@
     },
     {
       "name": "evaluate (module)",
-      "python": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe",
+      "python": "${command:python.interpreterPath}",
       "type": "debugpy",
       "request": "launch",
       "module": "src.evaluate",

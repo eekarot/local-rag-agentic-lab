@@ -575,6 +575,9 @@ python -m src.raglog_report list               # 列出历史 run
 
 ## 评估集
 
+> 题集随仓库提供（`experiments/questions.json`，202 题，其中 254 段短引用用于自动评分）；
+> **语料不提供**——短引用的性质与边界写在 [`NOTICE`](NOTICE) 第二·五节。
+
 `experiments/questions.json` 共 60 题（concept 16 / fact 16 / multi_hop 16 / negative 12），gold 由原文句子自动定位到 chunk：
 
 ```powershell

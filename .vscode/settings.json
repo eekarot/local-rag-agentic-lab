@@ -1,5 +1,6 @@
 {
     "python-envs.defaultEnvManager": "ms-python.python:system",
     "python-envs.defaultPackageManager": "ms-python.python:pip",
-    "python.defaultInterpreterPath": "C:/Users/zcl/AppData/Local/Programs/Python/Python312/python.exe"
+    // 留空：让 VS Code 用当前工作区选中的解释器（写死绝对路径只在我这台机器上有效）
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe"
 }

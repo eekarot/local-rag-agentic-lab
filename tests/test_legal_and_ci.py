@@ -99,5 +99,33 @@ class ChangelogTest(unittest.TestCase):
             self.assertIn(must, text, f"发版说明必须写清边界：缺 {must}")
 
 
+class NoPersonalPathsTest(unittest.TestCase):
+    """入库文件里不许留**我这台机器**的绝对路径。
+
+    实测（发布前审计）：`.vscode/launch.json` 与 `settings.json` 把解释器写死成
+    本机用户目录下的 python.exe —— 别人 clone 下来，VS Code 会去找一个不存在的解释器；
+    这类东西还顺带泄露用户名。
+
+    注意：标记本身也要拼出来（`"C:" + "/Users/"`），否则这个文件会匹配到自己。
+    """
+
+    USER_MARKERS = ("C:" + "/Users/", "C:" + chr(92) + "Users" + chr(92))
+
+    def test_no_absolute_user_paths_in_tracked_files(self):
+        import subprocess
+
+        files = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True,
+                               text=True, encoding="utf-8", errors="replace")
+        self.assertEqual(files.returncode, 0, files.stderr)
+        offenders = []
+        for name in files.stdout.splitlines():
+            if name.endswith((".json", ".py", ".md", ".yml", ".yaml", ".txt", ".env.example")):
+                text = (ROOT / name).read_text(encoding="utf-8", errors="ignore")
+                for marker in self.USER_MARKERS:
+                    if marker in text:
+                        offenders.append(f"{name}: {marker}")
+        self.assertEqual(offenders, [], f"这些文件里有本机绝对路径：{offenders}")
+
+
 if __name__ == "__main__":
     unittest.main()
