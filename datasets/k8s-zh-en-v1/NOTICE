@@ -63,3 +63,29 @@ cd - && python scripts/build_bench_dataset.py --upstream /tmp/k8s
 
 `--upstream` 指向上游克隆即可；脚本会按 `sources.json` 里同样的规则选页、做同样的
 transform，产出的每个文件 sha256 应与 manifest 一致。
+
+================================================================================
+第一版基线（2026-11-06，v0.1.0 检索链）
+================================================================================
+
+题集：`questions.jsonl`，**100 题**（95 正样本 + 5 负样本），中英各半、含 14 道跨语言题。
+检索链：`dense_zh` + `dense_en` + `lexical_en` → RRF → cross-encoder 重排，`k=10`、`pool=40`。
+
+| 切片 | n | recall@10 | hit@10 | full@10 | MRR |
+|---|---|---|---|---|---|
+| 全部（正样本） | 95 | 0.7737 | 0.7789 | 0.7684 | 0.5529 |
+| 英文证据（含中文问→英文证据） | 50 | 0.7900 | 0.8000 | 0.7800 | 0.6209 |
+| 中文证据（含英文问→中文证据） | 45 | 0.7556 | 0.7556 | 0.7556 | 0.4772 |
+
+延迟（已热身）：p50 **183 ms**、p90 **209 ms**。
+
+复现：
+
+```bash
+RAG_COLLECTION=bench_k8s_v1 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs \
+    --document-db storage/bench/documents.sqlite3 \
+    --versions storage/bench/index_versions.sqlite3 --cache storage/bench/embeddings.sqlite3
+python scripts/eval_bench.py --k 10 --out docs/baseline-k8s-v1.json
+```
+
+结果落在 `docs/baseline-k8s-v1.json`（汇总）与 `docs/baseline-k8s-v1.rows.jsonl`（逐题，含每题的检索结果与首次命中排名）。**改任何参数后都跟这份基线比**，别跟记忆比。

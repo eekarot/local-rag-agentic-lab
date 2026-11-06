@@ -584,8 +584,17 @@ python -m src.raglog_report list               # 列出历史 run
 
 ```bash
 python scripts/fetch_dataset.py --verify    # 校验本地基准数据与 manifest 一致
-RAG_COLLECTION=bench_k8s_v1 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs
+
+# 建到独立集合 + 独立文档表（别碰正式库）
+RAG_COLLECTION=bench_k8s_v1 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs     --document-db storage/bench/documents.sqlite3     --versions storage/bench/index_versions.sqlite3 --cache storage/bench/embeddings.sqlite3
+
+# 跑评估（100 题：中英各半 + 14 道跨语言 + 5 道负样本）
+python scripts/eval_bench.py --k 10 --out docs/baseline-k8s-v1.json
 ```
+
+**第一版基线**（v0.1.0 检索链，`k=10` / `pool=40`）：`recall@10 0.7737`、`hit@10 0.7789`、
+`full@10 0.7684`、`MRR 0.5529`；按证据语言看，英文 0.79 / 中文 0.7556（MRR 0.62 vs 0.48，
+**中文证据排得更靠后**）；延迟 p50 183 ms。
 
 > 题集随仓库提供（`experiments/questions.json`，202 题，其中 254 段短引用用于自动评分）；
 > **语料不提供**——短引用的性质与边界写在 [`NOTICE`](NOTICE) 第二·五节。

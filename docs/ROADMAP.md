@@ -47,7 +47,9 @@
 
 | # | 项 | 说明 | 验收要点 |
 |---|---|---|---|
-| C0 | **基准数据集 `k8s-zh-en-v1`**（后续指标都在这上面比） | ✅ 已完成：Kubernetes 官方文档中英对照 472 页 × 2 语言（CC BY 4.0，上游 commit `380372f` 钉死）；`sources.json` 记录每页 URL + sha256，`scripts/fetch_dataset.py --verify` 校验本地数据；数据本体走 Release 资产（tar.gz 2.5 MB，可复现打包）；**实测**：8.5 MB 正文 / 约 9.1k parent / 13.3k child（≈ 现有库 34%） | `python scripts/fetch_dataset.py --verify` → `OK：944 个文件全部与 manifest 一致`；`python -m unittest tests.test_bench_dataset` → 21 OK | ✅ |
+| C0 | **基准数据集 + 第一版基线** | ✅ 已完成：`datasets/k8s-zh-en-v1`（Kubernetes 官方文档中英对照 472 页 × 2 语言，CC BY 4.0，上游 commit `380372f` 钉死）+ `questions.jsonl` **100 题**（95 正样本 + 5 负样本；中英各半，14 道跨语言，题型 single_hop 68 / multi_hop 6 / numeric 7 / cross_lingual 14 / negative 5）+ 基线 `docs/baseline-k8s-v1.json`：**recall@10 0.7737 / hit@10 0.7789 / full@10 0.7684 / MRR 0.5529**；按证据语言 en 0.79 / zh 0.7556（MRR 0.62 vs 0.48）；延迟 p50 183 ms | `python scripts/fetch_dataset.py --verify` → 944 文件一致；`python scripts/build_bench_questions.py append --drafts ...` → 100 题全部通过 span 定位校验；`python scripts/eval_bench.py --k 10` → 落 baseline JSON + 逐题 rows；`python -m unittest tests.test_bench_questions tests.test_bench_dataset` → 32 OK | ✅ |
+| C0b | **中文证据排序偏弱**（基线暴露的真问题） | ⬜ 待做：zh 切片的 MRR 0.4772 vs en 0.6209 —— 同一套链路，中文证据平均排得更靠后；先看是 dense_zh 召回的问题还是重排的问题（`--no-rerank` 对照） | `python scripts/eval_bench.py --k 10 --no-rerank --out docs/ab-norerank.json` → 与基线比 **zh 切片 MRR 是否变化**；变化小 → 问题在召回；变化大 → 问题在重排 | ⬜ |
+
 | C1 | **D29 语言不平衡治理** | 中文语料为主时，英文路可能淹没中文证据 | 同语言加权或来源配额，报 Recall@k / hit@k / full@k 三项 + 逐题更好/更差/持平计数 |
 | C2 | **D30 跨语言门槛核算** | 跨语言命中该不该算、门槛怎么定 | 给出「算 / 不算」两套口径下的数字，结论写入设计文档 |
 | C3 | **D36 ANN Recall@K 基准** | 目前只有单点 0.98 观测 | ANN vs 精确 Top-K 脚本，`ef_search` 扫描表 |

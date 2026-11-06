@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.33
+> **文档版本**：2.34
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2409,6 +2409,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **N34** | 没起 Qdrant 就跑 `scripts/ingest.py`（README 第 2 步没做）甩一屏堆栈：httpx 重试链 + qdrant `ResponseHandlingException` + 4 段「During handling…」 | `build_pipeline` 先 `ping()` → `QdrantUnavailableError` → main 打印「连接 Qdrant 失败（url）」+ `docker compose up -d qdrant` + `curl -s localhost:6333`，exit 1；`QdrantDownGateTest` 用死端口写死，本机与 CI 行为一致 |
 | **N35** | 连不上服务端时 qdrant-client 先打 `UserWarning: Failed to obtain server version` —— 用户看到的第一行是它，真正的病因埋在中间 | `make_client` 里 `warnings.catch_warnings()` + 只过滤这一条（不动全局）；用例断言这句不许出现 |
 
+| **N36** | MRR 的分母被写成「命中的那些题」，全未命中记 0 的那部分没算进去 —— 基线被抬高一截（0.7098 vs 真实 0.5529），正好让「改坏了」看起来像「改好了」 | 分母改成**全部正样本**；`tests/test_bench_questions.py::SummarizeMetricTest` 用 4 条构造数据把三口径 + MRR 全钉住（含「全是负样本时不许报 0%」） |
+| **N37** | 检索返回的是 **parent** id，而出题时 span 落在 **child** 上 —— 两个 id 空间混用会让gold 永远匹配不上（实测 100 题全 miss 之前就被这个卡住） | `questions.jsonl` 同时记 `gold_chunks`(=parent，评估用) 与 `gold_points`(=child，建库用)；出题脚本从 `children.parent_id` 取 parent，用例断言两串前缀 `par_` / `chk_` 不许混 |
 > 记录 2026-11-02 已确认的三项决策：背景、结论、实测依据、对下游条目的具体调整。
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
 
@@ -3316,6 +3318,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.31                    2026-11-05              A6 后自查：N32 `.env.example` 词表路径漂移（照抄即错）+ 故障表补 HF 镜像
   2.32                    2026-11-05              A6 后文档审计：改 4 处过期陈述 + 补「日常运维」 + N33 状态表按集合隔离
   2.33                    2026-11-05              发布前验收：N34（没起库不抛堆栈）+ N35（version warning 埋病因）+ 发布卫生（去个人路径 / reports 收进 docs/evidence / NOTICE 短引用说明）
+  2.34                    2026-11-06              基准数据集落地：100 题题集 + 第一版基线（recall@10 0.7737）+ N36/N37
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空
