@@ -21,6 +21,8 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+ROOT = Path(__file__).resolve().parents[1]
+
 from src.rag.ingest.state import IngestState, Stage
 
 
@@ -265,6 +267,49 @@ class CollectionSwitchTest(unittest.TestCase):
         self.assertTrue(adopted.collection_adopted, "应该认领，而不是当作新库")
         self.assertTrue(adopted.is_done("a.md", document_version="sha256:x",
                                        chunker_version="v1", embedding_version="bge-m3-v1"))
+
+
+class PerCollectionStateFileTest(unittest.TestCase):
+    """换集合做实验，**不许清掉正式库的进度**（N33）。
+
+    实测（v0.1.0 手测）：A5 演示用 `RAG_COLLECTION=rag_a5_a/b` 跑了几个小库，
+    共用同一个 `storage/ingest/state.sqlite3`，于是 `_bind_collection()` 按设计
+    `DELETE FROM ingest_state` —— 正式集合 `rag_chunks_v1` 的 1,467 条进度被清空。
+    后果：`--status` 报 0 篇（很像「库是空的」），再跑一次 ingest 会重算全量；
+    `--delete` 因为查不到 `document_id` 直接「跳过」。
+
+    所以默认状态表要按集合分文件：换集合 = 换一本账。
+    """
+
+    def test_default_state_path_is_per_collection(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("ingest_script", ROOT / "scripts" / "ingest.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        default_path = module.default_state_path("rag_chunks_v1")
+        other_path = module.default_state_path("rag_a5_a")
+        self.assertNotEqual(default_path, other_path, "换集合必须换一个状态文件")
+        self.assertEqual(default_path.name, "state.sqlite3", "默认集合沿用老文件名（老库要能被认领）")
+        self.assertIn("rag_a5_a", other_path.name)
+
+    def test_switching_collection_keeps_the_other_ones_progress(self):
+        from src.rag.ingest.state import Stage
+
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "state-a.sqlite3"
+            b = Path(tmp) / "state-b.sqlite3"
+            first = IngestState(a, collection="rag_a")
+            first.begin("md/a.md"); first.complete("md/a.md", document_id="doc_a")
+            self.assertEqual(first.stats()["documents"], 1)
+
+            second = IngestState(b, collection="rag_b")     # 另一本账，互不影响
+            self.assertEqual(second.stats()["documents"], 0)
+
+            again = IngestState(a, collection="rag_a")
+            self.assertEqual(again.stats()["documents"], 1, "换集合不许动别人那本账")
+            self.assertFalse(again.collection_switched)
 
 
 if __name__ == "__main__":

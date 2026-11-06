@@ -226,5 +226,49 @@ class TokenizerDefaultPathTest(unittest.TestCase):
         self.assertIn(rel, readme, f"README 第 3 步必须把词表下到 {rel}")
 
 
+class ReadmeAccuracyTest(unittest.TestCase):
+    """README 是「使用说明」，不是宣传页：写的命令必须真能跑。
+
+    这轮审计实测抓到三处漂移，全都属于「照着写就错」：
+    ① 第 7 步末尾还写「SSE 与队列在下一批（O4）」——早就上线了；
+    ② 开关表把历史别名 `RAG_OLLAMA_CHECK` 当推荐项（真正的开关是 `RAG_RUN_SLOW`）；
+    ③ `--delete` 的示例输出写成了 JSON，实际是人读的一行。
+    """
+
+    def test_every_documented_ingest_flag_exists(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("ingest_script", ROOT / "scripts" / "ingest.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)                     # 只执行到定义，不跑 main()
+        real = {action for action in
+                (a.option_strings[0] for a in module.build_parser()._actions) if action}
+
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        # 抓「程序名之后整行」，再筛出以 -- 开头的 token。
+        # 第一版只抓「紧跟程序名的那一串选项」，于是 `--dir data --nosuchflag` 里的
+        # 第二个选项根本没被扫到 —— 守卫形同虚设（本轮实测发现的）。
+        tails = __import__("re").findall(r"scripts/ingest\.py ([^`\n]*)", readme)
+        flags = {token for tail in tails for token in tail.split() if token.startswith("--")}
+        self.assertTrue(flags, "README 里应该有 scripts/ingest.py 的用法示例")
+        unknown = sorted(flag for flag in flags if flag not in real)
+        self.assertEqual(unknown, [], f"README 写了不存在的选项：{unknown}")
+
+    def test_every_registered_endpoint_is_documented(self):
+        from src.rag.api.app import create_app
+
+        paths = {route.path for route in create_app().routes if route.path.startswith("/")}
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        missing = sorted(path for path in paths
+                         if path not in ("/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc")
+                         and path not in readme and path != "/")
+        self.assertEqual(missing, [], f"这些端点没写进 README：{missing}")
+
+    def test_readme_does_not_claim_sse_is_pending(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for stale in ("流式（SSE）与并发队列限制在下一批",):
+            self.assertNotIn(stale, readme, f"过期陈述：{stale}")
+
+
 if __name__ == "__main__":
     unittest.main()

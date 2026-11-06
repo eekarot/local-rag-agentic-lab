@@ -50,6 +50,23 @@ from src.rag.store.indexer import Indexer  # noqa: E402
 from src.rag.store.qdrant_store import default_collection, ensure_collection, make_client  # noqa: E402
 
 STATE_PATH = STORAGE_DIR / "ingest" / "state.sqlite3"
+
+
+
+def default_state_path(collection: str) -> Path:
+    """默认状态表**按集合分文件**。
+
+    为什么要分：状态表原本只有一份，`_bind_collection()` 发现集合不符就 `DELETE` 清空进度
+    （那是「换集合 = 换一整套库」的正确行为）。问题是**同一台机器上换集合作实验**时，
+    正经库的 1,467 条进度会被一起清掉 —— `--status` 报 0 篇（很像「库是空的」），
+    `--delete` 查不到 document_id 直接跳过（N33，v0.1.0 手测实测）。
+
+    默认集合仍叫 `state.sqlite3`：老库在原位，升级后能被「认领」而不是白跑全量。
+    """
+    if collection == default_collection():
+        return STATE_PATH
+    return STORAGE_DIR / "ingest" / f"state-{collection}.sqlite3"
+
 DOCUMENT_DB = STORAGE_DIR / "documents.sqlite3"
 VERSIONS_DB = STORAGE_DIR / "index_versions.sqlite3"
 
@@ -57,7 +74,8 @@ VERSIONS_DB = STORAGE_DIR / "index_versions.sqlite3"
 def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingService, IngestState]:
     client = make_client()
     ensure_collection(client, args.collection)
-    state = IngestState(args.state or STATE_PATH, collection=args.collection)
+    state = IngestState(args.state or default_state_path(args.collection),
+                        collection=args.collection)
     store = DocumentStore(args.document_db or DOCUMENT_DB)
     if getattr(state, "collection_switched", False):
         print(f"[ingest] 状态表原属于别的集合，已按「全新库」重建（当前集合 {args.collection}）",
@@ -114,6 +132,18 @@ def _no_work(args, lines: list[str]) -> bool:
     return False
 
 
+def _collection_points(collection: str) -> int | None:
+    """当前集合有多少点；连不上返回 None（状态查询不该因为服务没起就失败）。"""
+    try:
+        client = make_client(timeout=5)
+        try:
+            return client.count(collection_name=collection, exact=True).count
+        finally:
+            client.close()
+    except Exception:                                  # noqa: BLE001 - 只用来显示
+        return None
+
+
 def build_parser() -> argparse.ArgumentParser:
     """把参数定义抽出来，用例才能验证「默认值服从环境变量」（A5 撞库之后加的）。"""
     parser = argparse.ArgumentParser(prog="ingest", description="端到端摄入：文件 → Qdrant + Document Store")
@@ -152,14 +182,29 @@ def main(argv: list[str] | None = None) -> int:
         if not args.json:
             print(message, flush=True)
 
-    state = IngestState(args.state or STATE_PATH, collection=args.collection)
+    state = IngestState(args.state or default_state_path(args.collection),
+                        collection=args.collection)
     if args.status:
-        print(json.dumps(state.stats(), ensure_ascii=False, indent=2))
+        # 只说「0 篇」会让人以为库是空的。三样一起报才看得出问题在哪：
+        # 哪个集合、哪本账、库里实际有多少点（N33 的排查就靠这个对照）。
+        stats = state.stats()
+        print(json.dumps(stats, ensure_ascii=False, indent=2))
         counts = state.stage_counts()
         total = sum(counts.values())
         done = counts.get("COMPLETED", 0)
+        print(f"集合：{args.collection}")
+        print(f"状态表：{state.path}（{total} 条记录）")
+        points = _collection_points(args.collection)
+        if points is not None:
+            print(f"库内点数：{points}")
         if total:
             print(f"进度：{done}/{total} 完成（{done / total:.1%}）")
+        elif points:
+            # 有向量没进度 = 进度记录丢了（换集合共用一本账的老问题，见 N33）。
+            # 别让人以为库是空的：重建是安全的（点 id 幂等），只是会重算一遍。
+            print("[警告] 库里有向量，但状态表没有进度记录 —— 进度丢了，不是库空了")
+            print("       重跑一次建库即可（点 id 幂等；embedding 有缓存，通常几分钟内）")
+            print(f"       python scripts/ingest.py --dir data")
         return 0
     if args.failures:
         rows = state.failures(unresolved_only=not args.retry_failed)

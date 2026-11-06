@@ -236,7 +236,7 @@ RAG_RUN_SLOW=1 python -m unittest discover -s tests    # 全套含真实服务�
 这条规矩由 `tests/test_suite_layering.py` 守着：它用 AST 检查有没有模块在**导入期**就探真实服务
 （那会让「跳过」也变慢、并重新依赖外部进程）。你新写的用例如果这么干，会立刻红。
 
-### 能调什么（全部开关在一张表里）
+### 能调什么（全量在 `.env.example`，这里是最常改的几个）
 
 所有可调项都是环境变量，**默认值摊开在仓库根的 `.env.example`**（36 个，分 9 组：
 
@@ -254,7 +254,7 @@ cp .env.example .env      # 只是给你看和抄，本仓库不自动读 .env
 | `OLLAMA_CHAT_MODEL` | `qwen3.5:9b` | 机器带不动 9B，换小的 |
 | `RAG_EMBED_MAX_CHARS` | `8192` | 单块很长被截断时 |
 | `RAG_LOG_LEVEL` | `detail` | 只想留摘要用 `summary`，压测时 `off` |
-| `RAG_OLLAMA_CHECK` | `0` | 想跑连真实 Ollama 的用例时设 `1` |
+| `RAG_RUN_SLOW` | `0` | 想在测试里连真实 Qdrant / Ollama / 大字表时设 `1`（`RAG_OLLAMA_CHECK` 是历史别名，仍认） |
 
 > `.env.example` 与代码的一致性由 `tests/test_dev_env_manifest.py` 保证：
 > 代码读了却没写进文件的变量、文件里写了但没人读的变量、默认值和代码不一致的变量，
@@ -346,7 +346,49 @@ curl -s -X POST localhost:8000/api/v1/ask   -H "Content-Type: application/json" 
 - **Windows 上用 curl 发中文会乱码**（终端编码问题，不是服务端）：改用 `/docs` 页面，
   或把 body 写进文件后 `--data-binary @body.json`；
 - **只能单 worker**：`--workers 1`（默认）。多 worker 会各自加载一份 945 MB 的 reranker；
-- 流式（SSE）与并发队列限制在下一批（O4），当前的 `/ask` 是一次性返回。
+- **流式与队列都已上线**（见上面的「流式问答（SSE）」与「并发与限流」两节）：`/api/v1/ask` 一次性返回，`/api/v1/ask/stream` 边检索边吐字；生成队列满了返 `429` + `Retry-After`，`retrieve_only=true` 不占生成名额。
+
+### 日常运维：停服 / 看进度 / 删文档 / 重建 / 备份
+
+**看进度**（建库中途也可以跑，只读）：
+
+```bash
+python scripts/ingest.py --status        # 集合名 + 状态表位置 + 库内点数 + 完成百分比
+python scripts/ingest.py --failures      # 失败清单（--retry-failed 只重试失败的）
+```
+
+> `--status` 会把**三样一起报**（集合 / 状态表 / 库内点数）。如果它警告「库里有向量，
+> 但状态表没有进度记录」，说明进度丢了、库没空 —— 重跑一次建库即可（点 id 幂等，embedding 有缓存）。
+> 这种事不会因为换 `RAG_COLLECTION` 做实验再发生了：状态表现在按集合分文件（`state-<集合>.sqlite3`）。
+
+**删掉一篇文档**——「删除」必须三方一致（向量点 + 文档表 + 状态表），只删 Qdrant 点会让
+`--status` 和重建逻辑对不上。所以用命令而不是手工删集合：
+
+```bash
+python scripts/ingest.py --delete md/产品手册/安装.md
+# [delete] md/产品手册/安装.md → 删点 12、删文档 1、清状态 1     ← 三处都动了才算删干净
+```
+
+> `--delete` 的 key 必须和建库时一致（相对 `--dir` 的路径），它靠状态表把 key 映射到
+> `document_id`。状态表被清过就会打印「状态表里没有 document_id，跳过」。
+
+**重建整个库**（比如换了 embedding 模型、或改了 `CHUNK_SIZE`）：
+
+```bash
+# 换模型/改切分 = 旧向量全部作废，必须整库重建；只重建一篇用上面的 --delete + 重新 ingest
+python scripts/ingest.py --dir data --force
+```
+
+**停服与备份**：
+
+```bash
+docker compose stop qdrant        # 停但保留数据
+cp -r storage storage.bak-$(date +%Y%m%d)   # 备份（先 stop，避免拷到写一半的段文件）
+docker compose down               # 彻底停（数据仍在 ./storage/qdrant）
+```
+
+> 备份要一起拷 `storage/qdrant`（向量）、`storage/documents.sqlite3`（原文与元数据）、
+> `storage/ingest/`（进度）——**只拷其中一个，恢复出来就是残缺的库**。
 
 ### 服务自检：`GET /health`
 

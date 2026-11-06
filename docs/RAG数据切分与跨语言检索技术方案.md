@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.31
+> **文档版本**：2.32
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2404,6 +2404,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N32** | `.env.example` 里的 `RAG_TOKENIZER_PATH` 指向 `storage/tokenizer/tokenizer.json`，而代码默认值与 README 第 3 步都是 `storage/tokenizer/bge-m3/tokenizer.json` —— **照抄 `.env.example` 就会指到一个自己从没创建过的路径** | 这类漂移 `DefaultsMatchCodeTest` 抓不到，因为它只比对 `getenv("X", 默认值)` 的字面量，而词表路径是 `DEFAULT_TOKENIZER_PATH` 常量。已修：`.env.example` 改对 + `TokenizerDefaultPathTest` 2 用例（`.env.example` 与常量的相对路径相等、README 下载命令落在同一路径）——**发版前必查「照抄能不能用」** |
 
+| **N33** | 状态表只有一份，`_bind_collection()` 遇到集合不符就 `DELETE FROM ingest_state` —— 「换集合 = 换一整套库」本身正确，但**同一台机器上换集合做实验会清掉正式库的进度**：A5 演示跑完 `rag_a5_a/b` 后，`rag_chunks_v1` 的 1,467 条进度归零，`--status` 报 0 篇（很像「库是空的」）、`--delete` 查不到 `document_id` 直接跳过 | 默认状态表按集合分文件（`state.sqlite3` + `state-<集合>.sqlite3`，默认集合沿用老文件名以便认领）；`--status` 改成**三样一起报**（集合 / 状态表 / 库内点数），有向量无进度时明确警告「进度丢了，不是库空了」；2 用例（路径按集合分、切换不动别人那本账） |
 ## 17.11 决策记录（ADR）
 
 > 记录 2026-11-02 已确认的三项决策：背景、结论、实测依据、对下游条目的具体调整。
@@ -3311,6 +3312,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.29                    2026-11-05              A5 收尾：真·干净环境三条命令不崩（N30 占位文件 + 缺词表）+ 用例数校正
   2.30                    2026-11-05              A6：tag v0.1.0 + CHANGELOG（含「不包含」与「已知限制」）+ E02 收口
   2.31                    2026-11-05              A6 后自查：N32 `.env.example` 词表路径漂移（照抄即错）+ 故障表补 HF 镜像
+  2.32                    2026-11-05              A6 后文档审计：改 4 处过期陈述 + 补「日常运维」 + N33 状态表按集合隔离
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空
