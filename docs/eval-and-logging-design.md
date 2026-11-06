@@ -419,7 +419,7 @@ trace  = 一次提问（交互式一问，或评估集里 一题×一个模式�
 ```json
 {"trace_id":"...","qid":"eval-007","label":"retrieval_miss",
  "flags":["gold_not_in_topk","source_collapse"],
- "note":"gold 在 chunk-512，被同一文档 4 条挤掉","by":"zcl","at":"2026-10-30T17:02:11"}
+ "note":"gold 在 chunk-512，被同一文档 4 条挤掉","by":"reviewer","at":"2026-10-30T17:02:11"}
 ```
 
 `label` 固定枚举：`ok` / `retrieval_miss` / `ranking_bad` / `answer_wrong` / `hallucinated_citation` / `over_abstain` / `under_abstain`。
@@ -590,13 +590,13 @@ metrics  → 负责「算」：从日志 + gold + labels 计算指标
 
 | 版本 | 日期 | 变更 | 作者 |
 |---|---|---|---|
-| v1.0 | 2026-10-30 | 初稿：现状诊断、评估集与指标规范、实验设计、日志模块设计、路线图 | zcl |
-| v1.1 | 2026-10-30 | S0 落地：4 项决策确认；新增 7.8 两条判定规则（RRF 平坦判定、弃答强弱信号）；补 `gap_ratio` 字段 | zcl |
-| v1.2 | 2026-10-30 | S1 落地：数据集 v1（60 题 / 85 gold / 10 文档）；新增 3.3 落地细则与 3.3.1 实测构成；记录跨语言检索基线 | zcl |
-| v1.3 | 2026-10-30 | S2 落地：`run/measure/compare`；指标三口径（Recall / hit / full）+ bootstrap CI + McNemar；切片轴由「题面语言」改为「证据语言」（5.5）；补 6.2 门禁实现细节与 8.1 模块对照 | zcl |
-| v1.4 | 2026-11-02 | Embedding 换 `bge-m3`：全量重建 81,027×1024，新基线 `3e08ef4c1c4f058e`；3.3.1 补「语言防火墙」实测（中文题 top-4 中文 chunk 96%→68%、英文题 52%→1%）；真实 400 重试（旧二分分支因匹配字串不对而从未生效）；新增决策 5/6 | zcl |
-| v1.6 | 2026-11-02 | 题集新增 `query_en` 字段（决策 B06，仅用于三路消融，不进主指标）；记录重切分（B02）对题集的三个影响：`gold_chunks` 全部重定位、多 gold 题收敛导致 `hit`/`full` 差异消失、旧基线作废需按 E05 重立 | zcl |
-| v1.5 | 2026-11-02 | 负样本口径从「绝对余弦 ≥0.75」改为「相对全库 z 分数 + separation」：`vector_search` 记 `cos_mean`/`cos_std`，`measure` 报 `top1_z_p50/max`、`share_z_ge_alert`、`separation`；旧日志自动降级并提示重跑；新增 9 个单元测试（共 45）；顺带修掉「纯 vector 模式不记 branch」「branch.vector=null 时 measure 崩溃」两个 bug | zcl |
+| v1.0 | 2026-10-30 | 初稿：现状诊断、评估集与指标规范、实验设计、日志模块设计、路线图 | 维护者 |
+| v1.1 | 2026-10-30 | S0 落地：4 项决策确认；新增 7.8 两条判定规则（RRF 平坦判定、弃答强弱信号）；补 `gap_ratio` 字段 | 维护者 |
+| v1.2 | 2026-10-30 | S1 落地：数据集 v1（60 题 / 85 gold / 10 文档）；新增 3.3 落地细则与 3.3.1 实测构成；记录跨语言检索基线 | 维护者 |
+| v1.3 | 2026-10-30 | S2 落地：`run/measure/compare`；指标三口径（Recall / hit / full）+ bootstrap CI + McNemar；切片轴由「题面语言」改为「证据语言」（5.5）；补 6.2 门禁实现细节与 8.1 模块对照 | 维护者 |
+| v1.4 | 2026-11-02 | Embedding 换 `bge-m3`：全量重建 81,027×1024，新基线 `3e08ef4c1c4f058e`；3.3.1 补「语言防火墙」实测（中文题 top-4 中文 chunk 96%→68%、英文题 52%→1%）；真实 400 重试（旧二分分支因匹配字串不对而从未生效）；新增决策 5/6 | 维护者 |
+| v1.6 | 2026-11-02 | 题集新增 `query_en` 字段（决策 B06，仅用于三路消融，不进主指标）；记录重切分（B02）对题集的三个影响：`gold_chunks` 全部重定位、多 gold 题收敛导致 `hit`/`full` 差异消失、旧基线作废需按 E05 重立 | 维护者 |
+| v1.5 | 2026-11-02 | 负样本口径从「绝对余弦 ≥0.75」改为「相对全库 z 分数 + separation」：`vector_search` 记 `cos_mean`/`cos_std`，`measure` 报 `top1_z_p50/max`、`share_z_ge_alert`、`separation`；旧日志自动降级并提示重跑；新增 9 个单元测试（共 45）；顺带修掉「纯 vector 模式不记 branch」「branch.vector=null 时 measure 崩溃」两个 bug | 维护者 |
 
 ---
 

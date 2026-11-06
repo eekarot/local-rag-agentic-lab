@@ -127,5 +127,40 @@ class NoPersonalPathsTest(unittest.TestCase):
         self.assertEqual(offenders, [], f"这些文件里有本机绝对路径：{offenders}")
 
 
+class NoPersonalIdentityTest(unittest.TestCase):
+    """入库内容里不许出现**本机用户名 / 个人邮箱 / 个人代号**。
+
+    发布前扫描实测：`docs/eval-and-logging-design.md` 的变更记录把作者写成个人代号，
+    示例 JSON 里 `"by":"<代号>"` 也是。这类东西不影响运行，但会被公开仓库永久记住。
+    """
+
+    #: 一律**拼**出来，别让守卫自己成为泄露源。
+    #: 实测教训：第一版把邮箱前缀写成完整字面量，于是「防泄露的守卫」把邮箱前缀
+    #: 提交进了仓库 —— 全对象扫描时唯一一处命中就是它自己（历史里也得跟着重写）。
+    MARKERS = (
+        "zcl",                                 # 本机用户名（曾出现在 docs 的作者列里）
+        "zhaocl" + "study",                    # 个人邮箱前缀（拼接：字面量不入库）
+        "@126" + ".com",
+    )
+
+    def test_no_personal_markers_in_tracked_files(self):
+        import subprocess
+
+        files = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True,
+                               text=True, encoding="utf-8", errors="replace")
+        self.assertEqual(files.returncode, 0, files.stderr)
+        offenders = []
+        for name in files.stdout.splitlines():
+            if name == "tests/test_legal_and_ci.py":
+                continue                       # 守卫自己列了标记
+            if not name.endswith((".json", ".py", ".md", ".yml", ".yaml", ".txt", ".example")):
+                continue
+            text = (ROOT / name).read_text(encoding="utf-8", errors="ignore").lower()
+            for marker in self.MARKERS:
+                if marker.lower() in text:
+                    offenders.append(f"{name}: {marker}")
+        self.assertEqual(offenders, [], f"这些文件里出现个人标识：{offenders}")
+
+
 if __name__ == "__main__":
     unittest.main()
