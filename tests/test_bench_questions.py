@@ -9,6 +9,7 @@
 """
 
 import json
+import math
 import unittest
 from pathlib import Path
 
@@ -119,3 +120,51 @@ class SummarizeMetricTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReadmeBaselineNumbersTest(unittest.TestCase):
+    """README 里的基线数字必须与 `docs/baseline-k8s-v1.json` 一致。
+
+    手写数字最常见的死法是「跑完新结果忘了改 README」——读的人照着旧数做决策，
+    比没有数字更糟。这里让漂移直接变成红灯。
+    """
+
+    BASELINE = ROOT / "docs" / "baseline-k8s-v1.json"
+    README = ROOT / "README.md"
+
+    def setUp(self):
+        if not self.BASELINE.is_file():
+            self.skipTest("基线还没跑（先跑 scripts/eval_bench.py）")
+        self.data = json.loads(self.BASELINE.read_text(encoding="utf-8"))
+        self.readme = self.README.read_text(encoding="utf-8")
+
+    def test_overall_numbers_appear_verbatim(self):
+        overall = self.data["overall"]
+        k = self.data["k"]
+        for key in (f"recall@{k}", f"hit@{k}", f"full@{k}", "mrr"):
+            value = f"{overall[key]:.4f}"
+            self.assertIn(value, self.readme, f"README 里找不到 {key}={value}，数字漂了？")
+
+    def test_evidence_language_slices_appear_verbatim(self):
+        k = self.data["k"]
+        for lang in ("en", "zh-cn"):
+            stats = self.data["by_evidence_lang"][lang]
+            for key in (f"recall@{k}", f"hit@{k}", f"mrr"):
+                value = f"{stats[key]:.4f}"
+                self.assertIn(value, self.readme, f"README 里找不到 {lang} 的 {key}={value}")
+
+    def test_latency_appears(self):
+        latency = self.data["latency_ms"]
+        for name in ("p50", "p90"):
+            value = latency[name]
+            # 取整方式（半数进位/银行家舍入）不该让守卫变红，所以两边都认
+            candidates = {f"{name} **{value:.0f} ms**", f"{name} **{math.floor(value + 0.5)} ms**"}
+            self.assertTrue(candidates & {c for c in candidates if c in self.readme},
+                            f"README 里找不到 {name}（实际 {value} ms）")
+
+    def test_question_counts_are_consistent(self):
+        overall = self.data["overall"]
+        self.assertIn(f"| {overall['positives']} |", self.readme, "正样本数与 README 不一致")
+        re_questions = ROOT / "datasets" / "k8s-zh-en-v1" / "questions.jsonl"
+        total = len([l for l in re_questions.read_text(encoding="utf-8").splitlines() if l.strip()])
+        self.assertIn(f"**{total} 题**", self.readme, f"README 里的题数应为 {total}")
