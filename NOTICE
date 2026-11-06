@@ -50,6 +50,20 @@ Copyright 2026 The local-rag-agentic-lab Authors
 检索指标（`gold_chunks`）不受影响，只失去 span 级的精确打分。
 
 ================================================================================
+二·六、基准数据集 `datasets/k8s-zh-en-v1/` 是 CC BY 4.0（另一套许可证）
+================================================================================
+
+`datasets/k8s-zh-en-v1/` 里的文档**不是本项目的作品**，
+版权归 The Kubernetes Authors，按 **CC BY 4.0** 授权（允许商用，只需署名）：
+
+    Kubernetes 文档  © The Kubernetes Authors  ·  CC BY 4.0
+    来源：https://github.com/kubernetes/website （commit 见该目录 sources.json）
+    改动：仅做格式归一（剥 Hugo front matter / HTML 注释 / 模板短代码），未改写正文
+
+许可证全文在该目录下 `LICENSE-CC-BY-4.0`；归属与用法详见 `datasets/k8s-zh-en-v1/NOTICE`。
+再分发时这一节与 Apache-2.0 两份都保留即可 —— 两套许可证各管各自目录下的文件。
+
+================================================================================
 三、必须知道的例外：PyMuPDF 是 AGPL-3.0，不是 Apache-2.0
 ================================================================================
 

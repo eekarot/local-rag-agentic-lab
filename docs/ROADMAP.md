@@ -47,6 +47,7 @@
 
 | # | 项 | 说明 | 验收要点 |
 |---|---|---|---|
+| C0 | **基准数据集 `k8s-zh-en-v1`**（后续指标都在这上面比） | ✅ 已完成：Kubernetes 官方文档中英对照 472 页 × 2 语言（CC BY 4.0，上游 commit `380372f` 钉死）；`sources.json` 记录每页 URL + sha256，`scripts/fetch_dataset.py --verify` 校验本地数据；数据本体走 Release 资产（tar.gz 2.5 MB，可复现打包）；**实测**：8.5 MB 正文 / 约 9.1k parent / 13.3k child（≈ 现有库 34%） | `python scripts/fetch_dataset.py --verify` → `OK：944 个文件全部与 manifest 一致`；`python -m unittest tests.test_bench_dataset` → 21 OK | ✅ |
 | C1 | **D29 语言不平衡治理** | 中文语料为主时，英文路可能淹没中文证据 | 同语言加权或来源配额，报 Recall@k / hit@k / full@k 三项 + 逐题更好/更差/持平计数 |
 | C2 | **D30 跨语言门槛核算** | 跨语言命中该不该算、门槛怎么定 | 给出「算 / 不算」两套口径下的数字，结论写入设计文档 |
 | C3 | **D36 ANN Recall@K 基准** | 目前只有单点 0.98 观测 | ANN vs 精确 Top-K 脚本，`ef_search` 扫描表 |

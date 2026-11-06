@@ -1,0 +1,65 @@
+基准数据集：Kubernetes 官方文档中英对照（v1）
+================================================================================
+
+## 这是什么
+
+`docs/` 下是 **472 个页面 × 2 种语言 = 944 个 Markdown 文件**，取自
+[`kubernetes/website`](https://github.com/kubernetes/website) 的 `content/zh-cn/docs` 与
+`content/en/docs`，用作本项目的固定评测基准（baseline）。
+
+- 上游 commit：见 `sources.json` 的 `upstream.commit`（钉死，保证可复现）
+- 每页的中英两个版本**相对路径相同**，即同一篇文档的官方中文版与英文版
+- 选择规则：两棵树同路径的交集 ∩ 一级章节 ∈ `concepts` / `tasks` / `tutorials` / `setup`
+- 刻意排除 `reference`（1,070 页自动生成的 API 清单，不适合出题）
+- 只做了**无损的格式归一**（见 `sources.json` 的 `transform`）：剥掉 Hugo 的
+  YAML front matter、HTML 注释（reviewers 名单、`<!-- overview -->` 分段标记）、
+  模板短代码（`{{< ... >}}`），统一换行与尾部空行。
+  **没有改写任何一句正文。**
+
+## 许可证与归属
+
+**这些文档不是本项目的作品，版权归 The Kubernetes Authors。**
+
+    Kubernetes 文档  © The Kubernetes Authors
+    以 Creative Commons Attribution 4.0 International（CC BY 4.0）授权
+    许可证全文：本目录下的 LICENSE-CC-BY-4.0
+    来源：https://github.com/kubernetes/website （commit 见 sources.json）
+
+CC BY 4.0 允许复制、再分发、修改，**包括商业用途**，条件是保留署名（已在上方给出）
+并说明是否做过修改（已在上方说明：仅格式归一）。
+
+> 注意：本目录的 CC BY 4.0 与**仓库其余代码/文档的 Apache-2.0 是两套许可证**，
+> 各自管各自的文件。混合再分发时请两份都保留。
+
+## 怎么用
+
+```bash
+# 1) 若 docs/ 不在（仓库里不放数据本体，见下），先取回来
+python scripts/fetch_dataset.py            # 从 Release 资产下载并校验 sha256
+
+# 2) 校验本地文件与 manifest 一致（改动过会立刻报出来）
+python scripts/fetch_dataset.py --verify
+
+# 3) 建库（用独立集合，别碰你的正式库）
+RAG_COLLECTION=bench_k8s_v1 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs
+```
+
+**为什么数据本体不在 git 里**：944 个文件约 11 MB，进 git 会让每次 clone 都变慢一倍，
+而这个数据是**只读基准**（内容不再改动，改就是 v2）。所以本目录只提交：
+
+    sources.json          每页的 URL / sha256 / 体积（可复现的依据）
+    LICENSE-CC-BY-4.0     许可证全文
+    NOTICE                本文件
+    questions.jsonl       题集（我们自己出的，见文件头说明）
+    docs/                 ← 由 fetch_dataset.py 取回，已 gitignore
+
+## 复现（从上游重建逐字节相同的文件）
+
+```bash
+git clone --depth 1 --filter=blob:none --sparse https://github.com/kubernetes/website /tmp/k8s
+cd /tmp/k8s && git sparse-checkout set content/zh-cn/docs content/en/docs
+cd - && python scripts/build_bench_dataset.py --upstream /tmp/k8s
+```
+
+`--upstream` 指向上游克隆即可；脚本会按 `sources.json` 里同样的规则选页、做同样的
+transform，产出的每个文件 sha256 应与 manifest 一致。

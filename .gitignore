@@ -43,3 +43,8 @@ venv/
 Thumbs.db
 # D27c 句子候选池（expand_questions_v2 dump 生成，可重建；选中的 span 已内嵌进 questions.json）
 experiments/_span_candidates.json
+
+# 基准数据集本体（只读，由 scripts/fetch_dataset.py 取回；仓库只提交 manifest）
+datasets/*/docs/
+# Release 资产打包产物
+/dist/

@@ -575,6 +575,18 @@ python -m src.raglog_report list               # 列出历史 run
 
 ## 评估集
 
+两种用途分开：
+
+| 用途 | 位置 | 语料 |
+|---|---|---|
+| **固定基准**（后续所有指标都在它上面比） | `datasets/k8s-zh-en-v1/` | Kubernetes 官方文档中英对照，472 页 × 2 语言，CC BY 4.0 |
+| **历史题集**（本项目自己的语料，不对外提供语料） | `experiments/questions.json` | 202 题，含 254 段短引用（说明见 `NOTICE` 第二·五节） |
+
+```bash
+python scripts/fetch_dataset.py --verify    # 校验本地基准数据与 manifest 一致
+RAG_COLLECTION=bench_k8s_v1 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs
+```
+
 > 题集随仓库提供（`experiments/questions.json`，202 题，其中 254 段短引用用于自动评分）；
 > **语料不提供**——短引用的性质与边界写在 [`NOTICE`](NOTICE) 第二·五节。
 
