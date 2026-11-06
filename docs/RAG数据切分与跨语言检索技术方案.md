@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.32
+> **文档版本**：2.33
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2406,6 +2406,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N33** | 状态表只有一份，`_bind_collection()` 遇到集合不符就 `DELETE FROM ingest_state` —— 「换集合 = 换一整套库」本身正确，但**同一台机器上换集合做实验会清掉正式库的进度**：A5 演示跑完 `rag_a5_a/b` 后，`rag_chunks_v1` 的 1,467 条进度归零，`--status` 报 0 篇（很像「库是空的」）、`--delete` 查不到 `document_id` 直接跳过 | 默认状态表按集合分文件（`state.sqlite3` + `state-<集合>.sqlite3`，默认集合沿用老文件名以便认领）；`--status` 改成**三样一起报**（集合 / 状态表 / 库内点数），有向量无进度时明确警告「进度丢了，不是库空了」；2 用例（路径按集合分、切换不动别人那本账） |
 ## 17.11 决策记录（ADR）
+| **N34** | 没起 Qdrant 就跑 `scripts/ingest.py`（README 第 2 步没做）甩一屏堆栈：httpx 重试链 + qdrant `ResponseHandlingException` + 4 段「During handling…」 | `build_pipeline` 先 `ping()` → `QdrantUnavailableError` → main 打印「连接 Qdrant 失败（url）」+ `docker compose up -d qdrant` + `curl -s localhost:6333`，exit 1；`QdrantDownGateTest` 用死端口写死，本机与 CI 行为一致 |
+| **N35** | 连不上服务端时 qdrant-client 先打 `UserWarning: Failed to obtain server version` —— 用户看到的第一行是它，真正的病因埋在中间 | `make_client` 里 `warnings.catch_warnings()` + 只过滤这一条（不动全局）；用例断言这句不许出现 |
 
 > 记录 2026-11-02 已确认的三项决策：背景、结论、实测依据、对下游条目的具体调整。
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
@@ -3313,6 +3315,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.30                    2026-11-05              A6：tag v0.1.0 + CHANGELOG（含「不包含」与「已知限制」）+ E02 收口
   2.31                    2026-11-05              A6 后自查：N32 `.env.example` 词表路径漂移（照抄即错）+ 故障表补 HF 镜像
   2.32                    2026-11-05              A6 后文档审计：改 4 处过期陈述 + 补「日常运维」 + N33 状态表按集合隔离
+  2.33                    2026-11-05              发布前验收：N34（没起库不抛堆栈）+ N35（version warning 埋病因）+ 发布卫生（去个人路径 / reports 收进 docs/evidence / NOTICE 短引用说明）
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空
