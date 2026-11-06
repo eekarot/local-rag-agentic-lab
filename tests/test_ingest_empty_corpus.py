@@ -148,6 +148,15 @@ class EmptyCorpusHintTest(unittest.TestCase):
         self.assertIn("相对", text, "要说明 key 是相对 --dir 的路径")
 
 
+def run_ingest(argv, env_extra):
+    """在子进程里跑 `scripts/ingest.py`（唯一能证明「干净环境」的方式）。"""
+    env = dict(os.environ)
+    env.update(env_extra)
+    env["PYTHONIOENCODING"] = "utf-8"
+    return subprocess.run([sys.executable, *argv], cwd=str(ROOT), env=env,
+                          capture_output=True, text=True, encoding="utf-8",
+                          errors="replace", timeout=120)
+
 class NoTokenizerYetTest(unittest.TestCase):
     """干净克隆的**第一条命令**不能炸（A5 最后一步在真·干净环境里逮到的）。
 
@@ -161,11 +170,7 @@ class NoTokenizerYetTest(unittest.TestCase):
     """
 
     def _run(self, argv, env_extra):
-        env = dict(os.environ)
-        env.update(env_extra)
-        env["PYTHONIOENCODING"] = "utf-8"
-        return subprocess.run([sys.executable, *argv], cwd=str(ROOT), env=env,
-                              capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
+        return run_ingest(argv, env_extra)
 
     def test_empty_dir_without_tokenizer_still_gives_the_hint(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -203,12 +208,7 @@ class PlaceholderAndTokenizerGateTest(unittest.TestCase):
     """
 
     def _run(self, argv, env_extra):
-        env = dict(os.environ)
-        env.update(env_extra)
-        env["PYTHONIOENCODING"] = "utf-8"
-        return subprocess.run([sys.executable, *argv], cwd=str(ROOT), env=env,
-                              capture_output=True, text=True, encoding="utf-8",
-                              errors="replace", timeout=120)
+        return run_ingest(argv, env_extra)
 
     def test_readme_only_dir_counts_as_empty(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -229,7 +229,38 @@ class PlaceholderAndTokenizerGateTest(unittest.TestCase):
         combined = result.stdout + result.stderr
         self.assertNotIn("Traceback", combined, f"有文件但缺词表时报错也不该是堆栈：{combined[-400:]}")
         self.assertNotEqual(result.returncode, 0, "缺依赖要返回非零")
-        self.assertIn("curl", combined)
+        # 哪一步先失败取决于环境：本机没起 Qdrant 时先说 Qdrant（N34），
+        # 起了 Qdrant 才会走到词表。两种都必须是「说得清 + 可复制」，不许是堆栈。
+        self.assertTrue("curl" in combined or "docker compose" in combined,
+                        f"报错必须给出可复制的下一步：{combined[-400:]}")
+
+
+class QdrantDownGateTest(unittest.TestCase):
+    """**最典型的顺序错误**：README 第 2 步（起 Qdrant）没做就跑第 5 步（建库）。
+
+    实测（真·干净克隆发布前验收）：这种情况会甩出一屏 httpx 重试链 + qdrant-client
+    的 4 层 "During handling of the above exception"，最后才是
+    `ResponseHandlingException: [WinError 10061]`。用户看到的第一行反而是
+    `UserWarning: Failed to obtain server version`（N35），真正的病因埋在中间。
+
+    要求：一条原因 + 两条可复制命令，退出码非零，不许有堆栈、不许有 warning。
+    """
+
+    def _run(self, argv, env_extra):
+        return run_ingest(argv, env_extra)
+
+    def test_no_qdrant_is_a_message_not_a_traceback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            Path(tmp, "a.md").write_text("# 标题" + chr(10) + "正文", encoding="utf-8")
+            env = {"QDRANT_URL": "http://127.0.0.1:1"}      # 死端口：CI 与本机都一样
+            result = self._run(["scripts/ingest.py", "--dir", tmp], env)
+
+        combined = result.stdout + result.stderr
+        self.assertNotIn("Traceback", combined, f"没起库不该是堆栈：{combined[-400:]}")
+        self.assertNotIn("Failed to obtain server version", combined, "那条 warning 会把真病因埋掉")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("docker compose up -d qdrant", combined, "必须给出起库命令")
+        self.assertIn("curl -s localhost:6333", combined, "必须给出探活命令")
 
 
 if __name__ == "__main__":

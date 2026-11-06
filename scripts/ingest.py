@@ -47,7 +47,8 @@ from src.rag.ingest.state import IngestState  # noqa: E402
 from src.rag.store.document_store import DocumentStore  # noqa: E402
 from src.rag.store.index_versions import IndexVersions  # noqa: E402
 from src.rag.store.indexer import Indexer  # noqa: E402
-from src.rag.store.qdrant_store import default_collection, ensure_collection, make_client  # noqa: E402
+from src.rag.store.errors import QdrantUnavailableError  # noqa: E402
+from src.rag.store.qdrant_store import default_collection, ensure_collection, make_client, ping  # noqa: E402
 
 STATE_PATH = STORAGE_DIR / "ingest" / "state.sqlite3"
 
@@ -73,6 +74,7 @@ VERSIONS_DB = STORAGE_DIR / "index_versions.sqlite3"
 
 def build_pipeline(args, *, log) -> tuple[IngestPipeline, object, EmbeddingService, IngestState]:
     client = make_client()
+    ping(client)                     # 连不上就抛 QdrantUnavailableError（文案里带起库命令）
     ensure_collection(client, args.collection)
     state = IngestState(args.state or default_state_path(args.collection),
                         collection=args.collection)
@@ -226,6 +228,13 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         pipeline, client, embedder, state = build_pipeline(args, log=log)
+    except QdrantUnavailableError as exc:
+        # 没起库就先跑建库，是**陌生人最常见的顺序错误**（README 第 2 步还没做）。
+        # 裸 traceback 会让人以为是代码坏了 —— 这里只给「起哪条命令」（N34）。
+        print(str(exc), file=sys.stderr)
+        print("起库：docker compose up -d qdrant", file=sys.stderr)
+        print("探活：curl -s localhost:6333", file=sys.stderr)
+        return 1
     except TokenizerUnavailable as exc:
         # 缺词表是**新建库最常见的第二种失败**（第一种是空 data/）。异常文案已经写清
         # 下载命令，不该以堆栈形式出现 —— 用户会以为是自己装错了（A5 真·干净环境实测）。

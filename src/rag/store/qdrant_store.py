@@ -29,6 +29,7 @@ import json
 import os
 import sys
 import uuid
+import warnings
 from urllib.parse import urlsplit
 from typing import Any, Iterable, Mapping
 
@@ -126,7 +127,12 @@ def make_client(url: str | None = None, timeout: float | int = 10, **kwargs: Any
     resolved = url or qdrant_url()
     if is_local_url(resolved):
         kwargs.setdefault("trust_env", False)
-    return QdrantClient(url=resolved, timeout=timeout, **kwargs)
+    with warnings.catch_warnings():
+        # 连不上服务端时 qdrant-client 先打一条
+        # 「Failed to obtain server version ... Set check_compatibility=False」
+        # 的 UserWarning —— 用户看到的第一行就是它，真正的错误被埋了（N35）。
+        warnings.filterwarnings("ignore", message="Failed to obtain server version")
+        return QdrantClient(url=resolved, timeout=timeout, **kwargs)
 
 
 def point_id_for(chunk_id: str) -> str:
