@@ -1,6 +1,6 @@
 # ROADMAP：剩余工作项
 
-> 版本：2026-11-05 · 与 `docs/RAG数据切分与跨语言检索技术方案.md`（v2.24）配套。
+> 版本：2026-11-06 · 与 `docs/RAG数据切分与跨语言检索技术方案.md`（v2.36）配套。
 > 设计文档记「为什么这样做」，本文件记「还剩什么没做、怎么算做完」。
 >
 > **验收一律写成「命令 + 期望值」**，不写「优化一下」「完善一下」这种无法判定的条目。
@@ -8,15 +8,16 @@
 ## 0. 当前位置
 
 ```
-分支 master · 34 个提交 · 无 remote · 无 tag
-默认套件 python -m unittest discover -s tests → 909 用例 OK (skipped=50)，33.9 s（不联网）
-全套 RAG_RUN_SLOW=1 … → 909 用例 OK (skipped=5)，346 s
+分支 main · 54 个提交 · remote origin（github.com/eekarot/local-rag-agentic-lab）· tag v0.1.0
+默认套件 python -m unittest discover -s tests → 989 用例 OK (skipped=50)，30 s（不联网）
+全套 RAG_RUN_SLOW=1 … → 真服务链路手跑（CI 只跑默认套件）
 
 已落地链路：
-  解析 → 切分 → 父块 → bge-m3 向量 → Qdrant(38,865 点) + 英文 BM25
+  解析 → 切分 → 父块 → bge-m3 向量 → Qdrant + 英文 BM25
   → 三路召回 + RRF → ONNX 重排 → 引用体检 → 流式生成
   → CLI / HTTP 同步 / HTTP SSE / 浏览器聊天页
   → probes + doctor + 熔断降级 + 有界队列单飞
+  → 基准数据集（k8s-zh-en-v1，944 文件）+ 100 题 + 基线（docs/baseline-k8s-v1.json）
 ```
 
 ## A. v0.1.0 发布阻塞（6 项，约 2.3 天）
@@ -79,14 +80,115 @@
 | 翻译层 | 中文 query 常原样回填，白花 **~4 s** | 不需要翻译就跳过 | `question_en` 与原文相同即为信号 |
 | 流式首字 | **8.4–9.7 s** | 结构上已改善体感（`sources` 4.99 s 先到） | 正文受 9B 模型限制，短时间难降 |
 
+## F. 工程化与上手门槛（不含切片 / 检索算法）
+
+> 这一节**只记工程与体验**：安装、首跑、文档、运维、贡献流程、平台适配。
+> 改切分参数、换召回策略、调权重这类算法项不在本节（见 C 节）。
+>
+> 排序按「**别人能不能 5 分钟跑起来**」，不按实现难度。每条都给现状证据 +
+> 验收（命令 → 期望值），否则不算做完。
+>
+> 与 B 节重复的项只记一次账：`B1`(词表自动下载) / `B2`(local 模式) / `B3`(pyproject) /
+> `B4`(配置收敛) / `B5`(鉴权) 仍在 B 节维护，本节用「同 B3」指向，不复制。
+
+### F-1 首次上手：从 clone 到第一条答案
+
+| # | 项 | 现状证据 | 验收（命令 → 期望值） | 档 |
+|---|---|---|---|---|
+| F1 | **一条命令起全栈** | `docker-compose.yml` **只有 qdrant**；应用要手敲 `uvicorn`，还得自己记得 `--workers 1` | `docker compose up -d` → 60 s 内 `curl -s localhost:8000/health \| jq .status` = `"ok"`；compose 内两个服务都有 healthcheck | 2 |
+| F2 | **仓库自带示例语料** | 干净克隆 `data/` 只有 `.gitkeep` → 第一条 `ingest` 就是「发现 0 个文件」 | `python scripts/ingest.py --dir samples` → 输出 `indexed>=5`；`python scripts/ingest.py --status` 显示库内点数 > 100；全程不联网 | 1 |
+| F3 | **Release 资产自动上传** | `fetch_dataset` 默认从 Release 下载，但资产**目前是手传的**，一忘就 404 | push `bench-k8s-zh-en-v1` tag → `curl -sI <release asset url>` 返回 200；`python scripts/fetch_dataset.py --verify` → `OK：944 个文件全部与 manifest 一致` | 1 |
+| F4 | **`.env` 自动加载** | README 自己写着「本仓库不自动读 `.env`」——用户 `cp` 完不生效且**没有任何提示** | 写一个 `.env` 设 `RAG_LOG_LEVEL=off` → `python -m src.doctor` 打印「已读取 .env（1 项生效）」；`python -c "print(os.environ['RAG_LOG_LEVEL'])"` 走 CLI 时应为 `off` | 1 |
+| F5 | **依赖可复现** | `requirements.txt` 除 `qdrant-client` 外全是 `>=` → 今天能装，三个月后装出来的不是同一个环境 | 有 `requirements.lock`；CI 用 lock 装；`pip install -r requirements.lock` 两周一跑仍 `989 用例 OK` | 3 |
+| F6 | **Python 版本声明对齐** | README 写「3.10+」，CI 只跑 3.12 —— 没验证过的承诺 | CI 矩阵加 `3.10` / `3.11` → 两个新格子 success；否则把 README 改成「3.12」 | 3 |
+| F7 | **一键 bootstrap** | Windows / macOS / Linux 各 5 步，第 3 步还要 curl 一个 17 MB 文件 | `scripts/bootstrap.ps1` 与 `scripts/bootstrap.sh` 裸机跑完 → `python -m src.doctor` 退出码 0 且六项全 ✓ | 2 |
+| F8 | **`pyproject.toml` + console scripts** | 同 B3 | 同 B3 | 1 |
+| F9 | **免 Docker 模式** | 同 B2（最大安装门槛就是 Docker Desktop） | 同 B2 | 2 |
+
+### F-2 让人不用读完 1500 行 README
+
+| # | 项 | 现状证据 | 验收（命令 → 期望值） | 档 |
+|---|---|---|---|---|
+| F10 | **`doctor --fix` 真执行** | 现在只**打印**命令，用户还得复制粘贴 | `python -m src.doctor --fix --dry-run` → 列出将执行的 N 步；`--fix` 真跑，结束时 `python -m src.doctor` 退出码 0 | 2 |
+| F11 | **`rag init` 引导** | 现在要用户自己决定 6 件事（语料 / 模型 / 是否起服务 / 集合名…） | `rag init` 问 3 个问题 → 写 `.env` + 起依赖 + 建库，结束打印 `打开 http://127.0.0.1:8000/`；`curl -s localhost:8000/health` = ok | 2 |
+| F12 | **English README** | 全中文 —— 开源项目第一道门槛 | `README.en.md` 存在且覆盖：what / 3 条命令跑起来 / 基准数字 / 许可证 → `python -m unittest tests.test_readme_en` 通过（命令不许假） | 2 |
+| F13 | **首屏有画面** | 现在 README 全是表格和代码块，**没有一张图** | `docs/images/` 下 3 张截图（聊天页 / `/retrieve?debug=true` / doctor 全绿）+ 1 个 ≤20 s 终端录屏 → README 首屏引用它们，`git ls-files docs/images` 有 4 个文件 | 1 |
+| F14 | **5 分钟 quickstart** | 「快速开始」实际要 15 分钟 + 4 个外部前置（Docker / Ollama / 词表 / 模型） | `docs/quickstart-5min.md`：只用 compose + `samples/`，不碰词表下载 → 找个没跑过的人照做，`time` 显示 ≤5 min 且 `curl -s localhost:8000/health` = ok | 2 |
+| F15 | **可直接跑的请求集** | 只有零散 `curl` 行 | `examples/api.http`（REST Client 可点）+ Postman collection → 每个端点 2 个示例，`httpyac send examples/api.http` 每个示例返回 2xx | 3 |
+| F16 | **排障单独成页** | 常见故障只有 9 行表格 | `docs/troubleshooting.md` 按**症状**索引（端口占用 / 模型没拉 / 编码乱码 / 下载卡住 / 版本不匹配）→ 每条一个可复制命令，`tests/test_ops_probes.py::FixCommandsExistTest` 扩到扫这份文档后全绿 | 2 |
+
+### F-3 运维与观测（别人接手要能看、能备、能恢复）
+
+| # | 项 | 现状证据 | 验收（命令 → 期望值） | 档 |
+|---|---|---|---|---|
+| F17 | **`/metrics`** | 只有 `/health`（拉模式、给人看），Prometheus 抓不到 | `curl -s localhost:8000/metrics` → 出现 `# TYPE ask_latency_seconds`、`queue_inflight`、`degraded_total`；跑一个问题后计数 +1 | 2 |
+| F18 | **应用日志落盘 + 轮转** | `raglog` 只服务**旧链**；新链日志在 stdout 里 | 设 `RAG_LOG_DIR=logs/app` → 跑一次 `/ask` 后该目录出现 `app-YYYYMMDD.jsonl`；`python -m src.raglog_report latest --failures` 对新链 run 也有效 | 2 |
+| F19 | **镜像发布** | 没有镜像，只能源码跑 | `docker run -p 8000:8000 ghcr.io/eekarot/local-rag-agentic-lab:v0.1.0` → `docker image ls` 显示 <2 GB，容器内 `curl -s localhost:8000/health` = ok | 2 |
+| F20 | **备份 / 恢复脚本** | README 让用户手 `cp -r storage`，还强调「只拷一个就残缺」——知道该拷却不给命令 | `rag backup out.tar.gz` → 含 `storage/qdrant` + `documents.sqlite3` + `ingest/`；`rag restore out.tar.gz` 后 `/health` 的父块数与备份前一致 | 3 |
+| F21 | **遗留集合清理**（同 D6） | 45 个 collection，Qdrant 启动要约 2.5 min | `python scripts/cleanup_test_collections.py --dry-run` 列出 43 个 → 执行后 `curl -s localhost:6333/collections` 只剩正式集合；重启 Qdrant <10 s | 1 |
+| F22 | **鉴权 + 配额** | 同 B5 | 同 B5 | 2 |
+| F23 | **冷启动** | CLI setup 13.5 s、API 首请求 15–18 s（父块 25k + ONNX + Qdrant 都在启动路径） | 父块/ONNX 移后台线程预热 → `python -m src.ask --retrieve-only "x"` 计时 <3 s；`/health` 在 1 s 内可响应 | 3 |
+
+### F-4 贡献者与 CI（决定这仓库能不能被别人改）
+
+| # | 项 | 现状证据 | 验收（命令 → 期望值） | 档 |
+|---|---|---|---|---|
+| F24 | **把「干净克隆验收」固化进 CI** | 那次是**手工**做的，N26–N30 全靠它抓出来 | 新 job：`python -m venv` → 装依赖 → `python -m unittest discover -s tests` → `python scripts/fetch_dataset.py --verify`；故意改坏 README 路径 → job 必红 | 1 |
+| F25 | **lint + type + coverage** | 989 用例，**零 lint、零类型检查、不知道覆盖率** | CI 跑 `ruff check .` / `mypy src/rag` / `coverage report` → 三个 job 绿，且覆盖率门槛写进 job 名（如 `coverage>=72%`），故意写一个未用变量 → ruff 必红 | 3 |
+| F26 | **issue / PR 模板 + dependabot** | `.github/` 只有 1 个 `tests.yml` | `.github/ISSUE_TEMPLATE/bug.md`、`feature.md`、`PULL_REQUEST_TEMPLATE.md` 存在 → 新建 issue 时 GitHub 出现模板选择页；dependabot 每周开 PR 且改的是 lock 文件 | 3 |
+| F27 | **pre-commit** | 全靠自觉 | `.pre-commit-config.yaml`：ruff / 行尾 / 大文件拦截 → `pre-commit run --all-files` 退出码 0 且无 diff | 3 |
+| F28 | **任务入口** | 常用命令散在 README 各处 | `Makefile`：`make test` / `make bench` / `make ingest` / `make clean` → 四个目标逐个 `make <target>` 都能跑通（`make test` 打印 `OK (skipped=50)`） | 1 |
+| F29 | **慢测夜间档** | 真服务链路只能手跑 | nightly job 跑 `RAG_RUN_SLOW=1 python -m unittest discover -s tests` → 连续 7 天全绿，失败时自动开 issue（Actions 里能看到记录） | 3 |
+| F30 | **发版自动化** | tag → CHANGELOG → 附件 → push **全手工** | `git tag vX.Y.Z && git push --tags` → CI 自动打包、建 Release、上传资产、校验 `archive_sha256` | 3 |
+
+### F-5 平台与离线
+
+| # | 项 | 现状证据 | 验收（命令 → 期望值） | 档 |
+|---|---|---|---|---|
+| F31 | **Windows 专项** | README 里 `export` 与 PowerShell 混着写、`curl -N`、`taskkill` 各显神通 | 一份 `docs/windows.md` + `scripts/bootstrap.ps1` → 干净 Windows 照文档走完，`python -m src.doctor` 退出码 0 | 2 |
+| F32 | **离线 / 内网安装** | 只提了 `HF_ENDPOINT` 镜像 | `docs/offline.md`：`pip download` + 预置 `storage/tokenizer` + `HF_HUB_OFFLINE=1` → 断网机器上走完一遍，`curl -s localhost:8000/health` = ok | 3 |
+| F33 | **镜像里预置模型** | 首跑要下 449 MB 重排模型（还可能被墙） | 提供 `-full` 镜像 tag（含词表 + 449 MB 重排模型）→ 断网机器 `docker run` 后第一次 `/ask` 直接出答案（日志里无下载行）；slim tag 保持 `--no-rerank` 可用 | 3 |
+| F34 | **ARM64 / Apple Silicon 说明** | 未验证、未声明 | 平台页给出 `onnxruntime` 平台表 + 一行实测（「M2 上 p50 xx ms」）→ 或者在 README 明确写「仅验证 x86_64」，二选一必须落到文档里 | 3 |
+
+### F-6 评估产物的可读性（不改算法，只改「看得懂」）
+
+| # | 项 | 现状证据 | 验收（命令 → 期望值） | 档 |
+|---|---|---|---|---|
+| F35 | **HTML 报告** | 现在只有 JSON + 逐题 JSONL，得自己写脚本看 | `python scripts/eval_bench.py --html out.html` → 单文件，失败题聚合、可点开看该题检索结果；不需要外网 | 3 |
+| F36 | **一条命令出「基线 vs 现在」对比表** | 现状：跑两次，人肉对两个 JSON | `python scripts/eval_bench.py --compare docs/baseline-k8s-v1.json` → 输出 Markdown 表（三口径 + 更好/更差/持平计数），可直接贴 PR | 2 |
+| F37 | **bench profile** | 建基准库要手记 4 个路径参数（易写错，还可能污染正式库） | `docker compose --profile bench up` 或 `make bench` 一条命令完成「建库 → 评估 → 落 baseline」 | 2 |
+
+### 建议动手顺序（工程线）
+
+```
+第一档（半天，收益最大）：F2 示例语料 → F4 .env 自动加载 → F8 console scripts
+  理由：F2 把「第一条命令就报错」变成「第一条命令就出货」；
+        F4/F8 是每个用户都会碰到的，且一下午能全做完
+
+第二档（一天）：F1 compose 全栈 → F10 doctor --fix → F14 5 分钟 quickstart
+  理由：三件合起来才是「clone → 一条命令 → 浏览器里有答案」
+
+第三档（一天）：F24 干净克隆进 CI → F25 lint/coverage → F5 锁文件
+  理由：先把门槛降低的成果锁住，否则下一个人改回去没人发现
+
+随时可捡：F21 清集合（半小时，顺手把 Qdrant 启动从 2.5 min 拉回几秒）、
+          F20 备份脚本、F28 Makefile、F13 截图
+```
+
 ## 建议顺序
 
 ```
-A2 → A1 → A3 → A4 → A5 → A6(tag v0.1.0)      发布线，不插队
-→ B3 → B1 → B2（拆安装门槛）→ B4 → B5
+A2 → A1 → A3 → A4 → A5 → A6(tag v0.1.0)      发布线，已全部完成
+→ F2 → F4 → F8（工程第一档：示例语料 / .env / console scripts）
+→ F1 → F10 → F14（工程第二档：一条命令起全栈 / doctor --fix / 5 分钟 quickstart）
+→ F24 → F25 → F5（工程第三档：把成果锁进 CI）
+→ B1 → B2（拆安装门槛）→ B4 → B5
 → D5（引用精度）与 C1/C2（语言平衡）并行
 性能账（E 表）随时可捡，但都不阻塞发布
 ```
+
+工程线（F 节）与安装线（B 节）**不重叠**：F 管「跑起来顺不顺、看得懂看不懂、能不能被人改」，
+B 管三个具体功能（词表自动下载 / local 模式 / 鉴权等）。F 先做，因为它的每一项都会被每个新用户碰到。
 
 ## 判定口径（不许临时改）
 
