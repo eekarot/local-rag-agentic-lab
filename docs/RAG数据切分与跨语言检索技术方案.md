@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.30
+> **文档版本**：2.31
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2402,6 +2402,7 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | 60 题评估集与 5 组探针结果 | 指标不可与改造后直接比较 | 作为"改造前基线"存档，仅用于说明改造收益的方向与量级 |
 | **N31** | 发版最容易漂的是版本号：`API_VERSION` 改了、CHANGELOG 还停在上一版 | `ChangelogTest` 让用例去比 `src/rag/api/app.py` 的 `API_VERSION` 必须出现在 CHANGELOG 里，并要求写清「不包含」与「已知限制」——发版说明不写边界，等于让人一个个试 |
 
+| **N32** | `.env.example` 里的 `RAG_TOKENIZER_PATH` 指向 `storage/tokenizer/tokenizer.json`，而代码默认值与 README 第 3 步都是 `storage/tokenizer/bge-m3/tokenizer.json` —— **照抄 `.env.example` 就会指到一个自己从没创建过的路径** | 这类漂移 `DefaultsMatchCodeTest` 抓不到，因为它只比对 `getenv("X", 默认值)` 的字面量，而词表路径是 `DEFAULT_TOKENIZER_PATH` 常量。已修：`.env.example` 改对 + `TokenizerDefaultPathTest` 2 用例（`.env.example` 与常量的相对路径相等、README 下载命令落在同一路径）——**发版前必查「照抄能不能用」** |
 
 ## 17.11 决策记录（ADR）
 
@@ -3309,6 +3310,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.28                    2026-11-05              A5/E04 干净克隆验收（14 s 全绿 + 七步走通）
   2.29                    2026-11-05              A5 收尾：真·干净环境三条命令不崩（N30 占位文件 + 缺词表）+ 用例数校正
   2.30                    2026-11-05              A6：tag v0.1.0 + CHANGELOG（含「不包含」与「已知限制」）+ E02 收口
+  2.31                    2026-11-05              A6 后自查：N32 `.env.example` 词表路径漂移（照抄即错）+ 故障表补 HF 镜像
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空

@@ -197,5 +197,34 @@ def _same(document: str, code: str) -> bool:
         return document == code
 
 
+class TokenizerDefaultPathTest(unittest.TestCase):
+    """`.env.example` 抄进 `.env` 之后必须**真的能用**。
+
+    实测（v0.1.0 手测）：`.env.example` 写的是 `storage/tokenizer/tokenizer.json`，
+    而代码默认与 README 第 3 步下载的位置都是 `storage/tokenizer/bge-m3/tokenizer.json`。
+    照抄的人会得到一个「找不到词表」的路径 —— 而且是他从没创建过的路径。
+    """
+
+    def test_env_example_points_at_the_same_place_as_code(self):
+        from src.rag.ingestion.tokenizer import DEFAULT_TOKENIZER_PATH
+
+        documented = dict(
+            line.split("=", 1) for line in
+            (ROOT / ".env.example").read_text(encoding="utf-8").splitlines()
+            if line.strip() and not line.lstrip().startswith("#") and "=" in line
+        ).get("RAG_TOKENIZER_PATH")
+        self.assertIsNotNone(documented, ".env.example 必须写明 RAG_TOKENIZER_PATH")
+        self.assertEqual(Path(documented.replace("\\", "/")).as_posix(),
+                         DEFAULT_TOKENIZER_PATH.relative_to(ROOT).as_posix(),
+                         "照抄 .env.example 会指到别的地方去")
+
+    def test_readme_downloads_to_the_same_place(self):
+        from src.rag.ingestion.tokenizer import DEFAULT_TOKENIZER_PATH
+
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        rel = DEFAULT_TOKENIZER_PATH.relative_to(ROOT).as_posix()
+        self.assertIn(rel, readme, f"README 第 3 步必须把词表下到 {rel}")
+
+
 if __name__ == "__main__":
     unittest.main()

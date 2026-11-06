@@ -442,6 +442,7 @@ python -m src.doctor --json   # 给脚本用（stdout 只留 JSON）
 | `发现 0 个文件` | `data/` 里没有文档 | 见 [`data/README.md`](data/README.md) |
 | 每次调用 Ollama 都慢 2 s | Windows 上 `localhost` 先解析 `::1`，Ollama 只听 IPv4。`OLLAMA_BASE_URL` 用 `http://127.0.0.1:11434`（本仓库默认已是），并走复用连接的 Session |
 | 首次运行卡住 1 分钟 | 首次要从 HuggingFace 拉 449 MB 重排模型 | 等它下完（缓存进 `storage/models`）；或 `--no-rerank` |
+| 首次问答「卡死」十几分钟 | HuggingFace 直连被墙，`huggingface_hub` 在重试 | 走镜像：`export HF_ENDPOINT=https://hf-mirror.com` 再跑一次；或先用 `--no-rerank` 把链路跑通 |
 
 ## 项目结构
 
