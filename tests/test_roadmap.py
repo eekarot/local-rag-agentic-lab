@@ -4,7 +4,8 @@
 但规矩写在文件里不会自动生效——写着写着就会出现「优化一下体验」「完善文档」这种
 谁都能说自己做完的条目。这里把它变成红灯。
 
-只查 F 节（工程化与上手门槛）：这一节全是「体验类」诉求，最容易写成不可判定的话。
+查 F 节（工程化与上手门槛）与 G 节（切片护栏与体检）：这两节最容易写成
+「优化一下体验」「把切片做得更好」这种谁都能说自己做完的话。
 """
 
 import re
@@ -15,7 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ROADMAP = ROOT / "docs" / "ROADMAP.md"
 
 VAGUE = ("优化一下", "完善一下", "待补充", "TODO", "TBD", "做得更好", "提升体验")
-ITEM = re.compile(r"^\|\s*(F\d+)\s*\|")
+ITEM = re.compile(r"^\|\s*([FG]\d+)\s*\|")
+GUARDED = ("## F. ", "## G. ")
 
 
 def _section(text: str, heading: str) -> str:
@@ -29,15 +31,16 @@ class RoadmapEngineeringItemsTest(unittest.TestCase):
         if not ROADMAP.is_file():
             self.skipTest("ROADMAP 不在了")
         self.text = ROADMAP.read_text(encoding="utf-8")
-        self.section = _section(self.text, "## F. ")
+        self.section = "".join(_section(self.text, head) for head in GUARDED)
 
     def test_section_exists(self):
-        self.assertIn("## F. ", self.text, "工程化那一节被删了？")
+        for head in GUARDED:
+            self.assertIn(head, self.text, f"{head.strip()} 那一节被删了？")
 
     def test_every_item_has_command_and_expected_value(self):
         rows = [(m.group(1), line) for line in self.section.splitlines()
                 if (m := ITEM.match(line))]
-        self.assertGreaterEqual(len(rows), 30, "工程化条目数掉下来了（应有 30+）")
+        self.assertGreaterEqual(len(rows), 40, "F/G 两节条目数掉下来了（应有 40+）")
         for qid, line in rows:
             if "同 B" in line:          # 与 B 节重复的项，验收在 B 节维护，这里只留指针
                 continue
@@ -49,7 +52,8 @@ class RoadmapEngineeringItemsTest(unittest.TestCase):
                                f"{qid}：`→` 后面得有真的期望值，不能空着")
 
     def test_every_item_has_a_tier(self):
-        for line in self.section.splitlines():
+        f_section = _section(self.text, "## F. ")
+        for line in f_section.splitlines():
             m = ITEM.match(line)
             if not m:
                 continue

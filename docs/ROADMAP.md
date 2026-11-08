@@ -1,6 +1,6 @@
 # ROADMAP：剩余工作项
 
-> 版本：2026-11-06 · 与 `docs/RAG数据切分与跨语言检索技术方案.md`（v2.36）配套。
+> 版本：2026-11-06 · 与 `docs/RAG数据切分与跨语言检索技术方案.md`（v2.37）配套。
 > 设计文档记「为什么这样做」，本文件记「还剩什么没做、怎么算做完」。
 >
 > **验收一律写成「命令 + 期望值」**，不写「优化一下」「完善一下」这种无法判定的条目。
@@ -175,6 +175,31 @@
           F20 备份脚本、F28 Makefile、F13 截图
 ```
 
+## G. 切片护栏与体检（借鉴 `adaptive-chunking`）
+
+> 完整方案：[`docs/adaptive-chunking-integration-plan.md`](adaptive-chunking-integration-plan.md)
+> （上游 `github.com/ekimetrics/adaptive-chunking`，LREC 2026，MIT —— 只做只读参考，不引入依赖）
+>
+> 一句话：**借思想不借代码**。上游核心依赖 torch / `maverick-coref`(CC BY-NC-SA) 与本仓库
+> B08（只用 onnxruntime）、D39（16 GB 预算）冲突；金标也太薄（2.21 题/页），逐文档自适应选择不做。
+>
+> 本节只记「要做的事 + 怎么算做完」，判定口径见方案 §6。
+
+| # | 项 | 现状证据 | 验收（命令 → 期望值） | 状态 |
+|---|---|---|---|---|
+| G0 | **P0 冻结现状** | 现在只有分位数（`tokens_p50/p90/max`），没有「多少块越界 / 多少结构块被切断」 | `python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --metrics sc,bi` → 883 篇逐文档表 + `bi_below_threshold` 清单，人工抽 5 篇核对 ≥4 篇为真切断 | ⬜ |
+| G1 | **P1 无缝隙覆盖不变量** | `tests/test_parent_builder.py:289` 只断言「parent 有 child」，**不断言 child 拼起来没丢字** | 新增 `NoTextLossTest`：改坏实现少切一个字符 → `python -m unittest tests.test_ingest_invariants` 必红；未改坏时 OK | ⬜ |
+| G2 | **P1 overlap 上限语义钉死** | 只有 `child_overlap_tokens < child_max_tokens` 校验，「含 overlap 的 child ≤ 上限」无用例也无文档 | `OverlapWithinLimitTest` 存在且通过；把 overlap 调成 600 → 用例必红 | ⬜ |
+| G3 | **P1 SC + BI 指标** | `quality_report.py` 有 3 个细分指标，但没有「单文档单一分」 | `python -m unittest tests.test_quality_metrics` → ≥4 用例 OK；`block_integrity(['ab','cd'], [(0,4)], 'abcd')` = `0.0` | ⬜ |
+| G4 | **P2 体检命令**（面向用户，无金标也能用） | `quality_report.py` 是开发脚本（跑 A–D 五变体），用户索引自己文档时没有任何手段 | `python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --threshold 0.95 --strict` → 打印失败清单；`echo $?` = 0/1 与阈值一致 | ⬜ |
+| G5 | **P3 结构桶对照实验** | 883 篇里 590 篇有代码块（66.8%）、87 篇有表格（9.9%）；但 95 正样本只盖 43 页（2.21 题/页） | 题集 ≥250 题 / ≥120 页后：`eval_bench --compare docs/baseline-k8s-v1.json` → `hit@10 +≥2 题`、`MRR 降 <0.02`、三计数「更好 > 更差」，三条全中才采纳 | ⬜ |
+| G6 | **P4 与 B07 合并消融** | D1（`min_tokens` 200→400）要一次全量重建，别付两遍 2,000 s | 一张表同时给出 min_tokens 与结构保护的**单变量**效应 | ⬜ |
+| G7 | **P5 Docling 评估（解 D7 + N9 的候选）** | PDF 走 PyMuPDF（AGPL-3.0，D7 卡着），且 `source_start/end` 全 NULL（N9）；Docling 实查 PyPI = **MIT** | `python scripts/probe_docling.py --pdf-dir data/pdf_md --limit 20` → 每篇给出 `has_bbox: true` + 耗时；`pip list \| grep -i pymupdf` 仍为空（不引入 AGPL） | ⬜ |
+
+**明确不做**（理由见方案 §4-C）：逐文档自适应选择（金标 2.21 题/页）、语义切分（上游实测 SC 48.1 最差）、
+RC 指标（`maverick-coref` CC BY-NC-SA + 仅英文代词）、LLM regex 切分（需 OpenAI）、抄上游 1100/600/100（口径不同）、
+搬上游数字当基线（不同检索器）。
+
 ## 建议顺序
 
 ```
@@ -183,7 +208,9 @@ A2 → A1 → A3 → A4 → A5 → A6(tag v0.1.0)      发布线，已全部完�
 → F1 → F10 → F14（工程第二档：一条命令起全栈 / doctor --fix / 5 分钟 quickstart）
 → F24 → F25 → F5（工程第三档：把成果锁进 CI）
 → B1 → B2（拆安装门槛）→ B4 → B5
+→ G0 → G1 → G2 → G3 → G4（切片护栏与体检，不改默认参数，1.5 天）
 → D5（引用精度）与 C1/C2（语言平衡）并行
+→ G5 → G6（结构桶实验，等题集扩到 250+）· G7（Docling，可能一箭双雕解 D7+N9）
 性能账（E 表）随时可捡，但都不阻塞发布
 ```
 
