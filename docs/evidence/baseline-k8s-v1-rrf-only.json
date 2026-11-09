@@ -1,0 +1,84 @@
+{
+  "collection": "bench_k8s_v1",
+  "questions": "datasets\\k8s-zh-en-v1\\questions.jsonl",
+  "k": 10,
+  "pool": 40,
+  "rerank": true,
+  "overall": {
+    "n": 100,
+    "positives": 95,
+    "hit@10": 0.7789,
+    "full@10": 0.7684,
+    "recall@10": 0.7737,
+    "mrr": 0.5456
+  },
+  "by_evidence_lang": {
+    "en": {
+      "n": 50,
+      "positives": 50,
+      "hit@10": 0.8,
+      "full@10": 0.78,
+      "recall@10": 0.79,
+      "mrr": 0.6209
+    },
+    "negative": {
+      "n": 5,
+      "positives": 0
+    },
+    "zh-cn": {
+      "n": 45,
+      "positives": 45,
+      "hit@10": 0.7556,
+      "full@10": 0.7556,
+      "recall@10": 0.7556,
+      "mrr": 0.4619
+    }
+  },
+  "by_type": {
+    "cross_lingual": {
+      "n": 14,
+      "positives": 14,
+      "hit@10": 0.5,
+      "full@10": 0.5,
+      "recall@10": 0.5,
+      "mrr": 0.1478
+    },
+    "multi_hop": {
+      "n": 6,
+      "positives": 6,
+      "hit@10": 1.0,
+      "full@10": 1.0,
+      "recall@10": 1.0,
+      "mrr": 0.6528
+    },
+    "negative": {
+      "n": 5,
+      "positives": 0
+    },
+    "numeric": {
+      "n": 7,
+      "positives": 7,
+      "hit@10": 0.8571,
+      "full@10": 0.7143,
+      "recall@10": 0.7857,
+      "mrr": 0.6786
+    },
+    "single_hop": {
+      "n": 68,
+      "positives": 68,
+      "hit@10": 0.8088,
+      "full@10": 0.8088,
+      "recall@10": 0.8088,
+      "mrr": 0.6044
+    }
+  },
+  "negatives": {
+    "n": 5,
+    "note": "负样本的正确行为是弃答；它们没有 gold，不进 recall 分母"
+  },
+  "latency_ms": {
+    "p50": 199.7,
+    "p90": 239.2,
+    "warmup": true
+  }
+}

@@ -115,6 +115,20 @@ def retrieve_ranked(question: str, *, retriever, parents: Mapping[str, Mapping[s
     return outcome.hits, outcome.candidates, outcome.route_hits
 
 
+def _parent_text(parent: Mapping[str, Any] | None) -> str:
+    """父块正文：`text` 与 `content` 两个键都认（N45）。
+
+    为什么不能只认 `text`：`store_wiring.load_parent_records()`（生产链路）给的是 `text`，
+    而 `scripts/eval_bench.py` 的 `load_parents()` 直接塞 SQL 行、键是 `content`。
+    只认 `text` 时评测里每个候选的窗口都是空串 —— cross-encoder 对 40 个空串打分全等，
+    稳定排序保持原序，**重排等于没跑**，而报告的配置里写着「含重排」。
+    取不到正文就退化成空串，等于悄悄关掉一条路，这种失败方式最难发现。
+    """
+    if not parent:
+        return ""
+    return parent.get("text") or parent.get("content") or ""
+
+
 def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
                        counter, reranker, pool: int = DEFAULT_POOL,
                        rerank: bool = True) -> RetrievalOutcome:
@@ -126,7 +140,7 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
 
     hits: list[RerankHit] = []
     for rank, hit in enumerate(fused, start=1):
-        text = (parents.get(hit.parent_id) or {}).get("text", "")
+        text = _parent_text(parents.get(hit.parent_id))
         item = RerankHit(chunk_id=hit.parent_id, parent_id=hit.parent_id, text=text,
                          score=hit.score, rank=rank)
         hits.append(item)

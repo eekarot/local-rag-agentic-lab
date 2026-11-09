@@ -48,7 +48,11 @@ def load_parents(path: Path) -> dict[str, dict]:
     parents: dict[str, dict] = {}
     for row in conn.execute("SELECT parent_id, document_id, content, title, section_path, language "
                             "FROM parents"):
-        parents[row["parent_id"]] = dict(row)
+        item = dict(row)
+        # `text` 是检索链路认的键（与 store_wiring.load_parent_records 一致）；
+        # 少了它，重排的窗口全是空串 —— 实测基线因此一直「含重排」却从没真重排过（N45）。
+        item["text"] = item.get("content") or ""
+        parents[row["parent_id"]] = item
     conn.close()
     return parents
 

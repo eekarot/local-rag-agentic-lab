@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.40
+> **文档版本**：2.41
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2425,6 +2425,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **N43** | 入库闸门只认**父块**版本（`builder.chunker_version = PARENT_CHUNKER_VERSION`），子块语义改了却不会触发重建 → 升级后所有 `COMPLETED` 文档被 `[skip]`，**一份库混着两套切分语义且看不出来** | ①闸门值改成「父+子」复合：`ingest_chunker_version() = f"{PARENT}+{CHILD}"`，`IngestPipeline` 用它做 `is_done` 与 `state.complete`；②子块语义一改就升 `CHILD_CHUNKER_VERSION`（本次 → `recursive_child_v2`），代价是**子块 id 全变、父块 id 不变** —— 所以 `gold_chunks`（父块粒度）不受影响，只有 `gold_points` 要重算；③用例 `tests/test_chunker_version_gate.py` 7 条：旧记录不许再被跳过、同值仍能跳过、升子块版本只换子块 id
 | **N44** | `gold` 能不能「限制在题目那一页」—— 实测**不能随手改**：把匹配限制到 `source_path` 后，3 道英文题（`k8s-e-033/038`、`k8s-x-007`）判成检索错了，可它们检回的**孪生页面**上写着同一段话；hit@10 0.7789 → 0.7684、MRR 0.5456 → 0.5298 | ①`refresh-ids` **默认全库匹配**（与原出题口径一致），严格模式只作为 `--same-page` 开关存在；②口径一旦变就换基线，不能新旧数字直接比；③重算工具只换 id、不动 `gold_spans` 与其他字段，95 题 id 变化、`gold_chunks` 与改前完全一致、0 孤儿 |
 
+| **N45** | 评测里**重排从未真正跑过**：`retrieve_with_meta` 用 `parents[pid]["text"]` 取窗口正文，而 `scripts/eval_bench.py` 的 `load_parents()` 直接把 SQL 行塞进字典（键是 `content`）→ 每个候选的窗口都是空串，cross-encoder 对 40 个空串打分全等、稳定排序保持原序。**基线标着「含重排」，实际是 RRF 原序**（`--no-rerank` 与默认配置逐题 top-10 完全一致，就是这么发现的） | ①取窗口时 `text` / `content` 都认（`_parent_text()`），调用方用哪种 schema 都不会静默失效；②`eval_bench.load_parents` 补 `text` 别名，与 `store_wiring.load_parent_records` 对齐；③用例 `tests/test_rerank_window.py`：假 encoder 按「窗口里有没有 TARGET」打分 —— 窗口空就顺序不变，直接红；④修好后基线整体上移：hit@10 0.7789 → **0.8632**、MRR 0.5456 → **0.6075**、zh MRR 0.4619 → **0.6468**，延迟 p50 64 → 1192 ms（重排是真的贵）。RAG 里「配置写了、代码没跑」比「跑错」更难发现
+
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
 
 ### 17.11.1 B01：Embedding 走 Ollama API（不引入 FlagEmbedding）
@@ -3338,6 +3340,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.38                    2026-11-06              切片护栏落地（覆盖不变量 / overlap 上限 / SC+BI / 体检命令）+ N41
   2.39                    2026-11-06              切片改动的检索端 A/B（A/A 定噪声）+ N42（child id 随内容哈希变）
   2.40                    2026-11-06              入库闸门改父+子复合版本（N43）+ gold 重算工具与口径（N44）
+  2.41                    2026-11-06              评测里重排对空窗口工作（N45）+ 基线重立（hit@10 0.7789→0.8632）
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空

@@ -48,8 +48,9 @@
 
 | # | 项 | 说明 | 验收要点 |
 |---|---|---|---|
-| C0 | **基准数据集 + 第一版基线** | ✅ 已完成：`datasets/k8s-zh-en-v1`（Kubernetes 官方文档中英对照 472 页 × 2 语言，CC BY 4.0，上游 commit `380372f` 钉死）+ `questions.jsonl` **100 题**（95 正样本 + 5 负样本；中英各半，14 道跨语言，题型 single_hop 68 / multi_hop 6 / numeric 7 / cross_lingual 14 / negative 5）+ 基线 `docs/baseline-k8s-v1.json`：**recall@10 0.7737 / hit@10 0.7789 / full@10 0.7684 / MRR 0.5456**；按证据语言 en 0.79 / zh 0.7556（MRR 0.6209 vs 0.4619）；延迟 p50 200 ms。**2026-11-06 已重立**（G2 修掉 overlap 顶破上限后按 C7 重建库 + 重跑；旧基线归档在 `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`，MRR 0.5529 → 0.5456，命中率不变） | `python scripts/fetch_dataset.py --verify` → 944 文件一致；`python scripts/build_bench_questions.py append --drafts ...` → 100 题全部通过 span 定位校验；`python scripts/eval_bench.py --k 10` → 落 baseline JSON + 逐题 rows；`python -m unittest tests.test_bench_questions tests.test_bench_dataset` → 32 OK | ✅ |
-| C0b | **中文证据排序偏弱**（基线暴露的真问题） | ⬜ 待做：zh 切片的 MRR 0.4619 vs en 0.6209 —— 同一套链路，中文证据平均排得更靠后；先看是 dense_zh 召回的问题还是重排的问题（`--no-rerank` 对照） | `python scripts/eval_bench.py --k 10 --no-rerank --out docs/ab-norerank.json` → 与基线比 **zh 切片 MRR 是否变化**；变化小 → 问题在召回；变化大 → 问题在重排 | ⬜ |
+| C0 | **基准数据集 + 第一版基线** | ✅ 已完成：`datasets/k8s-zh-en-v1`（Kubernetes 官方文档中英对照 472 页 × 2 语言，CC BY 4.0，上游 commit `380372f` 钉死）+ `questions.jsonl` **100 题**（95 正样本 + 5 负样本；中英各半，14 道跨语言，题型 single_hop 68 / multi_hop 6 / numeric 7 / cross_lingual 14 / negative 5）+ 基线 `docs/baseline-k8s-v1.json`：**recall@10 0.8561 / hit@10 0.8632 / full@10 0.8526 / MRR 0.6075**（2026-11-06 修掉 N45「评测里重排对空窗口工作」后重立；修前是 0.7737/0.7789/0.7684/0.5456）；按证据语言 en hit 0.88 / zh 0.8444（MRR 0.5721 vs 0.6468）；延迟 p50 1192 ms（重排占 ~1.1 s）。**2026-11-06 已重立**（G2 修掉 overlap 顶破上限后按 C7 重建库 + 重跑；旧基线归档在 `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`，MRR 0.5529 → 0.5456，命中率不变） | `python scripts/fetch_dataset.py --verify` → 944 文件一致；`python scripts/build_bench_questions.py append --drafts ...` → 100 题全部通过 span 定位校验；`python scripts/eval_bench.py --k 10` → 落 baseline JSON + 逐题 rows；`python -m unittest tests.test_bench_questions tests.test_bench_dataset` → 32 OK | ✅ |
+| C0b | **中文证据排序偏弱** | ✅ 已定位（2026-11-06）：关重排 zh MRR **0.4619**、开重排 **0.6468** → 主因在**重排**不是召回；而且顺带查出旧基线的重排根本没运行（N45），修好后 zh 反而比 en 更稳（0.6468 vs 0.5721）。细节 `docs/evidence/c0b-rerank-pool-ablation.json`。**剩下的是另一件事**：`中→英` hit 仍只有 0.60（见 C0c） | `python scripts/eval_bench.py --k 10 --no-rerank` → zh MRR 0.4619；默认（重排开）→ zh MRR 0.6468；候选池 60 → hit@10 0.8737（+1 点，延迟 +49%） | ✅ |
+| C0c | **中→英跨语言仍然最弱** | `中→英` hit@10 **0.6000** / MRR 0.1944（n=10），其余三格 0.75–0.95 | `python scripts/eval_bench.py --k 10 --limit 100` → 四格里的 `中→英` 行；改翻译或 dense_en 后看该行是否上升（题量 10，只认 ≥2 题的移动，别单题下结论） | ⬜ |
 
 | C1 | **D29 语言不平衡治理** | 中文语料为主时，英文路可能淹没中文证据 | 同语言加权或来源配额，报 Recall@k / hit@k / full@k 三项 + 逐题更好/更差/持平计数 |
 | C2 | **D30 跨语言门槛核算** | 跨语言命中该不该算、门槛怎么定 | 给出「算 / 不算」两套口径下的数字，结论写入设计文档 |
@@ -58,7 +59,7 @@
 | C5 | **D38 百万级压测** | 当前 38,865 点，未见规模效应 | 生成 100 万点 → ingest 耗时、RSS、p50/p95 检索延迟 |
 | C6 | **D39 16GB 内存预算** | reranker 945 MB + 可用 5.9 GB，多进程会 OOM | 明确 `--workers` 上限推导过程，写成表 |
 | C7 | **E04 日志/评估资产接新 pipeline** | `raglog` 与 L1 评估仍走旧链 | 新链跑一次评估 → 日志字段与旧链可对齐比较 |
-| C8 | **E05 新基线重立 + 回归门禁** | 🔶 **基线已重立**（2026-11-06，G2 修掉 overlap 顶破上限后）：删集合重建 → `recall@10 0.7737 / hit@10 0.7789 / full@10 0.7684 / MRR 0.5456`，旧基线归档 `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`。**回归门禁未做** | `python scripts/eval_bench.py --k 10` → 与 `docs/baseline-k8s-v1.json` 一致（`python -m unittest tests.test_bench_questions.ReadmeBaselineNumbersTest` 退 0）；门禁：`python scripts/eval_bench.py --compare docs/baseline-k8s-v1.json` → 退出码按容差判定，`not_comparable` 不返非零 |
+| C8 | **E05 新基线重立 + 回归门禁** | 🔶 **基线已重立两次**（2026-11-06）：①G2 修掉 overlap 顶破上限 → 0.7737/0.7789/0.7684/0.5456；②修掉 N45（重排对空窗口）→ **0.8561/0.8632/0.8526/0.6075**，旧基线归档 `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`。**回归门禁未做** | `python scripts/eval_bench.py --k 10` → 与 `docs/baseline-k8s-v1.json` 一致（`python -m unittest tests.test_bench_questions.ReadmeBaselineNumbersTest` 退 0）；门禁：`python scripts/eval_bench.py --compare docs/baseline-k8s-v1.json` → 退出码按容差判定，`not_comparable` 不返非零 |
 
 ## D. 已知缺陷 / 明确 blocked
 
