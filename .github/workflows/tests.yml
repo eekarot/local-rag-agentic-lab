@@ -56,6 +56,7 @@ jobs:
           OLLAMA_BASE_URL: http://127.0.0.1:1
         # 失败时把「红在哪」写进 annotation：CI 日志要登录才能看，annotation 不用（排查少绕一圈）
         run: |
+          set +e          # GitHub 的 run 默认带 set -e，不关掉的话失败会直接中断，一行诊断都留不下
           python -m unittest discover -s tests > suite.log 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
