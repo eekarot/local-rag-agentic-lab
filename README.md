@@ -393,6 +393,23 @@ docker compose down               # 彻底停（数据仍在 ./storage/qdrant）
 > 备份要一起拷 `storage/qdrant`（向量）、`storage/documents.sqlite3`（原文与元数据）、
 > `storage/ingest/`（进度）——**只拷其中一个，恢复出来就是残缺的库**。
 
+### 建库前先体检：`scripts/chunk_quality.py`
+
+索引**你自己的文档**时没有题库可测（没有 `Recall@k`）。这时唯一能提前发现问题的办法是
+**看切分有没有把段落/表格/代码切断** —— 它不需要任何标注，只用到 parser 给出的结构边界：
+
+```bash
+python scripts/chunk_quality.py --dir data/md --strict      # 结构体检，有不合格就退出码 1
+python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --json out.json   # 逐篇结果落文件
+python scripts/ingest.py --dir data --precheck-only         # 同一个检查，但走建库入口
+```
+
+输出三样：`sc` 尺寸合规（有多少子块越界）、`bi` 结构完整（有多少段落/表格被切断）、
+`gap` 丢字检查（父块内容有没有被子块漏掉，**这算 bug 不算评分**）。
+
+> **`sc`/`bi` 不预测答对率**，只筛「明显结构有毛病」的语料；检索质量仍以 `scripts/eval_bench.py`
+> 为准。仓库自带的基准语料实测：944 篇 / 9,795 子块 / `sc` 1.0 / `bi` 0.9607 / 丢字 0 篇。
+
 ### 服务自检：`GET /health`
 
 `/health` 与 `doctor` 跑**同一套探针**（一份实现，两处复用），区别只是它给监控用：

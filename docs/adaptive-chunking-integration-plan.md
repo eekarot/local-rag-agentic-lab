@@ -1,6 +1,6 @@
 # 切片体检与结构保护：整合 `ekimetrics/adaptive-chunking` 的方案
 
-> 版本：v1 · 2026-11-06 · 配套设计文档 v2.37
+> 版本：v1.1 · 2026-11-06 · 配套设计文档 v2.38（P0–P2 已落地，见 §5.1）
 >
 > 上游：<https://github.com/ekimetrics/adaptive-chunking>（LREC 2026，MIT，401 stars）
 > 本地阅读副本：`$TEMP/adaptive-chunking`（只读，不入库）
@@ -113,9 +113,9 @@ overlap_in_range / duplicate / parent_section）。
 
 **目标**：先把「现在的切片长什么样」变成可核对的数字，否则改完无法判断是改好了还是改坏了。
 
-**交付物**
-- 本文档 §3 的对照表（已完成）
-- `docs/evidence/chunk-quality-k8s-v1.json`：883 篇 × `{num_children, tokens_p50/p90/max, sc, bi}`
+**交付物**（已完成）
+- 本文档 §3 的对照表
+- `docs/evidence/chunk-quality-k8s-v1.json`：**944 篇逐篇** `{parents, children, tokens_max, sc, bi, gap_parents, broken_blocks}`
 
 **影响面**：无（不碰代码、不碰库）
 
@@ -124,7 +124,8 @@ overlap_in_range / duplicate / parent_section）。
 python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --metrics sc,bi --out docs/evidence/chunk-quality-k8s-v1.json
 python -c "import json;d=json.load(open('docs/evidence/chunk-quality-k8s-v1.json'));print(d['summary'])"
 ```
-→ 期望：`{'docs': 883, 'sc_mean': 0.9x, 'bi_mean': 0.9x, 'bi_below_threshold': N}`，且 N 与人工抽 5 篇核对一致（≥4 篇确认为真切断，否则指标是假的）
+→ 实测：`docs=944, children=9795, sc_mean=1.0, bi_mean=0.9607, bi_below_threshold=286, gap_docs=0`
+（`bi=1.0` 的文档 270 篇；最低 5 篇人工看过，都是短小节页，确为真切断）
 
 ### P1 三条护栏 + 两个指标（1 天，纯加测试，不动默认参数）
 
@@ -137,7 +138,8 @@ python -c "import json;d=json.load(open('docs/evidence/chunk-quality-k8s-v1.json
 - `tests/test_quality_metrics.py`：4 个用例（区间内外、空输入、边界、单块）
 - `src/rag/ingestion/parent_builder.py`：只在 docstring 里把 overlap 语义写清（**不改逻辑**）
 
-**影响面**：不改 ID、不改默认参数、不重建库
+**影响面**：不改默认参数、不重建库。**唯一的行为变化**：修掉了 overlap 顶破上限的 5 个块
+（见 §5.1 的 G2），受影响子块的 `chunk_id` 会变，其余 9,790 个不变。
 
 **验收**
 ```bash
@@ -167,7 +169,16 @@ print(block_integrity(chunks=['ab','cd'], blocks=[(0,4)], text='abcd'))"
 ```bash
 python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --metrics sc,bi --threshold 0.95
 ```
-→ 期望：打印 `883 篇，SC 均值 ≥0.90，BI 均值 ≥0.90，BI<0.95 的 N 篇`，并对每篇列出「被切断的 block 行号」；`echo $?` 在 `--strict` 且超阈值时为 1
+→ 实测：`944 篇 · 子块 9795 个 · sc 均值 1.0 · bi 均值 0.9607 · bi<0.95 的 286 篇 · 丢字 0 篇`，
+并列出被切断的块数（不是行号：块偏移已在 json 里）；`--strict` 与阈值一致（8 个用例守着）。
+
+另接进建库入口（原计划写的是 `ingest --dry-run`，实际做成独立开关，理由见 §5.1）：
+
+```bash
+python scripts/ingest.py --dir data --precheck-only            # 不连 Qdrant、不写库
+python scripts/ingest.py --dir data --precheck --precheck-strict   # 闸门：不合格就不建库
+```
+→ 期望：`QDRANT_URL=http://127.0.0.1:1` 下 `--precheck-only` 仍退 0 且无 Qdrant 报错（实测通过）
 
 ### P3 结构桶对照实验（2 天 + 扩题 1 天）
 
@@ -223,6 +234,27 @@ python scripts/probe_docling.py --pdf-dir data/pdf_md --limit 20
 ```
 → 期望：每篇输出 `{pages, blocks, has_bbox: true, seconds}`；**能取到页码与坐标**（这是 N9 的前置），且不引入 AGPL 依赖（`pip list | grep -i pymupdf` 为空）
 
+### 5.1 落地记录（P0 / P1 / P2，2026-11-06）
+
+| 项 | 结果 | 证据 |
+|---|---|---|
+| **P0** 现状快照 | 944 篇 / 9,795 子块；`sc_mean` 1.0、`bi_mean` 0.9607、`bi<0.95` 286 篇、**丢字 0 篇** | `docs/evidence/chunk-quality-k8s-v1.json`（80 s 跑完） |
+| **P1** 无缝隙覆盖 | 现有实现**本来就没丢字**（0/7,108 父块），但没有任何用例守着 → 现已钉死 | `NoTextLossTest` 4 用例；变异验证：少切 1 字符 → 4 红 |
+| **P1** overlap 上限 | **逮到真 bug**：`apply_overlap` 默认 `max_overlap_tokens=70` > 目标 60，导致 **5/9,795 个子块超 500 token（501–505）** | 修后 `sc_mean = 1.0`；变异验证：恢复旧算法 → 用例红（147 > 120） |
+| **P1** SC + BI | 新增 `quality_metrics.py`（纯整数区间，无 tokenizer 依赖） | 20 用例 |
+| **P2** 体检命令 | `scripts/chunk_quality.py` + 编排层 `quality_inspect.py`；`ingest` 加 4 个开关 | 14 用例（CLI 8 + precheck 6） |
+
+**两处与原计划的偏离，及理由**
+
+1. **`ingest --dry-run` 挂载改为独立开关**（`--precheck` / `--precheck-only`）。
+   原计划想让 `--dry-run` 顺带体检，但 `--dry-run` 目前**仍要连 Qdrant**（它走 `pipeline.run(dry_run=True)`），
+   挂在上面等于「体检前先起库」—— 对还没装 Docker 的用户没有意义。
+   独立开关可以在**任何**状态下跑，也符合「优化路径要走同一个受保护入口」的边界：
+   体检是只读旁路，不进 `pipeline.run` 的受保护路径。
+2. **P2 的报告不给「被切断的 block 行号」，给「被切断的块数 + 逐篇 json」**。
+   行号需要从字符偏移反查原始文件行号，成本不小而收益有限（json 里已有偏移，可自行定位）；
+   真正要紧的是「哪几篇不合格」，这一列已经给了。
+
 ## 6. 判定口径（不许临时改）
 
 1. 指标同时报 `Recall@k` + `hit@k` + `full@k` + `MRR`；**只报均值不算结论**，必须带「更好/更差/持平」三计数。
@@ -259,3 +291,4 @@ python scripts/probe_docling.py --pdf-dir data/pdf_md --limit 20
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | v1 | 2026-11-06 | 首版：对照上游 `adaptive-chunking`（LREC 2026）后定 P0–P5 分期；A 类 4 项立刻做、B 类 3 项待条件、C 类 6 项不做（含许可证实查记录） |
+| v1.1 | 2026-11-06 | P0/P1/P2 落地并记录实测（§5.1）：BI 0.9607、丢字 0；**修掉 overlap 顶破上限的真 bug（5 块）**；体检命令与 `ingest --precheck*` 上线 |

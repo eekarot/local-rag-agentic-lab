@@ -184,14 +184,17 @@
 > B08（只用 onnxruntime）、D39（16 GB 预算）冲突；金标也太薄（2.21 题/页），逐文档自适应选择不做。
 >
 > 本节只记「要做的事 + 怎么算做完」，判定口径见方案 §6。
+>
+> **进度（2026-11-06）**：P0–P2 已落地（G0–G4 ✅，43 个新用例：质量指标 20 + 不变量 9 +
+> 体检命令 8 + 建库前体检 6）。P3/P4 等题集扩到 250+，P5（Docling）是旁路试验。
 
 | # | 项 | 现状证据 | 验收（命令 → 期望值） | 状态 |
 |---|---|---|---|---|
-| G0 | **P0 冻结现状** | 现在只有分位数（`tokens_p50/p90/max`），没有「多少块越界 / 多少结构块被切断」 | `python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --metrics sc,bi` → 883 篇逐文档表 + `bi_below_threshold` 清单，人工抽 5 篇核对 ≥4 篇为真切断 | ⬜ |
-| G1 | **P1 无缝隙覆盖不变量** | `tests/test_parent_builder.py:289` 只断言「parent 有 child」，**不断言 child 拼起来没丢字** | 新增 `NoTextLossTest`：改坏实现少切一个字符 → `python -m unittest tests.test_ingest_invariants` 必红；未改坏时 OK | ⬜ |
-| G2 | **P1 overlap 上限语义钉死** | 只有 `child_overlap_tokens < child_max_tokens` 校验，「含 overlap 的 child ≤ 上限」无用例也无文档 | `OverlapWithinLimitTest` 存在且通过；把 overlap 调成 600 → 用例必红 | ⬜ |
-| G3 | **P1 SC + BI 指标** | `quality_report.py` 有 3 个细分指标，但没有「单文档单一分」 | `python -m unittest tests.test_quality_metrics` → ≥4 用例 OK；`block_integrity(['ab','cd'], [(0,4)], 'abcd')` = `0.0` | ⬜ |
-| G4 | **P2 体检命令**（面向用户，无金标也能用） | `quality_report.py` 是开发脚本（跑 A–D 五变体），用户索引自己文档时没有任何手段 | `python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --threshold 0.95 --strict` → 打印失败清单；`echo $?` = 0/1 与阈值一致 | ⬜ |
+| G0 | **P0 冻结现状** | ✅ 已完成：`docs/evidence/chunk-quality-k8s-v1.json`（**944 篇 / 9,795 子块**；`sc_mean` 1.0、`bi_mean` **0.9607**、`bi<0.95` 的 **286 篇**、`bi=1.0` 的 270 篇、**丢字 0 篇**）；最低的 5 篇人工看过，都是短小节页（`_index.md` 与 `ingress-controllers.md`），确为真切断 | `python scripts/chunk_quality.py --dataset k8s-zh-en-v1 --json docs/evidence/chunk-quality-k8s-v1.json` → 同上数字（80 s） | ✅ |
+| G1 | **P1 无缝隙覆盖不变量** | ✅ 已完成：`tests/test_ingest_invariants.py::NoTextLossTest` 4 用例（区间铺满 + 内容与偏移逐字对齐 + 短文 + 真实语料）；实现 `find_coverage_gaps()`。**变异验证**：把 `end` 减 1 字符 → 4 个用例全红 | `python -m unittest tests.test_ingest_invariants` → `OK`（9 用例）；改成少切 1 字符 → `FAILED (failures=4)` | ✅ |
+| G2 | **P1 overlap 上限语义钉死** | ✅ 已完成且**逮到真问题**：`apply_overlap` 的默认 `max_overlap_tokens=70` 大于目标 60 → 基准库实测 **5/9,795 个子块超 500 token（501–505）**。定为 `chunk_size` 语义（含 overlap ≤ 上限），修法 = 收敛 overlap 上限 + `_fit_front()` 二分兜底裁剪。修复后 `sc_mean = 1.0`（0 块越界） | `python scripts/chunk_quality.py --dataset k8s-zh-en-v1` → `sc 均值 1.0`；把 `split_max` 改回 `child_max_tokens` 并去掉裁剪 → `tests.test_ingest_invariants` 红（实测 147 > 120） | ✅ |
+| G3 | **P1 SC + BI 指标** | ✅ 已完成：`src/rag/ingestion/quality_metrics.py`（`size_compliance` / `block_integrity` / `find_coverage_gaps`，纯整数区间，不碰 tokenizer 与向量库）+ `tests/test_quality_metrics.py` **20 用例**（含「一块被切两次只算一次」「容差内不算切断」「空输入给 None 不给 0%」） | `python -m unittest tests.test_quality_metrics` → `OK`（20 用例） | ✅ |
+| G4 | **P2 体检命令**（面向用户，无金标也能用） | ✅ 已完成：`scripts/chunk_quality.py`（`--dir`/`--dataset`/`--metrics`/`--threshold`/`--limit`/`--json`/`--strict`）+ 编排层 `src/rag/ingestion/quality_inspect.py`；`ingest` 新增 `--precheck` / `--precheck-only` / `--precheck-strict` / `--precheck-threshold`（建库前一道闸，**不连 Qdrant、不写库**）。缺词表给 `curl` 不给堆栈；空目录退 0 | `python scripts/chunk_quality.py --dir data/md --strict` → 打印 3 指标；`python scripts/ingest.py --dir data --precheck-only`（`QDRANT_URL` 指死端口）→ 报告出现且**无 Qdrant 报错**，退 0；`tests.test_chunk_quality_cli` 8 用例 + `tests.test_ingest_precheck` 6 用例 | ✅ |
 | G5 | **P3 结构桶对照实验** | 883 篇里 590 篇有代码块（66.8%）、87 篇有表格（9.9%）；但 95 正样本只盖 43 页（2.21 题/页） | 题集 ≥250 题 / ≥120 页后：`eval_bench --compare docs/baseline-k8s-v1.json` → `hit@10 +≥2 题`、`MRR 降 <0.02`、三计数「更好 > 更差」，三条全中才采纳 | ⬜ |
 | G6 | **P4 与 B07 合并消融** | D1（`min_tokens` 200→400）要一次全量重建，别付两遍 2,000 s | 一张表同时给出 min_tokens 与结构保护的**单变量**效应 | ⬜ |
 | G7 | **P5 Docling 评估（解 D7 + N9 的候选）** | PDF 走 PyMuPDF（AGPL-3.0，D7 卡着），且 `source_start/end` 全 NULL（N9）；Docling 实查 PyPI = **MIT** | `python scripts/probe_docling.py --pdf-dir data/pdf_md --limit 20` → 每篇给出 `has_bbox: true` + 耗时；`pip list \| grep -i pymupdf` 仍为空（不引入 AGPL） | ⬜ |

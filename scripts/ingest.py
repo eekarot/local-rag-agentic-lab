@@ -134,6 +134,53 @@ def _no_work(args, lines: list[str]) -> bool:
     return False
 
 
+def _run_precheck(args) -> int:
+    """切片体检（G4）：在建库**之前**回答「这份语料切得有没有结构性毛病」。
+
+    为什么放在建库前：建库一次要几百到几千秒，而体检只解析+切分（快两个数量级）。
+    用户索引自己的文档时没有题库可测，这是唯一能提前发现「段落/表格被切断」的手段。
+
+    返回 0 = 继续（或体检通过）；1 = `--precheck-strict` 下不合格，调用方应中止。
+    """
+    from src.rag.ingest.pipeline import discover_corpus
+    from src.rag.ingestion.parent_builder import ParentConfig
+    from src.rag.ingestion.quality_inspect import format_report, inspect_paths
+    from src.rag.ingestion.tokenizer import TokenCounter
+
+    discovered = discover_corpus(args.dir, args.patterns)
+    if args.only:
+        wanted = set(args.only)
+        discovered = [p for p in discovered if p.relative_to(args.dir).as_posix() in wanted]
+    if args.limit:
+        discovered = discovered[: args.limit]
+    if not discovered:
+        print("[precheck] 没有可体检的文件")
+        return 0
+
+    try:
+        counter = TokenCounter()
+    except TokenizerUnavailable as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+
+    summary = inspect_paths(
+        discovered,
+        counter,
+        ParentConfig(),
+        threshold=args.precheck_threshold,
+        display_root=args.dir,
+    )
+    for line in format_report(summary):
+        print(line)
+    if args.precheck_strict and not summary.ok:
+        print(
+            "[precheck] 体检不合格：先修切分或调整参数，再建库（本次退出码 1）",
+            file=sys.stderr,
+        )
+        return 1
+    return 0
+
+
 def _collection_points(collection: str) -> int | None:
     """当前集合有多少点；连不上返回 None（状态查询不该因为服务没起就失败）。"""
     try:
@@ -155,6 +202,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--only", nargs="*", default=None, help="只处理这些 doc_key（相对 --dir 的路径）")
     parser.add_argument("--force", action="store_true", help="忽略已完成状态，强制重做")
     parser.add_argument("--dry-run", action="store_true", help="只发现不写入")
+    parser.add_argument("--precheck", action="store_true",
+                        help="建库前先做切片体检（结构指标，多花一次解析/切分）")
+    parser.add_argument("--precheck-only", action="store_true",
+                        help="只做切片体检后退出（不连 Qdrant、不写库）")
+    parser.add_argument("--precheck-strict", action="store_true",
+                        help="体检不合格（bi 低于阈值或有丢字）时退出码 1")
+    parser.add_argument("--precheck-threshold", type=float, default=0.95,
+                        help="体检的 bi 阈值（默认 0.95）")
     parser.add_argument("--collection", default=default_collection())
     parser.add_argument("--state", type=Path, default=None)
     parser.add_argument("--document-db", type=Path, default=None)
@@ -225,6 +280,12 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(chr(10).join(lines))
             return 0
+
+    # 体检放在建库之前：不连 Qdrant、不写库；`--precheck-only` 到此为止。
+    if args.precheck or args.precheck_only:
+        code = _run_precheck(args)
+        if args.precheck_only or code:
+            return code
 
     try:
         pipeline, client, embedder, state = build_pipeline(args, log=log)

@@ -23,7 +23,12 @@ from typing import Iterable, Sequence
 
 from .block import DocumentBlock
 from .ids import content_hash, make_chunk_id, make_parent_id
-from .overlap import DEFAULT_OVERLAP_TOKENS, apply_overlap
+from .overlap import (
+    DEFAULT_MAX_OVERLAP_TOKENS,
+    DEFAULT_MIN_OVERLAP_TOKENS,
+    DEFAULT_OVERLAP_TOKENS,
+    apply_overlap,
+)
 from .recursive_chunker import recursive_split
 from .tokenizer import TokenCounter
 
@@ -384,6 +389,13 @@ def build_children(
     split_max = child_max_tokens - overlap_tokens
     split_target = max(1, child_target_tokens - overlap_tokens)
 
+    # overlap 的**上限**也要收在 `overlap_tokens` 以内：`apply_overlap` 的默认
+    # `max_overlap_tokens=70` 比 `DEFAULT_OVERLAP_TOKENS=60` 大，取 70 时会有几块溢出
+    # `child_max_tokens`（基准库实测 5/9,795 块超 1–5 个 token）。
+    # 语义选定：**含 overlap 的子块 ≤ child_max_tokens**（上游的 `max_tokens_strategy=chunk_size`）。
+    overlap_cap = max(0, min(DEFAULT_MAX_OVERLAP_TOKENS, overlap_tokens))
+    overlap_floor = max(0, min(DEFAULT_MIN_OVERLAP_TOKENS, overlap_cap))
+
     children: list[Child] = []
     for parent in parents:
         raw_pieces = recursive_split(
@@ -392,17 +404,31 @@ def build_children(
             max_tokens=split_max,
             target_tokens=split_target,
         )
-        pieces = apply_overlap(raw_pieces, counter, overlap_tokens=overlap_tokens)
+        pieces = apply_overlap(
+            raw_pieces,
+            counter,
+            overlap_tokens=overlap_tokens,
+            min_overlap_tokens=overlap_floor,
+            max_overlap_tokens=overlap_cap,
+        )
         for child_index, piece in enumerate(pieces):
-            if not piece.content.strip():
+            content = piece.content
+            char_start = piece.char_start
+            if not content.strip():
                 continue
-            start = None if parent.source_start is None else parent.source_start + piece.char_start
-            end = None if parent.source_start is None else parent.source_start + piece.char_end
+            # 兜底：无论 overlap 挑到多长，都不许把子块顶过 `child_max_tokens`。
+            # 丢掉的是**重叠区**，不丢正文（正文仍在后一块里）。
+            drop = _fit_front(content, counter, child_max_tokens)
+            if drop:
+                content = content[drop:]
+                char_start += drop
+            start = None if parent.source_start is None else parent.source_start + char_start
+            end = None if parent.source_start is None else parent.source_start + char_start + len(content)
             child = Child(
                 parent_index=parent.parent_index,
                 child_index=child_index,
-                content=piece.content,
-                token_count=counter.count(piece.content),
+                content=content,
+                token_count=counter.count(content),
                 section_path=list(parent.section_path),
                 source_start=start,
                 source_end=end,
@@ -417,10 +443,28 @@ def build_children(
             )
             if parent.parent_id:
                 child.chunk_id = make_chunk_id(
-                    parent.parent_id, child_index, content_hash(piece.content), CHILD_CHUNKER_VERSION
+                    parent.parent_id, child_index, content_hash(content), CHILD_CHUNKER_VERSION
                 )
             children.append(child)
     return children
+
+
+def _fit_front(content: str, counter: TokenCounter, max_tokens: int) -> int:
+    """返回「从前面丢掉多少个字符」能让剩余部分 ≤ `max_tokens`（丢的是重叠区）。
+
+    二分而不是逐字符：真实词表下「1 token ≈ 1 个字」并不成立，逐字符循环在长块上
+    会变成几千次分词。
+    """
+    if counter.count(content) <= max_tokens:
+        return 0
+    low, high = 0, len(content)
+    while low < high:
+        middle = (low + high) // 2
+        if counter.count(content[middle:]) <= max_tokens:
+            high = middle
+        else:
+            low = middle + 1
+    return low
 
 
 __all__ = [
