@@ -13,6 +13,9 @@
 - **`ingest --precheck` / `--precheck-only` / `--precheck-strict`**：建库前先体检。`--precheck-only`
   **不连 Qdrant、不写库**（把 `QDRANT_URL` 指到死端口也能跑），适合还没起服务的机器。
 - **`eval_bench --collection / --store`**：可以把评估指到另一个集合，做参数 A/B 时不必覆盖唯一一份基线数据。
+- **`eval_bench --compare 基线.json`：回归门禁**。打印「基线 vs 现在」对照表 + 逐题更好/更差/持平计数；
+  容差 = 基线一侧 95% bootstrap CI 半宽；题集/`k`/`pool`/重排开关不同则 `not_comparable` 并退 **0**
+  （不判红）；默认不覆盖基线文件。
 
 ### 修复
 

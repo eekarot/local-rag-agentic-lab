@@ -59,7 +59,7 @@
 | C5 | **D38 百万级压测** | 当前 38,865 点，未见规模效应 | 生成 100 万点 → ingest 耗时、RSS、p50/p95 检索延迟 |
 | C6 | **D39 16GB 内存预算** | reranker 945 MB + 可用 5.9 GB，多进程会 OOM | 明确 `--workers` 上限推导过程，写成表 |
 | C7 | **E04 日志/评估资产接新 pipeline** | `raglog` 与 L1 评估仍走旧链 | 新链跑一次评估 → 日志字段与旧链可对齐比较 |
-| C8 | **E05 新基线重立 + 回归门禁** | 🔶 **基线已重立两次**（2026-11-06）：①G2 修掉 overlap 顶破上限 → 0.7737/0.7789/0.7684/0.5456；②修掉 N45（重排对空窗口）→ **0.8561/0.8632/0.8526/0.6075**，旧基线归档 `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`。**回归门禁未做** | `python scripts/eval_bench.py --k 10` → 与 `docs/baseline-k8s-v1.json` 一致（`python -m unittest tests.test_bench_questions.ReadmeBaselineNumbersTest` 退 0）；门禁：`python scripts/eval_bench.py --compare docs/baseline-k8s-v1.json` → 退出码按容差判定，`not_comparable` 不返非零 |
+| C8 | **E05 新基线重立 + 回归门禁** | ✅ 已完成（2026-11-06）：基线重立两次（G2 修 overlap 超限 → 0.7737/0.7789/0.7684/0.5456；修 N45 重排空窗口 → **0.8561/0.8632/0.8526/0.6075**），旧基线归档在 `docs/evidence/`；门禁 `--compare` 已上线（容差 = 基线一侧 CI 半宽，不可比退 0） | `python scripts/eval_bench.py --k 10 --compare docs/baseline-k8s-v1.json` → 四条指标全 `ok`、逐题 0/0/95、退出码 **0**；把基线 hit@10 改成 0.99 再跑 → `regression`、退出码 **1**；`--no-rerank` 再比 → `not_comparable`（rerank 不同）、退出码 **0** | ✅ |
 
 ## D. 已知缺陷 / 明确 blocked
 
@@ -156,7 +156,7 @@
 | # | 项 | 现状证据 | 验收（命令 → 期望值） | 档 |
 |---|---|---|---|---|
 | F35 | **HTML 报告** | 现在只有 JSON + 逐题 JSONL，得自己写脚本看 | `python scripts/eval_bench.py --html out.html` → 单文件，失败题聚合、可点开看该题检索结果；不需要外网 | 3 |
-| F36 | **一条命令出「基线 vs 现在」对比表** | 现状：跑两次，人肉对两个 JSON | `python scripts/eval_bench.py --compare docs/baseline-k8s-v1.json` → 输出 Markdown 表（三口径 + 更好/更差/持平计数），可直接贴 PR | 2 |
+| F36 | **一条命令出「基线 vs 现在」对比表**（同 C8） | ✅ 已完成：`scripts/eval_bench.py --compare`（容差 = 基线一侧 95% bootstrap CI 半宽、不可比退 0、默认不覆盖基线） | `python scripts/eval_bench.py --k 10 --compare docs/baseline-k8s-v1.json` → Markdown 对照表 + 「更好/更差/持平」计数 + 退出码 0；基线 hit@10 造高到 0.99 再跑 → `regression` + 退出码 1 | 1 |
 | F37 | **bench profile** | 建基准库要手记 4 个路径参数（易写错，还可能污染正式库） | `docker compose --profile bench up` 或 `make bench` 一条命令完成「建库 → 评估 → 落 baseline」 | 2 |
 
 ### 建议动手顺序（工程线）

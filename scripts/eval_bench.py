@@ -31,6 +31,8 @@ BENCH_STORE = ROOT / "storage" / "bench" / "documents.sqlite3"
 QUESTIONS = ROOT / "datasets" / "k8s-zh-en-v1" / "questions.jsonl"
 COLLECTION = "bench_k8s_v1"
 
+NL = chr(10)
+
 
 def load_questions(path: Path) -> list[dict]:
     if not path.is_file():
@@ -98,6 +100,175 @@ def _build_retriever(collection: str, store_path: Path, warmup_texts, log):
         warmup_texts=warmup_texts,
         log=log,
     )
+
+
+#: 指标 -> (JSON 里的键模板, 表格里显示的名字)。键名必须和 `summarize()` 完全一致，
+#: 否则门禁会拿 `MRR` 去查 `mrr` 然后 KeyError（第一次写就踩了）。
+METRIC_LABELS = {
+    "hit": ("hit@{k}", "hit@k"),
+    "full": ("full@{k}", "full@k"),
+    "recall": ("recall@{k}", "recall@k"),
+    "mrr": ("mrr", "MRR"),
+}
+
+
+def questions_fingerprint(path: Path) -> str:
+    """题集的 sha256 —— 门禁判断「比的还是不是同一套题」的唯一依据。
+
+    不认文件名、不认行数：改一个字、换一题，行数可能一样。
+    """
+    import hashlib
+
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def bootstrap_half_width(values: list[float], *, n_boot: int = 2000, alpha: float = 0.05,
+                         seed: int = 0) -> float:
+    """基线一侧的 95% bootstrap CI 半宽，用作门禁容差。
+
+    为什么不用固定百分比（比如 1%）：我们这些指标在 95 题上本身就抖 ±0.04 量级，
+    固定 1% 会把正常抖动全报成回归，最后没人看门禁。为什么不配对 bootstrap：
+    容差要描述「基线自己能抖多少」，配对差会把两边的抖动互相抵消、容差变窄，反而更容易误报。
+    """
+    import random
+
+    if not values:
+        return 0.0
+    rng = random.Random(seed)                    # 固定种子：同一份基线每次算出的容差一致
+    n = len(values)
+    means = []
+    for _ in range(n_boot):
+        means.append(sum(values[rng.randrange(n)] for _ in range(n)) / n)
+    means.sort()
+    low = means[int((alpha / 2) * n_boot)]
+    high = means[max(0, int((1 - alpha / 2) * n_boot) - 1)]
+    return round((high - low) / 2, 4)
+
+
+def _metric_series(rows: list[dict]) -> dict[str, list[float]]:
+    """逐题序列（只含正样本）：用来算 CI，也用来做逐题对比。"""
+    positives = [r for r in rows if r["gold"]]
+    return {
+        "hit": [1.0 if r["hit"] else 0.0 for r in positives],
+        "full": [1.0 if r["full"] else 0.0 for r in positives],
+        "recall": [float(r["recall"] or 0.0) for r in positives],
+        "mrr": [(1.0 / r["first_hit_rank"]) if r["first_hit_rank"] else 0.0 for r in positives],
+    }
+
+
+def _comparability_reasons(current: dict, baseline: dict) -> list[str]:
+    reasons: list[str] = []
+    if not baseline.get("questions_sha256"):
+        reasons.append(
+            "基线里没有 questions_sha256（旧基线）：无法确认题集是否一致，先重跑一次基线"
+        )
+    elif current.get("questions_sha256") != baseline["questions_sha256"]:
+        reasons.append(
+            f"题集不同：基线 {baseline['questions_sha256'][:12]}… vs 现在 "
+            f"{str(current.get('questions_sha256'))[:12]}…"
+        )
+    for key in ("k", "pool", "rerank"):
+        if current.get(key) != baseline.get(key):
+            reasons.append(f"{key} 不同：基线 {baseline.get(key)} vs 现在 {current.get(key)}")
+    base_ids = {r["qid"] for r in baseline.get("rows", [])}
+    cur_ids = {r["qid"] for r in current.get("rows", [])}
+    if base_ids and cur_ids and base_ids != cur_ids:
+        reasons.append(
+            f"逐题结果对不上：基线 {len(base_ids)} 题、现在 {len(cur_ids)} 题，"
+            f"只有 {len(base_ids & cur_ids)} 题相同"
+        )
+    return reasons
+
+
+def compare_results(current: dict, baseline: dict, baseline_rows: list[dict],
+                    *, tolerance: float | None = None) -> dict:
+    """把「现在」和「基线」比成一张表 + 一个退出码。
+
+    退出码纪律：**不可比一律退 0**。CI 里非零退出等于「代码坏了」，
+    而这里真正的情况是「你换了题/换了参数」—— 那种事要人看，不该把流水线卡死。
+    """
+    reasons = _comparability_reasons(current, baseline)
+    if reasons:
+        return {
+            "comparable": False, "reasons": reasons, "metrics": {},
+            "per_question": {}, "verdict": "not_comparable", "exit_code": 0,
+            "tolerance": None,
+        }
+
+    k = current["k"]
+    base_series = _metric_series(baseline_rows)
+    cur_series = _metric_series(current["rows"])
+    base_overall = baseline["overall"]
+    cur_overall = current["overall"]
+
+    metrics: dict[str, dict] = {}
+    for name, (template, display) in METRIC_LABELS.items():
+        key = template.format(k=k)
+        base_value = base_overall[key]
+        cur_value = cur_overall[key]
+        tol = bootstrap_half_width(base_series[name]) if tolerance is None else float(tolerance)
+        delta = round(cur_value - base_value, 4)
+        if cur_value >= base_value + tol:
+            verdict = "improved"
+        elif cur_value < base_value - tol:
+            verdict = "regression"
+        else:
+            verdict = "ok"
+        metrics[name] = {
+            "label": display, "key": key, "baseline": base_value, "current": cur_value, "delta": delta,
+            "tolerance": round(tol, 4), "verdict": verdict,
+        }
+
+    base_rank = {r["qid"]: (r["first_hit_rank"] or 999) for r in baseline_rows if r["gold"]}
+    cur_rank = {r["qid"]: (r["first_hit_rank"] or 999) for r in current["rows"] if r["gold"]}
+    better = worse = same = 0
+    moved = []
+    for qid in sorted(base_rank):
+        before, after = base_rank[qid], cur_rank[qid]
+        if after < before:
+            better += 1
+        elif after > before:
+            worse += 1
+        else:
+            same += 1
+        if before != after:
+            moved.append({"qid": qid, "before": base_rank[qid], "after": cur_rank[qid]})
+
+    verdict = "regression" if any(m["verdict"] == "regression" for m in metrics.values()) else "ok"
+    return {
+        "comparable": True, "reasons": [], "metrics": metrics,
+        "per_question": {"better": better, "worse": worse, "same": same, "moved": moved},
+        "verdict": verdict,
+        "exit_code": 1 if verdict == "regression" else 0,
+        "tolerance": round(metrics["mrr"]["tolerance"] if tolerance is None else float(tolerance), 4),
+    }
+
+
+def format_comparison(cmp: dict) -> list[str]:
+    """人看的 Markdown。不可比时**先讲原因**，再讲结论 —— 别让人盯着空表猜。"""
+    lines: list[str] = []
+    if not cmp["comparable"]:
+        lines.append("**not_comparable**：这次结果与基线不可比，所以不给 delta、也不判红。原因：")
+        lines.extend(f"- {reason}" for reason in cmp["reasons"])
+        lines.append("（换题/换参数后请重立基线；同一套题同一套参数才能比。）")
+        return lines
+
+    lines.append(f"容差 = 基线一侧 95% bootstrap CI 半宽（MRR ±{cmp['tolerance']}）；掉出容差才判红。")
+    lines.append("")
+    lines.append("| 指标 | 基线 | 现在 | delta | 容差 | 判定 |")
+    lines.append("|---|---|---|---|---|---|")
+    for metric in cmp["metrics"].values():
+        lines.append(
+            f"| {metric['label']} | {metric['baseline']:.4f} | {metric['current']:.4f} | "
+            f"{metric['delta']:+.4f} | ±{metric['tolerance']} | {metric['verdict']} |"
+        )
+    counts = cmp["per_question"]
+    lines.append("")
+    lines.append(
+        f"逐题（首命中排名）：更好 **{counts['better']}** · 更差 **{counts['worse']}** · "
+        f"持平 **{counts['same']}**"
+    )
+    return lines
 
 
 def evaluate(
@@ -194,8 +365,15 @@ def _display_path(path: Path) -> str:
 
 
 def _resolve_paths(args):
-    """相对路径按当前工作目录解析成绝对路径（`--out`/`--store`/`--questions`）。"""
-    args.out = Path(args.out).resolve()
+    """相对路径按当前工作目录解析成绝对路径。
+
+    可选参数（`--out` / `--compare` / `--report` / `--baseline-rows`）保持 `None`，
+    否则 `Path(None)` 直接 TypeError（带 `--compare` 时 `--out` 默认就是 None）。
+    """
+    for name in ("out", "compare", "report", "baseline_rows", "rows_out"):
+        value = getattr(args, name, None)
+        if value is not None:
+            setattr(args, name, Path(value).resolve())
     args.store = Path(args.store).resolve()
     args.questions = Path(args.questions).resolve()
     return args
@@ -213,9 +391,20 @@ def build_parser() -> argparse.ArgumentParser:
                         help=f"要评估的集合（默认 {COLLECTION}；做实验请用带随机后缀的名字）")
     parser.add_argument("--store", type=Path, default=BENCH_STORE,
                         help="该集合对应的文档表（parents 从这里取）")
-    parser.add_argument("--out", type=Path, default=ROOT / "docs" / "baseline-k8s-v1.json")
+    parser.add_argument("--out", type=Path, default=None,
+                        help="汇总 JSON（默认 docs/baseline-k8s-v1.json；带 --compare 时不写，免得覆盖基线）")
     parser.add_argument("--rows-out", type=Path, default=None, help="逐题 JSONL（默认与 --out 同名 .rows.jsonl）")
+    parser.add_argument("--compare", type=Path, default=None,
+                        help="与基线对比并做回归门禁（基线汇总 JSON；逐题默认取同名 .rows.jsonl）")
+    parser.add_argument("--baseline-rows", type=Path, default=None, help="基线逐题 JSONL（默认自动推断）")
+    parser.add_argument("--compare-tolerance", type=float, default=None,
+                        help="覆盖容差（默认 = 基线一侧 95%% bootstrap CI 半宽）")
+    parser.add_argument("--report", type=Path, default=None, help="把对比表另存为 Markdown")
     return parser
+
+
+def _default_out(args) -> Path:
+    return args.out or (ROOT / "docs" / "baseline-k8s-v1.json")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -226,13 +415,17 @@ def main(argv: list[str] | None = None) -> int:
         questions = questions[: args.limit]
     result = evaluate(questions, k=args.k, pool=args.pool, rerank=not args.no_rerank,
                       warmup=not args.no_warmup, collection=args.collection, store=args.store)
+    result["questions_sha256"] = questions_fingerprint(args.questions)
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    rows_out = args.rows_out or args.out.with_suffix(".rows.jsonl")
-    args.out.write_text(json.dumps({k: v for k, v in result.items() if k != "rows"},
-                                   ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    rows_out.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in result["rows"]) + "\n",
-                        encoding="utf-8")
+    out_path = None if args.compare and args.out is None else _default_out(args)
+    rows_out = None
+    if out_path is not None:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        rows_out = args.rows_out or out_path.with_suffix(".rows.jsonl")
+        out_path.write_text(json.dumps({k: v for k, v in result.items() if k != "rows"},
+                                       ensure_ascii=False, indent=2) + NL, encoding="utf-8")
+        rows_out.write_text(NL.join(json.dumps(r, ensure_ascii=False) for r in result["rows"]) + NL,
+                            encoding="utf-8")
 
     overall = result["overall"]
     print(f"题数 {overall.get('n')}（正样本 {overall.get('positives')}）｜k={result['k']} pool={result['pool']} "
@@ -249,8 +442,35 @@ def main(argv: list[str] | None = None) -> int:
                   f"full@{result['k']}={stats[f'full@{result['k']}']}  mrr={stats['mrr']}")
     print(f"延迟（{'已热身' if result['latency_ms']['warmup'] else '未热身'}）："
           f" p50={result['latency_ms']['p50']} ms  p90={result['latency_ms']['p90']} ms")
-    print(f"结果：{_display_path(args.out)} ｜逐题：{_display_path(rows_out)}")
-    return 0
+    if out_path is not None:
+        print(f"结果：{_display_path(out_path)} ｜逐题：{_display_path(rows_out)}")
+
+    if args.compare is None:
+        return 0
+
+    baseline_path = args.compare
+    if not baseline_path.is_file():
+        print(f"[compare] 找不到基线：{baseline_path}", file=sys.stderr)
+        return 2
+    baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+    baseline_rows_path = args.baseline_rows or baseline_path.with_suffix(".rows.jsonl")
+    if not baseline_rows_path.is_file():
+        print(f"[compare] 找不到基线的逐题文件：{baseline_rows_path}", file=sys.stderr)
+        return 2
+    baseline_rows = [json.loads(line) for line in
+                     baseline_rows_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    comparison = compare_results(result, baseline, baseline_rows,
+                                tolerance=args.compare_tolerance)
+    print("")
+    print("## 与基线对比")
+    lines_out = format_comparison(comparison)
+    print(NL.join(lines_out))
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text("# 基线对比" + NL + NL + NL.join(lines_out) + NL, encoding="utf-8")
+        print(f"[compare] 已写入 {_display_path(args.report)}")
+    return int(comparison["exit_code"])
 
 
 if __name__ == "__main__":

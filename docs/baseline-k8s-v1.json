@@ -1,6 +1,7 @@
 {
   "collection": "bench_k8s_v1",
   "questions": "datasets\\k8s-zh-en-v1\\questions.jsonl",
+  "questions_sha256": "a352ed2d9e07571527d96c83c0e7fa826385799b9f8770d4af7ec92751cc4687",
   "k": 10,
   "pool": 40,
   "rerank": true,
