@@ -1,0 +1,137 @@
+{
+  "purpose": "切片护栏（P1/P2）对检索端的影响：A/A 定噪声、A/B 看改动，逐题计数而不是只报均值",
+  "date": "2026-11-06",
+  "branch": "feat/chunk-quality-guards",
+  "data": {
+    "dataset": "k8s-zh-en-v1",
+    "questions": 100,
+    "positives": 95,
+    "collection_before": "bench_k8s_v1",
+    "collection_after": "bench_k8s_v1_qc104850",
+    "k": 10,
+    "pool": 40,
+    "rerank": true,
+    "build_counts_before": {
+      "documents": 883,
+      "parents": 7108,
+      "children": 9795
+    },
+    "build_counts_after": {
+      "documents": 883,
+      "parents": 7108,
+      "children": 9795
+    }
+  },
+  "code_change": {
+    "summary": "overlap 上限从 min(70, 目标 60) 收敛为 <= 目标；并加 _fit_front() 兜底裁剪，保证含 overlap 的子块 <= child_max_tokens",
+    "children_with_new_id": 1067,
+    "children_total": 9795,
+    "children_with_new_id_pct": 10.9,
+    "children_over_limit_before": 5,
+    "children_over_limit_after": 0,
+    "gold_points_invalidated": 1,
+    "gold_points_total": 56,
+    "note": "child id 是内容哈希：重叠区一改，10.9% 的子块换了 id（不是 5 个）"
+  },
+  "aa_control": {
+    "note": "同一个集合跑两遍 / 同一代码重建后跑两遍，判断「抖动」还是「真差异」",
+    "old_collection_run1": {
+      "mrr": 0.5529,
+      "hit@10": 0.7789,
+      "full@10": 0.7684
+    },
+    "old_collection_run2": {
+      "mrr": 0.5529,
+      "hit@10": 0.7789,
+      "full@10": 0.7684
+    },
+    "new_collection_run1": {
+      "mrr": 0.5456,
+      "hit@10": 0.7789,
+      "full@10": 0.7684
+    },
+    "new_collection_run2": {
+      "mrr": 0.5456,
+      "hit@10": 0.7789,
+      "full@10": 0.7684
+    },
+    "deterministic": true,
+    "recorded_baseline_mrr": 0.5529
+  },
+  "ab": {
+    "overall": {
+      "mrr_before": 0.5529,
+      "mrr_after": 0.5456,
+      "mrr_delta": -0.0073,
+      "recall@10_before": 0.7737,
+      "recall@10_after": 0.7737,
+      "hit@10_before": 0.7789,
+      "hit@10_after": 0.7789,
+      "full@10_before": 0.7684,
+      "full@10_after": 0.7684,
+      "_note": "recall@10 是逐题 recall 的均值（不是「有多少题 recall>0」）；hit/full 是比例"
+    },
+    "by_language": {
+      "en": {
+        "mrr_before": 0.6209,
+        "mrr_after": 0.6209,
+        "hit@10_before": 0.8,
+        "hit@10_after": 0.8,
+        "recall@10_before": 0.79,
+        "recall@10_after": 0.79
+      },
+      "zh-cn": {
+        "mrr_before": 0.4772,
+        "mrr_after": 0.4619,
+        "hit@10_before": 0.7556,
+        "hit@10_after": 0.7556,
+        "recall@10_before": 0.7556,
+        "recall@10_after": 0.7556
+      }
+    },
+    "per_question": {
+      "better": 2,
+      "worse": 4,
+      "same": 94,
+      "moved": [
+        {
+          "qid": "k8s-c-009",
+          "lang": "zh-cn",
+          "rank_before": 8,
+          "rank_after": 7
+        },
+        {
+          "qid": "k8s-c-013",
+          "lang": "zh-cn",
+          "rank_before": 7,
+          "rank_after": 6
+        },
+        {
+          "qid": "k8s-c-023",
+          "lang": "zh-cn",
+          "rank_before": 4,
+          "rank_after": 5
+        },
+        {
+          "qid": "k8s-c-040",
+          "lang": "zh-cn",
+          "rank_before": 2,
+          "rank_after": 3
+        },
+        {
+          "qid": "k8s-c-042",
+          "lang": "zh-cn",
+          "rank_before": 1,
+          "rank_after": 2
+        },
+        {
+          "qid": "k8s-x-014",
+          "lang": "zh-cn",
+          "rank_before": 8,
+          "rank_after": 9
+        }
+      ]
+    },
+    "verdict": "hit@10 / full@10 / recall@10 逐题完全一致；只有 6 道中文题的 top-10 内部排序变了，MRR 因此 -0.0073"
+  }
+}

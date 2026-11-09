@@ -84,20 +84,46 @@ def summarize(rows: list[dict], k: int) -> dict:
     }
 
 
-def evaluate(questions: list[dict], *, k: int, pool: int, rerank: bool, warmup: bool) -> dict:
+def _build_retriever(collection: str, store_path: Path, warmup_texts, log):
+    """单独提出来是为了让用例能打桩验证「集合名真的传下去了」。"""
+    from src.rag.retrieval.store_wiring import build_default_retriever
+
+    return build_default_retriever(
+        collection=collection,
+        store_path=store_path,
+        warmup_texts=warmup_texts,
+        log=log,
+    )
+
+
+def evaluate(
+    questions: list[dict],
+    *,
+    k: int,
+    pool: int,
+    rerank: bool,
+    warmup: bool,
+    collection: str = COLLECTION,
+    store: Path = BENCH_STORE,
+    parents: dict[str, dict] | None = None,
+    counter=None,
+    reranker=None,
+) -> dict:
     from src.rag.ask.pipeline import retrieve_with_meta
     from src.rag.ingestion.tokenizer import TokenCounter
     from src.rag.retrieval.rerank import CrossEncoderReranker, RerankConfig
-    from src.rag.retrieval.store_wiring import build_default_retriever
 
-    parents = load_parents(BENCH_STORE)
-    counter = TokenCounter()
-    reranker = CrossEncoderReranker(config=RerankConfig(enabled=rerank))
-    retriever = build_default_retriever(
-        collection=COLLECTION,
-        store_path=BENCH_STORE,
-        warmup_texts=[q["question"] for q in questions[:5]] if warmup else (),
-        log=lambda _msg: None,
+    if parents is None:
+        parents = load_parents(store)
+    if counter is None:
+        counter = TokenCounter()
+    if reranker is None:
+        reranker = CrossEncoderReranker(config=RerankConfig(enabled=rerank))
+    retriever = _build_retriever(
+        collection,
+        store,
+        [q["question"] for q in questions[:5]] if warmup else (),
+        lambda _msg: None,
     )
 
     rows: list[dict] = []
@@ -134,7 +160,7 @@ def evaluate(questions: list[dict], *, k: int, pool: int, rerank: bool, warmup: 
 
     negatives = [r for r in rows if r["type"] == "negative"]
     return {
-        "collection": COLLECTION,
+        "collection": collection,
         "questions": str(QUESTIONS.relative_to(ROOT)),
         "k": k,
         "pool": pool,
@@ -155,7 +181,23 @@ def evaluate(questions: list[dict], *, k: int, pool: int, rerank: bool, warmup: 
     }
 
 
-def main(argv: list[str] | None = None) -> int:
+def _display_path(path: Path) -> str:
+    """仓库内给相对路径，仓库外给原样 —— **打印不能因为路径不在仓库里就崩**。"""
+    try:
+        return str(Path(path).resolve().relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
+def _resolve_paths(args):
+    """相对路径按当前工作目录解析成绝对路径（`--out`/`--store`/`--questions`）。"""
+    args.out = Path(args.out).resolve()
+    args.store = Path(args.store).resolve()
+    args.questions = Path(args.questions).resolve()
+    return args
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="eval_bench", description=__doc__.splitlines()[0])
     parser.add_argument("--questions", type=Path, default=QUESTIONS)
     parser.add_argument("--k", type=int, default=10)
@@ -163,15 +205,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-rerank", action="store_true")
     parser.add_argument("--no-warmup", action="store_true")
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--collection", default=COLLECTION,
+                        help=f"要评估的集合（默认 {COLLECTION}；做实验请用带随机后缀的名字）")
+    parser.add_argument("--store", type=Path, default=BENCH_STORE,
+                        help="该集合对应的文档表（parents 从这里取）")
     parser.add_argument("--out", type=Path, default=ROOT / "docs" / "baseline-k8s-v1.json")
     parser.add_argument("--rows-out", type=Path, default=None, help="逐题 JSONL（默认与 --out 同名 .rows.jsonl）")
-    args = parser.parse_args(argv)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _resolve_paths(build_parser().parse_args(argv))
 
     questions = load_questions(args.questions)
     if args.limit:
         questions = questions[: args.limit]
     result = evaluate(questions, k=args.k, pool=args.pool, rerank=not args.no_rerank,
-                      warmup=not args.no_warmup)
+                      warmup=not args.no_warmup, collection=args.collection, store=args.store)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     rows_out = args.rows_out or args.out.with_suffix(".rows.jsonl")
@@ -195,7 +245,7 @@ def main(argv: list[str] | None = None) -> int:
                   f"full@{result['k']}={stats[f'full@{result['k']}']}  mrr={stats['mrr']}")
     print(f"延迟（{'已热身' if result['latency_ms']['warmup'] else '未热身'}）："
           f" p50={result['latency_ms']['p50']} ms  p90={result['latency_ms']['p90']} ms")
-    print(f"结果：{args.out.relative_to(ROOT)} ｜逐题：{rows_out.relative_to(ROOT)}")
+    print(f"结果：{_display_path(args.out)} ｜逐题：{_display_path(rows_out)}")
     return 0
 
 

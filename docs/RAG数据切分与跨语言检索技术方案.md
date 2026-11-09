@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.38
+> **文档版本**：2.39
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2420,6 +2420,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N41** | 「含 overlap 的子块不超过上限」这条**从来没被测过**（N40 发现的洞之一）：`apply_overlap` 的默认 `max_overlap_tokens=70` 大于目标 `DEFAULT_OVERLAP_TOKENS=60`，宽出来的 10 token 会把子块顶过 `child_max_tokens` —— 基准库实测 **5/9,795 块超 500（501–505）** | ①语义钉死为 `chunk_size`（含 overlap ≤ `child_max_tokens`），写进 `build_children` 的注释与用例；②`overlap_cap = min(DEFAULT_MAX_OVERLAP_TOKENS, overlap_tokens)` + `_fit_front()` 二分兜底裁剪（丢的是重叠区，不丢正文）；③**测试输入必须能压到边界**：短段落（~35 字）切出的子块只有 30–40 token，怎么重叠都不会超，第一次写的用例就是这样假绿的 —— 换成「单段超 500 token」的文档才真正触发；④变异验证两次才通过：只改 `split_max` 不够（裁剪兜住了），必须同时去掉兜底才红
 
+| **N42** | 切片改一处重叠区，**10.9% 的子块换了 `chunk_id`**（1,067/9,795）——child id 是内容哈希；而 `gold_points` 用的就是 child id，实测 56 个里有 **1 个变孤儿** | ①切片语义的任何改动都按「重建库 + 重跑检索基线」处理（C7），不许只重跑检索；②`gold_points` 视为**可失效**资产：重建后必须重算，不许当稳定主键；③改后实测 recall@10 / hit@10 / full@10 **逐题不变**、MRR −0.0073（2 好 4 差 94 平），说明这类改动的影响只在「名次」不在「命中」，但**必须记账**（`docs/evidence/chunk-quality-ab-k8s-v1.json`） |
+
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
 
 ### 17.11.1 B01：Embedding 走 Ollama API（不引入 FlagEmbedding）
@@ -3331,6 +3333,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.36                    2026-11-06              ROADMAP 新增 F 节（工程化与上手门槛 37 条）+ 验收守卫（N39）
   2.37                    2026-11-06              切片体检整合方案 v1（P0–P5）+ ROADMAP G 节 + N40
   2.38                    2026-11-06              切片护栏落地（覆盖不变量 / overlap 上限 / SC+BI / 体检命令）+ N41
+  2.39                    2026-11-06              切片改动的检索端 A/B（A/A 定噪声）+ N42（child id 随内容哈希变）
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空

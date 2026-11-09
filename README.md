@@ -766,6 +766,11 @@ python scripts/eval_bench.py --k 10 --out docs/baseline-k8s-v1.json
 
 # 3) 改任何参数后，都跟这份基线比，而不是跟记忆比
 python scripts/eval_bench.py --k 10 --no-rerank --out /tmp/ab-norerank.json
+
+# 4) 改了切分/参数要重建库时：建到**另一个**带随机后缀的集合，再指过去评估
+#    （别覆盖唯一一份基线数据；注意改切分会让部分 chunk id 变化，gold_points 需重算）
+RAG_COLLECTION=bench_k8s_v1_ab12 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs     --document-db storage/bench/ab12/documents.sqlite3 --state storage/bench/ab12/state.sqlite3     --versions storage/bench/ab12/index_versions.sqlite3 --cache storage/bench/embeddings.sqlite3
+python scripts/eval_bench.py --k 10 --collection bench_k8s_v1_ab12     --store storage/bench/ab12/documents.sqlite3 --out /tmp/ab12.json
 ```
 
 评估脚本走的是**和 `/ask` 完全相同的一条链**（`retrieve_with_meta`），不另写一条——

@@ -168,3 +168,78 @@ class ReadmeBaselineNumbersTest(unittest.TestCase):
         re_questions = ROOT / "datasets" / "k8s-zh-en-v1" / "questions.jsonl"
         total = len([l for l in re_questions.read_text(encoding="utf-8").splitlines() if l.strip()])
         self.assertIn(f"**{total} 题**", self.readme, f"README 里的题数应为 {total}")
+
+
+class EvalCollectionOptionTest(unittest.TestCase):
+    """`eval_bench` 必须能指向**另一个**集合与文档表。
+
+    为什么必须有：改切片/嵌入参数后要比「新旧两库」的差，而旧实现把
+    `bench_k8s_v1` + `storage/bench/documents.sqlite3` 写死在模块常量里 ——
+    只能先覆盖正式基准库再评估，等于把唯一一份基线数据当试验田用。
+    纪律本来就要求「压测/实验用带随机后缀的集合名」，脚本得先支持。
+    """
+
+    def test_defaults_stay_on_the_official_baseline(self):
+        from scripts.eval_bench import build_parser
+
+        args = build_parser().parse_args([])
+        self.assertEqual(args.collection, "bench_k8s_v1")
+        self.assertEqual(Path(args.store).name, "documents.sqlite3")
+
+    def test_collection_and_store_can_be_overridden(self):
+        from scripts.eval_bench import build_parser
+
+        args = build_parser().parse_args(["--collection", "bench_qc_ab12", "--store", "x/y.sqlite3"])
+        self.assertEqual(args.collection, "bench_qc_ab12")
+        self.assertEqual(Path(args.store), Path("x/y.sqlite3"))
+
+    def test_evaluate_uses_the_given_collection(self):
+        """打桩到 `build_default_retriever` 这一层：证明参数真的传下去了。"""
+        import scripts.eval_bench as bench
+
+        seen = {}
+        original = bench._build_retriever
+
+        def fake(collection, store_path, warmup_texts, log):
+            seen["collection"] = collection
+            seen["store"] = store_path
+            return object()
+
+        bench._build_retriever = fake
+        try:
+            bench.evaluate([], k=1, pool=1, rerank=False, warmup=False,
+                           collection="bench_qc_ab12", store=Path("tmp.sqlite3"),
+                           parents={}, counter=object(), reranker=None)
+        finally:
+            bench._build_retriever = original
+        self.assertEqual(seen["collection"], "bench_qc_ab12")
+        self.assertEqual(Path(seen["store"]), Path("tmp.sqlite3"))
+
+
+class EvalOutPathDisplayTest(unittest.TestCase):
+    """`--out` 指到仓库外（或相对路径）时，最后一行打印不许崩。
+
+    BUG 实证：`--out storage/bench/qc/eval.json`（相对路径）跑完 100 题后
+    `args.out.relative_to(ROOT)` 抛 `ValueError` —— 结果文件其实已经写好了，
+    但人看到的是 traceback，会以为评估失败、白跑一遍。
+    """
+
+    def test_relative_out_is_resolved_against_cwd(self):
+        from scripts.eval_bench import build_parser, _resolve_paths
+
+        args = _resolve_paths(build_parser().parse_args(["--out", "storage/bench/x/eval.json"]))
+        self.assertTrue(args.out.is_absolute())
+
+    def test_display_path_outside_repo_does_not_raise(self):
+        import tempfile
+
+        from scripts.eval_bench import _display_path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            outside = Path(tmp) / "eval.json"
+            self.assertEqual(_display_path(outside), str(outside))
+
+    def test_display_path_inside_repo_is_relative(self):
+        from scripts.eval_bench import ROOT, _display_path
+
+        self.assertEqual(_display_path(ROOT / "docs" / "x.json"), str(Path("docs") / "x.json"))
