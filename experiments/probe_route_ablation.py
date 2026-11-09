@@ -14,8 +14,8 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = r"C:/Users/zcl/Desktop/project/local-rag-agentic-lab"
-sys.path.insert(0, ROOT)
+ROOT = Path(__file__).resolve().parents[1]   # 不许写本机绝对路径（身份守卫会红）
+sys.path.insert(0, str(ROOT))
 
 from scripts.eval_bench import (BENCH_STORE, QUESTIONS, _build_retriever, build_translate_fn,
                                 load_parents, load_questions)
@@ -77,9 +77,9 @@ for cell in ("zh→en", "en→zh"):
                      for label in VARIANTS}
     summary[cell]["n"] = len(picked)
 
-dest = Path(ROOT) / "docs/evidence/route-ablation-cross-lingual-k8s-v1.json"
+dest = ROOT / "docs/evidence/route-ablation-cross-lingual-k8s-v1.json"
 dest.write_text(json.dumps({"note": "跨语言格的逐路消融（关一路 → RRF → 重排 → hit@10）",
                             "rrf_k": RRF_K, "pool": POOL, "summary": summary, "rows": results},
                            ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(summary, ensure_ascii=False, indent=2))
-print("证据 →", dest.relative_to(Path(ROOT)))
+print("证据 →", dest.relative_to(ROOT))

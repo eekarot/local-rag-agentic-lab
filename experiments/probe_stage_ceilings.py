@@ -24,8 +24,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-ROOT = r"C:/Users/zcl/Desktop/project/local-rag-agentic-lab"
-sys.path.insert(0, ROOT)
+ROOT = Path(__file__).resolve().parents[1]   # 不许写本机绝对路径（身份守卫会红）
+sys.path.insert(0, str(ROOT))
 
 from scripts.eval_bench import (BENCH_STORE, QUESTIONS, _build_retriever, build_translate_fn,
                                 load_parents, load_questions)
@@ -43,7 +43,7 @@ counter = TokenCounter()
 retriever = _build_retriever("bench_k8s_v1", BENCH_STORE, [], lambda _m: None)
 translate = build_translate_fn()
 baseline = {json.loads(line)["qid"]: json.loads(line)
-            for line in (Path(ROOT) / "docs/baseline-k8s-v1.rows.jsonl").read_text(encoding="utf-8").splitlines()
+            for line in (ROOT / "docs/baseline-k8s-v1.rows.jsonl").read_text(encoding="utf-8").splitlines()
             if line.strip()}
 
 
@@ -135,7 +135,7 @@ for ql, el, label in (("en", "en", "英→英"), ("zh", "zh", "中→中"),
     cells[label] = cell_stats(picked, label)
 
 payload = {"k_pool": POOL, "k_deep": DEEP, "cells": cells, "rows": rows}
-dest = Path(ROOT) / "docs/evidence/retrieval-stage-ceilings-k8s-v1.json"
+dest = ROOT / "docs/evidence/retrieval-stage-ceilings-k8s-v1.json"
 dest.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 for label, stats in cells.items():
@@ -145,4 +145,4 @@ for label, stats in cells.items():
         print(f"   {key:20} {stats[key]}")
     print(f"   per_route@40    {stats['per_route@40']}")
     print(f"   per_route@200   {stats['per_route@200']}")
-print("\n证据 →", dest.relative_to(Path(ROOT)))
+print("\n证据 →", dest.relative_to(ROOT))
