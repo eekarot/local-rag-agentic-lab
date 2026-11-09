@@ -70,6 +70,14 @@ jobs:
           fi
           exit "$status"
 
+      - name: 诊断（临时）：单跑失败模块
+        if: failure()
+        env:
+          PYTHONIOENCODING: utf-8
+          QDRANT_URL: http://127.0.0.1:1
+          OLLAMA_BASE_URL: http://127.0.0.1:1
+        run: python scripts/_ci_diag.py tests.test_rerank_by_language
+
       - name: 法务与清单完整性
         if: runner.os == 'Linux'
         run: |
