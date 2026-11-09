@@ -63,6 +63,7 @@ class Summary:
     bi_below_threshold: int = 0
     gap_docs: int = 0
     threshold: float = 0.95
+    tolerance_chars: int = DEFAULT_TOLERANCE_CHARS
     reports: list[DocReport] = field(default_factory=list)
 
     @property
@@ -79,6 +80,7 @@ class Summary:
             "bi_below_threshold": self.bi_below_threshold,
             "gap_docs": self.gap_docs,
             "threshold": self.threshold,
+            "tolerance_chars": self.tolerance_chars,
             "per_doc": [report.to_dict() for report in self.reports],
         }
 
@@ -182,7 +184,7 @@ def inspect_paths(
     display_root: Path | None = None,
 ) -> Summary:
     """批量体检；``paths`` 由调用方决定顺序（脚本里已按相对路径排序）。"""
-    summary = Summary(threshold=threshold)
+    summary = Summary(threshold=threshold, tolerance_chars=tolerance_chars)
     sc_values: list[float] = []
     bi_values: list[float] = []
     for path in paths:
@@ -215,7 +217,7 @@ def format_report(summary: Summary, *, limit: int = 10) -> list[str]:
     """人看的一小段摘要。最后一行的提醒是**故意的**：别把结构指标当质量分贴出去。"""
     lines = [
         f"[chunk_quality] 体检 {summary.docs} 篇 · 子块 {summary.children} 个",
-        f"  口径：sc=尺寸合规 bi=结构完整（容差 {DEFAULT_TOLERANCE_CHARS} 字符） gap=丢字检查（不变量）",
+        f"  口径：sc=尺寸合规 bi=结构完整（容差 {summary.tolerance_chars} 字符） gap=丢字检查（不变量）",
         f"  sc 均值 {summary.sc_mean} · bi 均值 {summary.bi_mean} · "
         f"bi < {summary.threshold} 的文档 {summary.bi_below_threshold} 篇 · 丢字文档 {summary.gap_docs} 篇",
     ]
