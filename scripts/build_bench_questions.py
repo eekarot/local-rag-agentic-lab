@@ -197,6 +197,33 @@ def load_chunks(conn: sqlite3.Connection) -> list[dict]:
     return chunks
 
 
+def pick_pages(by_page: dict[str, list[dict]], *, pages: int,
+               only_pages: list[str] | None) -> list[str]:
+    """挑要抽候选句的页。
+
+    `only_pages` 给了就**原样照用**（去重、保留首次出现的位置）—— 扩题时要精确指定
+    「这 20 页各补 2–3 题」，任何排序/抽样改写都会让清单对不上。
+    没给才走原来的「按语言分层 + 等距抽样」，保证中英都有且可复现。
+    """
+    if only_pages:
+        ordered: list[str] = []
+        for page in only_pages:
+            if page not in ordered:
+                ordered.append(page)
+        return ordered
+    picked: list[str] = []
+    for lang in ("zh-cn", "en"):
+        candidates = sorted(p for p in by_page if p.startswith(f"{lang}/"))
+        step = max(1, len(candidates) // max(1, pages // 2))
+        picked.extend(candidates[::step][: pages // 2])
+    return picked
+
+
+def missing_pages(by_page: dict[str, list[dict]], wanted: list[str]) -> list[str]:
+    """清单里在库中不存在的页 —— 必须报出来，不能静默少抽几页。"""
+    return [page for page in wanted if page not in by_page]
+
+
 def dump(args) -> int:
     conn = connect()
     chunks = load_chunks(conn)
@@ -207,12 +234,14 @@ def dump(args) -> int:
     for chunk in chunks:
         by_page[chunk["source_uri"]].append(chunk)
 
-    # 按语言分层，再按路径排序取前 N 页 —— 保证中英都有、且可复现
-    picked: list[str] = []
-    for lang in ("zh-cn", "en"):
-        pages = sorted(p for p in by_page if p.startswith(f"{lang}/"))
-        step = max(1, len(pages) // max(1, args.pages // 2))
-        picked.extend(pages[::step][: args.pages // 2])
+    only_pages = None
+    if getattr(args, "only_pages", None):
+        only_pages = [line.strip() for line in
+                      Path(args.only_pages).read_text(encoding="utf-8").splitlines() if line.strip()]
+        absent = missing_pages(by_page, only_pages)
+        if absent:
+            raise SystemExit("这些页在库里没有子块（路径写错？）：" + chr(10).join(absent))
+    picked = pick_pages(by_page, pages=args.pages, only_pages=only_pages)
 
     parents = load_parents(conn)
     slices = child_slices(conn, parents)
@@ -369,6 +398,17 @@ def append(args) -> int:
             print(f"  - {line}", file=sys.stderr)
         return 1
 
+    if getattr(args, "merge", False):
+        existing = ([json.loads(line) for line in
+                     QUESTIONS_PATH.read_text(encoding="utf-8").splitlines() if line.strip()]
+                    if QUESTIONS_PATH.is_file() else [])
+        resolved, problems = merge_questions(existing, resolved)
+        if problems:
+            print("合并未通过：", file=sys.stderr)
+            for line in problems:
+                print(f"  - {line}", file=sys.stderr)
+            return 1
+
     if args.dry_run:
         print(f"[dry-run] 通过校验 {len(resolved)} 题，未写文件")
         return 0
@@ -384,6 +424,34 @@ def append(args) -> int:
     print(f"  类型：{dict(by_type)}")
     print(f"  证据语言：{dict(by_lang)}")
     return 0
+
+
+def merge_questions(existing: list[dict], resolved: list[dict]) -> tuple[list[dict], list[str]]:
+    """老题 + 新题 = 新题集。老题**一条都不动**（id 已经是好的），只往后接。
+
+    这里坚持三件事：qid 不许撞、新草稿内部不许重、题干不许与老题完全一致
+    （完全一致基本就是复制粘贴，不是「改写」）。
+    """
+    problems: list[str] = []
+    seen = {item["qid"] for item in existing}
+    seen_text = {(item.get("question") or "").strip() for item in existing}
+    added: list[dict] = []
+    for item in resolved:
+        qid = item["qid"]
+        if any(r["qid"] == qid for r in added):
+            problems.append(f"{qid}：新草稿里 qid 重复")
+            continue
+        if qid in seen:
+            problems.append(f"{qid}：qid 已存在（老题）")
+            continue
+        seen.add(qid)
+        text = (item.get("question") or "").strip()
+        if text and text in seen_text:
+            problems.append(f"{qid}：与已有题重复出题（题干完全一致）")
+            continue
+        seen_text.add(text)
+        added.append(item)
+    return list(existing) + added, problems
 
 
 def remap_gold(
@@ -475,11 +543,15 @@ def build_parser() -> argparse.ArgumentParser:
     dump_parser = sub.add_parser("dump", help="生成候选句子（带 key）")
     dump_parser.add_argument("--pages", type=int, default=30)
     dump_parser.add_argument("--per-page", type=int, default=8)
+    dump_parser.add_argument("--only-pages", type=Path, default=None,
+                             help="只抽这些页（一行一个 source_uri）；给了就忽略 --pages 的抽样逻辑")
     dump_parser.set_defaults(func=dump)
 
     append_parser = sub.add_parser("append", help="按 key 解析 span 并写 questions.jsonl")
     append_parser.add_argument("--drafts", type=Path, required=True)
     append_parser.add_argument("--dry-run", action="store_true")
+    append_parser.add_argument("--merge", action="store_true",
+                               help="与现有 questions.jsonl 合并（扩题用），而不是整份覆盖")
     append_parser.set_defaults(func=append)
 
     refresh_parser = sub.add_parser(

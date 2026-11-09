@@ -294,3 +294,78 @@ class ReadmeCrossLingualCellsTest(unittest.TestCase):
             self.assertIn(f"`{name}` | {stats['positives']} |", self.readme, f"题型 {name} 的 n 与 README 不一致")
             for key in (f"hit@{k}", f"full@{k}", "mrr"):
                 self.assertIn(f"{stats[key]:.4f}", self.readme, f"README 里找不到 {name} 的 {key}={stats[key]:.4f}")
+
+
+class PickPagesTest(unittest.TestCase):
+    """`dump --only-pages`：按给定页清单取样，别再被「按语言分层 + 等距抽样」改写。
+
+    扩题时要精确指定「这 20 页各补 2–3 题」，老逻辑会按 stride 重新挑页，
+    挑出来的跟我需要的对不上，于是只能手工比对 —— 这层就该是纯函数。
+    """
+
+    def setUp(self):
+        from scripts.build_bench_questions import pick_pages
+
+        self.pick = pick_pages
+        self.by_page = {f"{lang}/{name}": [] for lang in ("zh-cn", "en")
+                        for name in ("a.md", "b.md", "c.md")}
+
+    def test_only_pages_is_honoured_verbatim_and_ordered(self):
+        wanted = ["en/c.md", "zh-cn/a.md"]
+        self.assertEqual(self.pick(self.by_page, pages=30, only_pages=wanted), wanted)
+
+    def test_only_pages_dedups_but_keeps_first_position(self):
+        wanted = ["zh-cn/b.md", "en/a.md", "zh-cn/b.md"]
+        self.assertEqual(self.pick(self.by_page, pages=30, only_pages=wanted),
+                         ["zh-cn/b.md", "en/a.md"])
+
+    def test_without_only_pages_falls_back_to_stratified_pick(self):
+        picked = self.pick(self.by_page, pages=4, only_pages=None)
+        self.assertEqual(len(picked), 4)
+        self.assertTrue(any(p.startswith("zh-cn/") for p in picked))
+        self.assertTrue(any(p.startswith("en/") for p in picked))
+
+    def test_unknown_page_is_reported_not_silently_dropped(self):
+        from scripts.build_bench_questions import missing_pages
+
+        wanted = ["en/c.md", "en/nope.md"]
+        self.assertEqual(missing_pages(self.by_page, wanted), ["en/nope.md"])
+
+
+class MergeQuestionsTest(unittest.TestCase):
+    """扩题必须能「只加新的」，不能重写整份题集。
+
+    老流程 `append` 是「把这份草稿整份写进 questions.jsonl」—— 扩题时那样做，
+    要么得把 100 条老草稿重新喂一遍（候选句 key 早已重排，喂不回去），
+    要么就把老题弄丢。所以合并这一步必须是纯函数、可单测。
+    """
+
+    def test_merges_old_and_new_in_order(self):
+        from scripts.build_bench_questions import merge_questions
+
+        old = [{"qid": "k8s-c-001"}, {"qid": "k8s-e-001"}]
+        new = [{"qid": "k8s-c-042"}]
+        merged, problems = merge_questions(old, new)
+        self.assertEqual([r["qid"] for r in merged], ["k8s-c-001", "k8s-e-001", "k8s-c-042"])
+        self.assertEqual(problems, [])
+
+    def test_old_qid_collision_is_a_problem(self):
+        from scripts.build_bench_questions import merge_questions
+
+        merged, problems = merge_questions([{"qid": "k8s-c-001"}], [{"qid": "k8s-c-001"}])
+        self.assertEqual(len(merged), 1)
+        self.assertTrue(any("k8s-c-001" in p and "已存在" in p for p in problems))
+
+    def test_duplicate_inside_new_drafts_is_a_problem(self):
+        from scripts.build_bench_questions import merge_questions
+
+        _, problems = merge_questions([], [{"qid": "k8s-x-020"}, {"qid": "k8s-x-020"}])
+        self.assertTrue(any("k8s-x-020" in p and "重复" in p for p in problems))
+
+    def test_identical_question_text_is_reported(self):
+        from scripts.build_bench_questions import merge_questions
+
+        old = [{"qid": "k8s-c-001", "question": "同一个问题？"}]
+        new = [{"qid": "k8s-c-999", "question": "同一个问题？"}]
+        _, problems = merge_questions(old, new)
+        self.assertTrue(any("重复出题" in p for p in problems))

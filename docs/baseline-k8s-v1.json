@@ -1,76 +1,94 @@
 {
   "collection": "bench_k8s_v1",
   "questions": "datasets\\k8s-zh-en-v1\\questions.jsonl",
-  "questions_sha256": "a352ed2d9e07571527d96c83c0e7fa826385799b9f8770d4af7ec92751cc4687",
   "k": 10,
   "pool": 40,
   "rerank": true,
+  "query_en_mode": "translate",
+  "translate": {
+    "total": 81,
+    "ok": 0,
+    "cached": 81,
+    "skipped": 0,
+    "passthrough_terms": 0,
+    "passthrough_error": 0,
+    "success_rate": 1.0,
+    "cache": {
+      "entries": 287,
+      "hits": 81,
+      "misses": 0,
+      "hit_rate": 1.0,
+      "model": "qwen3.5:9b",
+      "version": "v1",
+      "checked_at": "2026-11-09T14:21:19"
+    }
+  },
   "overall": {
-    "n": 100,
-    "positives": 95,
-    "hit@10": 0.8632,
-    "full@10": 0.8526,
-    "recall@10": 0.8561,
-    "mrr": 0.6075
+    "n": 144,
+    "positives": 139,
+    "hit@10": 0.8345,
+    "full@10": 0.8273,
+    "recall@10": 0.8297,
+    "mrr": 0.5648
   },
   "by_evidence_lang": {
     "en": {
-      "n": 50,
-      "positives": 50,
-      "hit@10": 0.88,
-      "full@10": 0.86,
-      "recall@10": 0.8667,
-      "mrr": 0.5721
+      "n": 76,
+      "positives": 76,
+      "hit@10": 0.8947,
+      "full@10": 0.8816,
+      "recall@10": 0.886,
+      "mrr": 0.574
     },
     "negative": {
       "n": 5,
       "positives": 0
     },
     "zh-cn": {
-      "n": 45,
-      "positives": 45,
-      "hit@10": 0.8444,
-      "full@10": 0.8444,
-      "recall@10": 0.8444,
-      "mrr": 0.6468
+      "n": 63,
+      "positives": 63,
+      "hit@10": 0.7619,
+      "full@10": 0.7619,
+      "recall@10": 0.7619,
+      "mrr": 0.5538
     }
   },
   "by_type": {
     "cross_lingual": {
-      "n": 14,
-      "positives": 14,
-      "hit@10": 0.6429,
-      "full@10": 0.6429,
-      "recall@10": 0.6429,
-      "mrr": 0.169
+      "n": 31,
+      "positives": 31,
+      "hit@10": 0.6774,
+      "full@10": 0.6774,
+      "recall@10": 0.6774,
+      "mrr": 0.2423
     },
     "multi_hop": {
-      "n": 6,
-      "positives": 6,
-      "hit@10": 1.0,
-      "full@10": 1.0,
-      "recall@10": 1.0,
-      "mrr": 0.8889
+      "n": 11,
+      "positives": 11,
+      "hit@10": 0.9091,
+      "full@10": 0.9091,
+      "recall@10": 0.9091,
+      "mrr": 0.803
     },
     "negative": {
       "n": 5,
       "positives": 0
     },
     "numeric": {
-      "n": 7,
-      "positives": 7,
+      "n": 12,
+      "positives": 12,
       "hit@10": 1.0,
       "full@10": 1.0,
       "recall@10": 1.0,
-      "mrr": 1.0
+      "mrr": 0.8625
     },
     "single_hop": {
-      "n": 68,
-      "positives": 68,
-      "hit@10": 0.8824,
-      "full@10": 0.8676,
-      "recall@10": 0.8725,
-      "mrr": 0.6325
+      "n": 85,
+      "positives": 85,
+      "hit@10": 0.8588,
+      "full@10": 0.8471,
+      "recall@10": 0.851,
+      "mrr": 0.6096
     }
   },
   "negatives": {
@@ -78,8 +96,9 @@
     "note": "负样本的正确行为是弃答；它们没有 gold，不进 recall 分母"
   },
   "latency_ms": {
-    "p50": 1192.1,
-    "p90": 1600.8,
+    "p50": 1564.7,
+    "p90": 1687.9,
     "warmup": true
-  }
+  },
+  "questions_sha256": "71b6b84c7418fc9940374522cdf41b29e911af0d1909e7bfd11216fd1f295f42"
 }

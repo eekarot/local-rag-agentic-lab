@@ -126,12 +126,10 @@ def production_deps() -> ApiDeps:
         from src.rag.retrieval.rerank import CrossEncoderReranker, RerankConfig
         from src.rag.retrieval.store_wiring import build_default_retriever, load_parent_records
         from src.rag.translate.cache import TranslationCache
-        from src.rag.translate.service import TranslateService
+        from src.rag.translate.service import TranslateService, provider_from_chat
 
         translator = TranslateService(
-            provider=lambda prompt: ollama_client.chat(
-                [{"role": "user", "content": prompt}], temperature=0.0, think=False
-            ),
+            provider=provider_from_chat(ollama_client.chat),
             cache=TranslationCache(STORAGE_DIR / "cache" / "translations.sqlite3",
                                    model=OLLAMA_CHAT_MODEL, version="v1"),
             max_retries=1,
@@ -327,6 +325,7 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
                 q, retriever=current.retriever, parents=current.parents,
                 counter=current.counter, reranker=current.reranker,
                 pool=pool, rerank=rerank,
+                query_en=query_en,          # 翻译已经付过费了，别只拿来喂响应字段（N47）
             )
             ranked = outcome.hits
         except Exception as exc:                       # noqa: BLE001

@@ -67,7 +67,8 @@ class RerankWindowTest(unittest.TestCase):
                 self.reranked = False
 
         class _Retriever:
-            def retrieve(self, query, k):
+            # query_en 是 N47 修好后多出来的关键字参数：假实现照收，重点仍是窗口正文
+            def retrieve(self, query, k, query_en=None):
                 return _Result()
 
         return _Retriever()

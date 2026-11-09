@@ -6,6 +6,31 @@
 
 ## 未发布
 
+**修复**
+
+- **`query_en` 从未进入检索（N47）**：`retrieve_with_meta()` 没有这个参数，`/ask` / `/retrieve` / 评估脚本都没往下传，
+  翻译出来的英文只用在提示词语言和响应回显上 —— `dense_en` / `lexical_en` 一直在吃中文原句。
+  现在三处都转交；`/retrieve` 的 `question_en` 与新检索结果一致了。
+- **翻译从未真正发生（N48）**：`TranslateService` 的 provider 协议是 `(texts: list[str]) -> list[str]`，
+  而 `app.py` 手写 `lambda prompt: ...`，每次 4–5 ms 就 `passthrough_error` 并把中文原文当 `query_en`。
+  改为共享工厂 `provider_from_chat()`，并加 AST 守卫禁止手写 lambda。
+
+**新增**
+
+- **题集从 100 题扩到 144 题**（139 正样本；覆盖 43 页、每页 ≥3 题）：`dump --only-pages` 精确抽页、
+  `append --merge` 只加不重写；`cross_lingual` 从 14 增到 31（中→英 22 / 英→中 9），四格与题型表随之更新。
+- **`eval_bench --query-en {none,field,translate}`**：三种口径显式区分，基线用 `translate`（生产口径，走同一个翻译服务与缓存）；
+  `field` 是翻译上界（诊断用），`none` 是修 N47 前的旧口径。基线 JSON 里记 `translate` 统计（本次 81 条全部命缓存、0 降级）。
+- **`docs/evidence/query-en-modes-k8s-v1.json`**：三档口径的对照 + 中→英 5 个漏检的三路排名/重排前后排名。
+
+**行为变化（需要注意）**
+
+- **基线数字整体下移**：`hit@10 0.8632 → 0.8345`、`MRR 0.6075 → 0.5648`、`recall@10 0.8561 → 0.8297`。
+  原因两件事叠加：①题集扩了 44 题（跨语言占比升高，题更难）；②口径从「英文索引吃中文原句」换成真实翻译。
+- 真实翻译对**中文证据**的题是负收益（中→中 0.8372 → 0.7963）：英文两路被喂英文后把英文页顶上来，
+  与 `dense_zh` 的 RRF 融合里挤掉了中文 gold。这条已记为 C0c 的结论、C0d 的入口。
+
+
 ### 新增
 
 - **`scripts/chunk_quality.py`：切片结构体检**（不需要标注）。输出 `sc` 尺寸合规、`bi` 结构完整

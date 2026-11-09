@@ -131,9 +131,16 @@ def _parent_text(parent: Mapping[str, Any] | None) -> str:
 
 def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
                        counter, reranker, pool: int = DEFAULT_POOL,
-                       rerank: bool = True) -> RetrievalOutcome:
-    """`retrieve_ranked()` 的带元数据版本：多返回 `degraded`（缺能力 / 某路故障）。"""
-    result = retriever.retrieve(question, k=pool)
+                       rerank: bool = True,
+                       query_en: str | None = None) -> RetrievalOutcome:
+    """`retrieve_ranked()` 的带元数据版本：多返回 `degraded`（缺能力 / 某路故障）。
+
+    `query_en` 是翻译服务给出的英文 query，**必须转交给编排层**（N47）：
+    编排层明文规定 `dense_en` / `lexical_en` 吃英文 query，缺了它会回退中文原句并标记为噪声源。
+    之前这个参数根本不存在，于是翻译出来的英文只用在提示词语言和响应回显上，
+    英文索引实际一直在吃中文原句。
+    """
+    result = retriever.retrieve(question, k=pool, query_en=query_en)
     degraded = getattr(result, "degraded", None)
     routes = {name: list(route.ids)[:pool] for name, route in result.routes.items()}
     fused = rrf_fuse_routes(routes, rrf_k=RRF_K, top_k=pool)
@@ -181,7 +188,8 @@ def answer_query(
 
     started = time.perf_counter()
     outcome = retrieve_with_meta(question, retriever=retriever, parents=parents, counter=counter,
-                                 reranker=reranker, pool=pool, rerank=rerank)
+                                 reranker=reranker, pool=pool, rerank=rerank,
+                                 query_en=query_en)
     ranked, candidates, route_hits = outcome.hits, outcome.candidates, outcome.route_hits
     timings["retrieve_rerank_ms"] = (time.perf_counter() - started) * 1000
 

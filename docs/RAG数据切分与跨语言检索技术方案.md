@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.42
+> **文档版本**：2.43
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2428,6 +2428,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **N45** | 评测里**重排从未真正跑过**：`retrieve_with_meta` 用 `parents[pid]["text"]` 取窗口正文，而 `scripts/eval_bench.py` 的 `load_parents()` 直接把 SQL 行塞进字典（键是 `content`）→ 每个候选的窗口都是空串，cross-encoder 对 40 个空串打分全等、稳定排序保持原序。**基线标着「含重排」，实际是 RRF 原序**（`--no-rerank` 与默认配置逐题 top-10 完全一致，就是这么发现的） | ①取窗口时 `text` / `content` 都认（`_parent_text()`），调用方用哪种 schema 都不会静默失效；②`eval_bench.load_parents` 补 `text` 别名，与 `store_wiring.load_parent_records` 对齐；③用例 `tests/test_rerank_window.py`：假 encoder 按「窗口里有没有 TARGET」打分 —— 窗口空就顺序不变，直接红；④修好后基线整体上移：hit@10 0.7789 → **0.8632**、MRR 0.5456 → **0.6075**、zh MRR 0.4619 → **0.6468**，延迟 p50 64 → 1192 ms（重排是真的贵）。RAG 里「配置写了、代码没跑」比「跑错」更难发现
 
 | **N46** | 回归门禁的容差如果拍脑袋定 1%，在 95 题上是**必然误报**：hit@10 的 95% CI 半宽就有 ±0.068、MRR ±0.083，正常抖动全被判红，最后没人看门禁 | ①容差 = **基线一侧** 95% bootstrap CI 半宽（固定种子、可复现）；②不可比（题集/k/pool/重排开关不同）一律打印 `not_comparable` 并退 **0** —— 非零退出在 CI 里等于「代码坏了」；③门禁只抓大回归，小幅变化看**逐题更好/更差/持平**计数；④基线 JSON 记 `questions_sha256`（不认文件名/行数） |
+| **N47** | `retrieve_with_meta()` 没有 `query_en` 参数 —— 翻译服务算出来的英文 query **从未进入检索**：编排层明文规定 `dense_en` / `lexical_en` 吃英文 query，缺了就回退中文原句并标成「噪声源」，但 `/ask`、`/retrieve`、评估脚本都没往下传，英文只用在提示词语言与响应回显上 | ①`retrieve_with_meta` / `answer_query` / `/retrieve` 三处补上转交；②评估脚本给 `--query-en {none,field,translate}` 三档口径，**基线用 `translate`（生产口径）**，`field` 只当翻译上界做诊断；③`none` 保留但明确标注「不是生产口径」 |
+| **N48** | `TranslateService` 的 provider 协议是 `(texts: list[str]) -> list[str]`，而 `app.py` 手写的是 `lambda prompt: chat([...content: prompt...])` —— 服务按协议调用就 TypeError、退回位置参数后 `content` 收到**列表**，必然失败：每次 4–5 ms 返回空 → 状态 `passthrough_error` → `text` **回填中文原文**。于是「翻译」这一步一次都没真正发生，而所有日志看起来都正常 | ①抽出 `provider_from_chat(chat)` 共享工厂，`app.py` / 评估脚本都只能用工厂构造；②**AST 守卫**：`TranslateService(provider=...)` 的值必须是 `provider_from_chat` / `ollama_provider` 的调用，手写 lambda 直接红；③只有 `ok` / `cached` 才算真译文，`passthrough_*` 一律返回 None（降级为「没有英文 query」），并把 `translate` 统计写进基线 JSON |
 
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
 
@@ -3344,6 +3346,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.40                    2026-11-06              入库闸门改父+子复合版本（N43）+ gold 重算工具与口径（N44）
   2.41                    2026-11-06              评测里重排对空窗口工作（N45）+ 基线重立（hit@10 0.7789→0.8632）
   2.42                    2026-11-06              回归门禁上线（容差 = 基线 CI 半宽、不可比退 0）+ N46
+  2.43                    2026-11-06              题集扩到 144 题；修 N47/N48（翻译从未进入检索）+ C0c 三档口径
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空

@@ -1,0 +1,440 @@
+{
+  "dataset": "k8s-zh-en-v1",
+  "collection": "bench_k8s_v1",
+  "questions": {
+    "total": 144,
+    "positives": 139
+  },
+  "k": 10,
+  "pool": 40,
+  "rerank": true,
+  "modes": {
+    "none": {
+      "overall": {
+        "n": 144,
+        "positives": 139,
+        "hit@10": 0.8489,
+        "full@10": 0.8345,
+        "recall@10": 0.8405,
+        "mrr": 0.5793
+      },
+      "by_evidence_lang": {
+        "en": {
+          "n": 76,
+          "positives": 76,
+          "hit@10": 0.8816,
+          "full@10": 0.8553,
+          "recall@10": 0.8662,
+          "mrr": 0.5692
+        },
+        "zh-cn": {
+          "n": 63,
+          "positives": 63,
+          "hit@10": 0.8095,
+          "full@10": 0.8095,
+          "recall@10": 0.8095,
+          "mrr": 0.5916
+        }
+      },
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6817
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.8519,
+          "mrr": 0.6772
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.5556,
+          "mrr": 0.0778
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.6818,
+          "mrr": 0.2929
+        }
+      },
+      "latency_p50": 1200.0,
+      "translate_stats": null
+    },
+    "field": {
+      "overall": {
+        "n": 144,
+        "positives": 139,
+        "hit@10": 0.8489,
+        "full@10": 0.8417,
+        "recall@10": 0.8441,
+        "mrr": 0.5751
+      },
+      "by_evidence_lang": {
+        "en": {
+          "n": 76,
+          "positives": 76,
+          "hit@10": 0.9079,
+          "full@10": 0.8947,
+          "recall@10": 0.8991,
+          "mrr": 0.574
+        },
+        "zh-cn": {
+          "n": 63,
+          "positives": 63,
+          "hit@10": 0.7778,
+          "full@10": 0.7778,
+          "recall@10": 0.7778,
+          "mrr": 0.5765
+        }
+      },
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6801
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.7963,
+          "mrr": 0.657
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.6667,
+          "mrr": 0.0932
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.7727,
+          "mrr": 0.3136
+        }
+      },
+      "latency_p50": 1265.8,
+      "translate_stats": null
+    },
+    "translate": {
+      "overall": {
+        "n": 144,
+        "positives": 139,
+        "hit@10": 0.8345,
+        "full@10": 0.8273,
+        "recall@10": 0.8297,
+        "mrr": 0.5648
+      },
+      "by_evidence_lang": {
+        "en": {
+          "n": 76,
+          "positives": 76,
+          "hit@10": 0.8947,
+          "full@10": 0.8816,
+          "recall@10": 0.886,
+          "mrr": 0.574
+        },
+        "zh-cn": {
+          "n": 63,
+          "positives": 63,
+          "hit@10": 0.7619,
+          "full@10": 0.7619,
+          "recall@10": 0.7619,
+          "mrr": 0.5538
+        }
+      },
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6817
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.7963,
+          "mrr": 0.6332
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.5556,
+          "mrr": 0.0778
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.7273,
+          "mrr": 0.3096
+        }
+      },
+      "latency_p50": 1564.7,
+      "translate_stats": {
+        "total": 81,
+        "ok": 0,
+        "cached": 81,
+        "skipped": 0,
+        "passthrough_terms": 0,
+        "passthrough_error": 0,
+        "success_rate": 1.0,
+        "cache": {
+          "entries": 287,
+          "hits": 81,
+          "misses": 0,
+          "hit_rate": 1.0,
+          "model": "qwen3.5:9b",
+          "version": "v1",
+          "checked_at": "2026-11-09T14:21:19"
+        }
+      }
+    }
+  },
+  "deltas": {
+    "none → translate": {
+      "better": 4,
+      "worse": 9,
+      "same": 126,
+      "moved": [
+        {
+          "qid": "k8s-c-001",
+          "before": 1,
+          "after": null
+        },
+        {
+          "qid": "k8s-c-008",
+          "before": 4,
+          "after": 3
+        },
+        {
+          "qid": "k8s-c-012",
+          "before": 3,
+          "after": 4
+        },
+        {
+          "qid": "k8s-c-013",
+          "before": 1,
+          "after": 2
+        },
+        {
+          "qid": "k8s-c-019",
+          "before": 1,
+          "after": null
+        },
+        {
+          "qid": "k8s-c-028",
+          "before": 3,
+          "after": null
+        },
+        {
+          "qid": "k8s-c-033",
+          "before": 2,
+          "after": 1
+        },
+        {
+          "qid": "k8s-c-045",
+          "before": 8,
+          "after": 9
+        },
+        {
+          "qid": "k8s-c-055",
+          "before": 7,
+          "after": 9
+        },
+        {
+          "qid": "k8s-x-008",
+          "before": null,
+          "after": 4
+        },
+        {
+          "qid": "k8s-x-015",
+          "before": null,
+          "after": 4
+        },
+        {
+          "qid": "k8s-x-019",
+          "before": 5,
+          "after": 6
+        },
+        {
+          "qid": "k8s-x-023",
+          "before": 10,
+          "after": null
+        }
+      ]
+    },
+    "translate → field": {
+      "better": 5,
+      "worse": 5,
+      "same": 129,
+      "moved": [
+        {
+          "qid": "k8s-c-008",
+          "before": 3,
+          "after": 4
+        },
+        {
+          "qid": "k8s-c-010",
+          "before": 7,
+          "after": 8
+        },
+        {
+          "qid": "k8s-c-013",
+          "before": 2,
+          "after": 1
+        },
+        {
+          "qid": "k8s-c-032",
+          "before": null,
+          "after": 1
+        },
+        {
+          "qid": "k8s-c-045",
+          "before": 9,
+          "after": null
+        },
+        {
+          "qid": "k8s-e-041",
+          "before": 3,
+          "after": 4
+        },
+        {
+          "qid": "k8s-x-001",
+          "before": 9,
+          "after": 10
+        },
+        {
+          "qid": "k8s-x-023",
+          "before": null,
+          "after": 10
+        },
+        {
+          "qid": "k8s-x-030",
+          "before": null,
+          "after": 8
+        },
+        {
+          "qid": "k8s-x-031",
+          "before": 9,
+          "after": 8
+        }
+      ]
+    },
+    "none → field (中→英)": {
+      "better": 2,
+      "worse": 2,
+      "same": 18,
+      "moved": [
+        {
+          "qid": "k8s-x-001",
+          "before": 9,
+          "after": 10
+        },
+        {
+          "qid": "k8s-x-008",
+          "before": null,
+          "after": 4
+        },
+        {
+          "qid": "k8s-x-015",
+          "before": null,
+          "after": 4
+        },
+        {
+          "qid": "k8s-x-019",
+          "before": 5,
+          "after": 6
+        }
+      ]
+    },
+    "none → translate (中→英)": {
+      "better": 2,
+      "worse": 2,
+      "same": 18,
+      "moved": [
+        {
+          "qid": "k8s-x-008",
+          "before": null,
+          "after": 4
+        },
+        {
+          "qid": "k8s-x-015",
+          "before": null,
+          "after": 4
+        },
+        {
+          "qid": "k8s-x-019",
+          "before": 5,
+          "after": 6
+        },
+        {
+          "qid": "k8s-x-023",
+          "before": 10,
+          "after": null
+        }
+      ]
+    }
+  },
+  "zh_en_misses": {
+    "note": "生产口径（translate）下中→英的 5 个漏检：融合（关重排）时排第几、重排后排第几、三路各自排第几",
+    "probe": {
+      "k8s-x-009": {
+        "fused_rank": 3,
+        "rerank_rank": 17,
+        "route_dense_en": 3,
+        "route_lexical_en": 32,
+        "route_dense_zh": 22
+      },
+      "k8s-x-010": {
+        "fused_rank": 14,
+        "rerank_rank": 13,
+        "route_dense_en": 16,
+        "route_lexical_en": 6,
+        "route_dense_zh": null
+      },
+      "k8s-x-020": {
+        "fused_rank": 1,
+        "rerank_rank": 16,
+        "route_dense_en": 7,
+        "route_lexical_en": 1,
+        "route_dense_zh": 11
+      },
+      "k8s-x-023": {
+        "fused_rank": 8,
+        "rerank_rank": 14,
+        "route_dense_en": 5,
+        "route_lexical_en": 30,
+        "route_dense_zh": 31
+      },
+      "k8s-x-024": {
+        "fused_rank": 4,
+        "rerank_rank": 31,
+        "route_dense_en": 7,
+        "route_lexical_en": 1,
+        "route_dense_zh": 32
+      }
+    },
+    "rerank_query_probe": {
+      "note": "同一批 40 个候选，只换重排时用的 query（中文原句 vs 翻译后的英文），看 gold 掉到第几",
+      "probe": {
+        "k8s-x-009": {
+          "zh_query_rank": 17,
+          "en_query_rank": 7
+        },
+        "k8s-x-010": {
+          "zh_query_rank": 13,
+          "en_query_rank": 19
+        },
+        "k8s-x-020": {
+          "zh_query_rank": 16,
+          "en_query_rank": 3
+        },
+        "k8s-x-023": {
+          "zh_query_rank": 14,
+          "en_query_rank": 16
+        },
+        "k8s-x-024": {
+          "zh_query_rank": 31,
+          "en_query_rank": 24
+        }
+      }
+    }
+  },
+  "bugs_found": [
+    "N47 翻译出的英文 query 从未进入检索",
+    "N48 TranslateService provider 协议不匹配（100% passthrough_error）"
+  ]
+}

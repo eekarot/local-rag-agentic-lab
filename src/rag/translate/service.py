@@ -99,16 +99,26 @@ def parse_json_reply(reply: str) -> str:
     return text.splitlines()[0].strip().strip('"')
 
 
-def ollama_provider(model: str | None = None) -> Callable[..., list[str]]:
-    """真 provider：走 Ollama `/api/chat`，要求 JSON 回包、关掉思考段。"""
-    from ...ollama_client import chat
+def provider_from_chat(chat: Callable[..., str]) -> Callable[..., list[str]]:
+    """把「一次对话 -> 一条回复」的 chat 适配成 `TranslateService` 要的 provider 协议。
 
+    协议是 `provider(texts: list[str], hints=None) -> list[str]`：逐条组 prompt，
+    返回**同长度**列表。
+
+    为什么要有这个工厂（N48）：`/ask` 曾经手写 `lambda prompt: chat([...])`，
+    服务按协议调 `provider(texts, hints=...)` 时 TypeError、退回 `provider(texts)`，
+    `content` 收到的是**列表**，调用必然失败 —— 于是每次 4 ms 就降级成 `passthrough_error`，
+    `query_en` 永远是中文原句，翻译一次都没真正发生，而所有日志看起来都「正常」。
+    所以 provider 只能由这个工厂构造，不许各处手写。
+    """
     def provider(texts: list[str], hints: list[str] | None = None) -> list[str]:
         out: list[str] = []
         for index, text in enumerate(texts):
             user = text
-            if hints and hints[index]:
-                user = f"{text}\n\n(Must keep these tokens verbatim: {', '.join(hints[index])})"
+            if hints and index < len(hints) and hints[index]:
+                gap = chr(10) * 2
+                user = (f"{text}{gap}"
+                        f"(Must keep these tokens verbatim: {', '.join(hints[index])})")
             reply = chat(
                 [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user}],
                 temperature=0,
@@ -120,6 +130,13 @@ def ollama_provider(model: str | None = None) -> Callable[..., list[str]]:
         return out
 
     return provider
+
+
+def ollama_provider(model: str | None = None) -> Callable[..., list[str]]:
+    """真 provider：走 Ollama `/api/chat`，要求 JSON 回包、关掉思考段。"""
+    from ...ollama_client import chat
+
+    return provider_from_chat(chat)
 
 
 class TranslateService:

@@ -271,6 +271,76 @@ def format_comparison(cmp: dict) -> list[str]:
     return lines
 
 
+def query_for(question: dict, *, mode: str, translate=None) -> tuple[str, str | None]:
+    """这次检索到底喂什么给 `dense_en` / `lexical_en`。
+
+    三档，缺一档就会含糊：
+    - `none`      ：只给可见问题。**这不是生产口径**，是「翻译缺失」的降级态，
+                    也是修 N47 之前所有基线的真实口径（英文索引一直在吃中文原句）。
+    - `field`     ：再传手写的 `query_en` = 翻译**上界**（翻译永远正确时能到哪），用来判断
+                    「翻译有没有拖后腿」。
+    - `translate` ：走和 `/ask` 同一套翻译服务（同模型同缓存）= 生产口径。
+                    翻译失败时退化成 `none`（返回 None），绝不用机翻内容顶替。
+    """
+    if mode not in ("none", "field", "translate"):
+        raise ValueError(f"未知的 query-en 口径：{mode}（可选 none / field / translate）")
+    question_text = question["question"]
+    if mode == "none":
+        return question_text, None
+    if mode == "field":
+        english = (question.get("query_en") or "").strip()
+        return question_text, (english or None)
+    if translate is None:
+        raise ValueError("translate 口径必须给 translate 函数（否则等于偷偷跑成 none）")
+    english = (translate(question_text) or "").strip()
+    return question_text, (english or None)
+
+
+class TranslateAdapter:
+    """`/ask` 的翻译口径，外加把「翻了几条」暴露出来给基线归档。"""
+
+    def __init__(self, service):
+        self.service = service
+
+    def __call__(self, question: str) -> str | None:
+        from src.rag.lang.detect import detect
+
+        if detect(question) != "zh":
+            return question
+        result = self.service.translate([question])[0]
+        # 只有真译文才算数：passthrough_* 的 text 是**中文原文回填**，
+        # 当成英文喂下去等于悄悄退化成 none 口径（N48）。
+        if result.status not in ("ok", "cached"):
+            return None
+        return result.text or None
+
+    def stats(self) -> dict:
+        return self.service.stats()
+
+
+def build_translate_fn(chat=None):
+    """和 `/ask` 完全同一个翻译服务：同模型、同缓存文件、同 provider 工厂。
+
+    刻意不另写一套「评测专用翻译」—— 那样测出来的就不是生产行为。
+    `chat` 只给用例注入假模型用。
+    """
+    from src.config import OLLAMA_CHAT_MODEL, STORAGE_DIR
+    from src.rag.translate.cache import TranslationCache
+    from src.rag.translate.service import TranslateService, provider_from_chat
+
+    if chat is None:
+        from src.ollama_client import chat as ollama_chat
+        chat = ollama_chat
+
+    service = TranslateService(
+        provider=provider_from_chat(chat),
+        cache=TranslationCache(STORAGE_DIR / "cache" / "translations.sqlite3",
+                               model=OLLAMA_CHAT_MODEL, version="v1"),
+        max_retries=1,
+    )
+    return TranslateAdapter(service)
+
+
 def evaluate(
     questions: list[dict],
     *,
@@ -283,6 +353,8 @@ def evaluate(
     parents: dict[str, dict] | None = None,
     counter=None,
     reranker=None,
+    query_en: str = "none",
+    translator=None,
 ) -> dict:
     from src.rag.ask.pipeline import retrieve_with_meta
     from src.rag.ingestion.tokenizer import TokenCounter
@@ -304,10 +376,11 @@ def evaluate(
     rows: list[dict] = []
     latencies: list[float] = []
     for question in questions:
-        query = question["question"]
+        query, english = query_for(question, mode=query_en, translate=translator)
         started = time.perf_counter()
         outcome = retrieve_with_meta(query, retriever=retriever, parents=parents, counter=counter,
-                                     reranker=reranker, pool=pool, rerank=rerank)
+                                     reranker=reranker, pool=pool, rerank=rerank,
+                                     query_en=english)
         elapsed_ms = (time.perf_counter() - started) * 1000
         latencies.append(elapsed_ms)
         ranked = [hit.chunk_id for hit in outcome.hits][:k]   # 检索返回的是 parent id
@@ -340,6 +413,9 @@ def evaluate(
         "k": k,
         "pool": pool,
         "rerank": rerank,
+        "query_en_mode": query_en,
+        **({"translate": translator.stats()} if translator is not None
+           and hasattr(translator, "stats") else {}),
         "overall": summarize(rows, k),
         "by_evidence_lang": {name: summarize(items, k) for name, items in sorted(by_lang.items())},
         "by_type": {name: summarize(items, k) for name, items in sorted(by_type.items())},
@@ -397,6 +473,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--compare", type=Path, default=None,
                         help="与基线对比并做回归门禁（基线汇总 JSON；逐题默认取同名 .rows.jsonl）")
     parser.add_argument("--baseline-rows", type=Path, default=None, help="基线逐题 JSONL（默认自动推断）")
+    parser.add_argument("--query-en", choices=("none", "field", "translate"), default="none",
+                        help="dense_en/lexical_en 吃什么：none = 只给原问题（旧口径）；"
+                             "field = 再传手写 query_en（翻译上界）")
     parser.add_argument("--compare-tolerance", type=float, default=None,
                         help="覆盖容差（默认 = 基线一侧 95%% bootstrap CI 半宽）")
     parser.add_argument("--report", type=Path, default=None, help="把对比表另存为 Markdown")
@@ -414,7 +493,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.limit:
         questions = questions[: args.limit]
     result = evaluate(questions, k=args.k, pool=args.pool, rerank=not args.no_rerank,
-                      warmup=not args.no_warmup, collection=args.collection, store=args.store)
+                      warmup=not args.no_warmup, collection=args.collection, store=args.store,
+                      query_en=args.query_en,
+                      translator=build_translate_fn() if args.query_en == "translate" else None)
     result["questions_sha256"] = questions_fingerprint(args.questions)
 
     out_path = None if args.compare and args.out is None else _default_out(args)
