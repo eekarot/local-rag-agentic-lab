@@ -37,33 +37,42 @@ retriever = _build_retriever("bench_k8s_v1", BENCH_STORE, [], lambda _m: None)
 translate = build_translate_fn()
 
 
+def _units_with_offsets(text: str) -> list[tuple[int, int]]:
+    """按句末标点切积木，同时记住每块的字符区间（旧版把 prefix 的长度当成了偏移，见 N54）。"""
+    out, begin = [], 0
+    for i, char in enumerate(text):
+        if char in "。！？；.!?":
+            out.append((begin, i + 1))
+            begin = i + 1
+    if begin < len(text):
+        out.append((begin, len(text)))
+    return out
+
+
 def gold_window(parent_text: str, span: str, max_tokens: int) -> str:
     """以答案句为中心截一个窗口（模拟「窗口选择永远正确」）。"""
     start = parent_text.find(span)
     if start < 0:
         return best_window(parent_text, span, max_tokens=max_tokens, counter=counter)
-    head = parent_text[:start]
-    # 往前留一半预算，往后补满
-    budget = max_tokens // 2
-    lines = head.splitlines(keepends=True)
-    kept, used = [], 0
-    for line in reversed(lines):
-        n = counter.count(line)
-        if used + n > budget:
+    blocks = _units_with_offsets(parent_text)
+    anchor = next((i for i, (_b, e) in enumerate(blocks) if e > start), None)
+    if anchor is None:
+        return best_window(parent_text, span, max_tokens=max_tokens, counter=counter)
+    lo = hi = anchor
+    used = max(1, counter.count(parent_text[blocks[anchor][0]:blocks[anchor][1]]))
+    while used <= max_tokens // 2 and lo > 0:
+        n = max(1, counter.count(parent_text[blocks[lo - 1][0]:blocks[lo - 1][1]]))
+        if used + n > max_tokens // 2:
             break
-        kept.insert(0, line)
         used += n
-    prefix = "".join(kept)
-    rest_tokens = max_tokens - used
-    body = parent_text[len(prefix):]
-    out, used2 = [], 0
-    for line in body.splitlines(keepends=True):
-        n = counter.count(line)
-        if used2 + n > rest_tokens:
+        lo -= 1
+    while hi + 1 < len(blocks):
+        n = max(1, counter.count(parent_text[blocks[hi + 1][0]:blocks[hi + 1][1]]))
+        if used + n > max_tokens:
             break
-        out.append(line)
-        used2 += n
-    return prefix + "".join(out)
+        used += n
+        hi += 1
+    return parent_text[blocks[lo][0]:blocks[hi][1]]
 
 
 def rank_of(hits, gold):

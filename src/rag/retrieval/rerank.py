@@ -294,8 +294,10 @@ def _hard_split(unit: str, max_tokens: int, counter) -> list[str]:
 def best_window(text: str, query: str, *, max_tokens: int, counter) -> str:
     """在父块正文里挑一段「最可能回答 query」的窗口，长度 ≤ max_tokens。
 
-    为什么需要它：父块 p50 是 1,564 字符（约 700 token），而重排只截 256 token。
-    直接截开头会拿到标题/目录，真正相关的那句在中间。做法是：
+    为什么需要它（实测数字，见 `docs/evidence/window-strategy-k8s-v1.json`）：
+    候选父块 p50 = **322 token**，其中 **63% 超过 256**；直接截开头会拿到标题/目录，
+    真正相关的那句常在中间。窗口挑错不是小事：整批换成「块首 256 token」，
+    整体 hit@10 从 0.8345 掉到 0.6978（中→中 −18.5 点）。做法是：
 
     1. 按句末标点切积木；
     2. 逐个积木累计 token，滑出一个一个 ≤ max_tokens 的候选窗口；

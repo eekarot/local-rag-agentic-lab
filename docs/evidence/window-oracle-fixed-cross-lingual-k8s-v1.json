@@ -1,0 +1,256 @@
+{
+  "note": "oracle 窗口修正后的跨语言对照（旧版把 prefix 长度当成了偏移，N54）",
+  "summary": {
+    "中→英": {
+      "n": 22,
+      "overlap": {
+        "hit@10": 0.7273,
+        "mrr": 0.3096
+      },
+      "head": {
+        "hit@10": 0.7727,
+        "mrr": 0.3031
+      },
+      "oracle_fixed": {
+        "hit@10": 0.7727,
+        "mrr": 0.4005
+      },
+      "mrr_note": "MRR 只算 top-10 内命中，未命中记 0（分母=全部正样本）"
+    },
+    "英→中": {
+      "n": 9,
+      "overlap": {
+        "hit@10": 0.5556,
+        "mrr": 0.0778
+      },
+      "head": {
+        "hit@10": 0.4444,
+        "mrr": 0.0855
+      },
+      "oracle_fixed": {
+        "hit@10": 0.7778,
+        "mrr": 0.3494
+      },
+      "mrr_note": "MRR 只算 top-10 内命中，未命中记 0（分母=全部正样本）"
+    }
+  },
+  "rows": [
+    {
+      "qid": "k8s-x-001",
+      "cell": "中→英",
+      "overlap": 9,
+      "head": 7,
+      "oracle_fixed": 9
+    },
+    {
+      "qid": "k8s-x-002",
+      "cell": "中→英",
+      "overlap": 4,
+      "head": 4,
+      "oracle_fixed": 3
+    },
+    {
+      "qid": "k8s-x-003",
+      "cell": "中→英",
+      "overlap": null,
+      "head": null,
+      "oracle_fixed": null
+    },
+    {
+      "qid": "k8s-x-004",
+      "cell": "中→英",
+      "overlap": 3,
+      "head": 3,
+      "oracle_fixed": 3
+    },
+    {
+      "qid": "k8s-x-005",
+      "cell": "中→英",
+      "overlap": 2,
+      "head": 7,
+      "oracle_fixed": 1
+    },
+    {
+      "qid": "k8s-x-006",
+      "cell": "中→英",
+      "overlap": 2,
+      "head": 2,
+      "oracle_fixed": 1
+    },
+    {
+      "qid": "k8s-x-007",
+      "cell": "中→英",
+      "overlap": 4,
+      "head": 4,
+      "oracle_fixed": 4
+    },
+    {
+      "qid": "k8s-x-008",
+      "cell": "中→英",
+      "overlap": 4,
+      "head": 3,
+      "oracle_fixed": 4
+    },
+    {
+      "qid": "k8s-x-009",
+      "cell": "中→英",
+      "overlap": 17,
+      "head": 16,
+      "oracle_fixed": 16
+    },
+    {
+      "qid": "k8s-x-010",
+      "cell": "中→英",
+      "overlap": 13,
+      "head": 10,
+      "oracle_fixed": 3
+    },
+    {
+      "qid": "k8s-x-011",
+      "cell": "英→中",
+      "overlap": 9,
+      "head": 8,
+      "oracle_fixed": 1
+    },
+    {
+      "qid": "k8s-x-012",
+      "cell": "英→中",
+      "overlap": 5,
+      "head": 3,
+      "oracle_fixed": 1
+    },
+    {
+      "qid": "k8s-x-013",
+      "cell": "英→中",
+      "overlap": 9,
+      "head": 9,
+      "oracle_fixed": 3
+    },
+    {
+      "qid": "k8s-x-014",
+      "cell": "英→中",
+      "overlap": 13,
+      "head": 15,
+      "oracle_fixed": 5
+    },
+    {
+      "qid": "k8s-x-015",
+      "cell": "中→英",
+      "overlap": 4,
+      "head": 4,
+      "oracle_fixed": 4
+    },
+    {
+      "qid": "k8s-x-016",
+      "cell": "中→英",
+      "overlap": 5,
+      "head": 5,
+      "oracle_fixed": 5
+    },
+    {
+      "qid": "k8s-x-017",
+      "cell": "中→英",
+      "overlap": 2,
+      "head": 2,
+      "oracle_fixed": 2
+    },
+    {
+      "qid": "k8s-x-018",
+      "cell": "中→英",
+      "overlap": 1,
+      "head": 1,
+      "oracle_fixed": 1
+    },
+    {
+      "qid": "k8s-x-019",
+      "cell": "中→英",
+      "overlap": 6,
+      "head": 6,
+      "oracle_fixed": 4
+    },
+    {
+      "qid": "k8s-x-020",
+      "cell": "中→英",
+      "overlap": 16,
+      "head": 12,
+      "oracle_fixed": 16
+    },
+    {
+      "qid": "k8s-x-021",
+      "cell": "中→英",
+      "overlap": 1,
+      "head": 1,
+      "oracle_fixed": 1
+    },
+    {
+      "qid": "k8s-x-022",
+      "cell": "中→英",
+      "overlap": 2,
+      "head": 2,
+      "oracle_fixed": 2
+    },
+    {
+      "qid": "k8s-x-023",
+      "cell": "中→英",
+      "overlap": 14,
+      "head": 13,
+      "oracle_fixed": 14
+    },
+    {
+      "qid": "k8s-x-024",
+      "cell": "中→英",
+      "overlap": 31,
+      "head": 28,
+      "oracle_fixed": 18
+    },
+    {
+      "qid": "k8s-x-025",
+      "cell": "中→英",
+      "overlap": 2,
+      "head": 2,
+      "oracle_fixed": 1
+    },
+    {
+      "qid": "k8s-x-026",
+      "cell": "中→英",
+      "overlap": 2,
+      "head": 2,
+      "oracle_fixed": 2
+    },
+    {
+      "qid": "k8s-x-027",
+      "cell": "英→中",
+      "overlap": null,
+      "head": null,
+      "oracle_fixed": null
+    },
+    {
+      "qid": "k8s-x-028",
+      "cell": "英→中",
+      "overlap": null,
+      "head": null,
+      "oracle_fixed": null
+    },
+    {
+      "qid": "k8s-x-029",
+      "cell": "英→中",
+      "overlap": 6,
+      "head": 5,
+      "oracle_fixed": 4
+    },
+    {
+      "qid": "k8s-x-030",
+      "cell": "英→中",
+      "overlap": 12,
+      "head": 11,
+      "oracle_fixed": 9
+    },
+    {
+      "qid": "k8s-x-031",
+      "cell": "英→中",
+      "overlap": 9,
+      "head": 24,
+      "oracle_fixed": 4
+    }
+  ]
+}

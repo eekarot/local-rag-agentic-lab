@@ -1,0 +1,1371 @@
+{
+  "note": "三种窗口策略对照（A 生产 overlap / B 块首 / C 以答案句为中心）",
+  "self_check_mismatch": [
+    "k8s-c-026",
+    "k8s-c-035",
+    "k8s-e-011",
+    "k8s-x-009",
+    "k8s-x-010",
+    "k8s-x-014",
+    "k8s-x-020",
+    "k8s-x-023",
+    "k8s-x-024",
+    "k8s-x-030"
+  ],
+  "self_check_mismatch_count": 10,
+  "summary": {
+    "中→英": {
+      "n": 22,
+      "overlap": {
+        "hit@10": 0.7273,
+        "mrr": 0.3096
+      },
+      "head": {
+        "hit@10": 0.7273,
+        "mrr": 0.3312
+      },
+      "oracle": {
+        "hit@10": 0.6818,
+        "mrr": 0.3053
+      },
+      "window_has_gold": {
+        "overlap": 0.8636,
+        "head": 0.7727
+      },
+      "mrr_note": "MRR 只算 top-10 内命中，未命中记 0（分母=全部正样本）"
+    },
+    "英→中": {
+      "n": 9,
+      "overlap": {
+        "hit@10": 0.5556,
+        "mrr": 0.0778
+      },
+      "head": {
+        "hit@10": 0.3333,
+        "mrr": 0.05
+      },
+      "oracle": {
+        "hit@10": 0.6667,
+        "mrr": 0.1183
+      },
+      "window_has_gold": {
+        "overlap": 0.3333,
+        "head": 0.2222
+      },
+      "mrr_note": "MRR 只算 top-10 内命中，未命中记 0（分母=全部正样本）"
+    },
+    "中→中": {
+      "n": 54,
+      "overlap": {
+        "hit@10": 0.7963,
+        "mrr": 0.6332
+      },
+      "head": {
+        "hit@10": 0.6111,
+        "mrr": 0.3972
+      },
+      "oracle": {
+        "hit@10": 0.5741,
+        "mrr": 0.3922
+      },
+      "window_has_gold": {
+        "overlap": 0.6296,
+        "head": 0.3889
+      },
+      "mrr_note": "MRR 只算 top-10 内命中，未命中记 0（分母=全部正样本）"
+    },
+    "英→英": {
+      "n": 54,
+      "overlap": {
+        "hit@10": 0.963,
+        "mrr": 0.6817
+      },
+      "head": {
+        "hit@10": 0.8333,
+        "mrr": 0.6202
+      },
+      "oracle": {
+        "hit@10": 0.8519,
+        "mrr": 0.6406
+      },
+      "window_has_gold": {
+        "overlap": 0.8148,
+        "head": 0.7963
+      },
+      "mrr_note": "MRR 只算 top-10 内命中，未命中记 0（分母=全部正样本）"
+    },
+    "整体": {
+      "n": 139,
+      "overlap": {
+        "hit@10": 0.8345,
+        "mrr": 0.5648
+      },
+      "head": {
+        "hit@10": 0.6978,
+        "mrr": 0.4509
+      },
+      "oracle": {
+        "hit@10": 0.705,
+        "mrr": 0.4572
+      },
+      "window_has_gold": {
+        "overlap": 0.7194,
+        "head": 0.5971
+      },
+      "mrr_note": "MRR 只算 top-10 内命中，未命中记 0（分母=全部正样本）"
+    }
+  },
+  "rows": [
+    {
+      "qid": "k8s-c-001",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-002",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-c-003",
+      "cell": "中→中",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 12,
+      "window_has_gold_head": false,
+      "oracle": 17
+    },
+    {
+      "qid": "k8s-c-004",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-005",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-006",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": false,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-007",
+      "cell": "中→中",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 3,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-008",
+      "cell": "中→中",
+      "overlap": 3,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-009",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 5
+    },
+    {
+      "qid": "k8s-c-010",
+      "cell": "中→中",
+      "overlap": 7,
+      "window_has_gold_overlap": true,
+      "head": 40,
+      "window_has_gold_head": false,
+      "oracle": 40
+    },
+    {
+      "qid": "k8s-c-011",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 5,
+      "window_has_gold_head": false,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-012",
+      "cell": "中→中",
+      "overlap": 4,
+      "window_has_gold_overlap": false,
+      "head": 2,
+      "window_has_gold_head": false,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-c-013",
+      "cell": "中→中",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 36,
+      "window_has_gold_head": false,
+      "oracle": 24
+    },
+    {
+      "qid": "k8s-c-014",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 7,
+      "window_has_gold_head": false,
+      "oracle": 17
+    },
+    {
+      "qid": "k8s-c-015",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 40,
+      "window_has_gold_head": false,
+      "oracle": 30
+    },
+    {
+      "qid": "k8s-c-016",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-017",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": false,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-c-018",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-019",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-020",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-022",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 21,
+      "window_has_gold_head": false,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-c-023",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 17,
+      "window_has_gold_head": false,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-026",
+      "cell": "中→中",
+      "overlap": 20,
+      "window_has_gold_overlap": true,
+      "head": 12,
+      "window_has_gold_head": true,
+      "oracle": 12
+    },
+    {
+      "qid": "k8s-c-028",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-029",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-030",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-031",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-032",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-033",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 3,
+      "window_has_gold_head": false,
+      "oracle": 18
+    },
+    {
+      "qid": "k8s-c-034",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-035",
+      "cell": "中→中",
+      "overlap": 12,
+      "window_has_gold_overlap": true,
+      "head": 18,
+      "window_has_gold_head": false,
+      "oracle": 12
+    },
+    {
+      "qid": "k8s-c-036",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 10,
+      "window_has_gold_head": false,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-037",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 33,
+      "window_has_gold_head": false,
+      "oracle": 33
+    },
+    {
+      "qid": "k8s-c-038",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-039",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-040",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 4,
+      "window_has_gold_head": false,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-041",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-042",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": false,
+      "oracle": 16
+    },
+    {
+      "qid": "k8s-c-043",
+      "cell": "中→中",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 3,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-044",
+      "cell": "中→中",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 22,
+      "window_has_gold_head": false,
+      "oracle": 33
+    },
+    {
+      "qid": "k8s-c-045",
+      "cell": "中→中",
+      "overlap": 9,
+      "window_has_gold_overlap": true,
+      "head": 7,
+      "window_has_gold_head": true,
+      "oracle": 9
+    },
+    {
+      "qid": "k8s-e-001",
+      "cell": "英→英",
+      "overlap": 3,
+      "window_has_gold_overlap": true,
+      "head": 6,
+      "window_has_gold_head": false,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-e-002",
+      "cell": "英→英",
+      "overlap": 3,
+      "window_has_gold_overlap": false,
+      "head": 2,
+      "window_has_gold_head": false,
+      "oracle": 3
+    },
+    {
+      "qid": "k8s-e-003",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-004",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 40,
+      "window_has_gold_head": false,
+      "oracle": 36
+    },
+    {
+      "qid": "k8s-e-005",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": false,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-006",
+      "cell": "英→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-e-007",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-008",
+      "cell": "英→英",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-e-009",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-010",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-011",
+      "cell": "英→英",
+      "overlap": 18,
+      "window_has_gold_overlap": true,
+      "head": 14,
+      "window_has_gold_head": true,
+      "oracle": 24
+    },
+    {
+      "qid": "k8s-e-012",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-013",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-014",
+      "cell": "英→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 6,
+      "window_has_gold_head": false,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-e-015",
+      "cell": "英→英",
+      "overlap": 5,
+      "window_has_gold_overlap": true,
+      "head": 19,
+      "window_has_gold_head": false,
+      "oracle": 19
+    },
+    {
+      "qid": "k8s-e-016",
+      "cell": "英→英",
+      "overlap": 2,
+      "window_has_gold_overlap": false,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-e-017",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-018",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-019",
+      "cell": "英→英",
+      "overlap": 8,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-020",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-021",
+      "cell": "英→英",
+      "overlap": 9,
+      "window_has_gold_overlap": true,
+      "head": 3,
+      "window_has_gold_head": true,
+      "oracle": 3
+    },
+    {
+      "qid": "k8s-e-022",
+      "cell": "英→英",
+      "overlap": 4,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-023",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-e-024",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-025",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-026",
+      "cell": "英→英",
+      "overlap": 3,
+      "window_has_gold_overlap": true,
+      "head": 23,
+      "window_has_gold_head": false,
+      "oracle": 25
+    },
+    {
+      "qid": "k8s-e-027",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-028",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-029",
+      "cell": "英→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 3,
+      "window_has_gold_head": true,
+      "oracle": 3
+    },
+    {
+      "qid": "k8s-e-030",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-031",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-032",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-033",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-034",
+      "cell": "英→英",
+      "overlap": 3,
+      "window_has_gold_overlap": false,
+      "head": 17,
+      "window_has_gold_head": true,
+      "oracle": 11
+    },
+    {
+      "qid": "k8s-e-035",
+      "cell": "英→英",
+      "overlap": 8,
+      "window_has_gold_overlap": false,
+      "head": 15,
+      "window_has_gold_head": true,
+      "oracle": 40
+    },
+    {
+      "qid": "k8s-e-036",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-037",
+      "cell": "英→英",
+      "overlap": 4,
+      "window_has_gold_overlap": true,
+      "head": 4,
+      "window_has_gold_head": true,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-e-038",
+      "cell": "英→英",
+      "overlap": 10,
+      "window_has_gold_overlap": true,
+      "head": 8,
+      "window_has_gold_head": true,
+      "oracle": 10
+    },
+    {
+      "qid": "k8s-e-039",
+      "cell": "英→英",
+      "overlap": 6,
+      "window_has_gold_overlap": true,
+      "head": 6,
+      "window_has_gold_head": true,
+      "oracle": 6
+    },
+    {
+      "qid": "k8s-e-040",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-x-001",
+      "cell": "中→英",
+      "overlap": 9,
+      "window_has_gold_overlap": true,
+      "head": 10,
+      "window_has_gold_head": true,
+      "oracle": 10
+    },
+    {
+      "qid": "k8s-x-002",
+      "cell": "中→英",
+      "overlap": 4,
+      "window_has_gold_overlap": true,
+      "head": 9,
+      "window_has_gold_head": false,
+      "oracle": 6
+    },
+    {
+      "qid": "k8s-x-003",
+      "cell": "中→英",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-x-004",
+      "cell": "中→英",
+      "overlap": 3,
+      "window_has_gold_overlap": true,
+      "head": 3,
+      "window_has_gold_head": true,
+      "oracle": 3
+    },
+    {
+      "qid": "k8s-x-005",
+      "cell": "中→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-x-006",
+      "cell": "中→英",
+      "overlap": 2,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-x-007",
+      "cell": "中→英",
+      "overlap": 4,
+      "window_has_gold_overlap": true,
+      "head": 6,
+      "window_has_gold_head": true,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-x-008",
+      "cell": "中→英",
+      "overlap": 4,
+      "window_has_gold_overlap": true,
+      "head": 3,
+      "window_has_gold_head": true,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-x-009",
+      "cell": "中→英",
+      "overlap": 17,
+      "window_has_gold_overlap": true,
+      "head": 18,
+      "window_has_gold_head": true,
+      "oracle": 16
+    },
+    {
+      "qid": "k8s-x-010",
+      "cell": "中→英",
+      "overlap": 13,
+      "window_has_gold_overlap": true,
+      "head": 12,
+      "window_has_gold_head": true,
+      "oracle": 18
+    },
+    {
+      "qid": "k8s-x-011",
+      "cell": "英→中",
+      "overlap": 9,
+      "window_has_gold_overlap": true,
+      "head": 12,
+      "window_has_gold_head": false,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-x-012",
+      "cell": "英→中",
+      "overlap": 5,
+      "window_has_gold_overlap": false,
+      "head": 16,
+      "window_has_gold_head": false,
+      "oracle": 23
+    },
+    {
+      "qid": "k8s-x-013",
+      "cell": "英→中",
+      "overlap": 9,
+      "window_has_gold_overlap": false,
+      "head": 8,
+      "window_has_gold_head": false,
+      "oracle": 9
+    },
+    {
+      "qid": "k8s-x-014",
+      "cell": "英→中",
+      "overlap": 13,
+      "window_has_gold_overlap": false,
+      "head": 14,
+      "window_has_gold_head": false,
+      "oracle": 9
+    },
+    {
+      "qid": "k8s-e-041",
+      "cell": "英→英",
+      "overlap": 3,
+      "window_has_gold_overlap": true,
+      "head": 3,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-e-042",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-043",
+      "cell": "英→英",
+      "overlap": 5,
+      "window_has_gold_overlap": true,
+      "head": 5,
+      "window_has_gold_head": true,
+      "oracle": 5
+    },
+    {
+      "qid": "k8s-e-044",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-045",
+      "cell": "英→英",
+      "overlap": 4,
+      "window_has_gold_overlap": true,
+      "head": 4,
+      "window_has_gold_head": true,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-e-047",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-048",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-049",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-050",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-051",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 13,
+      "window_has_gold_head": false,
+      "oracle": 26
+    },
+    {
+      "qid": "k8s-e-052",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-e-053",
+      "cell": "英→英",
+      "overlap": 5,
+      "window_has_gold_overlap": true,
+      "head": 6,
+      "window_has_gold_head": true,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-e-054",
+      "cell": "英→英",
+      "overlap": 6,
+      "window_has_gold_overlap": false,
+      "head": 20,
+      "window_has_gold_head": false,
+      "oracle": 8
+    },
+    {
+      "qid": "k8s-e-055",
+      "cell": "英→英",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": false,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-046",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-047",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-048",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-049",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 4,
+      "window_has_gold_head": true,
+      "oracle": 6
+    },
+    {
+      "qid": "k8s-c-050",
+      "cell": "中→中",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 9,
+      "window_has_gold_head": false,
+      "oracle": 5
+    },
+    {
+      "qid": "k8s-c-051",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": false,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-052",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 1,
+      "window_has_gold_head": false,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-053",
+      "cell": "中→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-c-054",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": false,
+      "head": 9,
+      "window_has_gold_head": false,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-c-055",
+      "cell": "中→中",
+      "overlap": 9,
+      "window_has_gold_overlap": false,
+      "head": 19,
+      "window_has_gold_head": false,
+      "oracle": 13
+    },
+    {
+      "qid": "k8s-c-056",
+      "cell": "中→中",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-c-057",
+      "cell": "中→中",
+      "overlap": 10,
+      "window_has_gold_overlap": true,
+      "head": 7,
+      "window_has_gold_head": false,
+      "oracle": 11
+    },
+    {
+      "qid": "k8s-c-058",
+      "cell": "中→中",
+      "overlap": 7,
+      "window_has_gold_overlap": true,
+      "head": 14,
+      "window_has_gold_head": true,
+      "oracle": 15
+    },
+    {
+      "qid": "k8s-x-015",
+      "cell": "中→英",
+      "overlap": 4,
+      "window_has_gold_overlap": true,
+      "head": 8,
+      "window_has_gold_head": false,
+      "oracle": 4
+    },
+    {
+      "qid": "k8s-x-016",
+      "cell": "中→英",
+      "overlap": 5,
+      "window_has_gold_overlap": true,
+      "head": 5,
+      "window_has_gold_head": true,
+      "oracle": 5
+    },
+    {
+      "qid": "k8s-x-017",
+      "cell": "中→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-x-018",
+      "cell": "中→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-x-019",
+      "cell": "中→英",
+      "overlap": 6,
+      "window_has_gold_overlap": true,
+      "head": 6,
+      "window_has_gold_head": true,
+      "oracle": 6
+    },
+    {
+      "qid": "k8s-x-020",
+      "cell": "中→英",
+      "overlap": 16,
+      "window_has_gold_overlap": true,
+      "head": 15,
+      "window_has_gold_head": true,
+      "oracle": 16
+    },
+    {
+      "qid": "k8s-x-021",
+      "cell": "中→英",
+      "overlap": 1,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 1
+    },
+    {
+      "qid": "k8s-x-022",
+      "cell": "中→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 4,
+      "window_has_gold_head": false,
+      "oracle": 18
+    },
+    {
+      "qid": "k8s-x-023",
+      "cell": "中→英",
+      "overlap": 14,
+      "window_has_gold_overlap": true,
+      "head": 11,
+      "window_has_gold_head": true,
+      "oracle": 13
+    },
+    {
+      "qid": "k8s-x-024",
+      "cell": "中→英",
+      "overlap": 31,
+      "window_has_gold_overlap": false,
+      "head": 21,
+      "window_has_gold_head": false,
+      "oracle": 34
+    },
+    {
+      "qid": "k8s-x-025",
+      "cell": "中→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 1,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-x-026",
+      "cell": "中→英",
+      "overlap": 2,
+      "window_has_gold_overlap": true,
+      "head": 2,
+      "window_has_gold_head": true,
+      "oracle": 2
+    },
+    {
+      "qid": "k8s-x-027",
+      "cell": "英→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-x-028",
+      "cell": "英→中",
+      "overlap": null,
+      "window_has_gold_overlap": false,
+      "head": null,
+      "window_has_gold_head": false,
+      "oracle": null
+    },
+    {
+      "qid": "k8s-x-029",
+      "cell": "英→中",
+      "overlap": 6,
+      "window_has_gold_overlap": true,
+      "head": 5,
+      "window_has_gold_head": true,
+      "oracle": 10
+    },
+    {
+      "qid": "k8s-x-030",
+      "cell": "英→中",
+      "overlap": 12,
+      "window_has_gold_overlap": true,
+      "head": 8,
+      "window_has_gold_head": true,
+      "oracle": 10
+    },
+    {
+      "qid": "k8s-x-031",
+      "cell": "英→中",
+      "overlap": 9,
+      "window_has_gold_overlap": false,
+      "head": 23,
+      "window_has_gold_head": false,
+      "oracle": 7
+    }
+  ]
+}
