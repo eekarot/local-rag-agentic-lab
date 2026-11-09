@@ -36,6 +36,29 @@ from ..ingestion.parent_builder import ParentBuilder, build_children
 from ..ingestion.tokenizer import TokenCounter
 from .state import IngestState, Stage
 
+def apply_document_language(parents: Sequence[Any]) -> str:
+    """算出文档语言并写回每条父块的 `language`，返回该语言。
+
+    单独成一个函数是为了让「算」和「写回」都能被测到；
+    `run()` 里只有一行接线，由源码断言守。
+    """
+    language = document_language(parents)
+    for parent in parents:
+        parent.language = language
+    return language
+
+
+def document_language(parents: Sequence[Any]) -> str:
+    """整篇文档的语言：把父块正文拼一段来判（一篇文档按一种语言处理）。
+
+    为什么要单独抽出来：语言要写进文档与每条父块，但这个判断本身与
+    「文件发现 / 解析 / 嵌入 / 写库」全无关 —— 抽成纯函数才能在不拉起整条管线的
+    情况下测到它（`IngestPipeline.run()` 里的接线由源码断言守）。
+    """
+    sample = " ".join(str(getattr(p, "content", "") or "") for p in parents)[:4000]
+    return detect_language(sample)
+
+
 DEFAULT_PATTERNS = ("**/*.md", "**/*.txt", "**/*.pdf")
 
 
@@ -355,9 +378,7 @@ class IngestPipeline:
                 raise IngestionError("切分后没有任何 child（空文档或解析结果为空）")
             parser_version = getattr(parser, "parser_version", "") or f"{path.suffix.lstrip('.').lower()}_v1"
             # 语言在建库时判一次就够（整篇同语言），别留给下游每次现判（N49）。
-            language = detect_language(" ".join(p.content for p in parents)[:4000])
-            for parent in parents:
-                parent.language = language
+            language = apply_document_language(parents)
             document = {
                 "document_id": document_id,
                 "source_uri": key,
