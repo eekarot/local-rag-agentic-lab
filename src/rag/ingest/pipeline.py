@@ -324,7 +324,7 @@ class IngestPipeline:
         if not self._force and self.state.is_done(
             key,
             document_version=version,
-            chunker_version=self.builder.chunker_version,
+            chunker_version=self.builder.ingest_version,  # 父+子，见 N43
             embedding_version=self.embedding_version,
         ):
             summary.skipped += 1
@@ -395,7 +395,7 @@ class IngestPipeline:
             item["key"],
             document_id=item["document"]["document_id"],
             document_version=item["document"]["document_version"],
-            chunker_version=self.builder.chunker_version,
+            chunker_version=self.builder.ingest_version,  # 父+子，见 N43
             embedding_version=self.embedding_version,
         )
         summary.indexed += 1

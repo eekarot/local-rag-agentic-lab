@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.39
+> **文档版本**：2.40
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2422,6 +2422,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N42** | 切片改一处重叠区，**10.9% 的子块换了 `chunk_id`**（1,067/9,795）——child id 是内容哈希；而 `gold_points` 用的就是 child id，实测 56 个里有 **1 个变孤儿** | ①切片语义的任何改动都按「重建库 + 重跑检索基线」处理（C7），不许只重跑检索；②`gold_points` 视为**可失效**资产：重建后必须重算，不许当稳定主键；③改后实测 recall@10 / hit@10 / full@10 **逐题不变**、MRR −0.0073（2 好 4 差 94 平），说明这类改动的影响只在「名次」不在「命中」，但**必须记账**（`docs/evidence/chunk-quality-ab-k8s-v1.json`） |
 
+| **N43** | 入库闸门只认**父块**版本（`builder.chunker_version = PARENT_CHUNKER_VERSION`），子块语义改了却不会触发重建 → 升级后所有 `COMPLETED` 文档被 `[skip]`，**一份库混着两套切分语义且看不出来** | ①闸门值改成「父+子」复合：`ingest_chunker_version() = f"{PARENT}+{CHILD}"`，`IngestPipeline` 用它做 `is_done` 与 `state.complete`；②子块语义一改就升 `CHILD_CHUNKER_VERSION`（本次 → `recursive_child_v2`），代价是**子块 id 全变、父块 id 不变** —— 所以 `gold_chunks`（父块粒度）不受影响，只有 `gold_points` 要重算；③用例 `tests/test_chunker_version_gate.py` 7 条：旧记录不许再被跳过、同值仍能跳过、升子块版本只换子块 id
+| **N44** | `gold` 能不能「限制在题目那一页」—— 实测**不能随手改**：把匹配限制到 `source_path` 后，3 道英文题（`k8s-e-033/038`、`k8s-x-007`）判成检索错了，可它们检回的**孪生页面**上写着同一段话；hit@10 0.7789 → 0.7684、MRR 0.5456 → 0.5298 | ①`refresh-ids` **默认全库匹配**（与原出题口径一致），严格模式只作为 `--same-page` 开关存在；②口径一旦变就换基线，不能新旧数字直接比；③重算工具只换 id、不动 `gold_spans` 与其他字段，95 题 id 变化、`gold_chunks` 与改前完全一致、0 孤儿 |
+
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
 
 ### 17.11.1 B01：Embedding 走 Ollama API（不引入 FlagEmbedding）
@@ -3334,6 +3337,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.37                    2026-11-06              切片体检整合方案 v1（P0–P5）+ ROADMAP G 节 + N40
   2.38                    2026-11-06              切片护栏落地（覆盖不变量 / overlap 上限 / SC+BI / 体检命令）+ N41
   2.39                    2026-11-06              切片改动的检索端 A/B（A/A 定噪声）+ N42（child id 随内容哈希变）
+  2.40                    2026-11-06              入库闸门改父+子复合版本（N43）+ gold 重算工具与口径（N44）
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空

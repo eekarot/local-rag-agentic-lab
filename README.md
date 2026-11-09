@@ -774,6 +774,10 @@ RAG_COLLECTION=bench_k8s_v1_ab12 python scripts/ingest.py --dir datasets/k8s-zh-
     --versions storage/bench/ab12/index_versions.sqlite3 --cache storage/bench/embeddings.sqlite3
 python scripts/eval_bench.py --k 10 --collection bench_k8s_v1_ab12 \
     --store storage/bench/ab12/documents.sqlite3 --out /tmp/ab12.json
+
+# 5) 重建之后题集里的 gold id 会失效（id 由内容+版本派生），按 gold_spans 重算回来
+python scripts/build_bench_questions.py refresh-ids --dry-run   # 先看会改几题
+python scripts/build_bench_questions.py refresh-ids
 ```
 
 评估脚本走的是**和 `/ask` 完全相同的一条链**（`retrieve_with_meta`），不另写一条——

@@ -34,7 +34,24 @@ from .tokenizer import TokenCounter
 
 #: 切分规则版本：改切分逻辑必须同时改这两个版本号，否则 ID 不会变（D10 负向测试会抓到）
 PARENT_CHUNKER_VERSION = "recursive_parent_child_v1"
-CHILD_CHUNKER_VERSION = "recursive_child_v1"
+
+#: 子块规则版本。v2 = 重叠语义固定为 `chunk_size`（含重叠的子块不得超过 `child_max_tokens`）。
+#: 改这里的代价是**所有子块 id 变化**（id 含版本号），但**父块 id 不变** —— 所以
+#: `gold_chunks`（父块粒度）不会被打破，只有 `gold_points`（子块粒度）需要重算。
+CHILD_CHUNKER_VERSION = "recursive_child_v2"
+
+
+def ingest_chunker_version(parent_version: str | None = None) -> str:
+    """入库闸门用的切分版本 = 父 + 子两段（N43）。
+
+    为什么不能只用父块版本：这一轮改的是**子块**的重叠语义。只用父块版本当闸门，
+    升级后所有 `COMPLETED` 文档会被 `[skip]`，旧语义的子块留在库里、新文档用新语义 ——
+    一份库混着两套切分语义，而且看不出来。
+
+    为什么用 `+` 拼而不是另起一个常量：两个版本号都要能在库里直接读出来，
+    出事时 `--status` / `index_versions` 里一眼能看出「父是哪版、子是哪版」。
+    """
+    return f"{parent_version or PARENT_CHUNKER_VERSION}+{CHILD_CHUNKER_VERSION}"
 
 #: block 之间拼接用的分隔符（Parent 内容里段落之间保留空行）
 _BLOCK_JOINER = "\n\n"
@@ -190,6 +207,11 @@ class ParentBuilder:
     def __init__(self, counter: TokenCounter, config: ParentConfig | None = None) -> None:
         self.counter = counter
         self.config = config or ParentConfig()
+
+    @property
+    def ingest_version(self) -> str:
+        """入库闸门用的版本（父 + 子）。**不要**拿它算 id：父块 id 只认父版本。"""
+        return ingest_chunker_version(self.chunker_version)
 
     def build(
         self,
@@ -469,6 +491,7 @@ def _fit_front(content: str, counter: TokenCounter, max_tokens: int) -> int:
 
 __all__ = [
     "CHILD_CHUNKER_VERSION",
+    "ingest_chunker_version",
     "PARENT_CHUNKER_VERSION",
     "Child",
     "Parent",

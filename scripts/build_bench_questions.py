@@ -39,6 +39,8 @@ DATASET = ROOT / "datasets" / "k8s-zh-en-v1"
 CANDIDATES_PATH = DATASET / "_candidates.json"
 QUESTIONS_PATH = DATASET / "questions.jsonl"
 
+NL = chr(10)  # 显式换行：这个文件里的字符串常量很多，不能用字面量换行
+
 SENTENCE_LIMITS = (40, 240)        # 太短定位不到、太长跨块
 MAX_HITS = 4                       # 一个 span 命中超过 4 个块 = ambiguous
 SKIP_PREFIXES = ("-", "*", "|", "#", ">", "`", "www.", "http", "Note:", "NOTE:", "```")
@@ -384,7 +386,89 @@ def append(args) -> int:
     return 0
 
 
-def main(argv: list[str] | None = None) -> int:
+def remap_gold(
+    question: dict, chunks: list[dict], *, same_page_only: bool = False
+) -> tuple[list[str], list[str], list[str]]:
+    """按 `gold_spans` 在当前库里重算 `gold_chunks`（父块）/ `gold_points`（子块）。
+
+    **默认全库匹配，不限制页面** —— 这是出题时的原口径（`append` 也是这么做的）：
+    gold 回答的问题是「这段证据文字有没有被检出来」，不是「是不是从我想的那一页检出来的」。
+    改了它等于换了衡量的东西：实测限制到 `source_path` 会把这 3 道题判成
+    「检索错了」，可它们检回的孪生页面上本来就写着同一段话（`k8s-e-033` 从命中变不命中）。
+
+    想严判「必须是这一页」时传 `same_page_only=True`（命令行 `--same-page`），
+    但要意识到那会改变基线口径，不能跟旧数字直接比。
+    """
+    if question.get("type") == "negative":
+        return (list(question.get("gold_chunks") or []),
+                list(question.get("gold_points") or []), [])
+
+    spans = [text for text in (question.get("gold_spans") or []) if text]
+    if not spans:
+        return (list(question.get("gold_chunks") or []),
+                list(question.get("gold_points") or []),
+                [f"{question.get('qid')}：没有 gold_spans，无法重算（保留原值）"])
+
+    page = question.get("source_path") or ""
+    hits = {
+        chunk["chunk_id"]: chunk["parent_id"]
+        for chunk in chunks
+        if (not same_page_only or chunk["source_uri"] == page)
+        and any(span in chunk["text"] for span in spans)
+    }
+    if not hits:
+        return (list(question.get("gold_chunks") or []),
+                list(question.get("gold_points") or []),
+                [f"{question.get('qid')}：span 在当前库里定位不到（保留原值）—— 题可能坏了，别当没事"])
+    problems = []
+    if len(hits) > MAX_HITS:
+        problems.append(
+            f"{question.get('qid')}：span 命中 {len(hits)} 个块（>{MAX_HITS}），出题时算 ambiguous"
+        )
+    return sorted(set(hits.values())), sorted(hits), problems
+
+
+def refresh_ids(args) -> int:
+    """重建库后重算题集里的两套 gold id（父块 + 子块）。
+
+    为什么必须重算：`gold_chunks=par_*`、`gold_points=chk_*` 都是**内容/版本派生**的 id，
+    切分或重叠语义一变就整体失效。题集里存着 `gold_spans`（语料原文），所以能重算。
+    """
+    conn = connect()
+    chunks = load_chunks(conn)
+    if not chunks:
+        raise SystemExit("库里没有 child（还没建好？）")
+    path = Path(args.questions) if args.questions else QUESTIONS_PATH
+    if not path.is_file():
+        raise SystemExit(f"找不到题集：{path}")
+    lines = [line for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+    out: list[str] = []
+    problems: list[str] = []
+    changed = 0
+    for line in lines:
+        question = json.loads(line)
+        before = (question.get("gold_chunks"), question.get("gold_points"))
+        parents, points, issues = remap_gold(question, chunks, same_page_only=args.same_page)
+        question["gold_chunks"] = parents
+        question["gold_points"] = points
+        problems.extend(issues)
+        if (parents, points) != (before[0], before[1]):
+            changed += 1
+        out.append(json.dumps(question, ensure_ascii=False))
+
+    print(f"题集 {len(lines)} 行，gold id 变化 {changed} 题")
+    for problem in problems:
+        print(f"  [警告] {problem}")
+    if args.dry_run:
+        print("（--dry-run：没有写回）")
+        return 0
+    path.write_text(NL.join(out) + NL, encoding="utf-8")
+    print(f"已写回 {path}")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="build_bench_questions", description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="cmd", required=True)
 
@@ -398,7 +482,19 @@ def main(argv: list[str] | None = None) -> int:
     append_parser.add_argument("--dry-run", action="store_true")
     append_parser.set_defaults(func=append)
 
-    args = parser.parse_args(argv)
+    refresh_parser = sub.add_parser(
+        "refresh-ids", help="重建库后按 gold_spans 重算 gold_chunks / gold_points"
+    )
+    refresh_parser.add_argument("--questions", type=Path, default=None)
+    refresh_parser.add_argument("--dry-run", action="store_true")
+    refresh_parser.add_argument("--same-page", action="store_true",
+                                help="只认题目 source_path 那一页（严判；会改变基线口径）")
+    refresh_parser.set_defaults(func=refresh_ids)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
     return args.func(args)
 
 

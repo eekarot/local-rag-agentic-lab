@@ -23,6 +23,12 @@
 - **基准基线已重立**：`recall@10 0.7737` / `hit@10 0.7789` / `full@10 0.7684` / **`MRR 0.5456`**
   （原 0.5529）。命中率一格没变，只有 6 道中文题在 top-10 内部换了名次。旧基线归档在
   `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`。
+- **子块规则版本升到 `recursive_child_v2`，入库闸门改成「父+子」复合版本**。以前只认父块版本，
+  改了子块语义后老库里的文档会被 `[skip]` 跳过 —— 一份库混着两套切分语义。升级后跑一次
+  `ingest` 会自动重建全部文档的子块（父块 id 不变）。
+- **新增 `python scripts/build_bench_questions.py refresh-ids`**：重建库后按题集里的 `gold_spans`
+  重算两套 gold id（`gold_chunks` 父块 / `gold_points` 子块）。默认**全库匹配**，与原出题口径一致；
+  `--same-page` 是严判开关（会改变基线口径）。
 
 ## v0.1.0 — 2026-11-05
 
