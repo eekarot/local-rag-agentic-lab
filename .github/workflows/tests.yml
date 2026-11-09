@@ -48,6 +48,9 @@ jobs:
           pip install -r requirements.txt -r requirements-dev.txt
 
       - name: 默认套件（不联网，期望 <60 s）
+        # Windows runner 默认 shell 是 pwsh，而下面的失败诊断是 bash 语法 —— 必须显式指定，
+        # 否则整步在 `set +e` 那行就语法错误退出（2026-11-06 踩过一次）
+        shell: bash
         env:
           PYTHONIOENCODING: utf-8
           # 指向死端口：默认套件不该碰这两个服务。万一有人加了联网用例，
