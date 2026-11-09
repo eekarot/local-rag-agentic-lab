@@ -4,8 +4,8 @@
 
 这个仓库的重点不是"能答"，而是**每个"更好"都有数字、每条数字都能重跑**：一份**随仓库发布的基准**（Kubernetes 官方文档中英对照 944 篇 + 100 道改写题）、三口径一起报的检索指标、正负样本分开计分、以及一份把所有失败留痕的导入状态机。
 
-当前基线（`k=10`，含重排）：`recall@10 0.7737` / `hit@10 0.7789` / `full@10 0.7684` / `MRR 0.5529`，
-检索延迟 p50 183 ms。**怎么算的、怎么复现、哪里最弱**都在下面「[基准数据集](#基准数据集)」「[基准结果](#基准结果)」两节。
+当前基线（`k=10`，含重排）：`recall@10 0.7737` / `hit@10 0.7789` / `full@10 0.7684` / `MRR 0.5456`，
+检索延迟 p50 200 ms。**怎么算的、怎么复现、哪里最弱**都在下面「[基准数据集](#基准数据集)」「[基准结果](#基准结果)」两节。
 
 ## 它和常见 RAG demo 的差别
 
@@ -716,30 +716,30 @@ python -m unittest tests.test_bench_questions tests.test_bench_dataset    # 32 �
 
 | 切片 | n | `recall@10` | `hit@10` | `full@10` | `MRR` |
 |---|---|---|---|---|---|
-| **全部（正样本）** | 95 | **0.7737** | **0.7789** | **0.7684** | **0.5529** |
+| **全部（正样本）** | 95 | **0.7737** | **0.7789** | **0.7684** | **0.5456** |
 | 英文证据 | 50 | 0.7900 | 0.8000 | 0.7800 | 0.6209 |
-| 中文证据 | 45 | 0.7556 | 0.7556 | 0.7556 | 0.4772 |
+| 中文证据 | 45 | 0.7556 | 0.7556 | 0.7556 | 0.4619 |
 
 按「提问语言 × 证据语言」拆开，问题就不是「中文差」这么模糊了：
 
 | 提问 → 证据 | n | `hit@10` | `MRR` | 读法 |
 |---|---|---|---|---|
 | 英 → 英 | 40 | **0.9250** | **0.7522** | 能力最强的一格 |
-| 中 → 中 | 41 | 0.7317 | 0.4964 | 能用，但排得靠后 |
-| 英 → 中 | 4 | 1.0000 | 0.2812 | 都找到了，但都压在后面 |
+| 中 → 中 | 41 | 0.7317 | 0.4799 | 能用，但排得靠后 |
+| 英 → 中 | 4 | 1.0000 | 0.2778 | 都找到了，但都压在后面 |
 | 中 → 英 | 10 | **0.3000** | **0.0958** | **真正的短板** |
 
 按题型：
 
 | 题型 | n | `hit@10` | `full@10` | `MRR` |
 |---|---|---|---|---|
-| `multi_hop` | 6 | 1.0000 | 1.0000 | 0.6488 |
-| `single_hop` | 68 | 0.8088 | 0.8088 | 0.6073 |
-| `numeric` | 7 | 0.8571 | 0.7143 | 0.7500 |
-| `cross_lingual` | 14 | **0.5000** | 0.5000 | **0.1488** |
+| `multi_hop` | 6 | 1.0000 | 1.0000 | 0.6528 |
+| `single_hop` | 68 | 0.8088 | 0.8088 | 0.6044 |
+| `numeric` | 7 | 0.8571 | 0.7143 | 0.6786 |
+| `cross_lingual` | 14 | **0.5000** | 0.5000 | **0.1478** |
 
-**延迟**（已热身）：p50 **183 ms**、p90 **209 ms**（检索 + 重排，不含生成）。
-首次命中排名分布：rank1 42 题、rank2 11、rank3 8、其后 13、未命中 21。
+**延迟**（已热身）：p50 **200 ms**、p90 **239 ms**（检索 + 重排，不含生成）。
+首次命中排名分布：rank1 41 题、rank2 11、rank3 9、其后 13、未命中 21。
 
 **没测的**：答案层忠实度（`faithfulness`）需要人工判读，这里不给数——自动打分的
 `faithfulness` 是自欺。引用质量（可解析率 / 越界率）逐次在 `/ask` 响应里返回，不在本基线里。
@@ -769,8 +769,11 @@ python scripts/eval_bench.py --k 10 --no-rerank --out /tmp/ab-norerank.json
 
 # 4) 改了切分/参数要重建库时：建到**另一个**带随机后缀的集合，再指过去评估
 #    （别覆盖唯一一份基线数据；注意改切分会让部分 chunk id 变化，gold_points 需重算）
-RAG_COLLECTION=bench_k8s_v1_ab12 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs     --document-db storage/bench/ab12/documents.sqlite3 --state storage/bench/ab12/state.sqlite3     --versions storage/bench/ab12/index_versions.sqlite3 --cache storage/bench/embeddings.sqlite3
-python scripts/eval_bench.py --k 10 --collection bench_k8s_v1_ab12     --store storage/bench/ab12/documents.sqlite3 --out /tmp/ab12.json
+RAG_COLLECTION=bench_k8s_v1_ab12 python scripts/ingest.py --dir datasets/k8s-zh-en-v1/docs \
+    --document-db storage/bench/ab12/documents.sqlite3 --state storage/bench/ab12/state.sqlite3 \
+    --versions storage/bench/ab12/index_versions.sqlite3 --cache storage/bench/embeddings.sqlite3
+python scripts/eval_bench.py --k 10 --collection bench_k8s_v1_ab12 \
+    --store storage/bench/ab12/documents.sqlite3 --out /tmp/ab12.json
 ```
 
 评估脚本走的是**和 `/ask` 完全相同的一条链**（`retrieve_with_meta`），不另写一条——

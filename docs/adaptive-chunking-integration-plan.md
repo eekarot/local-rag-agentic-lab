@@ -293,10 +293,14 @@ hit / full / recall 一格没动），变的是**命中位置**（例：`k8s-c-0
 1. 这次修的是**结构 bug**，不是检索优化：命中率一格没变，只有 6 题的名次在 top-10 内挪了位置，
    MRR 因此 −0.0073。**接受**——用「5 个超上限的子块」换「0.007 的 MRR」是划算的，但必须记账。
 2. **child id = 内容哈希**，所以任何 overlap 语义调整都会重排 ~10.9% 的 id：
-   本次 `gold_points`（56 个 child id）里有 **1 个变成孤儿**。→ 切片改动必须走 C7「重立基线」，
+   本次 `gold_points`（56 个 child id）里有 **1 个变成孤儿**。→ 切片改动必须走 C8「重立基线」，
    不能只重跑检索。
-3. 因此**这次没有改 `docs/baseline-k8s-v1.json`**：它是 `main` 那份代码的基线，改了它就没法再对照。
-   合入 `main` 时再一次性重建库 + 重跑基线 + 改 README 数字（N38 守着三者一致）。
+3. **`docs/baseline-k8s-v1.json` 随后已重立**（同日，ROADMAP C8）：删掉旧集合与旧文档表 → 用新代码重建
+   （883 篇 / 7,108 父块 / 9,795 子块、超上限子块 0、耗时 224 s、embedding 全命中缓存）→ 重跑 95 正样本。
+   正式基线新数字 = 上表「改后」那一列（MRR 0.5456），旧基线归档为
+   `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`（+ `.rows.jsonl`），所以 A/B 仍可复算。
+   README、四格表、题型表、延迟、rank 分布全部同步（N38 守总表与 en/zh 切片，
+   `tests/test_bench_questions.py::ReadmeCrossLingualCellsTest` 新守四格 + 题型表）。
 
 ## 6. 判定口径（不许临时改）
 

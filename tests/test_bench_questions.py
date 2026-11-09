@@ -10,6 +10,8 @@
 
 import json
 import math
+import re
+import statistics
 import unittest
 from pathlib import Path
 
@@ -243,3 +245,52 @@ class EvalOutPathDisplayTest(unittest.TestCase):
         from scripts.eval_bench import ROOT, _display_path
 
         self.assertEqual(_display_path(ROOT / "docs" / "x.json"), str(Path("docs") / "x.json"))
+
+
+class ReadmeCrossLingualCellsTest(unittest.TestCase):
+    """README 里「提问语言 × 证据语言」四格和题型表也必须跟着基线走。
+
+    N38 只守了总表与 en/zh 切片，那两处之外还有 8 个更常被引用的数字（四格）+
+    12 个题型数字。重立基线时漏改它们，读者会照着「中→英 30%」这种旧结论做决策。
+    这里直接从 `baseline-k8s-v1.rows.jsonl` 重算（提问语言按是否含中日韩字符判定），
+    不抄任何手写数字。
+    """
+
+    ROWS = ROOT / "docs" / "baseline-k8s-v1.rows.jsonl"
+    README = ROOT / "README.md"
+    CJK = re.compile(r"[\u4e00-\u9fff]")
+
+    def setUp(self):
+        if not self.ROWS.is_file():
+            self.skipTest("逐题结果还没跑（先跑 scripts/eval_bench.py）")
+        self.rows = [json.loads(line) for line in self.ROWS.read_text(encoding="utf-8").splitlines() if line.strip()]
+        self.readme = self.README.read_text(encoding="utf-8")
+
+    def _cell(self, qlang: str, elang: str):
+        picked = [
+            row for row in self.rows
+            if row["type"] != "negative"
+            and ("中" if self.CJK.search(row["question"]) else "英") == qlang
+            and {"zh-cn": "中", "en": "英"}.get(row["expected_evidence_lang"]) == elang
+        ]
+        hit = sum(1 for row in picked if row["hit"]) / len(picked)
+        mrr = statistics.mean((1.0 / row["first_hit_rank"]) if row["first_hit_rank"] else 0.0 for row in picked)
+        return len(picked), hit, mrr
+
+    def test_four_cells_appear_verbatim(self):
+        for qlang, elang in (("英", "英"), ("中", "中"), ("英", "中"), ("中", "英")):
+            n, hit, mrr = self._cell(qlang, elang)
+            row_marker = f"| {qlang} → {elang} | {n} |"
+            self.assertIn(row_marker, self.readme, f"README 四格表里找不到「{qlang} → {elang}」这一行，或 n 变了")
+            for value in (f"{hit:.4f}", f"{mrr:.4f}"):
+                self.assertIn(value, self.readme, f"README 里找不到 {qlang}→{elang} 的 {value}")
+
+    def test_per_type_numbers_appear_verbatim(self):
+        baseline = json.loads((ROOT / "docs" / "baseline-k8s-v1.json").read_text(encoding="utf-8"))
+        k = baseline["k"]
+        for name, stats in baseline["by_type"].items():
+            if name == "negative":
+                continue
+            self.assertIn(f"`{name}` | {stats['positives']} |", self.readme, f"题型 {name} 的 n 与 README 不一致")
+            for key in (f"hit@{k}", f"full@{k}", "mrr"):
+                self.assertIn(f"{stats[key]:.4f}", self.readme, f"README 里找不到 {name} 的 {key}={stats[key]:.4f}")

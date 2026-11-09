@@ -4,6 +4,26 @@
 内部的决策与踩坑细节在 [`docs/RAG数据切分与跨语言检索技术方案.md`](docs/RAG数据切分与跨语言检索技术方案.md)（含 30 条 N 编号的坑）
 与 [`docs/ROADMAP.md`](docs/ROADMAP.md)（还剩什么、怎么算做完）。
 
+## 未发布
+
+### 新增
+
+- **`scripts/chunk_quality.py`：切片结构体检**（不需要标注）。输出 `sc` 尺寸合规、`bi` 结构完整
+  （段落/表格/代码有没有被切断）、`gap` 丢字检查。支持 `--dir` / `--dataset` / `--threshold` / `--strict` / `--json`。
+- **`ingest --precheck` / `--precheck-only` / `--precheck-strict`**：建库前先体检。`--precheck-only`
+  **不连 Qdrant、不写库**（把 `QDRANT_URL` 指到死端口也能跑），适合还没起服务的机器。
+- **`eval_bench --collection / --store`**：可以把评估指到另一个集合，做参数 A/B 时不必覆盖唯一一份基线数据。
+
+### 行为变化（会影响已有库）
+
+- **子块尺寸现在严格不超过 `child_max_tokens`**。旧实现里 overlap 上限（70）大于目标重叠（60），
+  会把子块顶过上限——基准库实测有 5 个子块到 501–505 token，现在为 0。
+- **这条改动会让 10.9% 的子块换 `chunk_id`**（id 是内容哈希，重叠区一改就重新哈希）。
+  升级后请**整库重建**；`gold_points`（子块级标注）需要重算。
+- **基准基线已重立**：`recall@10 0.7737` / `hit@10 0.7789` / `full@10 0.7684` / **`MRR 0.5456`**
+  （原 0.5529）。命中率一格没变，只有 6 道中文题在 top-10 内部换了名次。旧基线归档在
+  `docs/evidence/baseline-k8s-v1-before-overlap-fix.json`。
+
 ## v0.1.0 — 2026-11-05
 
 第一个可用版本。**能做什么、不能做什么，写在这里，免得你试了才发现。**

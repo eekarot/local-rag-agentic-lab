@@ -133,5 +133,33 @@
       ]
     },
     "verdict": "hit@10 / full@10 / recall@10 逐题完全一致；只有 6 道中文题的 top-10 内部排序变了，MRR 因此 -0.0073"
+  },
+  "rebaseline": {
+    "when": "2026-11-06（与本次合并同一轮，ROADMAP C8）",
+    "why": "切片语义变了 10.9% 的 child id，旧基线对应的库已不存在",
+    "how": "删除集合 bench_k8s_v1 + 旧文档表 → 用新代码重建（embedding 全部命中缓存）→ 重跑 95 正样本",
+    "build": {
+      "documents": 883,
+      "parents": 7108,
+      "children": 9795,
+      "children_over_limit": 0,
+      "elapsed_s": 224,
+      "embedding_cache_hit_rate": 1.0
+    },
+    "official_baseline": {
+      "recall@10": 0.7737,
+      "hit@10": 0.7789,
+      "full@10": 0.7684,
+      "mrr": 0.5456,
+      "latency_p50_ms": 199.7,
+      "latency_p90_ms": 239.2
+    },
+    "matches_temp_collection": true,
+    "archived_old_baseline": {
+      "summary": "docs/evidence/baseline-k8s-v1-before-overlap-fix.json",
+      "rows": "docs/evidence/baseline-k8s-v1-before-overlap-fix.rows.jsonl",
+      "note": "旧基线（MRR 0.5529）保留，A/B 仍可复算；但它对应那份库已删，不能再用它跑回归门禁"
+    },
+    "readme_guard": "N38 守总表 + en/zh 切片；ReadmeCrossLingualCellsTest 守四格 + 题型表"
   }
 }
