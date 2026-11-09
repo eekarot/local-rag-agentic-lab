@@ -18,6 +18,8 @@
 
 **新增**
 
+- **C0e / C0h 实测否掉**（`experiments/probe_c0e_quota.py`，证据 `docs/evidence/c0e-language-quota-k8s-v1.json`）：按语言配额的 top-k 在这套题集上**逐题 0/144 变化**（top-10 本来就是中英混排，两种语言都有名额），配 `by_lang` 的 7 种合并口径全部低于基线 MRR 0.5648；镜像假设「限制对方语言占比」同样不赚（0.5144 / 0.5103）。
+- 新增三个默认关闭的开关与对应的测试：`--lang-quota`、`--rerank-merge {raw,zscore,rank}`、`--max-other-lang`（`src/rag/ask/pipeline.py` 的 `select_with_language_quota()` / `normalize_group_scores()`，用例 `tests/test_language_quota.py`、`tests/test_rerank_merge_normalization.py`）。基线 JSON 补 `rerank_query_mode` / `lang_quota` / `rerank_merge` / `max_other_lang` 四个口径字段（数值未改），回归门禁据此判可比性。
 - **跨语言检索的逐段拆账**（`experiments/probe_stage_ceilings.py` / `probe_window_ceiling.py` / `probe_route_ablation.py`）：把链路切成「翻译 → 三路召回 → 子块转父块 → RRF → 窗口+重排 → 组装」，逐段给出上限。结论：中→英 漏检里 18.2% 是重排丢失（同语言 1.9%），英→中 22.2%；英→中的重排失效来自**窗口选择**（只有 42.9% 的窗口含答案句，oracle 窗口把 0.5556 抬到 0.6667）。证据：`docs/evidence/retrieval-stage-ceilings-k8s-v1.json`、`rerank-window-ceiling-k8s-v1.json`、`route-ablation-cross-lingual-k8s-v1.json`。ROADMAP 据此新增 C0f（窗口兜底）、C0g（en→zh 翻译）。
 - **`eval_bench --rerank-query {question,by_lang}`**：按候选块语言选重排 query。**实测净亏，默认仍是 `question`** —— `by_lang` 让中→英 MRR 0.323→0.471、中→中 0.636→0.508，整体 0.5695→0.5432（17 好 / 26 差 / 96 平）；取 max 更差、两列 RRF 融合也没救回来。结论与数据在 `docs/evidence/c0d-rerank-query-k8s-v1.json`（ROADMAP C0d ❌、C0e 待做）。
 - **题集从 100 题扩到 144 题**（139 正样本；覆盖 43 页、每页 ≥3 题）：`dump --only-pages` 精确抽页、

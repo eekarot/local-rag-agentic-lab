@@ -169,7 +169,10 @@ def _comparability_reasons(current: dict, baseline: dict) -> list[str]:
             f"题集不同：基线 {baseline['questions_sha256'][:12]}… vs 现在 "
             f"{str(current.get('questions_sha256'))[:12]}…"
         )
-    for key in ("k", "pool", "rerank"):
+    # 口径指纹：这些参数一换就不是「同一个检索器」了。
+    # `lang_quota` 与 `rerank_query_mode` 是 C0e 加的：只改其中一个也会换掉名单。
+    for key in ("k", "pool", "rerank", "query_en_mode", "rerank_query_mode", "lang_quota",
+                "rerank_merge", "max_other_lang"):
         if current.get(key) != baseline.get(key):
             reasons.append(f"{key} 不同：基线 {baseline.get(key)} vs 现在 {current.get(key)}")
     base_ids = {r["qid"] for r in baseline.get("rows", [])}
@@ -358,6 +361,9 @@ def evaluate(
     query_en: str = "none",
     translator=None,
     rerank_query: str = "question",
+    lang_quota: int = 0,
+    rerank_merge: str = "raw",
+    max_other_lang: int = 0,
 ) -> dict:
     from src.rag.ask.pipeline import retrieve_with_meta
     from src.rag.ingestion.tokenizer import TokenCounter
@@ -383,10 +389,13 @@ def evaluate(
         started = time.perf_counter()
         outcome = retrieve_with_meta(query, retriever=retriever, parents=parents, counter=counter,
                                      reranker=reranker, pool=pool, rerank=rerank,
-                                     query_en=english, rerank_query=rerank_query)
+                                     query_en=english, rerank_query=rerank_query,
+                                     rerank_merge=rerank_merge,
+                                     k=k, lang_quota=lang_quota,
+                                     max_other_lang=max_other_lang)
         elapsed_ms = (time.perf_counter() - started) * 1000
         latencies.append(elapsed_ms)
-        ranked = [hit.chunk_id for hit in outcome.hits][:k]   # 检索返回的是 parent id
+        ranked = [hit.chunk_id for hit in outcome.hits][:k]   # 检索返回的是 parent id（已按配额取够 k 条）
         gold = set(question.get("gold_chunks") or [])
         hit_at = [rank for rank, cid in enumerate(ranked, start=1) if cid in gold]
         rows.append({
@@ -418,6 +427,9 @@ def evaluate(
         "rerank": rerank,
         "query_en_mode": query_en,
         "rerank_query_mode": rerank_query,
+        "lang_quota": lang_quota,
+        "rerank_merge": rerank_merge,
+        "max_other_lang": max_other_lang,
         **({"translate": translator.stats()} if translator is not None
            and hasattr(translator, "stats") else {}),
         "overall": summarize(rows, k),
@@ -483,6 +495,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--rerank-query", choices=("question", "by_lang"), default="question",
                         help="重排用哪个 query：question = 只用提问原句（默认）；"
                              "by_lang = 按候选块语言选（中文块用中文问、英文块用英文问）")
+    parser.add_argument("--rerank-merge", choices=("raw", "zscore", "rank"), default="raw",
+                        help="C0e-2：by_lang 两组分数的合并口径（raw=直接混排）")
+    parser.add_argument("--max-other-lang", type=int, default=0,
+                        help="C0h：与提问语言不同的候选最多占几个（0 = 关闭）")
+    parser.add_argument("--lang-quota", type=int, default=0,
+                        help="C0e：最终 top-k 里每种语言至少占几个名额（0 = 关闭）")
     parser.add_argument("--compare-tolerance", type=float, default=None,
                         help="覆盖容差（默认 = 基线一侧 95%% bootstrap CI 半宽）")
     parser.add_argument("--report", type=Path, default=None, help="把对比表另存为 Markdown")
@@ -503,7 +521,9 @@ def main(argv: list[str] | None = None) -> int:
                       warmup=not args.no_warmup, collection=args.collection, store=args.store,
                       query_en=args.query_en,
                       translator=build_translate_fn() if args.query_en == "translate" else None,
-                      rerank_query=args.rerank_query)
+                      rerank_query=args.rerank_query, lang_quota=args.lang_quota,
+                      rerank_merge=args.rerank_merge,
+                      max_other_lang=args.max_other_lang)
     result["questions_sha256"] = questions_fingerprint(args.questions)
 
     out_path = None if args.compare and args.out is None else _default_out(args)

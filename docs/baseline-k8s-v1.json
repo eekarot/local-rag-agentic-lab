@@ -5,6 +5,9 @@
   "pool": 40,
   "rerank": true,
   "query_en_mode": "translate",
+  "rerank_query_mode": "question",
+  "lang_quota": 0,
+  "rerank_merge": "raw",
   "translate": {
     "total": 81,
     "ok": 0,

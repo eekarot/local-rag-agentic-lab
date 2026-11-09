@@ -146,7 +146,8 @@ def _block_lang(parent: Mapping[str, Any] | None) -> str:
 
 
 def rerank_by_language(hits: Sequence[RerankHit], parents: Mapping[str, Mapping[str, Any]], *,
-                       query_zh: str, query_en: str | None, reranker, counter) -> list[RerankHit]:
+                       query_zh: str, query_en: str | None, reranker, counter,
+                       merge: str = "raw") -> list[RerankHit]:
     """按**候选块自己的语言**挑重排 query（C0d）。
 
     C0c 的实测：中→英 的漏检在融合里排 #1/#3/#4/#8/#14，重排后掉到 #16/#17/#31/#13/#14 ——
@@ -170,15 +171,143 @@ def rerank_by_language(hits: Sequence[RerankHit], parents: Mapping[str, Mapping[
         rerank_hits(query, group, encoder=reranker.encoder, config=reranker.config,
                     top_n=len(group), stats=reranker.stats,
                     text_getter=lambda hit: hit.fields["window"])
+        # 两组分数来自两个不同的 query，必须先各自归一化才能跨组比大小（见 normalize_group_scores）
+        normalize_group_scores(group, merge=merge)
+        for hit in group:
+            hit.rerank_score = float(hit.fields["norm_score"] or 0.0)
 
     return sorted(hits, key=lambda hit: (-(hit.rerank_score or 0.0), hit.rank, hit.chunk_id))
+
+
+def normalize_group_scores(hits: Sequence[RerankHit], *, merge: str = "raw") -> list[RerankHit]:
+    """把**同一组**（同一种语言、同一个 query）的分数换成跨组可比的量（C0e-2）。
+
+    `by_lang` 给两种语种各配一个 query，于是两组的 `rerank_score` 来自两个不同的问题：
+    cross-encoder 的原始分是「这段像不像在回答**这句**」，**跨 query 不可比**。
+    直接混起来排序，就是让一组的 logits 尺度决定谁进 top-k —— 这也是 C0d
+    「中→英 涨、中→中 掉」的直接原因，与「名额」无关（配额的实测就不赚）。
+
+    三种口径：
+      * `raw`    —— 不动（基线口径，保留作回归对照）；
+      * `zscore` —— 组内标准化，保留「比组内均值高多少」的信息；
+      * `rank`   —— 组内百分位，只留名次，对分数尺度完全不敏感。
+
+    归一化后的值写进 `fields["norm_score"]`，**原始 `rerank_score` 一律不动**（诊断要用）；
+    仅当 `merge != "raw"` 时改写 `rerank_score` 本身，因为下游 `rerank_hits` 与报告都读它。
+    """
+    if merge == "raw":
+        for hit in hits:
+            hit.fields["norm_score"] = hit.rerank_score
+        return list(hits)
+    if merge not in ("zscore", "rank"):
+        raise ValueError(f"未知的合并口径：{merge}（可选 raw / zscore / rank）")
+
+    scores = [float(hit.rerank_score or 0.0) for hit in hits]
+    count = len(scores)
+    if count == 0:
+        return []
+    if count == 1:
+        hits[0].fields["norm_score"] = 0.0 if merge == "zscore" else 1.0
+        return list(hits)
+
+    if merge == "zscore":
+        mean = sum(scores) / count
+        variance = sum((value - mean) ** 2 for value in scores) / count
+        spread = variance ** 0.5
+        normalized = [0.0 if spread == 0 else (value - mean) / spread for value in scores]
+    else:
+        order = sorted(range(count), key=lambda i: (-scores[i], hits[i].rank))
+        normalized = [0.0] * count
+        for position, index in enumerate(order, start=1):
+            normalized[index] = 1.0 - (position - 1) / count
+
+    for hit, value in zip(hits, normalized):
+        hit.fields["norm_score"] = value
+    return list(hits)
+
+
+def _question_lang(question: str | None) -> str:
+    """提问语言（只用来决定「谁算对方语言」）。判不出来按中文——与 `_block_lang()` 的兜底一致。"""
+    from ..lang.detect import resolve_language
+
+    lang = str(resolve_language(None, question or "") or "").lower()
+    return "zh" if lang.startswith("zh") else "en"
+
+
+def select_with_language_quota(hits: Sequence[RerankHit], parents: Mapping[str, Mapping[str, Any]],
+                               *, k: int, min_per_lang: int = 0,
+                               max_other_lang: int = 0,
+                               question: str | None = None) -> list[RerankHit]:
+    """从已排序的候选里挑 `k` 条，每种语言先占住 `min_per_lang` 个名额（C0e）。
+
+    为什么是「名额」不是「加权」：池子里中英混排，重排给谁高分谁就进 top-k。
+    C0d 把英文候选抬起来，中→英 的 MRR 涨了（0.323→0.471），中→中 却掉了（0.636→0.508）——
+    两种语言在**同一张名单**上抢位置，抬一边必然压另一边（N50）。
+
+    所以这里只改「谁进名单」：每种语言按自己的分数序占住若干名额，剩下的名额仍按全局序填。
+    **名单内的相对顺序一个字都不动**，`hit@k` / `MRR` / rank 分布的口径与原来完全一致。
+
+    `max_other_lang` 是同一个想法的镜像（C0h）：限制**与提问语言不同**的候选最多占几个。
+    实测（`docs/evidence/c0e-language-quota-k8s-v1.json`）最少名额在这份题集上从不触发
+    —— 逐题 0/144 变化，因为 top-10 本来就是中英混排、两种语言都有位置（31 道跨语言题 100% 如此）。
+    真正会被挤掉的是「同语言池子里的中文 gold 被英文块顶下去」，所以限制对方语言才有意义。
+
+    `min_per_lang=0`（且 `max_other_lang=0`）或池子里只有一种语言时，本函数与 `hits[:k]` **逐位相同**。
+    """
+    if k <= 0 or not hits:
+        return []
+    if min_per_lang <= 0 and max_other_lang <= 0:
+        return list(hits[:k])
+
+    grouped: dict[str, list[RerankHit]] = {}
+    for hit in hits:
+        grouped.setdefault(_block_lang(parents.get(hit.parent_id)), []).append(hit)
+    if len(grouped) <= 1:                       # 单语言池：配额无事可做
+        return list(hits[:k])
+
+    position_of = {id(hit): index for index, hit in enumerate(hits)}
+    banned: set[int] = set()
+
+    if max_other_lang > 0 and question is not None:      # C0h：对方语言超出上限的候选先剔掉
+        other = "en" if _question_lang(question) == "zh" else "zh"
+        seen = 0
+        for hit in hits:
+            if _block_lang(parents.get(hit.parent_id)) != other:
+                continue
+            seen += 1
+            if seen > max_other_lang:
+                banned.add(id(hit))
+
+    reserved: list[RerankHit] = []
+    for group in grouped.values():              # 按「该语言最好名次」的先后占位
+        for hit in group[:min_per_lang]:
+            if len(reserved) >= k or id(hit) in banned:
+                break
+            reserved.append(hit)
+    chosen = {id(hit) for hit in reserved}
+
+    result: list[RerankHit] = list(reserved)
+    for hit in hits:                            # 剩下的名额按全局分数序填满
+        if len(result) >= k:
+            break
+        if id(hit) in chosen or id(hit) in banned:
+            continue
+        result.append(hit)
+    # 名单内顺序必须跟**输入顺序**（= 重排后的顺序），不能按 `rank`（RRF 名次）重排：
+    # 重排已经把好候选挪到前面了，按 RRF 名次重排等于把重排结果丢掉（踩过一次）。
+    result.sort(key=lambda hit: position_of[id(hit)])
+    return result[:k]
 
 
 def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
                        counter, reranker, pool: int = DEFAULT_POOL,
                        rerank: bool = True,
                        query_en: str | None = None,
-                       rerank_query: str = "question") -> RetrievalOutcome:
+                       rerank_query: str = "question",
+                       rerank_merge: str = "raw",
+                       k: int | None = None,
+                       lang_quota: int = 0,
+                       max_other_lang: int = 0) -> RetrievalOutcome:
     """`retrieve_ranked()` 的带元数据版本：多返回 `degraded`（缺能力 / 某路故障）。
 
     `query_en` 是翻译服务给出的英文 query，**必须转交给编排层**（N47）：
@@ -200,12 +329,15 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
 
     route_hits = {name: len(ids) for name, ids in routes.items()}
     if not rerank:
+        if k is not None and k > 0:
+            hits = select_with_language_quota(hits, parents, k=k, min_per_lang=lang_quota,
+                                              max_other_lang=max_other_lang, question=question)
         return RetrievalOutcome(hits=hits, candidates=len(fused), route_hits=route_hits,
                                 degraded=degraded)
 
     if rerank_query == "by_lang":
         ranked = rerank_by_language(hits, parents, query_zh=question, query_en=query_en,
-                                    reranker=reranker, counter=counter)
+                                    reranker=reranker, counter=counter, merge=rerank_merge)
     elif rerank_query == "question":
         for item in hits:
             # 父块 p50 约 700 token，直接截 256 只看得到标题 → 先按 query 挑窗口再重排
@@ -217,7 +349,11 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
                              text_getter=lambda hit: hit.fields["window"])
     else:
         raise ValueError(f"未知的 rerank_query 口径：{rerank_query}（可选 question / by_lang）")
-    return RetrievalOutcome(hits=ranked[:pool] if pool else ranked, candidates=len(fused),
+    ranked = ranked[:pool] if pool else ranked
+    if k is not None and k > 0:
+        ranked = select_with_language_quota(ranked, parents, k=k, min_per_lang=lang_quota,
+                                            max_other_lang=max_other_lang, question=question)
+    return RetrievalOutcome(hits=ranked, candidates=len(fused),
                             route_hits=route_hits, degraded=degraded)
 
 
@@ -231,6 +367,9 @@ def answer_query(
     ask: Callable[[list[dict[str, str]]], str] | None,
     query_en: str | None = None,
     rerank_query: str = "question",
+    rerank_merge: str = "raw",
+    lang_quota: int = 0,
+    max_other_lang: int = 0,
     k: int = DEFAULT_K,
     pool: int = DEFAULT_POOL,
     budget: int = DEFAULT_BUDGET,
@@ -242,7 +381,9 @@ def answer_query(
     started = time.perf_counter()
     outcome = retrieve_with_meta(question, retriever=retriever, parents=parents, counter=counter,
                                  reranker=reranker, pool=pool, rerank=rerank,
-                                 query_en=query_en, rerank_query=rerank_query)
+                                 query_en=query_en, rerank_query=rerank_query,
+                                 rerank_merge=rerank_merge,
+                                 k=k, lang_quota=lang_quota, max_other_lang=max_other_lang)
     ranked, candidates, route_hits = outcome.hits, outcome.candidates, outcome.route_hits
     timings["retrieve_rerank_ms"] = (time.perf_counter() - started) * 1000
 

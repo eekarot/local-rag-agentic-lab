@@ -291,6 +291,7 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
                 pool=request.pool,
                 budget=request.budget,
                 rerank=request.rerank,
+                lang_quota=request.lang_quota,
             )
         except Exception as exc:                       # noqa: BLE001 - 统一转 500 + 可读 detail
             raise _failed("问答失败：", exc) from exc
@@ -312,6 +313,8 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
         k: int = Query(default=DEFAULT_K, ge=1, le=200, description="返回条数"),
         pool: int = Query(default=DEFAULT_POOL, ge=1, le=200, description="每路检索深度"),
         rerank: bool = Query(default=True, description="是否重排"),
+        lang_quota: int = Query(default=0, ge=0, le=200,
+                                description="最终 top-k 里每种语言至少占几个名额（0 = 关闭）"),
         debug: bool = Query(default=False, description="附带 candidates 等诊断字段"),
     ) -> RetrieveResponse:
         current = get_deps()
@@ -326,6 +329,7 @@ def create_app(*, deps: ApiDeps | None = None) -> FastAPI:
                 counter=current.counter, reranker=current.reranker,
                 pool=pool, rerank=rerank,
                 query_en=query_en,          # 翻译已经付过费了，别只拿来喂响应字段（N47）
+                k=k, lang_quota=lang_quota,
             )
             ranked = outcome.hits
         except Exception as exc:                       # noqa: BLE001

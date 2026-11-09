@@ -35,6 +35,8 @@ class AskRequest(BaseModel):
     rerank: bool = Field(default=True, description="是否过交叉编码器重排；关掉快约 0.7 s/次")
     retrieve_only: bool = Field(default=False,
                                 description="只检索不生成：不调用聊天模型（省 50 s+）")
+    lang_quota: int = Field(default=0, ge=0, le=MAX_K,
+                            description="最终 top-k 里每种语言至少占几个名额（0 = 关闭）")
 
     model_config = {
         "json_schema_extra": {
