@@ -1,0 +1,2998 @@
+{
+  "k_pool": 40,
+  "k_deep": 200,
+  "cells": {
+    "英→英": {
+      "label": "英→英",
+      "n": 54,
+      "final_hit@10": 0.963,
+      "in_pool_route@40": 0.9815,
+      "in_deep_route@200": 1.0,
+      "fused@10": 0.9259,
+      "fused@40": 0.9815,
+      "window_has_gold": 0.8302,
+      "window_checked": 53,
+      "per_route@40": {
+        "dense_zh": 0.9815,
+        "dense_en": 0.9815,
+        "lexical_en": 0.9444
+      },
+      "per_route@200": {
+        "dense_zh": 0.9815,
+        "dense_en": 0.9815,
+        "lexical_en": 0.9815
+      }
+    },
+    "中→中": {
+      "label": "中→中",
+      "n": 54,
+      "final_hit@10": 0.7963,
+      "in_pool_route@40": 0.9259,
+      "in_deep_route@200": 0.9815,
+      "fused@10": 0.7407,
+      "fused@40": 0.8333,
+      "window_has_gold": 0.8,
+      "window_checked": 45,
+      "per_route@40": {
+        "dense_zh": 0.9074,
+        "dense_en": 0.7778,
+        "lexical_en": 0.5741
+      },
+      "per_route@200": {
+        "dense_zh": 0.9815,
+        "dense_en": 0.9259,
+        "lexical_en": 0.7222
+      }
+    },
+    "英→中": {
+      "label": "英→中",
+      "n": 9,
+      "final_hit@10": 0.5556,
+      "in_pool_route@40": 0.8889,
+      "in_deep_route@200": 1.0,
+      "fused@10": 0.7778,
+      "fused@40": 0.7778,
+      "window_has_gold": 0.4286,
+      "window_checked": 7,
+      "per_route@40": {
+        "dense_zh": 0.7778,
+        "dense_en": 0.7778,
+        "lexical_en": 0.6667
+      },
+      "per_route@200": {
+        "dense_zh": 1.0,
+        "dense_en": 1.0,
+        "lexical_en": 1.0
+      }
+    },
+    "中→英": {
+      "label": "中→英",
+      "n": 22,
+      "final_hit@10": 0.7273,
+      "in_pool_route@40": 0.9545,
+      "in_deep_route@200": 0.9545,
+      "fused@10": 0.7727,
+      "fused@40": 0.9545,
+      "window_has_gold": 0.9048,
+      "window_checked": 21,
+      "per_route@40": {
+        "dense_zh": 0.8182,
+        "dense_en": 0.9545,
+        "lexical_en": 0.9091
+      },
+      "per_route@200": {
+        "dense_zh": 0.9545,
+        "dense_en": 0.9545,
+        "lexical_en": 0.9545
+      }
+    }
+  },
+  "rows": [
+    {
+      "qid": "k8s-c-001",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 37,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 37,
+        "dense_en": 104,
+        "lexical_en": 66
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-002",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": null
+      },
+      "fused10": 10,
+      "final": 1,
+      "fused40": 10,
+      "window_probe": "这种安排称为 API 聚合（API Aggregation，AA），允许你通过编写和部署自己的 API 服务器来为自定义",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-003",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 29,
+        "lexical_en": 6
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 29,
+        "lexical_en": 6
+      },
+      "fused10": 5,
+      "final": 2,
+      "fused40": 5,
+      "window_probe": "主 API 服务器将你指定的自定义 API 的请求委托给你的 API 服务器，使其可供所有客户端使用。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-004",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 7,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 7,
+        "lexical_en": null
+      },
+      "fused10": 4,
+      "final": 1,
+      "fused40": 4,
+      "window_probe": "“字段选择算符（Field selectors）”允许你根据一个或多个资源字段的值筛选\nKubernetes 。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-005",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 21,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 21,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-006",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 10
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 10
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "请注意调度器和控制器在不同时间观察到新污点可能引发的竞态条件：\n这可能导致在控制器认为没有需要驱逐的 Pod 从而将此条",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-007",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 5,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 5,
+        "lexical_en": null
+      },
+      "fused10": 5,
+      "final": 2,
+      "fused40": 5,
+      "window_probe": "该效果会应用到正在使用被污染设备的 ResourceClaim，以及引用该 ResourceClaim 的所有 Pod。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-008",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 4,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 4,
+        "lexical_en": null
+      },
+      "fused10": 10,
+      "final": 3,
+      "fused40": 10,
+      "window_probe": "在尝试分配 ResourceClaim 时，被污染的设备会被忽略，\n因为使用它们会阻止 Pod 的调度。",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-009",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 7,
+        "lexical_en": 9
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 7,
+        "lexical_en": 9
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "该驱逐由 kube-controller-manager 中的设备污点驱逐控制器通过删除受影响的 Pod 来实现。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-010",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 3,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 3,
+        "lexical_en": 50
+      },
+      "fused10": 2,
+      "final": 7,
+      "fused40": 2,
+      "window_probe": "如果在 Pod 定义中只设置了 `limits`，kubelet 将根据 limits 推断 `requests`，并将",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-011",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 6,
+        "lexical_en": 16
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 6,
+        "lexical_en": 16
+      },
+      "fused10": 4,
+      "final": 1,
+      "fused40": 4,
+      "window_probe": "在这个例子中，由于只指定了 RuntimeClass 名称，所以准入控制器更新了 Pod，使之包含 `overhead`",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-012",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 16,
+        "dense_en": 6,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 16,
+        "dense_en": 6,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": 4,
+      "fused40": 19,
+      "window_probe": "如果定义了 [ResourceQuota](/zh-cn/docs/concepts/policy/resource-q",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-013",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 6,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 6,
+        "dense_en": 66,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": 2,
+      "fused40": 28,
+      "window_probe": "当 kube-scheduler 决定在哪一个节点调度运行新的 Pod 时，调度器会兼顾该 Pod 的\n`overhea",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-014",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 27,
+        "dense_en": 6,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 27,
+        "dense_en": 6,
+        "lexical_en": 84
+      },
+      "fused10": 8,
+      "final": 1,
+      "fused40": 8,
+      "window_probe": "在这个示例中，调度器将资源请求和开销相加，\n然后寻找具备 2.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-015",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 8,
+        "lexical_en": 38
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 8,
+        "lexical_en": 38
+      },
+      "fused10": 4,
+      "final": 1,
+      "fused40": 4,
+      "window_probe": "如果该资源对每一个容器都定义了一个限制（定义了限制值的 Guaranteed QoS 或者\nBurstable QoS）",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-016",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": null
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "在启动后，用户和组件都不应以 `system:masters` 身份向 Kubernetes API 进行身份验证。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-017",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "事实上，`system:masters` 应该只用作一个例外机制，而不是管理员用户。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-018",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-019",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 22,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 22,
+        "dense_en": 137,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-020",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "27 之前，此特性称为**拓扑感知提示（Topology Aware Hint）**。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-022",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 8
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 8
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "当你创建一个 VolumeSnapshot 且未指定 VolumeSnapshotClass 时，\nKubernetes",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-023",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 2,
+        "lexical_en": 6
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 2,
+        "lexical_en": 6
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "如果使用相同的 CSI 驱动程序创建了多个默认的 VolumeSnapshotClass 对象，\n则创建 VolumeS",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-026",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 62,
+        "lexical_en": 70
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": 23,
+      "window_probe": "临时容器是使用 API 中的一种特殊的 `ephemeralcontainers` 处理器进行创建的，\n而不是直接添加到",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-028",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 33,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 33,
+        "dense_en": 66,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-029",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 9,
+        "dense_en": 15,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 9,
+        "dense_en": 15,
+        "lexical_en": null
+      },
+      "fused10": 10,
+      "final": 1,
+      "fused40": 10,
+      "window_probe": "如果该特定拓扑域没有足够容量来容纳新的 Pod，这些 Pod 将保持 Pending 状态\n——即使这意味着当前已调度的",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-030",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 4,
+        "dense_en": 7,
+        "lexical_en": 7
+      },
+      "route_deep": {
+        "dense_zh": 4,
+        "dense_en": 7,
+        "lexical_en": 7
+      },
+      "fused10": 6,
+      "final": 1,
+      "fused40": 6,
+      "window_probe": "TAS 确保同一个 PodGroup 中的所有 Pod 被一起调度在特定的拓扑域中，\n例如同一个服务器机架或同一个可用区",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-031",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 42,
+        "dense_en": null,
+        "lexical_en": 62
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-032",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 68,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-033",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 5,
+        "lexical_en": 9
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 5,
+        "lexical_en": 9
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "标志 `--apiserver-advertise-address` 不支持双协议栈。",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-034",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 17
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 17
+      },
+      "fused10": 4,
+      "final": 1,
+      "fused40": 4,
+      "window_probe": "领导者迁移（Leader Migration）提供了一种机制，使得 HA 集群可以通过这两个组件之间共享资源锁，\n在升级",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-035",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 4,
+        "dense_en": 6,
+        "lexical_en": 8
+      },
+      "route_deep": {
+        "dense_zh": 4,
+        "dense_en": 6,
+        "lexical_en": 8
+      },
+      "fused10": 5,
+      "final": null,
+      "fused40": 5,
+      "window_probe": "领导者迁移可以通过在 `kube-controller-manager` 或 `cloud-controller-man",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-036",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 6
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 6
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "这些范围是 `10.0.0.0/8`、`172.16.0.0/12` 和 `192.168.0.0/16`。",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-037",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 4,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "route_deep": {
+        "dense_zh": 4,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "fused10": 4,
+      "final": 1,
+      "fused40": 4,
+      "window_probe": "代理程序配置为每隔 60 秒从 **/etc/config/ip-masq-agent** 重新加载其配置，\n这也是可修",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-038",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 10,
+        "lexical_en": 35
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 10,
+        "lexical_en": 35
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "拓扑管理器为组件提供了一个称为 **建议提供者（Hint Provider）** 的接口，以发送和接收拓扑信息。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-039",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 10,
+        "lexical_en": 17
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 10,
+        "lexical_en": 17
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "拓扑管理器从**建议提供者**接收拓扑信息，作为表示可用的 NUMA 节点和首选分配指示的位掩码。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-040",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 5,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 5,
+        "lexical_en": 78
+      },
+      "fused10": 6,
+      "final": 1,
+      "fused40": 6,
+      "window_probe": "该 API 在 kubelet 的经过身份验证和只读的端口上的 `/metrics/resource` 中提供。",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-041",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 3,
+        "lexical_en": 34
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 3,
+        "lexical_en": 34
+      },
+      "fused10": 7,
+      "final": 1,
+      "fused40": 7,
+      "window_probe": "当你要访问的集群不直接在公共 Internet 上公开其 API 时，这很有用。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-042",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "为了比较，如果 Pod 失效策略被禁用，Job 将重试直至达到 `backoffLimit`（6 次失败）。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-043",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 12,
+        "lexical_en": 7
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 12,
+        "lexical_en": 7
+      },
+      "fused10": 4,
+      "final": 2,
+      "fused40": 4,
+      "window_probe": "公认的 `kubernetes` Service 将 kube-apiserver 的端点暴露给 Pod，\n计算出默认 ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-044",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 6,
+        "dense_en": 10,
+        "lexical_en": 13
+      },
+      "route_deep": {
+        "dense_zh": 6,
+        "dense_en": 10,
+        "lexical_en": 13
+      },
+      "fused10": 8,
+      "final": 2,
+      "fused40": 8,
+      "window_probe": "ServiceCIDR 受到  的保护，\n以避免留下孤立的 Service ClusterIP；",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-045",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 27,
+        "dense_en": 36,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 27,
+        "dense_en": 36,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": 9,
+      "fused40": 31,
+      "window_probe": "在这个过程中，你需要使用\n[CertificateSigningRequest](/zh-cn/docs/referen",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-001",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 3,
+      "fused40": 1,
+      "window_probe": "To use a hidden metric, you must enable it.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-002",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 3,
+      "fused40": 1,
+      "window_probe": "Deleted metrics are no longer published and cannot be used.",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-003",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "This format is structured plain text, designed so that peopl",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-004",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "The built-in policy APIs follow the same conventions as othe",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-005",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "For these reasons, policy APIs are recommended over *configu",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-006",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 7
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 7
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "A common set of labels allows tools to work interoperably, d",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-007",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 15,
+        "dense_en": 15,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 15,
+        "dense_en": 15,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": 1,
+      "fused40": 16,
+      "window_probe": "Kubernetes is not\na platform as a service (PaaS) and doesn't",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-008",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": 60
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-e-009",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 2
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "When one or more of these resources reach specific consumpti",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-010",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "During a node-pressure eviction, the kubelet sets the [phase",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-011",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 4,
+        "dense_en": 4,
+        "lexical_en": 3
+      },
+      "route_deep": {
+        "dense_zh": 4,
+        "dense_en": 4,
+        "lexical_en": 3
+      },
+      "fused10": 2,
+      "final": null,
+      "fused40": 2,
+      "window_probe": "If you use [soft eviction thresholds](#soft-eviction-thresho",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-012",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 2
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "However, these Pods can\ntake other security sensitive action",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-013",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 3
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 3
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "You should configure encryption of your Secret\ndata in `etcd",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-014",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 15,
+        "dense_en": 15,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 15,
+        "dense_en": 15,
+        "lexical_en": 2
+      },
+      "fused10": 6,
+      "final": 2,
+      "fused40": 6,
+      "window_probe": "Granting `list` access to Secrets implicitly lets the subjec",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-015",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 14,
+        "dense_en": 14,
+        "lexical_en": 38
+      },
+      "route_deep": {
+        "dense_zh": 14,
+        "dense_en": 14,
+        "lexical_en": 38
+      },
+      "fused10": null,
+      "final": 5,
+      "fused40": 16,
+      "window_probe": "Kubernetes updates the EndpointSlices for a Service\nwhenever",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-016",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 4,
+        "dense_en": 4,
+        "lexical_en": 4
+      },
+      "route_deep": {
+        "dense_zh": 4,
+        "dense_en": 4,
+        "lexical_en": 4
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "A key aim of Services in Kubernetes is that you don't need t",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-017",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 85
+      },
+      "fused10": 9,
+      "final": 1,
+      "fused40": 9,
+      "window_probe": "The only difference is that upon\nprovisioning, rather than c",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-018",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "The source PVC must be bound and available (not in use).",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-019",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 24
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 24
+      },
+      "fused10": 3,
+      "final": 8,
+      "fused40": 3,
+      "window_probe": "CronJob is meant for performing regular scheduled actions su",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-020",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 4
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 4
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "One CronJob object is like one line of a _crontab_ (cron tab",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-021",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 9
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 9
+      },
+      "fused10": 1,
+      "final": 9,
+      "fused40": 1,
+      "window_probe": "For example, in certain circumstances, a single CronJob can ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-022",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 4,
+      "fused40": 1,
+      "window_probe": "The _downward API_ allows containers to consume\ninformation ",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-023",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 6,
+        "dense_en": 6,
+        "lexical_en": 17
+      },
+      "route_deep": {
+        "dense_zh": 6,
+        "dense_en": 6,
+        "lexical_en": 17
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "A better option would be to use the Pod's name as an identif",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-024",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "Every [PodGroup](/docs/concepts/workloads/podgroup-api/) mus",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-025",
+      "qlang": "en",
+      "elang": "en",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "In fact, you can use `kubeadm` to set up a cluster that will",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-026",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 34,
+        "dense_en": 34,
+        "lexical_en": 22
+      },
+      "route_deep": {
+        "dense_zh": 34,
+        "dense_en": 34,
+        "lexical_en": 22
+      },
+      "fused10": 7,
+      "final": 3,
+      "fused40": 7,
+      "window_probe": "Whether you're deploying into the\ncloud or on-premises, you ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-027",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "In Kubernetes version 1.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-028",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "Under\n  such circumstances, a cluster cannot make any change",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-029",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "Performance and stability of the cluster is sensitive to net",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-030",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 4
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 4
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "This page shows cluster administrators how to harden authori",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-031",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 2
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "This technique is also known as _rootless mode_.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-032",
+      "qlang": "en",
+      "elang": "en",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "Starting from Kubernetes version 1.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-033",
+      "qlang": "en",
+      "elang": "en",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "25 onwards, Pod Security Admission is generally\navailable.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-034",
+      "qlang": "en",
+      "elang": "en",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 5,
+        "dense_en": 5,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 5,
+        "dense_en": 5,
+        "lexical_en": 2
+      },
+      "fused10": 2,
+      "final": 3,
+      "fused40": 2,
+      "window_probe": "This API makes information available about resource usage fo",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-035",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 8,
+        "dense_en": 8,
+        "lexical_en": 7
+      },
+      "route_deep": {
+        "dense_zh": 8,
+        "dense_en": 8,
+        "lexical_en": 7
+      },
+      "fused10": 6,
+      "final": 8,
+      "fused40": 6,
+      "window_probe": "You can also view the resource metrics using the\n[`kubectl t",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-036",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "The Kubernetes project recommends modifying DNS configuratio",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-037",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 17
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 17
+      },
+      "fused10": 3,
+      "final": 4,
+      "fused40": 3,
+      "window_probe": "Change made in other ways may be overwritten by the kubelet ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-038",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 10,
+      "fused40": 1,
+      "window_probe": "You must use a kubectl version that is within one minor vers",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-039",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 4
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 4
+      },
+      "fused10": 3,
+      "final": 6,
+      "fused40": 3,
+      "window_probe": "A rolling update gradually replaces old Pods with new ones, ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-040",
+      "qlang": "en",
+      "elang": "en",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 4
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 4
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "For this example there are only three items: _apple_, _banan",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-001",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 37,
+        "dense_en": 20,
+        "lexical_en": 7
+      },
+      "route_deep": {
+        "dense_zh": 37,
+        "dense_en": 20,
+        "lexical_en": 7
+      },
+      "fused10": null,
+      "final": 9,
+      "fused40": 11,
+      "window_probe": "You should configure encryption of your Secret\ndata in `etcd",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-002",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 25,
+        "dense_en": 10,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 25,
+        "dense_en": 10,
+        "lexical_en": 1
+      },
+      "fused10": 8,
+      "final": 4,
+      "fused40": 8,
+      "window_probe": "Granting `list` access to Secrets implicitly lets the subjec",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-003",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-x-004",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 4,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 4,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 3,
+      "fused40": 1,
+      "window_probe": "The source PVC must be bound and available (not in use).",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-005",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 2
+      },
+      "fused10": 2,
+      "final": 2,
+      "fused40": 2,
+      "window_probe": "One CronJob object is like one line of a _crontab_ (cron tab",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-006",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 1,
+        "lexical_en": 3
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 1,
+        "lexical_en": 3
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "The _downward API_ allows containers to consume\ninformation ",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-x-007",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 12,
+        "dense_en": 6,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 12,
+        "dense_en": 6,
+        "lexical_en": 2
+      },
+      "fused10": 1,
+      "final": 4,
+      "fused40": 1,
+      "window_probe": "You must use a kubectl version that is within one minor vers",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-008",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": null,
+        "dense_en": 3,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 105,
+        "dense_en": 3,
+        "lexical_en": 81
+      },
+      "fused10": null,
+      "final": 4,
+      "fused40": 24,
+      "window_probe": "When one or more of these resources reach specific consumpti",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-009",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 22,
+        "dense_en": 3,
+        "lexical_en": 32
+      },
+      "route_deep": {
+        "dense_zh": 22,
+        "dense_en": 3,
+        "lexical_en": 32
+      },
+      "fused10": 3,
+      "final": null,
+      "fused40": 3,
+      "window_probe": "A rolling update gradually replaces old Pods with new ones, ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-010",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": null,
+        "dense_en": 16,
+        "lexical_en": 6
+      },
+      "route_deep": {
+        "dense_zh": 74,
+        "dense_en": 16,
+        "lexical_en": 6
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": 14,
+      "window_probe": "If you use [soft eviction thresholds](#soft-eviction-thresho",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-011",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 11
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 11
+      },
+      "fused10": 3,
+      "final": 9,
+      "fused40": 3,
+      "window_probe": "标志 `--apiserver-advertise-address` 不支持双协议栈。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-012",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 5
+      },
+      "fused10": 3,
+      "final": 5,
+      "fused40": 3,
+      "window_probe": "代理程序配置为每隔 60 秒从 **/etc/config/ip-masq-agent** 重新加载其配置，\n这也是可修",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-x-013",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 10
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 10
+      },
+      "fused10": 3,
+      "final": 9,
+      "fused40": 3,
+      "window_probe": "为了比较，如果 Pod 失效策略被禁用，Job 将重试直至达到 `backoffLimit`（6 次失败）。",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-x-014",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 5,
+        "dense_en": 5,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 5,
+        "dense_en": 5,
+        "lexical_en": 73
+      },
+      "fused10": 9,
+      "final": null,
+      "fused40": 9,
+      "window_probe": "该 API 在 kubelet 的经过身份验证和只读的端口上的 `/metrics/resource` 中提供。",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-041",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 20,
+        "dense_en": 20,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 20,
+        "dense_en": 20,
+        "lexical_en": 2
+      },
+      "fused10": 3,
+      "final": 3,
+      "fused40": 3,
+      "window_probe": "For example, you can create a cost-optimized\n  device class ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-042",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "This page shows cluster administrators how to harden authori",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-043",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 19,
+        "dense_en": 19,
+        "lexical_en": 17
+      },
+      "route_deep": {
+        "dense_zh": 19,
+        "dense_en": 19,
+        "lexical_en": 17
+      },
+      "fused10": null,
+      "final": 5,
+      "fused40": 12,
+      "window_probe": "Every [PodGroup](/docs/concepts/workloads/podgroup-api/) mus",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-044",
+      "qlang": "en",
+      "elang": "en",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 15
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 15
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "In Kubernetes version 1.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-045",
+      "qlang": "en",
+      "elang": "en",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 31,
+        "dense_en": 31,
+        "lexical_en": 3
+      },
+      "route_deep": {
+        "dense_zh": 31,
+        "dense_en": 31,
+        "lexical_en": 3
+      },
+      "fused10": 10,
+      "final": 4,
+      "fused40": 10,
+      "window_probe": "Pod Security Admission was available by default in Kubernete",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-047",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "This technique is also known as _rootless mode_.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-048",
+      "qlang": "en",
+      "elang": "en",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "Starting from Kubernetes version 1.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-049",
+      "qlang": "en",
+      "elang": "en",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 16,
+        "dense_en": 16,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 16,
+        "dense_en": 16,
+        "lexical_en": 1
+      },
+      "fused10": 5,
+      "final": 1,
+      "fused40": 5,
+      "window_probe": "Starting from Kubernetes version 1.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-050",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "For basic templating you need the command-line utility `sed`",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-051",
+      "qlang": "en",
+      "elang": "en",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 9
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 9
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "If a static Pod fails admission control, the kubelet won't r",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-052",
+      "qlang": "en",
+      "elang": "en",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "Shared labels and annotations share a common prefix: `app.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-053",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 6
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 2,
+        "lexical_en": 6
+      },
+      "fused10": 1,
+      "final": 5,
+      "fused40": 1,
+      "window_probe": "You must use a kubectl version that is within one minor vers",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-e-054",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 4,
+        "dense_en": 4,
+        "lexical_en": 4
+      },
+      "route_deep": {
+        "dense_zh": 4,
+        "dense_en": 4,
+        "lexical_en": 4
+      },
+      "fused10": 4,
+      "final": 6,
+      "fused40": 4,
+      "window_probe": "Resource metrics are accessible using the `/metrics/resource",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-e-055",
+      "qlang": "en",
+      "elang": "en",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 2
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "For these reasons, policy APIs are recommended over *configu",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-046",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 68,
+        "lexical_en": 79
+      },
+      "fused10": null,
+      "final": 1,
+      "fused40": 24,
+      "window_probe": "请注意， 还会在 `/metrics/cadvisor`、\n`/metrics/resource` 和 `/metric",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-047",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "27 之前，此特性称为**拓扑感知提示（Topology Aware Hint）**。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-048",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": 17
+      },
+      "route_deep": {
+        "dense_zh": 112,
+        "dense_en": 152,
+        "lexical_en": 17
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-049",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 11,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 11,
+        "lexical_en": 52
+      },
+      "fused10": 7,
+      "final": 1,
+      "fused40": 7,
+      "window_probe": "临时容器是使用 API 中的一种特殊的 `ephemeralcontainers` 处理器进行创建的，\n而不是直接添加到",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-050",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 8,
+        "lexical_en": 39
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 8,
+        "lexical_en": 39
+      },
+      "fused10": 3,
+      "final": 2,
+      "fused40": 3,
+      "window_probe": "临时容器不被[静态 Pod](/zh-cn/docs/tasks/configure-pod-container/sta",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-051",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 2,
+        "dense_en": 4,
+        "lexical_en": 2
+      },
+      "route_deep": {
+        "dense_zh": 2,
+        "dense_en": 4,
+        "lexical_en": 2
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "这种情况下，`kubectl` 将要求代理服务器（例如 SSH 堡垒机）解析 k8s API 服务器域名，\n  而不是在",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-052",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 3,
+        "lexical_en": 6
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 3,
+        "lexical_en": 6
+      },
+      "fused10": 3,
+      "final": 1,
+      "fused40": 3,
+      "window_probe": "当你要访问的集群不直接在公共 Internet 上公开其 API 时，这很有用。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-053",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 59,
+        "dense_en": 76,
+        "lexical_en": null
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-c-054",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "multi_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 2,
+        "lexical_en": 7
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 2,
+        "lexical_en": 7
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "请始终确保每个 CSI 驱动程序只有一个默认的 VolumeSnapshotClass。",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-055",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 5,
+        "lexical_en": 15
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 5,
+        "lexical_en": 15
+      },
+      "fused10": 6,
+      "final": 9,
+      "fused40": 6,
+      "window_probe": "领导者迁移可以通过在 `kube-controller-manager` 或 `cloud-controller-man",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-c-056",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 14,
+        "lexical_en": 4
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 14,
+        "lexical_en": 4
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "拓扑管理器从**建议提供者**接收拓扑信息，作为表示可用的 NUMA 节点和首选分配指示的位掩码。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-057",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "numeric",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 12
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 2,
+        "lexical_en": 12
+      },
+      "fused10": 2,
+      "final": 10,
+      "fused40": 2,
+      "window_probe": "为了比较，如果 Pod 失效策略被禁用，Job 将重试直至达到 `backoffLimit`（6 次失败）。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-c-058",
+      "qlang": "zh",
+      "elang": "zh",
+      "type": "single_hop",
+      "route": {
+        "dense_zh": 1,
+        "dense_en": 4,
+        "lexical_en": 6
+      },
+      "route_deep": {
+        "dense_zh": 1,
+        "dense_en": 4,
+        "lexical_en": 6
+      },
+      "fused10": 2,
+      "final": 7,
+      "fused40": 2,
+      "window_probe": "公认的 `kubernetes` Service 将 kube-apiserver 的端点暴露给 Pod，\n计算出默认 ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-015",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": null,
+        "dense_en": 19,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 63,
+        "dense_en": 19,
+        "lexical_en": 1
+      },
+      "fused10": null,
+      "final": 4,
+      "fused40": 14,
+      "window_probe": "Instead, the Pod references a\n  resource claim, and the devi",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-016",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 10,
+        "dense_en": 4,
+        "lexical_en": 15
+      },
+      "route_deep": {
+        "dense_zh": 10,
+        "dense_en": 4,
+        "lexical_en": 15
+      },
+      "fused10": 5,
+      "final": 5,
+      "fused40": 5,
+      "window_probe": "This page shows cluster administrators how to harden authori",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-017",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 40,
+        "dense_en": 8,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 40,
+        "dense_en": 8,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "This policy is suited for groups that do not require simulta",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-018",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 11,
+        "dense_en": 1,
+        "lexical_en": 12
+      },
+      "route_deep": {
+        "dense_zh": 11,
+        "dense_en": 1,
+        "lexical_en": 12
+      },
+      "fused10": 2,
+      "final": 1,
+      "fused40": 2,
+      "window_probe": "Kubernetes offers a DNS cluster addon, which most of the sup",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-019",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 3,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 6,
+      "fused40": 1,
+      "window_probe": "25 onwards, Pod Security Admission is generally\navailable.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-020",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 11,
+        "dense_en": 7,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 11,
+        "dense_en": 7,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": null,
+      "fused40": 1,
+      "window_probe": "If you are just looking for how to run a pod as a non-root u",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-021",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 1,
+        "lexical_en": 3
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 1,
+        "lexical_en": 3
+      },
+      "fused10": 1,
+      "final": 1,
+      "fused40": 1,
+      "window_probe": "For this example there are only three items: _apple_, _banan",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-022",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 9,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 9,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "However, if the attacker uses an invalid\nnamespace name when",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-023",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 31,
+        "dense_en": 5,
+        "lexical_en": 30
+      },
+      "route_deep": {
+        "dense_zh": 31,
+        "dense_en": 5,
+        "lexical_en": 30
+      },
+      "fused10": 8,
+      "final": null,
+      "fused40": 8,
+      "window_probe": "A rolling update gradually replaces old Pods with new ones, ",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-024",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 32,
+        "dense_en": 7,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 32,
+        "dense_en": 7,
+        "lexical_en": 1
+      },
+      "fused10": 4,
+      "final": null,
+      "fused40": 4,
+      "window_probe": "You also need to use a version of `kubeadm` that can deploy ",
+      "window_has_gold": false
+    },
+    {
+      "qid": "k8s-x-025",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 3,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 3,
+        "dense_en": 1,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "An unstable etcd indicates that no leader is elected.",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-026",
+      "qlang": "zh",
+      "elang": "en",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 7,
+        "dense_en": 8,
+        "lexical_en": 1
+      },
+      "route_deep": {
+        "dense_zh": 7,
+        "dense_en": 8,
+        "lexical_en": 1
+      },
+      "fused10": 1,
+      "final": 2,
+      "fused40": 1,
+      "window_probe": "The Kubernetes project recommends modifying DNS configuratio",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-027",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 58,
+        "dense_en": 58,
+        "lexical_en": 55
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-x-028",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": null,
+        "dense_en": null,
+        "lexical_en": 27
+      },
+      "route_deep": {
+        "dense_zh": 43,
+        "dense_en": 43,
+        "lexical_en": 27
+      },
+      "fused10": null,
+      "final": null,
+      "fused40": null,
+      "window_has_gold": null
+    },
+    {
+      "qid": "k8s-x-029",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 7,
+        "dense_en": 7,
+        "lexical_en": 24
+      },
+      "route_deep": {
+        "dense_zh": 7,
+        "dense_en": 7,
+        "lexical_en": 24
+      },
+      "fused10": 7,
+      "final": 6,
+      "fused40": 7,
+      "window_probe": "这种安排称为 API 聚合（API Aggregation，AA），允许你通过编写和部署自己的 API 服务器来为自定义",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-030",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 5,
+        "dense_en": 5,
+        "lexical_en": null
+      },
+      "route_deep": {
+        "dense_zh": 5,
+        "dense_en": 5,
+        "lexical_en": 47
+      },
+      "fused10": 10,
+      "final": null,
+      "fused40": 10,
+      "window_probe": "默认情况下，字段选择算符/过滤器是未被应用的，\n这意味着指定类型的所有资源都会被筛选出来。",
+      "window_has_gold": true
+    },
+    {
+      "qid": "k8s-x-031",
+      "qlang": "en",
+      "elang": "zh",
+      "type": "cross_lingual",
+      "route": {
+        "dense_zh": 9,
+        "dense_en": 9,
+        "lexical_en": 30
+      },
+      "route_deep": {
+        "dense_zh": 9,
+        "dense_en": 9,
+        "lexical_en": 30
+      },
+      "fused10": 5,
+      "final": 9,
+      "fused40": 5,
+      "window_probe": "该 API 在 kubelet 的经过身份验证和只读的端口上的 `/metrics/resource` 中提供。",
+      "window_has_gold": false
+    }
+  ]
+}

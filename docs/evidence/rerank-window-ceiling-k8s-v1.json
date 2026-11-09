@@ -1,0 +1,236 @@
+{
+  "note": "跨语言格的窗口上限实验（A 生产 / B oracle 窗口 / C 完美重排）",
+  "summary": {
+    "zh→en": {
+      "n": 22,
+      "A_production": 0.7273,
+      "B_oracle_window": 0.7273,
+      "C_perfect_rerank": 0.7727
+    },
+    "en→zh": {
+      "n": 9,
+      "A_production": 0.5556,
+      "B_oracle_window": 0.6667,
+      "C_perfect_rerank": 0.7778
+    }
+  },
+  "rows": [
+    {
+      "qid": "k8s-x-001",
+      "cell": "zh→en",
+      "A": 9,
+      "B": 9,
+      "C": null
+    },
+    {
+      "qid": "k8s-x-002",
+      "cell": "zh→en",
+      "A": 4,
+      "B": 3,
+      "C": 8
+    },
+    {
+      "qid": "k8s-x-003",
+      "cell": "zh→en",
+      "A": null,
+      "B": null,
+      "C": null
+    },
+    {
+      "qid": "k8s-x-004",
+      "cell": "zh→en",
+      "A": 3,
+      "B": 3,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-005",
+      "cell": "zh→en",
+      "A": 2,
+      "B": 2,
+      "C": 2
+    },
+    {
+      "qid": "k8s-x-006",
+      "cell": "zh→en",
+      "A": 2,
+      "B": 1,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-007",
+      "cell": "zh→en",
+      "A": 4,
+      "B": 4,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-008",
+      "cell": "zh→en",
+      "A": 4,
+      "B": 4,
+      "C": null
+    },
+    {
+      "qid": "k8s-x-009",
+      "cell": "zh→en",
+      "A": 17,
+      "B": 17,
+      "C": 3
+    },
+    {
+      "qid": "k8s-x-010",
+      "cell": "zh→en",
+      "A": 13,
+      "B": 26,
+      "C": null
+    },
+    {
+      "qid": "k8s-x-011",
+      "cell": "en→zh",
+      "A": 9,
+      "B": 2,
+      "C": 3
+    },
+    {
+      "qid": "k8s-x-012",
+      "cell": "en→zh",
+      "A": 5,
+      "B": 23,
+      "C": 3
+    },
+    {
+      "qid": "k8s-x-013",
+      "cell": "en→zh",
+      "A": 9,
+      "B": 9,
+      "C": 3
+    },
+    {
+      "qid": "k8s-x-014",
+      "cell": "en→zh",
+      "A": 13,
+      "B": 9,
+      "C": 9
+    },
+    {
+      "qid": "k8s-x-015",
+      "cell": "zh→en",
+      "A": 4,
+      "B": 5,
+      "C": null
+    },
+    {
+      "qid": "k8s-x-016",
+      "cell": "zh→en",
+      "A": 5,
+      "B": 5,
+      "C": 5
+    },
+    {
+      "qid": "k8s-x-017",
+      "cell": "zh→en",
+      "A": 2,
+      "B": 2,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-018",
+      "cell": "zh→en",
+      "A": 1,
+      "B": 1,
+      "C": 2
+    },
+    {
+      "qid": "k8s-x-019",
+      "cell": "zh→en",
+      "A": 6,
+      "B": 6,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-020",
+      "cell": "zh→en",
+      "A": 16,
+      "B": 16,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-021",
+      "cell": "zh→en",
+      "A": 1,
+      "B": 1,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-022",
+      "cell": "zh→en",
+      "A": 2,
+      "B": 5,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-023",
+      "cell": "zh→en",
+      "A": 14,
+      "B": 14,
+      "C": 8
+    },
+    {
+      "qid": "k8s-x-024",
+      "cell": "zh→en",
+      "A": 31,
+      "B": 36,
+      "C": 4
+    },
+    {
+      "qid": "k8s-x-025",
+      "cell": "zh→en",
+      "A": 2,
+      "B": 1,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-026",
+      "cell": "zh→en",
+      "A": 2,
+      "B": 2,
+      "C": 1
+    },
+    {
+      "qid": "k8s-x-027",
+      "cell": "en→zh",
+      "A": null,
+      "B": null,
+      "C": null
+    },
+    {
+      "qid": "k8s-x-028",
+      "cell": "en→zh",
+      "A": null,
+      "B": null,
+      "C": null
+    },
+    {
+      "qid": "k8s-x-029",
+      "cell": "en→zh",
+      "A": 6,
+      "B": 9,
+      "C": 7
+    },
+    {
+      "qid": "k8s-x-030",
+      "cell": "en→zh",
+      "A": 12,
+      "B": 9,
+      "C": 10
+    },
+    {
+      "qid": "k8s-x-031",
+      "cell": "en→zh",
+      "A": 9,
+      "B": 9,
+      "C": 5
+    }
+  ]
+}

@@ -1,0 +1,271 @@
+{
+  "note": "跨语言格的逐路消融（关一路 → RRF → 重排 → hit@10）",
+  "rrf_k": 60,
+  "pool": 40,
+  "summary": {
+    "zh→en": {
+      "三路（生产）": 0.7273,
+      "去掉 dense_zh": 0.7273,
+      "去掉 dense_en": 0.6818,
+      "去掉 lexical_en": 0.7273,
+      "n": 22
+    },
+    "en→zh": {
+      "三路（生产）": 0.5556,
+      "去掉 dense_zh": 0.5556,
+      "去掉 dense_en": 0.5556,
+      "去掉 lexical_en": 0.5556,
+      "n": 9
+    }
+  },
+  "rows": [
+    {
+      "qid": "k8s-x-001",
+      "cell": "zh→en",
+      "三路（生产）": 9,
+      "去掉 dense_zh": 9,
+      "去掉 dense_en": 8,
+      "去掉 lexical_en": 9
+    },
+    {
+      "qid": "k8s-x-002",
+      "cell": "zh→en",
+      "三路（生产）": 4,
+      "去掉 dense_zh": 4,
+      "去掉 dense_en": 4,
+      "去掉 lexical_en": 4
+    },
+    {
+      "qid": "k8s-x-003",
+      "cell": "zh→en",
+      "三路（生产）": null,
+      "去掉 dense_zh": null,
+      "去掉 dense_en": null,
+      "去掉 lexical_en": null
+    },
+    {
+      "qid": "k8s-x-004",
+      "cell": "zh→en",
+      "三路（生产）": 3,
+      "去掉 dense_zh": 3,
+      "去掉 dense_en": 3,
+      "去掉 lexical_en": 3
+    },
+    {
+      "qid": "k8s-x-005",
+      "cell": "zh→en",
+      "三路（生产）": 2,
+      "去掉 dense_zh": 2,
+      "去掉 dense_en": 2,
+      "去掉 lexical_en": 2
+    },
+    {
+      "qid": "k8s-x-006",
+      "cell": "zh→en",
+      "三路（生产）": 2,
+      "去掉 dense_zh": 2,
+      "去掉 dense_en": 2,
+      "去掉 lexical_en": 2
+    },
+    {
+      "qid": "k8s-x-007",
+      "cell": "zh→en",
+      "三路（生产）": 4,
+      "去掉 dense_zh": 4,
+      "去掉 dense_en": 4,
+      "去掉 lexical_en": 4
+    },
+    {
+      "qid": "k8s-x-008",
+      "cell": "zh→en",
+      "三路（生产）": 4,
+      "去掉 dense_zh": 3,
+      "去掉 dense_en": null,
+      "去掉 lexical_en": 4
+    },
+    {
+      "qid": "k8s-x-009",
+      "cell": "zh→en",
+      "三路（生产）": 17,
+      "去掉 dense_zh": 13,
+      "去掉 dense_en": 17,
+      "去掉 lexical_en": 13
+    },
+    {
+      "qid": "k8s-x-010",
+      "cell": "zh→en",
+      "三路（生产）": 13,
+      "去掉 dense_zh": 13,
+      "去掉 dense_en": 14,
+      "去掉 lexical_en": 14
+    },
+    {
+      "qid": "k8s-x-011",
+      "cell": "en→zh",
+      "三路（生产）": 9,
+      "去掉 dense_zh": 11,
+      "去掉 dense_en": 11,
+      "去掉 lexical_en": 9
+    },
+    {
+      "qid": "k8s-x-012",
+      "cell": "en→zh",
+      "三路（生产）": 5,
+      "去掉 dense_zh": 5,
+      "去掉 dense_en": 5,
+      "去掉 lexical_en": 5
+    },
+    {
+      "qid": "k8s-x-013",
+      "cell": "en→zh",
+      "三路（生产）": 9,
+      "去掉 dense_zh": 9,
+      "去掉 dense_en": 9,
+      "去掉 lexical_en": 9
+    },
+    {
+      "qid": "k8s-x-014",
+      "cell": "en→zh",
+      "三路（生产）": 13,
+      "去掉 dense_zh": 13,
+      "去掉 dense_en": 13,
+      "去掉 lexical_en": 13
+    },
+    {
+      "qid": "k8s-x-015",
+      "cell": "zh→en",
+      "三路（生产）": 4,
+      "去掉 dense_zh": 4,
+      "去掉 dense_en": 4,
+      "去掉 lexical_en": 4
+    },
+    {
+      "qid": "k8s-x-016",
+      "cell": "zh→en",
+      "三路（生产）": 5,
+      "去掉 dense_zh": 5,
+      "去掉 dense_en": 5,
+      "去掉 lexical_en": 5
+    },
+    {
+      "qid": "k8s-x-017",
+      "cell": "zh→en",
+      "三路（生产）": 2,
+      "去掉 dense_zh": 2,
+      "去掉 dense_en": 2,
+      "去掉 lexical_en": 2
+    },
+    {
+      "qid": "k8s-x-018",
+      "cell": "zh→en",
+      "三路（生产）": 1,
+      "去掉 dense_zh": 1,
+      "去掉 dense_en": 1,
+      "去掉 lexical_en": 1
+    },
+    {
+      "qid": "k8s-x-019",
+      "cell": "zh→en",
+      "三路（生产）": 6,
+      "去掉 dense_zh": 6,
+      "去掉 dense_en": 6,
+      "去掉 lexical_en": 5
+    },
+    {
+      "qid": "k8s-x-020",
+      "cell": "zh→en",
+      "三路（生产）": 16,
+      "去掉 dense_zh": 14,
+      "去掉 dense_en": 15,
+      "去掉 lexical_en": 14
+    },
+    {
+      "qid": "k8s-x-021",
+      "cell": "zh→en",
+      "三路（生产）": 1,
+      "去掉 dense_zh": 1,
+      "去掉 dense_en": 1,
+      "去掉 lexical_en": 1
+    },
+    {
+      "qid": "k8s-x-022",
+      "cell": "zh→en",
+      "三路（生产）": 2,
+      "去掉 dense_zh": 2,
+      "去掉 dense_en": 2,
+      "去掉 lexical_en": 2
+    },
+    {
+      "qid": "k8s-x-023",
+      "cell": "zh→en",
+      "三路（生产）": 14,
+      "去掉 dense_zh": 13,
+      "去掉 dense_en": 14,
+      "去掉 lexical_en": 11
+    },
+    {
+      "qid": "k8s-x-024",
+      "cell": "zh→en",
+      "三路（生产）": 31,
+      "去掉 dense_zh": 28,
+      "去掉 dense_en": 30,
+      "去掉 lexical_en": 32
+    },
+    {
+      "qid": "k8s-x-025",
+      "cell": "zh→en",
+      "三路（生产）": 2,
+      "去掉 dense_zh": 2,
+      "去掉 dense_en": 2,
+      "去掉 lexical_en": 2
+    },
+    {
+      "qid": "k8s-x-026",
+      "cell": "zh→en",
+      "三路（生产）": 2,
+      "去掉 dense_zh": 2,
+      "去掉 dense_en": 2,
+      "去掉 lexical_en": 2
+    },
+    {
+      "qid": "k8s-x-027",
+      "cell": "en→zh",
+      "三路（生产）": null,
+      "去掉 dense_zh": null,
+      "去掉 dense_en": null,
+      "去掉 lexical_en": null
+    },
+    {
+      "qid": "k8s-x-028",
+      "cell": "en→zh",
+      "三路（生产）": null,
+      "去掉 dense_zh": null,
+      "去掉 dense_en": null,
+      "去掉 lexical_en": null
+    },
+    {
+      "qid": "k8s-x-029",
+      "cell": "en→zh",
+      "三路（生产）": 6,
+      "去掉 dense_zh": 6,
+      "去掉 dense_en": 6,
+      "去掉 lexical_en": 6
+    },
+    {
+      "qid": "k8s-x-030",
+      "cell": "en→zh",
+      "三路（生产）": 12,
+      "去掉 dense_zh": 9,
+      "去掉 dense_en": 9,
+      "去掉 lexical_en": 12
+    },
+    {
+      "qid": "k8s-x-031",
+      "cell": "en→zh",
+      "三路（生产）": 9,
+      "去掉 dense_zh": 8,
+      "去掉 dense_en": 8,
+      "去掉 lexical_en": 9
+    }
+  ]
+}
