@@ -54,7 +54,15 @@ jobs:
           # CI 会立刻红，而不是「runner 上恰好有服务」而蒙混过关。
           QDRANT_URL: http://127.0.0.1:1
           OLLAMA_BASE_URL: http://127.0.0.1:1
-        run: python -m unittest discover -s tests
+        # 失败时把「红在哪」写进 annotation：CI 日志要登录才能看，annotation 不用（排查少绕一圈）
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests 2>&1 | tee suite.log
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            grep -E "^(FAIL|ERROR):" -A 8 suite.log | head -80 | sed 's/^/::error::/' || true
+          fi
+          exit "$status"
 
       - name: 法务与清单完整性
         if: runner.os == 'Linux'
