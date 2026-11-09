@@ -1,0 +1,177 @@
+{
+  "dataset": "k8s-zh-en-v1",
+  "collection": "bench_k8s_v1",
+  "k": 10,
+  "pool": 40,
+  "query_en_mode": "translate",
+  "question": "C0d：重排时该不该按候选块语言换 query？",
+  "answer": "不该（实测净亏）。假设本身成立（中→英 明显受益），但收益被中→中的损失吃掉。",
+  "strategies": {
+    "question": {
+      "hit@10": 0.8345,
+      "mrr": 0.5695,
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6827
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.7963,
+          "mrr": 0.6356
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.5556,
+          "mrr": 0.0956
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.7273,
+          "mrr": 0.3233
+        }
+      }
+    },
+    "by_lang": {
+      "hit@10": 0.8345,
+      "mrr": 0.5432,
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6827
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.7963,
+          "mrr": 0.5077
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.5556,
+          "mrr": 0.0956
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.7273,
+          "mrr": 0.471
+        }
+      }
+    },
+    "max_both": {
+      "hit@10": 0.7914,
+      "mrr": 0.4847,
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6827
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.7037,
+          "mrr": 0.3139
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.5556,
+          "mrr": 0.0956
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.6818,
+          "mrr": 0.5771
+        }
+      }
+    }
+  },
+  "rrf_variant": {
+    "note": "两种 query 各排一列 → RRF(k=60) 融合，避免直接比两个分数尺度",
+    "question": {
+      "hit@10": 0.8345,
+      "mrr": 0.5695,
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6827
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.7963,
+          "mrr": 0.6356
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.5556,
+          "mrr": 0.0956
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.7273,
+          "mrr": 0.3233
+        }
+      }
+    },
+    "rrf_two": {
+      "hit@10": 0.8345,
+      "mrr": 0.5148,
+      "cells": {
+        "en→en": {
+          "n": 54,
+          "hit@10": 0.963,
+          "mrr": 0.6827
+        },
+        "zh→zh": {
+          "n": 54,
+          "hit@10": 0.7778,
+          "mrr": 0.4758
+        },
+        "en→zh": {
+          "n": 9,
+          "hit@10": 0.5556,
+          "mrr": 0.0956
+        },
+        "zh→en": {
+          "n": 22,
+          "hit@10": 0.7727,
+          "mrr": 0.37
+        }
+      }
+    },
+    "per_question": {
+      "better": 17,
+      "worse": 26,
+      "same": 96
+    }
+  },
+  "bug_found": {
+    "id": "N49",
+    "summary": "documents.language / parents.language 两列在所有历史库里 100% 为 NULL",
+    "evidence": "storage/documents.sqlite3 25,411 条父块、storage/bench 7,108 条，language 全 NULL；ingest 写文档时把 \"language\": None 写死，也没传给 ParentBuilder.build()",
+    "impact": "「按块语言选 query」第一版跑出来与现状逐位相同（每个块都拿到 None → 全部退成中文）"
+  },
+  "per_question": {
+    "question → by_lang": {
+      "better": 18,
+      "worse": 25,
+      "same": 96
+    },
+    "question → max_both": {
+      "better": 20,
+      "worse": 37,
+      "same": 82
+    },
+    "by_lang → max_both": {
+      "better": 15,
+      "worse": 31,
+      "same": 93
+    }
+  },
+  "baseline_default": {
+    "hit@10": 0.8345,
+    "mrr": 0.5648,
+    "note": "默认口径（--rerank-query question）与基线逐题一致：更好 0 / 更差 0 / 持平 139"
+  }
+}

@@ -11,12 +11,14 @@
 - **`query_en` 从未进入检索（N47）**：`retrieve_with_meta()` 没有这个参数，`/ask` / `/retrieve` / 评估脚本都没往下传，
   翻译出来的英文只用在提示词语言和响应回显上 —— `dense_en` / `lexical_en` 一直在吃中文原句。
   现在三处都转交；`/retrieve` 的 `question_en` 与新检索结果一致了。
+- **`language` 列从未被写入（N49）**：`documents.language` / `parents.language` 在历史库里 100% 为 NULL，建库时把 `"language": None` 写死了。现在建库按正文判一次写进文档与所有父块；读取侧 `COALESCE` + 正文兜底，旧库不重建也能用。父块 id 不变。
 - **翻译从未真正发生（N48）**：`TranslateService` 的 provider 协议是 `(texts: list[str]) -> list[str]`，
   而 `app.py` 手写 `lambda prompt: ...`，每次 4–5 ms 就 `passthrough_error` 并把中文原文当 `query_en`。
   改为共享工厂 `provider_from_chat()`，并加 AST 守卫禁止手写 lambda。
 
 **新增**
 
+- **`eval_bench --rerank-query {question,by_lang}`**：按候选块语言选重排 query。**实测净亏，默认仍是 `question`** —— `by_lang` 让中→英 MRR 0.323→0.471、中→中 0.636→0.508，整体 0.5695→0.5432（17 好 / 26 差 / 96 平）；取 max 更差、两列 RRF 融合也没救回来。结论与数据在 `docs/evidence/c0d-rerank-query-k8s-v1.json`（ROADMAP C0d ❌、C0e 待做）。
 - **题集从 100 题扩到 144 题**（139 正样本；覆盖 43 页、每页 ≥3 题）：`dump --only-pages` 精确抽页、
   `append --merge` 只加不重写；`cross_lingual` 从 14 增到 31（中→英 22 / 英→中 9），四格与题型表随之更新。
 - **`eval_bench --query-en {none,field,translate}`**：三种口径显式区分，基线用 `translate`（生产口径，走同一个翻译服务与缓存）；

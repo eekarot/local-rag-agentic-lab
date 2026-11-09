@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.43
+> **文档版本**：2.44
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2431,6 +2431,9 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 | **N47** | `retrieve_with_meta()` 没有 `query_en` 参数 —— 翻译服务算出来的英文 query **从未进入检索**：编排层明文规定 `dense_en` / `lexical_en` 吃英文 query，缺了就回退中文原句并标成「噪声源」，但 `/ask`、`/retrieve`、评估脚本都没往下传，英文只用在提示词语言与响应回显上 | ①`retrieve_with_meta` / `answer_query` / `/retrieve` 三处补上转交；②评估脚本给 `--query-en {none,field,translate}` 三档口径，**基线用 `translate`（生产口径）**，`field` 只当翻译上界做诊断；③`none` 保留但明确标注「不是生产口径」 |
 | **N48** | `TranslateService` 的 provider 协议是 `(texts: list[str]) -> list[str]`，而 `app.py` 手写的是 `lambda prompt: chat([...content: prompt...])` —— 服务按协议调用就 TypeError、退回位置参数后 `content` 收到**列表**，必然失败：每次 4–5 ms 返回空 → 状态 `passthrough_error` → `text` **回填中文原文**。于是「翻译」这一步一次都没真正发生，而所有日志看起来都正常 | ①抽出 `provider_from_chat(chat)` 共享工厂，`app.py` / 评估脚本都只能用工厂构造；②**AST 守卫**：`TranslateService(provider=...)` 的值必须是 `provider_from_chat` / `ollama_provider` 的调用，手写 lambda 直接红；③只有 `ok` / `cached` 才算真译文，`passthrough_*` 一律返回 None（降级为「没有英文 query」），并把 `translate` 统计写进基线 JSON |
 
+| **N49** | `documents.language` / `parents.language` 两列在**所有历史库里 100% 为 NULL**：ingest 写文档时把 `"language": None` 写死，也没传给 `ParentBuilder.build()`。所以「按候选块语言选 query」第一版跑出来与现状**逐位相同**（每个块都拿到 None，全部退成中文） | ①建库时按正文判一次语言，写进文档与所有父块；②读取侧 `COALESCE(p.language, d.language)`，仍为空再按正文现判（`resolve_language()`）；③父块 id 不变，不需要重建库 |
+| **N50** | 拿**不同 query** 的 cross-encoder 分数直接比大小，等于跨尺度比较：`by_lang` 把英文候选抬高后，中文 gold 的分数没变、名次却掉了（中→中 MRR 0.636→0.508）。**改成两列 RRF 融合也没用**（0.5148 < 0.5695）—— 问题不在分数尺度，而在**名额**：池子里中英混排，抬高一边必然挤掉另一边 | ①「按块语言换 query」只作为实验开关保留（默认 `question`）；②真正要改的是 top-k 名额分配（C0e）；③任何「提升某类候选分数」的改动，必须同时看**双方**的逐题计数，不能只看总均值 |
+
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
 
 ### 17.11.1 B01：Embedding 走 Ollama API（不引入 FlagEmbedding）
@@ -3347,6 +3350,7 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.41                    2026-11-06              评测里重排对空窗口工作（N45）+ 基线重立（hit@10 0.7789→0.8632）
   2.42                    2026-11-06              回归门禁上线（容差 = 基线 CI 半宽、不可比退 0）+ N46
   2.43                    2026-11-06              题集扩到 144 题；修 N47/N48（翻译从未进入检索）+ C0c 三档口径
+  2.44                    2026-11-06              C0d 实测否掉（N49 language 全 NULL + N50 名额问题不是分数问题）
                                                  + N31 版本号漂移由用例守护
                                                  + N26 跳过理由撒谎、N27 集合名写死撞库、
                                                  + N28 换集合静默漏文档、N29 来源路径永远为空

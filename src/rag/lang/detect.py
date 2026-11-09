@@ -84,6 +84,20 @@ def summarize(languages: Iterable[str]) -> dict[str, int]:
     return stats
 
 
+def resolve_language(stored: str | None, text: str | None) -> str:
+    """父块/文档的语言：**列里有就用列**，没有才按正文现判。
+
+    为什么要这个兜底：`documents.language` / `parents.language` 两列在历史库里**全是 NULL**
+    （ingest 写文档时把 None 写死了，见 N49），而「按候选块语言选重排 query」必须有它。
+    现判放在这里而不是各处 copy 正则：语言规则要错也只错一处。
+    """
+    if stored:
+        return stored
+    if not (text or "").strip():
+        return ""
+    return detect(text)
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m src.rag.lang.detect", description="语言识别")
     parser.add_argument("text", nargs="*", help="要判定的文本（可给多条）")

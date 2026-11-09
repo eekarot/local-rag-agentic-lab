@@ -129,10 +129,56 @@ def _parent_text(parent: Mapping[str, Any] | None) -> str:
     return parent.get("text") or parent.get("content") or ""
 
 
+def _block_lang(parent: Mapping[str, Any] | None) -> str:
+    """候选父块的语言。
+
+    `parents.language` 这一列在历史库里全是 NULL（N49），所以再用正文判一次 ——
+    语言判错只会让这一块的 query 选错，而「一律当中文」会让 C0d 完全失效（这一次就踩了：
+    第一版 by_lang 与 question 跑出来**逐位相同**，因为每个块都拿到 None）。
+    正文也判不出来时才退成中文（中文 query 是原来的行为，不会更差）。
+    """
+    from ..lang.detect import resolve_language
+
+    item = parent or {}
+    lang = str(resolve_language(item.get("language"), item.get("text") or item.get("content"))
+               or "").lower()
+    return "zh" if lang.startswith("zh") else ("en" if lang.startswith("en") else "zh")
+
+
+def rerank_by_language(hits: Sequence[RerankHit], parents: Mapping[str, Mapping[str, Any]], *,
+                       query_zh: str, query_en: str | None, reranker, counter) -> list[RerankHit]:
+    """按**候选块自己的语言**挑重排 query（C0d）。
+
+    C0c 的实测：中→英 的漏检在融合里排 #1/#3/#4/#8/#14，重排后掉到 #16/#17/#31/#13/#14 ——
+    因为重排拿中文原句给英文窗口打分。cross-encoder 不是跨语言模型，它只看「这段像不像在回答这句」。
+    但整题切换成英文又会把中文证据打下去（x-010 #13→#19），所以只能**逐候选**按块语言选。
+
+    实现上分组调用 `rerank_hits`（每组一个 query），再把分数合起来统一排序：
+    好处是不必改那个已经稳定的核心函数，重排的并列/异常/截断语义保持一模一样。
+    """
+    grouped: dict[str, list[RerankHit]] = {}
+    for hit in hits:
+        hit.fields["rerank_query"] = ("zh" if query_en is None else _block_lang(parents.get(hit.parent_id)))
+        grouped.setdefault(hit.fields["rerank_query"], []).append(hit)
+
+    for lang, group in grouped.items():
+        query = query_zh if lang == "zh" or query_en is None else query_en
+        for hit in group:
+            hit.fields["window"] = best_window(hit.text, query,
+                                              max_tokens=reranker.config.max_length,
+                                              counter=counter)
+        rerank_hits(query, group, encoder=reranker.encoder, config=reranker.config,
+                    top_n=len(group), stats=reranker.stats,
+                    text_getter=lambda hit: hit.fields["window"])
+
+    return sorted(hits, key=lambda hit: (-(hit.rerank_score or 0.0), hit.rank, hit.chunk_id))
+
+
 def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
                        counter, reranker, pool: int = DEFAULT_POOL,
                        rerank: bool = True,
-                       query_en: str | None = None) -> RetrievalOutcome:
+                       query_en: str | None = None,
+                       rerank_query: str = "question") -> RetrievalOutcome:
     """`retrieve_ranked()` 的带元数据版本：多返回 `degraded`（缺能力 / 某路故障）。
 
     `query_en` 是翻译服务给出的英文 query，**必须转交给编排层**（N47）：
@@ -157,16 +203,22 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
         return RetrievalOutcome(hits=hits, candidates=len(fused), route_hits=route_hits,
                                 degraded=degraded)
 
-    for item in hits:
-        # 父块 p50 约 700 token，直接截 256 只看得到标题 → 先按 query 挑窗口再重排
-        item.fields["window"] = best_window(item.text, question,
-                                            max_tokens=reranker.config.max_length,
-                                            counter=counter)
-    ranked = rerank_hits(question, hits, encoder=reranker.encoder, config=reranker.config,
-                         top_n=pool, stats=reranker.stats,
-                         text_getter=lambda hit: hit.fields["window"])
-    return RetrievalOutcome(hits=ranked, candidates=len(fused), route_hits=route_hits,
-                            degraded=degraded)
+    if rerank_query == "by_lang":
+        ranked = rerank_by_language(hits, parents, query_zh=question, query_en=query_en,
+                                    reranker=reranker, counter=counter)
+    elif rerank_query == "question":
+        for item in hits:
+            # 父块 p50 约 700 token，直接截 256 只看得到标题 → 先按 query 挑窗口再重排
+            item.fields["window"] = best_window(item.text, question,
+                                                max_tokens=reranker.config.max_length,
+                                                counter=counter)
+        ranked = rerank_hits(question, hits, encoder=reranker.encoder, config=reranker.config,
+                             top_n=pool, stats=reranker.stats,
+                             text_getter=lambda hit: hit.fields["window"])
+    else:
+        raise ValueError(f"未知的 rerank_query 口径：{rerank_query}（可选 question / by_lang）")
+    return RetrievalOutcome(hits=ranked[:pool] if pool else ranked, candidates=len(fused),
+                            route_hits=route_hits, degraded=degraded)
 
 
 def answer_query(
@@ -178,6 +230,7 @@ def answer_query(
     reranker,
     ask: Callable[[list[dict[str, str]]], str] | None,
     query_en: str | None = None,
+    rerank_query: str = "question",
     k: int = DEFAULT_K,
     pool: int = DEFAULT_POOL,
     budget: int = DEFAULT_BUDGET,
@@ -189,7 +242,7 @@ def answer_query(
     started = time.perf_counter()
     outcome = retrieve_with_meta(question, retriever=retriever, parents=parents, counter=counter,
                                  reranker=reranker, pool=pool, rerank=rerank,
-                                 query_en=query_en)
+                                 query_en=query_en, rerank_query=rerank_query)
     ranked, candidates, route_hits = outcome.hits, outcome.candidates, outcome.route_hits
     timings["retrieve_rerank_ms"] = (time.perf_counter() - started) * 1000
 

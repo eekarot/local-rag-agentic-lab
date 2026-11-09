@@ -45,7 +45,7 @@ def load_parent_records(store_path: str | Path | None = None) -> list[dict[str, 
     with store._connect() as conn:      # noqa: SLF001  同包内部
         rows = conn.execute(
             "SELECT p.parent_id, p.document_id, p.parent_index, p.content, p.title,"
-            " p.section_path, d.source_uri"
+            " p.section_path, COALESCE(p.language, d.language) AS language, d.source_uri"
             " FROM parents p JOIN documents d ON d.document_id = p.document_id"
         ).fetchall()
     for row in rows:
@@ -65,6 +65,9 @@ def load_parent_records(store_path: str | Path | None = None) -> list[dict[str, 
             # 视角看来源表才发现）。`source` 保留给老调用方。
             "source_uri": row["source_uri"],
             "source": row["source_uri"],
+            # 语言是 C0d「按候选块语言选重排 query」的依据：没有它就只能在重排时靠正则猜，
+            # 而库里本来就有这一列（`parents.language`），没理由现场猜。
+            "language": row["language"],
         })
     return out
 

@@ -29,6 +29,7 @@ from typing import Any, Callable, Iterable, Iterator, Sequence
 
 from ..embedding.service import DEFAULT_VERSION as DEFAULT_EMBEDDING_VERSION
 from ..ingestion.errors import IngestionError
+from ..lang.detect import detect as detect_language  # noqa: E402  语言在建库时判一次（N49）
 from ..ingestion.ids import document_version, make_document_id
 from ..ingestion.parser import get_parser, register_builtin_parsers
 from ..ingestion.parent_builder import ParentBuilder, build_children
@@ -353,13 +354,17 @@ class IngestPipeline:
             if not children:
                 raise IngestionError("切分后没有任何 child（空文档或解析结果为空）")
             parser_version = getattr(parser, "parser_version", "") or f"{path.suffix.lstrip('.').lower()}_v1"
+            # 语言在建库时判一次就够（整篇同语言），别留给下游每次现判（N49）。
+            language = detect_language(" ".join(p.content for p in parents)[:4000])
+            for parent in parents:
+                parent.language = language
             document = {
                 "document_id": document_id,
                 "source_uri": key,
                 "file_name": path.name,
                 "file_type": path.suffix.lstrip(".").lower(),
                 "title": title,
-                "language": None,
+                "language": language,
                 "document_version": version,
                 "parser_version": parser_version,
                 "created_at": None,

@@ -48,6 +48,8 @@ def load_parents(path: Path) -> dict[str, dict]:
     conn = sqlite3.connect(str(path))
     conn.row_factory = sqlite3.Row
     parents: dict[str, dict] = {}
+    # 只读 parents 表：`language` 在历史库里全是 NULL（N49），真正的兜底在 `_block_lang()`
+    # 按正文现判；为了一个还是 NULL 的列去 JOIN documents 只会把最小可用 schema 变复杂。
     for row in conn.execute("SELECT parent_id, document_id, content, title, section_path, language "
                             "FROM parents"):
         item = dict(row)
@@ -355,6 +357,7 @@ def evaluate(
     reranker=None,
     query_en: str = "none",
     translator=None,
+    rerank_query: str = "question",
 ) -> dict:
     from src.rag.ask.pipeline import retrieve_with_meta
     from src.rag.ingestion.tokenizer import TokenCounter
@@ -380,7 +383,7 @@ def evaluate(
         started = time.perf_counter()
         outcome = retrieve_with_meta(query, retriever=retriever, parents=parents, counter=counter,
                                      reranker=reranker, pool=pool, rerank=rerank,
-                                     query_en=english)
+                                     query_en=english, rerank_query=rerank_query)
         elapsed_ms = (time.perf_counter() - started) * 1000
         latencies.append(elapsed_ms)
         ranked = [hit.chunk_id for hit in outcome.hits][:k]   # 检索返回的是 parent id
@@ -414,6 +417,7 @@ def evaluate(
         "pool": pool,
         "rerank": rerank,
         "query_en_mode": query_en,
+        "rerank_query_mode": rerank_query,
         **({"translate": translator.stats()} if translator is not None
            and hasattr(translator, "stats") else {}),
         "overall": summarize(rows, k),
@@ -476,6 +480,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--query-en", choices=("none", "field", "translate"), default="none",
                         help="dense_en/lexical_en 吃什么：none = 只给原问题（旧口径）；"
                              "field = 再传手写 query_en（翻译上界）")
+    parser.add_argument("--rerank-query", choices=("question", "by_lang"), default="question",
+                        help="重排用哪个 query：question = 只用提问原句（默认）；"
+                             "by_lang = 按候选块语言选（中文块用中文问、英文块用英文问）")
     parser.add_argument("--compare-tolerance", type=float, default=None,
                         help="覆盖容差（默认 = 基线一侧 95%% bootstrap CI 半宽）")
     parser.add_argument("--report", type=Path, default=None, help="把对比表另存为 Markdown")
@@ -495,7 +502,8 @@ def main(argv: list[str] | None = None) -> int:
     result = evaluate(questions, k=args.k, pool=args.pool, rerank=not args.no_rerank,
                       warmup=not args.no_warmup, collection=args.collection, store=args.store,
                       query_en=args.query_en,
-                      translator=build_translate_fn() if args.query_en == "translate" else None)
+                      translator=build_translate_fn() if args.query_en == "translate" else None,
+                      rerank_query=args.rerank_query)
     result["questions_sha256"] = questions_fingerprint(args.questions)
 
     out_path = None if args.compare and args.out is None else _default_out(args)
