@@ -158,6 +158,12 @@ def _metric_series(rows: list[dict]) -> dict[str, list[float]]:
     }
 
 
+#: 口径指纹：这些参数一换就不是「同一个检索器」了。新增口径时必须同步 `docs/baseline-k8s-v1.json`，
+#: 否则门禁会把默认路径也判成 not_comparable（C0e 就漏过一次 `max_other_lang`）。
+COMPARABILITY_KEYS = ("k", "pool", "rerank", "query_en_mode", "rerank_query_mode",
+                      "lang_quota", "rerank_merge", "max_other_lang")
+
+
 def _comparability_reasons(current: dict, baseline: dict) -> list[str]:
     reasons: list[str] = []
     if not baseline.get("questions_sha256"):
@@ -169,10 +175,7 @@ def _comparability_reasons(current: dict, baseline: dict) -> list[str]:
             f"题集不同：基线 {baseline['questions_sha256'][:12]}… vs 现在 "
             f"{str(current.get('questions_sha256'))[:12]}…"
         )
-    # 口径指纹：这些参数一换就不是「同一个检索器」了。
-    # `lang_quota` 与 `rerank_query_mode` 是 C0e 加的：只改其中一个也会换掉名单。
-    for key in ("k", "pool", "rerank", "query_en_mode", "rerank_query_mode", "lang_quota",
-                "rerank_merge", "max_other_lang"):
+    for key in COMPARABILITY_KEYS:
         if current.get(key) != baseline.get(key):
             reasons.append(f"{key} 不同：基线 {baseline.get(key)} vs 现在 {current.get(key)}")
     base_ids = {r["qid"] for r in baseline.get("rows", [])}

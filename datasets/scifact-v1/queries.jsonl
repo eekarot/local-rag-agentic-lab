@@ -1,0 +1,1109 @@
+{"id": "0", "claim": "0-dimensional biomaterials lack inductive properties.", "split": "train"}
+{"id": "2", "claim": "1 in 5 million in UK have abnormal PrP positivity.", "split": "train"}
+{"id": "4", "claim": "1-1% of colorectal cancer patients are diagnosed with regional or distant metastases.", "split": "train"}
+{"id": "6", "claim": "10% of sudden infant death syndrome (SIDS) deaths happen in newborns aged less than 6 months.", "split": "train"}
+{"id": "9", "claim": "32% of liver transplantation programs required patients to discontinue methadone treatment in 2001.", "split": "train"}
+{"id": "10", "claim": "4-PBA treatment decreases endoplasmic reticulum stress in response to general endoplasmic reticulum stress markers.", "split": "train"}
+{"id": "11", "claim": "4-PBA treatment raises endoplasmic reticulum stress in response to general endoplasmic reticulum stress markers.", "split": "train"}
+{"id": "12", "claim": "40mg/day dosage of folic acid and 2mg/day dosage of vitamin B12 does not affect chronic kidney disease (CKD) progression.", "split": "train"}
+{"id": "14", "claim": "5'-nucleotidase metabolizes 6MP.", "split": "train"}
+{"id": "15", "claim": "50% of patients exposed to radiation have activated markers of mesenchymal stem cells.", "split": "train"}
+{"id": "17", "claim": "53% of perinatal mortality is due to low birth weight.", "split": "train"}
+{"id": "18", "claim": "61% of colorectal cancer patients are diagnosed with regional or distant metastases.", "split": "train"}
+{"id": "19", "claim": "7-day-old adult Caenorhabditis elegans exhibit approximately 5% of the learning capacity seen in 1-day old adults.", "split": "train"}
+{"id": "20", "claim": "7-day-old adult Caenorhabditis elegans exhibit approximately 75% of the learning capacity seen in 1-day old adults.", "split": "train"}
+{"id": "21", "claim": "70% of burn patients are admitted for hospitalization and further treatment after appearing at hospital emergency wards or outpatient clinics.", "split": "train"}
+{"id": "22", "claim": "76-85% of people with severe mental disorder receive no treatment in low and middle income countries.", "split": "train"}
+{"id": "24", "claim": "90% of patients with melanoma and an objective response to PD-1 blockade will experience a progression in their melanoma.", "split": "train"}
+{"id": "25", "claim": "90% of sudden infant death syndrome (SIDS) deaths happen in newborns aged less than 6 months.", "split": "train"}
+{"id": "26", "claim": "A 100g dose of chloroquine chemoprophylactic regimen results in retinal toxicity after 1 year of weekly intake.", "split": "train"}
+{"id": "27", "claim": "A 100g dose of chloroquine chemoprophylactic regimen results in retinal toxicity after 5-6 years of weekly intake.", "split": "train"}
+{"id": "28", "claim": "A T helper 2 cell (Th2) environment impedes disease development in patients with systemic lupus erythematosus (SLE).", "split": "train"}
+{"id": "30", "claim": "A breast cancer patient's capacity to metabolize tamoxifen influences treatment outcome.", "split": "train"}
+{"id": "32", "claim": "A country's Vaccine Alliance (GAVI) eligibility is not indictivate of accelerated adoption of the Hub vaccine.", "split": "train"}
+{"id": "34", "claim": "A deficiency of folate increases blood levels of homocysteine.", "split": "train"}
+{"id": "35", "claim": "A deficiency of vitamin B12 decreases blood levels of homocysteine.", "split": "train"}
+{"id": "37", "claim": "A deficiency of vitamin B6 decreases blood levels of homocysteine.", "split": "train"}
+{"id": "39", "claim": "A diminished ovarian reserve does not solely indicate infertility in an a priori non-infertile population.", "split": "train"}
+{"id": "40", "claim": "A diminished ovarian reserve is a very strong indicator of infertility, even in an a priori non-infertile population.", "split": "train"}
+{"id": "41", "claim": "A high microerythrocyte count protects against severe anemia in homozygous alpha (+)- thalassemia trait subjects.", "split": "train"}
+{"id": "43", "claim": "A low percentage of hematopoietic progenitor cells are susceptible to HIV-1 infection ex vivo.", "split": "train"}
+{"id": "44", "claim": "A mutation in HNF4A leads to an increased risk of developing diabetes by the age of 14 years.", "split": "train"}
+{"id": "45", "claim": "A mutation in HNF4A leads to an increased risk of diabetes by the age of 14 years.", "split": "train"}
+{"id": "46", "claim": "A single nucleotide variant the gene DGKK is strongly associated with increased risk of hypospadias.", "split": "train"}
+{"id": "47", "claim": "A strong bias in the phage genome locations where the spacers were derived has been observed in many CRISPR subtypes that confer the immunity to phage.", "split": "train"}
+{"id": "52", "claim": "ALDH1 expression is associated with poorer prognosis for breast cancer primary tumors.", "split": "train"}
+{"id": "55", "claim": "AMP-activated protein kinase (AMPK) activation reduces inflammation-related fibrosis in the lungs.", "split": "train"}
+{"id": "58", "claim": "APOE4 expression in iPSC-derived neurons results in decreased tau phosphorylation.", "split": "train"}
+{"id": "60", "claim": "ART has no effect on the infectiveness of HIV-positive people.", "split": "train"}
+{"id": "61", "claim": "ART substantially reduces infectiveness of HIV-positive people.", "split": "train"}
+{"id": "62", "claim": "ATF4 is a general endoplasmic reticulum stress marker.", "split": "train"}
+{"id": "63", "claim": "ATM and Rad3 related protein are critical for sensing DNA damage.", "split": "train"}
+{"id": "64", "claim": "ATM and Rad3 related protein have no role in sensing DNA damage.", "split": "train"}
+{"id": "66", "claim": "AZT given with ribavirin increases anemia.", "split": "train"}
+{"id": "67", "claim": "Activated Cdk5 phosphorylates the ATM protein in response to DNA damage.", "split": "train"}
+{"id": "68", "claim": "Activated Cdk5 regulates DNA damage-induced neuronal death.", "split": "train"}
+{"id": "69", "claim": "Activation of PPM1D enhances p53 function.", "split": "train"}
+{"id": "71", "claim": "Activation of the Rac1 homolog CED-10 kills viable cells in SRGP-1 mutant Caenorhabditis elegans.", "split": "train"}
+{"id": "73", "claim": "Activator-inhibitor pairs are provided ventrally by Xrl-sizzled.", "split": "train"}
+{"id": "74", "claim": "Active H. pylori urease has a polymeric structure consisting of five distinct subunits.", "split": "train"}
+{"id": "76", "claim": "Active Ly49Q induces neutrophil polarization.", "split": "train"}
+{"id": "77", "claim": "Active Ly49Q prevents neutrophil polarization.", "split": "train"}
+{"id": "78", "claim": "Active caspase-11 participate in regulating phagosome-lysosome fusion.", "split": "train"}
+{"id": "79", "claim": "Active caspase-11 protein promotes pyroptosis.", "split": "train"}
+{"id": "80", "claim": "Acute ablation of KRAS causes severe growth impairment.", "split": "train"}
+{"id": "81", "claim": "Acute ablation of Snail in the embryonic cortex affects the proliferation and number of embryonic cortical precursors.", "split": "train"}
+{"id": "82", "claim": "Addition of BMP4, activin A, CHIR99021, and SU504 to reprogramming fibroblasts generates, expands and maintains cardiovascular progenitor cells (CPCs)", "split": "train"}
+{"id": "85", "claim": "Adult tissue-resident macrophages are seeded before birth.", "split": "train"}
+{"id": "86", "claim": "Adult tissue-resident macrophages are seeded before birth.", "split": "train"}
+{"id": "88", "claim": "Adult tissue-resident macrophages possess a self-renewing capacity.", "split": "train"}
+{"id": "89", "claim": "Adult tissue-resident macrophages stem from the embryonal yolk sac and fetal liver.", "split": "train"}
+{"id": "90", "claim": "Adult tissue-resident macrophages stem from the embryonal yolk sac and fetal liver.", "split": "train"}
+{"id": "91", "claim": "Aged patients are less susceptible to ischaemia/reperfusion injury.", "split": "train"}
+{"id": "92", "claim": "Aged patients are more susceptible to ischaemia/reperfusion injury.", "split": "train"}
+{"id": "93", "claim": "Aggravated inflammation is dependent on NLRP3 inflammasome activation.", "split": "train"}
+{"id": "95", "claim": "Albendazole is used to treat soil-transmitted helminths.", "split": "train"}
+{"id": "96", "claim": "Algerian physicians constitue the largest component of sub-Saharan Africa-trained physicians in the United States.", "split": "train"}
+{"id": "98", "claim": "Alirocumab treatment reduces apo(a) fractional clearance rate.", "split": "train"}
+{"id": "104", "claim": "Allogeneic mechanical circulatory support is not as effective as autologous mechanical circulatory support for treating acute myocardial infarction.", "split": "train"}
+{"id": "105", "claim": "Alteration of origin firing causes changes in termination zones of Okazaki fragments.", "split": "train"}
+{"id": "106", "claim": "Ambulatory blood pressure monitoring is inaccurate at diagnosing hypertension.", "split": "train"}
+{"id": "108", "claim": "Amitriptyline is an effective treatment for chronic tension-type headaches.", "split": "train"}
+{"id": "109", "claim": "An M2-like phenotype in brown adipose tissue macrophages is quickly induced by cold exposure.", "split": "train"}
+{"id": "111", "claim": "Androgenetic haploid mouse embryonic stem cells (ESCs) can be derived and genetically manipulated in vitro.", "split": "train"}
+{"id": "112", "claim": "Angiotensin converting enzyme inhibitors are associated with decreased risk for functional renal insufficiency.", "split": "train"}
+{"id": "114", "claim": "Anthrax spores are very difficult to dispose once they are dispersed.", "split": "train"}
+{"id": "116", "claim": "Anthrax spores remain deadly until affected areas are decontaminated.", "split": "train"}
+{"id": "119", "claim": "Antidepressants increase the severity of migraines.", "split": "train"}
+{"id": "120", "claim": "Antidepressants reduce the severity of migraines.", "split": "train"}
+{"id": "121", "claim": "Antimicrobial agents are less effective due to the pressure of antimicrobial usage.", "split": "train"}
+{"id": "122", "claim": "Antimicrobial agents are more effective due to the pressure of antimicrobial usage.", "split": "train"}
+{"id": "123", "claim": "Antiretroviral therapy increases rates of tuberculosis across a broad range of CD4 strata.", "split": "train"}
+{"id": "126", "claim": "Approximately 250,000 people are infected with human T-cell lymphotropic virus type 1 in the United Kingdom.", "split": "train"}
+{"id": "134", "claim": "Assessing treatment adherence is more beneficial to clinical practice than measuring routine outcomes.", "split": "train"}
+{"id": "138", "claim": "Asymptomatic visual impairment screening in elderly populations leads to improved vision.", "split": "train"}
+{"id": "139", "claim": "At least 85% of patients exposed to radiation have activated markers of myofibroblasts.", "split": "train"}
+{"id": "144", "claim": "Autologous transplantation of mesenchymal stem cells has better graft function than induction therapy with anti-interleukin-2 receptor antibodies.", "split": "train"}
+{"id": "149", "claim": "Autophagy deficiency in the liver increases vulnerability to insulin resistance.", "split": "train"}
+{"id": "152", "claim": "B cells go though plasmablast differentiation and antibody production by continuous expression of EBI2.", "split": "train"}
+{"id": "153", "claim": "B3-Galectin decreases cell resistance to tyrosine kinase inhibitors (TKIs) by engaging the alternate KRAS-RalB signaling complex downstream of EGFR.", "split": "train"}
+{"id": "154", "claim": "B3-Galectin increases cell resistance to tyrosine kinase inhibitors (TKIs) by engaging the alternate KRAS-RalB signaling complex downstream of EGFR.", "split": "train"}
+{"id": "155", "claim": "BCL-2 activation antagonizes the apoptotic effects of c-Myc.", "split": "train"}
+{"id": "156", "claim": "BCL-2 promotes the apoptotic effects of c-Myc.", "split": "train"}
+{"id": "157", "claim": "BLM gene encodes RecQ-class DNA helicase.", "split": "train"}
+{"id": "159", "claim": "BRCA 1 mutation carriers' risk of breast and ovarian cancer depends on where the mutation is located.", "split": "train"}
+{"id": "160", "claim": "Bacterial meningitis can be diagnosed on the basis of positive cerebrospinal fluid (CSF) cultures.", "split": "train"}
+{"id": "161", "claim": "Bacteriophagaes MS2 and Qβ are members of the Leviviridae.", "split": "train"}
+{"id": "164", "claim": "Bariatric surgery increases rates of colorectal cancer.", "split": "train"}
+{"id": "165", "claim": "Bariatric surgery increases rates of postmenopausal breast cancer.", "split": "train"}
+{"id": "166", "claim": "Bariatric surgery leads to negative outcomes in mental health.", "split": "train"}
+{"id": "167", "claim": "Bariatric surgery leads to positive outcomes in mental health.", "split": "train"}
+{"id": "168", "claim": "Bariatric surgery reduces colorectal cancer.", "split": "train"}
+{"id": "169", "claim": "Bariatric surgery reduces postmenopausal breast cancer.", "split": "train"}
+{"id": "172", "claim": "Basophils promote disease development in patients with systemic lupus erythematosus (SLE).", "split": "train"}
+{"id": "173", "claim": "Bcp1 is a chaperone for Rpl23.", "split": "train"}
+{"id": "174", "claim": "Beta-band coherence is diminished for visible stimuli over invisible stimuli.", "split": "train"}
+{"id": "175", "claim": "Beta-band coherence is enhanced for visible stimuli over invisible stimuli.", "split": "train"}
+{"id": "176", "claim": "BiP is a general endoplasmic reticulum stress marker.", "split": "train"}
+{"id": "177", "claim": "Binding of p53 to enhancer regions (p53BERs) regulates the activity of p53 transcription and cell cycle arrest through the production of p53-dependent eRNAs.", "split": "train"}
+{"id": "178", "claim": "Birth-weight is negatively associated with breast cancer.", "split": "train"}
+{"id": "181", "claim": "Blocking the interaction between TDP-43 and respiratory complex I proteins ND3 and ND6 prevents TDP-43-induced neuronal loss.", "split": "train"}
+{"id": "182", "claim": "Bone Marrow (BM) transplantation is used to treat acute myeloid leukemia (AML)", "split": "train"}
+{"id": "184", "claim": "Bone marrow cells don't contribute to adult macrophage compartments.", "split": "train"}
+{"id": "186", "claim": "British female students are bullied more than British male students.", "split": "train"}
+{"id": "187", "claim": "British male students are bullied more than British female students.", "split": "train"}
+{"id": "189", "claim": "Broadly HIV-1 Neutralizing Antibodies (bnAb) 10EB have no affinity for phospholipids.", "split": "train"}
+{"id": "196", "claim": "C2 works synergistically with A-769662 to activate dephosphorylated AMPK.", "split": "train"}
+{"id": "197", "claim": "CCL19 is a ligand for CCR7.", "split": "train"}
+{"id": "199", "claim": "CCL19 is predominantly present within dLNs.", "split": "train"}
+{"id": "200", "claim": "CD28 initiates tonic signaling in conventional T cells, which causes an exhaustion phenotype and limited efficiency.", "split": "train"}
+{"id": "201", "claim": "CD28 signals regulate trafficking of murine auto-reactive T cells into target tissues.", "split": "train"}
+{"id": "203", "claim": "CD44v6 is not associated with constitutive and reprogrammed cancer stem cells driving cancer metastasis.", "split": "train"}
+{"id": "204", "claim": "CDK6 shows impaired binding to loss-of-function variants of p18 INK4C.", "split": "train"}
+{"id": "205", "claim": "CDK6 shows improved binding to loss-of-function variants of p18 INK4C.", "split": "train"}
+{"id": "209", "claim": "CHOP is a general endoplasmic reticulum stress marker.", "split": "train"}
+{"id": "210", "claim": "COPI coatmer is involved in lipid homeostasis.", "split": "train"}
+{"id": "211", "claim": "COPI coatmer is involved in viral replication.", "split": "train"}
+{"id": "214", "claim": "CRP is positively correlated with postoperative mortality following Coronary Artery Bypass Graft (CABG) surgery.", "split": "train"}
+{"id": "220", "claim": "Ca2+ cycling controls whole-body energy homeostasis in beige fat.", "split": "train"}
+{"id": "221", "claim": "Ca2+ cycling is a UCP1-dependent thermogenic mechanism.", "split": "train"}
+{"id": "222", "claim": "Ca2+ cycling is a UCP1-independent thermogenic mechanism.", "split": "train"}
+{"id": "223", "claim": "Cancer cells can stimulate the accumulation of intra-tumoural myeloid-derived suppressor cells by promoting granulocyte colony stimulating factor production.", "split": "train"}
+{"id": "224", "claim": "Cancer-associated fibroblasts (CAFs) are constituents of tumor microenvironments", "split": "train"}
+{"id": "225", "claim": "Cancer-associated fibroblasts (CAFs) have no known interaction with cancer cells in the formation and activation of CAFs.", "split": "train"}
+{"id": "226", "claim": "Cancer-associated fibroblasts (CAFs) interact with cancer cells to mediate formation and activation of CAFs.", "split": "train"}
+{"id": "227", "claim": "Cancers that initially benefit from epidermal growth factor receptor targeted therapies later become refractory through several mechanisms.", "split": "train"}
+{"id": "228", "claim": "Cardiac tissue-resident macrophages directly contribute to electrical activity.", "split": "train"}
+{"id": "229", "claim": "Carriers of HNF4A mutations are at reduced risk for diabetes.", "split": "train"}
+{"id": "235", "claim": "Cell autonomous sex determination in somatic cells occurs in Galliformes.", "split": "train"}
+{"id": "241", "claim": "Cellular clocks are associated with mitosis timing in NIH 3T3 cells.", "split": "train"}
+{"id": "242", "claim": "Cellular clocks are not predictive of mitosis timing in NIH 3T3 cells.", "split": "train"}
+{"id": "243", "claim": "Cellular differentiation of embryonic stem cells is accompanied by changes in replication timing, transcription and nuclear localization.", "split": "train"}
+{"id": "244", "claim": "Certain immunomodulator-human dialyzable leukocyte extract (hDLE) peptides are recognized by toll-like receptors (TLRs) on macrophages and dendritic cells.", "split": "train"}
+{"id": "245", "claim": "Charcoal is an effective treatment for acute paraquat poisoning.", "split": "train"}
+{"id": "246", "claim": "Charcoal shows no benefit for acute paraquat poisoning.", "split": "train"}
+{"id": "247", "claim": "Chemical injury represses transglutaminase 2 activity.", "split": "train"}
+{"id": "250", "claim": "Chenodeoxycholic acid treatment decreases brown adipose tissue activity.", "split": "train"}
+{"id": "251", "claim": "Chenodeoxycholic acid treatment increases brown adipose tissue activity.", "split": "train"}
+{"id": "253", "claim": "Chinese individuals with TT homozygosity in the MTHFR gene are less vulnerable to strokes caused by low levels of folate intake.", "split": "train"}
+{"id": "254", "claim": "Chinese individuals with TT homozygosity in the MTHFR gene are more vulnerable to strokes caused by low levels of folate intake.", "split": "train"}
+{"id": "255", "claim": "Chlamydia trachomatis is most prevalent in the UK among individuals in their 50s and 60s.", "split": "train"}
+{"id": "256", "claim": "Chlamydia trachomatis is most prevalent in the UK among sexually-experienced individuals aged 16 to 24.", "split": "train"}
+{"id": "258", "claim": "Cholesterol loading induces KLF4 expression in VSMCs, resulting in the expression of pro-inflammatory cytokines.", "split": "train"}
+{"id": "259", "claim": "Chronic HIV stimulation of B cells leads to the premature exhaustion of B cells.", "split": "train"}
+{"id": "262", "claim": "Cis-acting lncRNAs control the expression of genes that are positioned in the vicinity of their transcription sites.", "split": "train"}
+{"id": "263", "claim": "Citrullinated proteins externalized in neutrophil extracellular traps act indirectly to disrupt the inflammatory cycle.", "split": "train"}
+{"id": "264", "claim": "Citrullinated proteins externalized in neutrophil extracellular traps act indirectly to perpetuate the inflammatory cycle via induction of autoantibodies.", "split": "train"}
+{"id": "265", "claim": "Clathrin stabilizes the spindle fiber apparatus during mitosis.", "split": "train"}
+{"id": "266", "claim": "Cnn1 recruitment varies with cell cycle timing.", "split": "train"}
+{"id": "267", "claim": "Cognitive behavioral therapy is an ineffective treatment for insomnia", "split": "train"}
+{"id": "272", "claim": "Combination nicotine replacement therapies with varenicline or bupropion are more effective after 12 weeks of reatment compared to varenicline monotherapy.", "split": "train"}
+{"id": "277", "claim": "Commelina yellow mottle virus (ComYMV) has three typical badnavirus ORFs, capable of encoding proteins 23, 15, and 216 kD.", "split": "train"}
+{"id": "278", "claim": "Commelina yellow mottle virus' (ComYMV) genome consists of 2140 baise pairs.", "split": "train"}
+{"id": "280", "claim": "Comparative transcriptome analysis identified new platelet proteins with structural features suggesting a role in platelet function.", "split": "train"}
+{"id": "281", "claim": "Concentrations of SNV and CNV in stem-cell regulatory elements and binding sites of transcription factors in iPSC-lines are distinct from their founding cells.", "split": "train"}
+{"id": "283", "claim": "Consumption of whole fruits increases the risk of type 2 diabetes.", "split": "train"}
+{"id": "285", "claim": "Continued HHV-8 transmission among MSM in San Francisco may be explained by urogenital contact.", "split": "train"}
+{"id": "286", "claim": "Converting apoE4 to apoE3 by gene editing prevents the pathology associated with apoE4 in human iPSCderived neurons.", "split": "train"}
+{"id": "287", "claim": "Converting apoE4 to apoE3 by gene editing worsens the pathology associated with apoE4 in human iPSCderived neurons.", "split": "train"}
+{"id": "290", "claim": "Cost effectiveness evaluations based on cRCT data accurately reflect prices for patients in actual clinical practice.", "split": "train"}
+{"id": "292", "claim": "Cost effectiveness evaluations based on cRCT data lack external validity.", "split": "train"}
+{"id": "293", "claim": "Crossover hot spots are found within gene promoters in Saccharomyces cerevisiae.", "split": "train"}
+{"id": "296", "claim": "Cyclin A2 destruction is necessary to switch from unstable to stable kt-mt attachments in mitosis.", "split": "train"}
+{"id": "299", "claim": "Cytochrome c is transferred from cytosol to the mitochondrial intermembrane space during apoptosis.", "split": "train"}
+{"id": "301", "claim": "Cytosolic proteins bind to iron-responsive elements on mRNAs coding for TFRC1.", "split": "train"}
+{"id": "304", "claim": "DMS3 protein enables Pol V transcription in vivo.", "split": "train"}
+{"id": "305", "claim": "DRD1 proteins enable Pol V transcription in vivo.", "split": "train"}
+{"id": "306", "claim": "DUSP4 decreases apoptosis.", "split": "train"}
+{"id": "308", "claim": "DUSP4 downregulation deactivates the Ras-ERK pathway", "split": "train"}
+{"id": "309", "claim": "DUSP4 increases apoptosis.", "split": "train"}
+{"id": "310", "claim": "De novo assembly of sequence data has fewer specific contigs than unassembled sequence data.", "split": "train"}
+{"id": "313", "claim": "De novo assembly of sequence data has shorter contigs than unassembled sequence data.", "split": "train"}
+{"id": "315", "claim": "Decrease of p62 in prostate tumor stroma results in defective autophagy.", "split": "train"}
+{"id": "316", "claim": "Decreased conversion of PGE 2 to PPARy ligand 15-ket-PGE 2 causes accumulation of PGE.", "split": "train"}
+{"id": "317", "claim": "Decreased diastolic blood pressure (DBP) is associated with abdominal aortic aneurysm.", "split": "train"}
+{"id": "323", "claim": "Deleting Raptor increases G-CSF levels.", "split": "train"}
+{"id": "325", "claim": "Deletion of ATM and Rad3 related protein is not predictive of acute tissue loss.", "split": "train"}
+{"id": "326", "claim": "Deletion of ATM and Rad3 related protein leads to acute tissue loss.", "split": "train"}
+{"id": "330", "claim": "Deltex has no known interactions with eIF3f.", "split": "train"}
+{"id": "331", "claim": "Deltex interacts with eIF3. There is no known interaction between Deltex and elF3", "split": "train"}
+{"id": "332", "claim": "Depletion of T-helper 17 (Th17) cells during simian immunodeficiency virus (SIV) infection decreases dissemination of Salmonella Typhimurium from the gut.", "split": "train"}
+{"id": "333", "claim": "Depletion of T-helper 17 (Th17) cells during simian immunodeficiency virus (SIV) infection increases dissemination of Salmonella Typhimurium from the gut.", "split": "train"}
+{"id": "334", "claim": "Depletion of nitric oxide is responsible for vasospasm.", "split": "train"}
+{"id": "335", "claim": "Deregulation of HAND2 is a crucial step in endometrial carcinogenesis in mice.", "split": "train"}
+{"id": "336", "claim": "Destination container port throughput(CPT) is negatively related to dengue virus (DENV-1) diffusion in air traffic shipments.", "split": "train"}
+{"id": "337", "claim": "Destination container port throughput(CPT) is positively related to dengue virus (DENV-1) diffusion in air traffic shipments.", "split": "train"}
+{"id": "339", "claim": "Dexamethasone increases risk of postoperative bleeding.", "split": "train"}
+{"id": "340", "claim": "Diabetes remission occurs less in people treated with conventional therapy than in people treated with laparoscopic adjustable gastric banding surgery.", "split": "train"}
+{"id": "341", "claim": "Diabetes remission occurs more in people treated with conventional therapy than in people treated with laparoscopic adjustable gastric banding surgery.", "split": "train"}
+{"id": "342", "claim": "Diabetic patients with acute coronary syndrome experience decreased short-term and long-term risk for bleeding events.", "split": "train"}
+{"id": "345", "claim": "Differentiated E2f-1, -2, -3 TKO cells in the intestine do not exhibit apoptosis.", "split": "train"}
+{"id": "346", "claim": "Differentiation of progenitor cells to myeloid cells is skewed upon activation of insulin signaling.", "split": "train"}
+{"id": "347", "claim": "Differentiation of progenitor cells to myeloid cells is skewed when insulin signaling is suppressed.", "split": "train"}
+{"id": "349", "claim": "Diminished ovarian reserve is a reliable indicator of infertility in a non-infertile population.", "split": "train"}
+{"id": "351", "claim": "Distant CREs are important for transcriptional regulation.", "split": "train"}
+{"id": "352", "claim": "Distant CREs are less conserved among species.", "split": "train"}
+{"id": "355", "claim": "Drosophila supracellular actomyosin structures are found at boundaries in wing imaginal discs.", "split": "train"}
+{"id": "356", "claim": "Dscam1 acts as a hypervariable pattern-recognition receptor for the immune system.", "split": "train"}
+{"id": "357", "claim": "During non-homologous end joining, the ligation step is not as tolerant of disrepairs and other distortions when joining 3' of strand breaks as compared to 5' strand breaks.", "split": "train"}
+{"id": "358", "claim": "During non-homologous end joining, the ligation step is not as tolerant of disrepairs and other distortions when joining 5' of strand breaks as compared to 3' strand breaks.", "split": "train"}
+{"id": "361", "claim": "During the primary early antibody response activated B cells migrate toward the inner-and outer follicular areas where oxysterol accumulation is generated by stromal cells.", "split": "train"}
+{"id": "363", "claim": "EG7 tumors can be killed by systemic oxaliplatin primed CD8+ T cells from the tumor-draining lymph node cells.", "split": "train"}
+{"id": "364", "claim": "EGR2 is important to myelination of the peripheral nervous system.", "split": "train"}
+{"id": "365", "claim": "ER-localized phosphatase Sac1 processes PI4P through coordination with OSBP and the endosome-localized protein sorting nexin 2.", "split": "train"}
+{"id": "366", "claim": "ERAP1 SNPs are epistatic to HLA alleles for ankylosing spondylitis.", "split": "train"}
+{"id": "367", "claim": "Early patent ductus ateriosus (PDA) screening decreases in-hospital mortality.", "split": "train"}
+{"id": "368", "claim": "Early patent ductus ateriosus (PDA) screening increases in-hospital mortality.", "split": "train"}
+{"id": "369", "claim": "Ectopic expression of Sall4, Nanog, Esrrb, and Lin28 generates induced pluripotent stem cells from mouse embryonic fibroblasts more efficiently than other factor combinations.", "split": "train"}
+{"id": "370", "claim": "Egr2 regulates the homeostasis of B and T cells.", "split": "train"}
+{"id": "371", "claim": "Egr3 regulates the homeostasis of B and T cells.", "split": "train"}
+{"id": "372", "claim": "Eilat virus (EILV) produced in mosquitos elicits rapid and long-lasting neutralizing antibodies in nonhuman primates.", "split": "train"}
+{"id": "375", "claim": "Elevated cell-free mitochondrial DNA levels are associated with mortality.", "split": "train"}
+{"id": "376", "claim": "Eliminating the last sporadic cases of malaria requires considerable funding.", "split": "train"}
+{"id": "377", "claim": "Emodin forms hydrogen bonds with residues involved in PGAM1 substrate binding.", "split": "train"}
+{"id": "378", "claim": "Energy balance requires hypothalamic glutamate neurotransmission.", "split": "train"}
+{"id": "379", "claim": "Enhanced early production of inflammatory chemokines damages viral control in the lung.", "split": "train"}
+{"id": "381", "claim": "Environmental factors can influence the development of breast cancer.", "split": "train"}
+{"id": "382", "claim": "Environmentally-induced senescence is mimicked in disease modeling by adding specific molecules to the culture system.", "split": "train"}
+{"id": "383", "claim": "Epidemiological disease burden from noncommunicable diseases is more prevalent in high economic settings.", "split": "train"}
+{"id": "389", "claim": "Ethanol stress increases the expression of IBP in bacteria.", "split": "train"}
+{"id": "390", "claim": "Ethanol stress increases the expression of PSP in bacteria.", "split": "train"}
+{"id": "391", "claim": "Ethanol stress increases the expression of SRL in bacteria.", "split": "train"}
+{"id": "392", "claim": "Ethanol stress lowers the expression of PSP in bacteria.", "split": "train"}
+{"id": "393", "claim": "Ethanol stress reduces the expression of SRL in bacteria.", "split": "train"}
+{"id": "394", "claim": "Excess gestational weight gain is associated with obesity-related pregnancy outcomes.", "split": "train"}
+{"id": "396", "claim": "Exercise increases cancer mortality rates among Chinese citizens.", "split": "train"}
+{"id": "397", "claim": "Exercise reduces cancer mortality rates among Chinese citizens.", "split": "train"}
+{"id": "398", "claim": "Exhaustion of B cells contributes to poor Ab response in HIV-infected individuals.", "split": "train"}
+{"id": "400", "claim": "Exposure to fine particulate air pollution is unrelated to anxiety prevalence.", "split": "train"}
+{"id": "401", "claim": "Expression of MSX2 is induced 3 hours after the addition of BMP4, which is earlier than T and CDX2.", "split": "train"}
+{"id": "403", "claim": "Expression of oncolytic virus antigens as peptides makes relapse more likely.", "split": "train"}
+{"id": "404", "claim": "Expression of oncolytic virus antigens as peptides permits additional protection against relapse.", "split": "train"}
+{"id": "406", "claim": "F4/80+ macrophages regulate mature osteoblast maintenance.", "split": "train"}
+{"id": "407", "claim": "FACT and other histone chaperone(s) compensate for Histone 2A (H2A)-histone 2B (H2B) dimer eviction during the histone exchange process.", "split": "train"}
+{"id": "413", "claim": "Female carriers of the Apolipoprotein E4 (APOE4) allele have decreased risk for dementia.", "split": "train"}
+{"id": "414", "claim": "Female carriers of the Apolipoprotein E4 (APOE4) allele have increased risk for Alzheimer's disease.", "split": "train"}
+{"id": "416", "claim": "Female carriers of the Apolipoprotein E4 (APOE4) allele have longer lifetime exposure to estrogen due to an increased reproductive period.", "split": "train"}
+{"id": "417", "claim": "Female carriers of the Apolipoprotein E4 (APOE4) allele have shorter lifetime exposure to estrogen due to a decreased reproductive period.", "split": "train"}
+{"id": "418", "claim": "Fibroblast Growth Factor is a ligand which signals through receptor tyrosine kinases.", "split": "train"}
+{"id": "420", "claim": "Fibroblast growth factor 21 protects against atherosclerosis by modulating adiponectin and SREBP2 levels.", "split": "train"}
+{"id": "422", "claim": "Flexible molecules experience less steric hindrance in the tumor microenviroment than rigid molecules.", "split": "train"}
+{"id": "423", "claim": "Folate and vitamin B12 levels influence the association between homocysteine and preeclampsia.", "split": "train"}
+{"id": "425", "claim": "For every 1,000 children with cerebral palsy, more than 300 of them are premature or underweight at birth.", "split": "train"}
+{"id": "426", "claim": "Forkhead 0 (fox0) transcription factors are involved in apoptosis.", "split": "train"}
+{"id": "428", "claim": "Forkhead 0 (fox0) transcription factors are involved in cellular differentiation.", "split": "train"}
+{"id": "429", "claim": "Formation of N-terminal pyroglutamate by glutamine cyclase (GC) competes with NTAQ1 for Nt-Gln substrates.", "split": "train"}
+{"id": "430", "claim": "FoxO3a activation in neuronal death is inhibited by reactive oxygen species (ROS).", "split": "train"}
+{"id": "432", "claim": "Foxk2 regulates autophagy genes in muscle cells and fibroblast cells.", "split": "train"}
+{"id": "434", "claim": "Foxp3 enables the expression of transcriptional regulators implicated in memory T cell development.", "split": "train"}
+{"id": "435", "claim": "Foxp3 represses the expression of transcriptional regulators implicated in memory T cell development.", "split": "train"}
+{"id": "441", "claim": "G-CSF increases the expansion and infiltration of MDSCs into tumors.", "split": "train"}
+{"id": "444", "claim": "GATA3 regulates cell cycle progression in bone marrow hematopoietic stem cells.", "split": "train"}
+{"id": "445", "claim": "GATA3 regulates self-renewal capacity in bone marrow hematopoietic stem cells.", "split": "train"}
+{"id": "447", "claim": "Gastric infection with Helicobacter pylori decreases risk of gastric cancer in humans.", "split": "train"}
+{"id": "448", "claim": "Gastric infection with Helicobacter pylori increases risk of gastric cancer in humans.", "split": "train"}
+{"id": "449", "claim": "Gastric lavage is an effective treatment for acute paraquat poisoning.", "split": "train"}
+{"id": "453", "claim": "General exercise therapy is more effective than rotator cuff exercises in reducing pain and improving function of the shoulder.", "split": "train"}
+{"id": "454", "claim": "General exercise therapy is more effective than scapular stabilizer exercises in reducing pain and improving function of the shoulder.", "split": "train"}
+{"id": "455", "claim": "Genes involved in pre-mRNA splicing have a significant impact on genome stability.", "split": "train"}
+{"id": "456", "claim": "Genes regulated by Esrrb transcription factor are sensitive to Mbd3 function.", "split": "train"}
+{"id": "458", "claim": "Genetic deficiency of mast cells leads to decreased weight gain in a mouse model of diet-induced obesity.", "split": "train"}
+{"id": "461", "claim": "Genetic deletion of JAM-A increases gut permeability.", "split": "train"}
+{"id": "463", "claim": "Genomic aberrations of metastases provide information for targeted therapy.", "split": "train"}
+{"id": "466", "claim": "Genomic sequences involved in alternative splicing responsible for Hutchinson-Gilford progeria syndrome (HGPS) are abundant in the ''progerinonly'' allele of Lmna knock-in models.", "split": "train"}
+{"id": "469", "claim": "Glial calcium waves influence seizures.", "split": "train"}
+{"id": "470", "claim": "Glioblastoma multiforme (GBM) is characterized by extensive invasion, rapid growth, necrosis, and angiogenesis.", "split": "train"}
+{"id": "472", "claim": "Glucose restriction to 0.05% reduces RLS (replicative life span) by 20-40% in S. cerevisiae.", "split": "train"}
+{"id": "473", "claim": "Glycan adaptation involves insertion-deletion events.", "split": "train"}
+{"id": "474", "claim": "Glycan adaptation is rarely observed in the B-cell repertoire.", "split": "train"}
+{"id": "479", "claim": "Gpr124 increases BBB breakdown in mouse models of ischemic stroke.", "split": "train"}
+{"id": "480", "claim": "Gpr124 suppresses BBB breakdown in mouse models of ischemic stroke.", "split": "train"}
+{"id": "481", "claim": "Guanine nucleotide dissociation inhibitor (Rho-GDI) interacts with the p75 NTR death domain", "split": "train"}
+{"id": "482", "claim": "Guanine nucleotide exchange factors (GEFs) mediate RhoA activation in response to tensional forces on fibronectin-binding integrins.", "split": "train"}
+{"id": "483", "claim": "H.pylori-mediated gastric cancer occurs due to the accumulation of mutations in host epithelial cells.", "split": "train"}
+{"id": "484", "claim": "H4 G94P proteins induce chromatin assembly, which increases free histones.", "split": "train"}
+{"id": "485", "claim": "H4 G94P proteins induce degradation of free histones via Rad53-dependent mechanisms.", "split": "train"}
+{"id": "486", "claim": "H4 G94P proteins inhibit chromatin assembly, which decreases free histones.", "split": "train"}
+{"id": "487", "claim": "H4 G94P proteins suppress degradation of free histones via Rad53-dependent mechanisms.", "split": "train"}
+{"id": "488", "claim": "HAND2 methylation is a key step in early endometrial carcinogenesis.", "split": "train"}
+{"id": "489", "claim": "HIV trans-activator protein (TAT) effectively transports large and small molecules across cellular membranes into larger populations of neurons.", "split": "train"}
+{"id": "490", "claim": "HNF4A mutations are associated with macrosomia in infancy.", "split": "train"}
+{"id": "492", "claim": "HOXB4 facilitates HSC expansion when co-cultured with HSCs.", "split": "train"}
+{"id": "493", "claim": "HOXB4 is a highly expressed component of cellular secretome from fetal liver cell populations.", "split": "train"}
+{"id": "494", "claim": "HSCT-T dosage may not be diagnostic if the onset of symptoms occurs less than 3 hours before AMI.", "split": "train"}
+{"id": "495", "claim": "Having a main partner improves HIV outcomes.", "split": "train"}
+{"id": "498", "claim": "Having a main partner worsens HIV outcomes.", "split": "train"}
+{"id": "499", "claim": "HbA1c consistently overestimates glycemic control in black individuals with Sickle cell trait (SCT).", "split": "train"}
+{"id": "500", "claim": "Headaches are correlated with cognitive impairment.", "split": "train"}
+{"id": "504", "claim": "Healthy volunteers exhibit rapid and transient increase of cellular ATP after being bolus-injected with fructose.", "split": "train"}
+{"id": "505", "claim": "Helicobacter pylori-induced aberrant NF-kB-dependent expression of activation-induced cytidine deaminase contributes to the mutagenesis of host DNA.", "split": "train"}
+{"id": "506", "claim": "Helminths interfere with immune system control of coinfections by microbial pathogens 16.", "split": "train"}
+{"id": "509", "claim": "Hematopoietic Stem Cell purification reaches purity rates above 90%.", "split": "train"}
+{"id": "515", "claim": "High levels of CRP lead to a higher risk of exacerbations in chronic obstructive pulmonary disease (COPD).", "split": "train"}
+{"id": "523", "claim": "Higher plasma levels of I-carnitine, when associated with trimethylamine N-oxide, are negatively correlated with cardiovascular events in humans.", "split": "train"}
+{"id": "524", "claim": "Higher plasma levels of I-carnitine, when associated with trimethylamine N-oxide, are positively correlated with cardiovascular events in humans.", "split": "train"}
+{"id": "526", "claim": "Homozygous deletion of murine Sbds gene from osterix-expressing mesenchymal stem and progenitor cells (MPCs) induces oxidative stress.", "split": "train"}
+{"id": "529", "claim": "Human embryonic stem cells give rise to cell types from all three embryonic germ layers.", "split": "train"}
+{"id": "530", "claim": "Human embryonic stem cells give rise to cell types from the outer embryonic germ layer, but not the other two layers.", "split": "train"}
+{"id": "531", "claim": "Human embryonic stem cells have the capacity to give rise to differentiated progeny representative of all three embryonic germ layers.", "split": "train"}
+{"id": "537", "claim": "Hypocretin neurones suppress panicprone state in rats.", "split": "train"}
+{"id": "541", "claim": "Hypothalamic glutamate neurotransmission is unrelated to energy balance.", "split": "train"}
+{"id": "542", "claim": "IFI16 impedes STING phosphorylation and translocation, resulting in reduced activation of STING.", "split": "train"}
+{"id": "545", "claim": "IFIT1 speeds viral replication by allowing for the proliferation of mis-capped viral RNAs.", "split": "train"}
+{"id": "547", "claim": "IL-10 production by monocytes inhibits CD4 + T cell response.", "split": "train"}
+{"id": "548", "claim": "IL-6 signaling plays a major role in atherosclerotic cardiovascular disease.", "split": "train"}
+{"id": "550", "claim": "ITAM phosphorylation allows for the transfer of the T cell receptor (TCR) signal from the echo-domain to the cytoplasmic tail of the T cell receptor (TCR).", "split": "train"}
+{"id": "553", "claim": "IgA plasma cells that are specific for transglutaminase 2 are scarce in the duodenal mucosa of celiac disease patients when the disease is active.", "split": "train"}
+{"id": "555", "claim": "Immune complex triggered cell death leads to extracellular release of nuclear DNA.", "split": "train"}
+{"id": "557", "claim": "Immune complex triggered cell death leads to sequestration of oxidized mitochondrial DNA.", "split": "train"}
+{"id": "559", "claim": "Immune responses in immune cells are geographically segregated.", "split": "train"}
+{"id": "562", "claim": "Improvements in OER catalysts show stable activity over several hundred hours.", "split": "train"}
+{"id": "563", "claim": "In British Men, haplogroup I decreases risk of cardiovascular disease.", "split": "train"}
+{"id": "564", "claim": "In British Men, haplogroup I increases risk of cardiovascular disease by 50%.", "split": "train"}
+{"id": "565", "claim": "In S. cerevisiae, the absence of RNA surveillance pathways causes sensitivity to high iron conditions.", "split": "train"}
+{"id": "566", "claim": "In S. cerevisiae, the absence of RNA surveillance pathways reduces sensitivity to high iron conditions.", "split": "train"}
+{"id": "568", "claim": "In a naive state, blocking Wingless-Int-1 secretion from mouse embryonic stem cells inhibits self-renewal of the mouse embryonic stem cells.", "split": "train"}
+{"id": "570", "claim": "In breast cancer, the loss of myoepithelial cells promotes the transition of ductal carcinoma in situ to invasive carcinoma.", "split": "train"}
+{"id": "571", "claim": "In breast cancer, the loss of myoepithelial cells slows the transition of ductal carcinoma in situ to invasive carcinoma.", "split": "train"}
+{"id": "572", "claim": "In chronic viral infections or tumors, peptides that selectively inhibit PTPRS can be utilized to boost insufficient activity of pDCs.", "split": "train"}
+{"id": "573", "claim": "In domesticated populations of Saccharomyces cerevisiae, segmental aneuploidy is very common.", "split": "train"}
+{"id": "574", "claim": "In domesticated populations of Saccharomyces cerevisiae, segmental aneuploidy occurs infrequently.", "split": "train"}
+{"id": "576", "claim": "In melanoma, anti-CTLA-4 treatment reinvigorates exhausted PD-1+Eomes+CD8 T cells.", "split": "train"}
+{"id": "579", "claim": "In patients with congenital heart defects, β-blockers significantly improve clinical heart failure outcomes.", "split": "train"}
+{"id": "580", "claim": "In pediatric tissue, most T cells are naive T cell emigrants from the thymus.", "split": "train"}
+{"id": "582", "claim": "In rhesus macaques, daily subcutaneous injections of emtricitabine are ineffective at protecting against rectally transmitted simian-human immunodeficiency virus.", "split": "train"}
+{"id": "584", "claim": "In rhesus macaques, daily subcutaneous injections of tenofovir protects against rectally transmitted simian-human immunodeficiency virus.", "split": "train"}
+{"id": "585", "claim": "In the UK, drowning affects boys and girls equally.", "split": "train"}
+{"id": "588", "claim": "In transgenic mice harboring green florescent protein under the control of the Sox2 promoter, more than 50 percent of the cells with green florescent colocalize with cell proliferation markers.", "split": "train"}
+{"id": "590", "claim": "In young and middle-aged adults, current or remote uses of ADHD medications increase the risk of serious cardiovascular events.", "split": "train"}
+{"id": "591", "claim": "Incidence of 10/66 dementia is higher than the incidence of DSM-IV dementia.", "split": "train"}
+{"id": "592", "claim": "Incidence of 10/66 dementia is lower than the incidence of DSM-IV dementia.", "split": "train"}
+{"id": "594", "claim": "Incidence of heart failure increased by 10% in women since 1979.", "split": "train"}
+{"id": "595", "claim": "Incidence of sepsis has fallen substantially from 2009 to 2014.", "split": "train"}
+{"id": "600", "claim": "Including pharmacists in rounding teams does not alter the incidence of adverse drug events (ADEs).", "split": "train"}
+{"id": "601", "claim": "Including pharmacists in rounding teams reduces the incidence of adverse drug events (ADEs).", "split": "train"}
+{"id": "602", "claim": "Increase of p62 in prostate tumor stroma results in defective autophagy.", "split": "train"}
+{"id": "603", "claim": "Increased LDL receptors plays a role in the reduction of plasma Lp(a).", "split": "train"}
+{"id": "606", "claim": "Increased conversion of PGE 2 to PPARy ligand 15-ket-PGE 2 causes accumulation of PGE.", "split": "train"}
+{"id": "607", "claim": "Increased diastolic blood pressure (DBP) is associated with abdominal aortic aneurysm.", "split": "train"}
+{"id": "609", "claim": "Increased flux of microbial products provokes immune responses.", "split": "train"}
+{"id": "610", "claim": "Increased flux of microbial products suppresses immune responses.", "split": "train"}
+{"id": "611", "claim": "Increased lipolysis leads to higher P38 phosphorylation in adipose tissue.", "split": "train"}
+{"id": "612", "claim": "Increased microtubule acetylation exacerbates LRRK2 Roc-COR domain mutation induced locomotor deficits.", "split": "train"}
+{"id": "614", "claim": "Increased microtubule acetylation repairs interference of axonal transport caused by LRRK2 Roc-COR domain mutations.", "split": "train"}
+{"id": "615", "claim": "Increased microtubule acetylation worsens interference of axonal transport caused by LRRK2 Roc-COR domain mutations.", "split": "train"}
+{"id": "616", "claim": "Increased mobility of retrotransposons does not lead to mutation and higher tumorigenesis rates.", "split": "train"}
+{"id": "617", "claim": "Increased mobility of retrotransposons is assosciated with mutation and higher tumorigenesis rates.", "split": "train"}
+{"id": "618", "claim": "Increased purity of cytoplasmic membranes isolated from overexpressors is indicated by stronger spots for OmpF in 2D BN-PAGE gels.", "split": "train"}
+{"id": "620", "claim": "Increased vessel density along with a reduction in fibrosis improves the efficacy of chemotherapy treatments.", "split": "train"}
+{"id": "621", "claim": "Individuals with Alzheimers who participate in six months of physical activity improve cognitive function for up to 18 months.", "split": "train"}
+{"id": "622", "claim": "Individuals with low serum vitamin D concentrations have decreased risk of multiple sclerosis.", "split": "train"}
+{"id": "624", "claim": "Induced hepatic stem cells possess the potential to differentiate into cholangiocytic cells.", "split": "train"}
+{"id": "625", "claim": "Induced hepatic stem cells possess the potential to differentiate into hepatocytic cells.", "split": "train"}
+{"id": "626", "claim": "Induction of urokinase receptor signaling in podocytes causes foot process effacement and proteinuria.", "split": "train"}
+{"id": "631", "claim": "Inhibiting HDAC6 increases survival of mice with ARID1A mutated tumors.", "split": "train"}
+{"id": "632", "claim": "Inhibiting focal adhesion formation enables cells to convert mechanical strain into eventual scarring.", "split": "train"}
+{"id": "633", "claim": "Inhibiting focal adhesion formation increases the rate at which cells convert mechanical strain into inflammation and fibrosis.", "split": "train"}
+{"id": "635", "claim": "Inhibiting glucose-6-phospate dehydrogenase improves lipogenesis by deactivating LKB1-AMPK signaling.", "split": "train"}
+{"id": "638", "claim": "Input from  mental and physical health care professionals is not effective at decreasing homelessness.", "split": "train"}
+{"id": "640", "claim": "Inside the body, falciparum parasites reproduce asexually.", "split": "train"}
+{"id": "642", "claim": "Insulin decreases risk of severe kidney failure.", "split": "train"}
+{"id": "643", "claim": "Insulin effects appetite via ventral tegmental neurons.", "split": "train"}
+{"id": "645", "claim": "Intake of folic acid (FA) and vitamin B6 (VB6) increases levels of homocysteine.", "split": "train"}
+{"id": "646", "claim": "Intake of folic acid (FA) and vitamin B6 (VB6) reduces levels of homocysteine.", "split": "train"}
+{"id": "647", "claim": "Integrated care is ineffective at tackling multiple comorbidities.", "split": "train"}
+{"id": "648", "claim": "Integrated care is successful at tackling multiple comorbidities.", "split": "train"}
+{"id": "650", "claim": "Integrating classroom-based collaborative learning with Web-based collaborative learning offers the best class performance.", "split": "train"}
+{"id": "651", "claim": "Interferon stimulated genes (ISGs) Irf1, Irg1, Ifi27, and Rsad2 encourage West Nile virus replication in cortical neurons.", "split": "train"}
+{"id": "652", "claim": "Interferon stimulated genes (ISGs) Irf1, Irg1, Ifi27, and Rsad2 inhibit West Nile virus replication in cortical neurons.", "split": "train"}
+{"id": "653", "claim": "Interleukin-18 plays an important role in the pathogenesis of atherosclerosis.", "split": "train"}
+{"id": "654", "claim": "Intra-cerebroventricular infusion of amyloid-β oligomers increases expression of fibronectin type-III domain-containing protein 5 mRNA in mice hippocampi.", "split": "train"}
+{"id": "655", "claim": "Intra-cerebroventricular infusion of amyloid-β oligomers reduces expression of fibronectin type-III domain-containing protein 5 mRNA in mice hippocampi.", "split": "train"}
+{"id": "657", "claim": "Intramembrane cleavage by signal peptide peptidase aids in the degradation of proteins with a complex membrane orientation.", "split": "train"}
+{"id": "658", "claim": "It is not proven that moderate consumption of candy and chocolate reduces the risk of cardiovascular disease (CVD) specifically.", "split": "train"}
+{"id": "661", "claim": "JMJD6 catalyzes the hydroxylation of C-terminal lysine and supresses transcriptional activity.", "split": "train"}
+{"id": "662", "claim": "JMJD6 slows the hydroxylation of C-terminal lysine", "split": "train"}
+{"id": "663", "claim": "KLF4 is necessary for VSMCs to gain genetic characteristics of other cell types within atherosclerotic lesions.", "split": "train"}
+{"id": "665", "claim": "KRT17 modulates the expression of the transcriptional regulator AIRE in diseased epithelia.", "split": "train"}
+{"id": "666", "claim": "Kir7.1 modulates channel activity by the G protein-coupled melanocortin-4 receptor (MC4R) in the paraventricular nucleus of the hypothalamus.", "split": "train"}
+{"id": "667", "claim": "Klf2 is important for proper myeloid cell function.", "split": "train"}
+{"id": "668", "claim": "Klf4 is important for proper myeloid cell differentiation.", "split": "train"}
+{"id": "669", "claim": "Klf4 is not required for proper myeloid cell differentiation.", "split": "train"}
+{"id": "670", "claim": "Knockout proximal tubule-specific deletion of the BMP receptor Alk3 causes epithelial damage.", "split": "train"}
+{"id": "671", "claim": "Knockout proximal tubule-specific deletion of the BMP receptor Alk3 causes fibrosis.", "split": "train"}
+{"id": "672", "claim": "L3MBTL2 binds to H2AK119Ub marked chromatin to form a PRC1 complex.", "split": "train"}
+{"id": "673", "claim": "LDL cholesterol has a causal role in the development of cardiovascular disease.", "split": "train"}
+{"id": "676", "claim": "LRBA prevents CTLA - 4 recycling.", "split": "train"}
+{"id": "677", "claim": "LRBA promotes CTLA - 4 recycling.", "split": "train"}
+{"id": "679", "claim": "LSD1-positive promoters are associated with RNA polymerase II", "split": "train"}
+{"id": "680", "claim": "Lack of FGF21 in mice increases life expectancy.", "split": "train"}
+{"id": "681", "claim": "Lack of FGF21 in mice leads to atherosclerotic plaque formation.", "split": "train"}
+{"id": "682", "claim": "Lack of FGF21 in mice leads to reduced lifespan.", "split": "train"}
+{"id": "683", "claim": "Lack of FGF21 in mice slows the rate of atherosclerotic plaque formation.", "split": "train"}
+{"id": "685", "claim": "Lamins are associated with nuclear membrane structure maintenance.", "split": "train"}
+{"id": "686", "claim": "Lamins are found within the inner layer of the mitochondrial membrane of all cells.", "split": "train"}
+{"id": "687", "claim": "Lamins are found within the inner layer of the nuclear membrane of all cells.", "split": "train"}
+{"id": "688", "claim": "Lamins have no effect on nuclear membrane structure maintenance.", "split": "train"}
+{"id": "689", "claim": "Less than 10% of patients exposed to radiation have activated markers of mesenchymal stem cells.", "split": "train"}
+{"id": "694", "claim": "Lice attenuated SIV vaccines induce a stronger antigen-specific T cell response in lymph node cells.", "split": "train"}
+{"id": "696", "claim": "Lipopolysaccharides have an inflammation independent effect on kidney barrier function.", "split": "train"}
+{"id": "698", "claim": "Lmna knock-in models are appropriate for testing therapeutic approaches against Hutchinson-Gilford progeria syndrome (HGPS).", "split": "train"}
+{"id": "703", "claim": "Localization of PIN1 in the roots of Arabidopsis requires VPS9a", "split": "train"}
+{"id": "704", "claim": "Long - range chromatin interactions regulate transcription.", "split": "train"}
+{"id": "705", "claim": "Long chain polyunsaturated fatty acids supplementation has no significant effects on wheezing or asthma at 3 and 6 years.", "split": "train"}
+{"id": "709", "claim": "Long chain polyunsaturated fatty acids supplementation is associated with lower rates of atopic eczema at 1 year.", "split": "train"}
+{"id": "710", "claim": "Long chain polyunsaturated fatty acids supplementation reduces wheezing and asthma.", "split": "train"}
+{"id": "713", "claim": "Low expression of miR7a does not repress target genes or exert a biological function in ovaries.", "split": "train"}
+{"id": "714", "claim": "Low expression of miR7a does not repress target genes or exert a biological function in testis.", "split": "train"}
+{"id": "717", "claim": "Low nucleosome occupancy correlates with high methylation levels across species.", "split": "train"}
+{"id": "724", "claim": "Ly49Q directs the organization of neutrophil polarization by regulating membrane raft functions.", "split": "train"}
+{"id": "726", "claim": "Ly6C hi monocytes have a higher inflammatory capacity than Ly6C lo monocytes.", "split": "train"}
+{"id": "730", "claim": "Lysine histone demethylase inhibitor JIB 04 is inactive against KDM5A.", "split": "train"}
+{"id": "732", "claim": "M. stadtmanae does not induce ASC speck formation in BlaER1 monocytes.", "split": "train"}
+{"id": "733", "claim": "M. stadtmanae induces ASC speck formation in BlaER1 monocytes.", "split": "train"}
+{"id": "734", "claim": "MEK inhibitors are effective treatments in RAS-driven mouse models of cancer.", "split": "train"}
+{"id": "736", "claim": "MFGE8 regulates fat absorption by binding to av-Beta3 and av-Beta5 integrins.", "split": "train"}
+{"id": "737", "claim": "MICAL redox enzymes regulate actin dynamics in many cell types.", "split": "train"}
+{"id": "738", "claim": "MICAL redox enzymes regulate actin dynamics.", "split": "train"}
+{"id": "739", "claim": "MT binding domain drives amyloid structure formation.", "split": "train"}
+{"id": "740", "claim": "MUC1-C activates the NF-κB p65 signaling pathway by interacting with IκB kinase ß.", "split": "train"}
+{"id": "745", "claim": "MafA phosphorylation decreases its ubiquitination.", "split": "train"}
+{"id": "746", "claim": "MafA phosphorylation enhances its ubiquitination.", "split": "train"}
+{"id": "747", "claim": "MafA ubiquitination decreases the recruitment of coavtivator P/CAF by MafA.", "split": "train"}
+{"id": "748", "claim": "MafA ubiquitination increases the recruitment of coavtivator P/CAF by MafA.", "split": "train"}
+{"id": "749", "claim": "Major antigen-induced signals from the T cell receptor and secondary signals from costimulatory receptors are required for T cell activation.", "split": "train"}
+{"id": "751", "claim": "Major vault protein (MVP) leads to more aggressive tumors by regulating the sorting of tumor suppressive miR-193a into extracellular vesicles (EVs).", "split": "train"}
+{"id": "752", "claim": "Major vault protein regulates sorting of tumor suppressive miR-193a into EVs.", "split": "train"}
+{"id": "753", "claim": "Malaria has a high vectorial capacity.", "split": "train"}
+{"id": "755", "claim": "Many cytokines that are produced by cancer cells also contribute to carcinogenesis.", "split": "train"}
+{"id": "757", "claim": "Many transmembrane receptors transmit signals by long-range conformational changes in the association of alpha-helices across the plasma membrane.", "split": "train"}
+{"id": "758", "claim": "Marmosets have a brain region homologous to Broca's area.", "split": "train"}
+{"id": "760", "claim": "Mathematical models predict that using Artemisinin-based combination therapy over nongametocytocidal drugs have only a modest impact in reducing malaria transmission.", "split": "train"}
+{"id": "761", "claim": "MeCP2 influences the synaptic maturation of neurons.", "split": "train"}
+{"id": "762", "claim": "Measuring routine outcomes is more beneficial to clinical practice than assessing treatment adherence.", "split": "train"}
+{"id": "764", "claim": "Medications to treat obesity are highly effective.", "split": "train"}
+{"id": "765", "claim": "Medications to treat obesity do not have side effects.", "split": "train"}
+{"id": "766", "claim": "Medications to treat obesity have unwanted side effects.", "split": "train"}
+{"id": "767", "claim": "Men are more susceptible to death due to pneumonia when compared to women.", "split": "train"}
+{"id": "771", "claim": "Metastatic colorectal cancer treated with a single agent fluoropyrimidines resulted in similar efficacy and better quality of life when compared with oxaliplatin-based chemotherapy in elderly patients.", "split": "train"}
+{"id": "772", "claim": "Mice are incapable of producing neutralizing antibodies in reponse to the Chikungunya virus (CHIKV) produced in mosquitos.", "split": "train"}
+{"id": "774", "claim": "Mice defective for deoxyribonucleic acid (DNA) polymerase I (polI) fail to reveal increased sensitivity to ionizing radiation (IR).", "split": "train"}
+{"id": "776", "claim": "Mice defective for deoxyribonucleic acid (DNA) polymerase m (polm) fail to reveal increased sensitivity to ionizing radiation (IR).", "split": "train"}
+{"id": "777", "claim": "Mice defective for deoxyribonucleic acid (DNA) polymerase m (polm) reveal increased sensitivity to ionizing radiation (IR).", "split": "train"}
+{"id": "778", "claim": "Mice lacking Sirt1 in Sf1-expressing neurons are immune to diet-induced obesity and insulin resistance.", "split": "train"}
+{"id": "779", "claim": "Mice lacking Sirt1 in Sf1-expressing neurons have increased susceptibility to diet-induced obesity and insulin resistance.", "split": "train"}
+{"id": "780", "claim": "Mice that lack Interferon-γ or its receptor are highly susceptible to experimental autoimmune myocarditis.", "split": "train"}
+{"id": "782", "claim": "Mice without IFN-γ or its receptor are highly susceptible to EAM induced with α-MyHC/CFA.", "split": "train"}
+{"id": "787", "claim": "Microcin J25 encourages nucleoside triphosphate (NTP) binding.", "split": "train"}
+{"id": "788", "claim": "Microcin J25 inhibits nucleoside triphosphate (NTP) binding.", "split": "train"}
+{"id": "789", "claim": "Microglia are an innate immune cell type of the central nervous system.", "split": "train"}
+{"id": "790", "claim": "Microglia are an innate immune cell type of the peripheral nervous system.", "split": "train"}
+{"id": "791", "claim": "Migraine with aura is associated with ischemic stroke.", "split": "train"}
+{"id": "792", "claim": "Misunderstandings between doctors and patients can lead to non-adherence.", "split": "train"}
+{"id": "795", "claim": "Mitochondria play a major role in apoptosis.", "split": "train"}
+{"id": "797", "claim": "Mitochondria play a major role in energy production.", "split": "train"}
+{"id": "798", "claim": "Mitochondria play a trivial role in calcium homeostasis.", "split": "train"}
+{"id": "799", "claim": "Moderate consumption of candy and chocolate reduces the risk of cardiovascular disease (CVD).", "split": "train"}
+{"id": "801", "claim": "Monoclonal antibody targeting of N-cadherin encourages castration resistance.", "split": "train"}
+{"id": "802", "claim": "Monoclonal antibody targeting of N-cadherin encourages metastasis.", "split": "train"}
+{"id": "803", "claim": "Monoclonal antibody targeting of N-cadherin inhibits castration resistance.", "split": "train"}
+{"id": "804", "claim": "Monoclonal antibody targeting of N-cadherin inhibits growth.", "split": "train"}
+{"id": "807", "claim": "Most termination events in Okazaki fragments are dictated by initiation patterns.", "split": "train"}
+{"id": "810", "claim": "Mouse models can be generated using \"artificial spermatids.\"", "split": "train"}
+{"id": "812", "claim": "Mutant mice lacking SVCT2 have severely reduced ascorbic acid levels in both brain and adrenals.", "split": "train"}
+{"id": "813", "claim": "Mutations in G-Beta protein GNB1 are present in many cancers, resulting in loss of interaction with G-alpha subunits and concomitant activation of AKT pathway.", "split": "train"}
+{"id": "815", "claim": "Mutations in RIM1 decrease levels of IME1 RNA.", "split": "train"}
+{"id": "816", "claim": "Mutations in RIM1 raise levels of IME1 RNA.", "split": "train"}
+{"id": "817", "claim": "Myelin sheaths are lipid-rich cellular structures.", "split": "train"}
+{"id": "818", "claim": "Myelin sheaths play a role in action potential propagation.", "split": "train"}
+{"id": "822", "claim": "N348I mutations cause resistance to nevirapine.", "split": "train"}
+{"id": "825", "claim": "N348I mutations reduce resistance to nevirapine.", "split": "train"}
+{"id": "826", "claim": "NAC destabilizes NO to increase the effect of contrast agents on renal functions.", "split": "train"}
+{"id": "828", "claim": "NAC inhibits the generation of angiotensin-converting enzyme.", "split": "train"}
+{"id": "835", "claim": "NR5A2 does not play a role in development of endometrial tissues.", "split": "train"}
+{"id": "838", "claim": "NR5A2 is important in reverse cholesterol transport in humans.", "split": "train"}
+{"id": "840", "claim": "Natriuretic peptides increase susceptibility to diabetes.", "split": "train"}
+{"id": "841", "claim": "Natriuretic peptides protect against diabetes.", "split": "train"}
+{"id": "844", "claim": "Neutrophil extracellular trap (NET) antigens may contain the targeted autoantigens PR3 and MPO.", "split": "train"}
+{"id": "846", "claim": "Neutrophils produce IL-1β in response to large particles.", "split": "train"}
+{"id": "848", "claim": "Nigerian physicians constitue the largest component of sub-Saharan Africa-trained physicians in the United States.", "split": "train"}
+{"id": "853", "claim": "Nonhuman primates are incapable of producing neutralizing antibodies in reponse to the Eilat virus (EILV) produced in mosquitos.", "split": "train"}
+{"id": "854", "claim": "Nonhypertensive people who are 55 years old have a 90% chance of developing hypertension during their lifetime.", "split": "train"}
+{"id": "855", "claim": "Noninvasive positive pressure ventilation is not predictive of acute respiratory failure after solid organ transplantation.", "split": "train"}
+{"id": "856", "claim": "Nonsteroidal antinflammatory drugs are ineffective as cancer treatments.", "split": "train"}
+{"id": "857", "claim": "Nonsteroidal antinflammatory drugs show potential anticancer indications.", "split": "train"}
+{"id": "858", "claim": "Normal expression of RUNX1 causes tumorsupressing effects.", "split": "train"}
+{"id": "860", "claim": "Normal granulomas form in the absence of TNF in Zebrafish.", "split": "train"}
+{"id": "861", "claim": "Normal granulomas form in the presence of TNF in Zebrafish.", "split": "train"}
+{"id": "863", "claim": "Notch signaling occurs between tumor cells and stromal cells.", "split": "train"}
+{"id": "866", "claim": "Nuclear transfer from adult human fibroblasts to human oocytes can give rise to blastocysts containing expandable pluripotent cells.", "split": "train"}
+{"id": "867", "claim": "Oat tolerant coeliac patients may have oat specific inflammatory cells in their small bowel mucosa.", "split": "train"}
+{"id": "871", "claim": "Obesity decreases life quality.", "split": "train"}
+{"id": "876", "claim": "Obesity raises life quality.", "split": "train"}
+{"id": "877", "claim": "Occipital activation levels are associated with auditory spatial performance in parietal regions of the brain.", "split": "train"}
+{"id": "881", "claim": "Omnivores produce less trimethylamine N-oxide from dietary I-carnitine than vegans.", "split": "train"}
+{"id": "883", "claim": "Omnivores produce more trimethylamine N-oxide from dietary I-carnitine than vegans.", "split": "train"}
+{"id": "884", "claim": "Omnivores produce more trimethylamine N-oxide from dietary I-carnitine than vegetarians.", "split": "train"}
+{"id": "885", "claim": "One in five surgical randomized controlled trials are discontinued early.", "split": "train"}
+{"id": "886", "claim": "One in two surgical randomized controlled trials are discontinued early.", "split": "train"}
+{"id": "890", "claim": "Origin gross domestic product(GDP) is negatively related to dengue virus (DENV-1) diffusion in air traffic shipments.", "split": "train"}
+{"id": "891", "claim": "Origin gross domestic product(GDP) is positively related to dengue virus (DENV-1) diffusion in air traffic shipments.", "split": "train"}
+{"id": "893", "claim": "Osteocytes have an essential role in G-CSF induced HSPC mobilization.", "split": "train"}
+{"id": "894", "claim": "Osteoparthritis (OA) is characterized by degeneration of articular cartilage, joint edge, and subchondral bone hyperplasia.", "split": "train"}
+{"id": "895", "claim": "Over half of the gabonese children with Schimmelpenning-Feuerstein-Mims syndrome (SFM) had a plasma lactate of more than 5mmol/L.", "split": "train"}
+{"id": "896", "claim": "Overexpressing Cnp1 N-tail variants exacerbates the temperature-sensitive growth defect of scm3-139.", "split": "train"}
+{"id": "897", "claim": "Overexpressing Cnp1 N-tail variants rescues the temperature-sensitive growth defect of scm3-139.", "split": "train"}
+{"id": "898", "claim": "Oxidative DNA damage activates STING signalling.", "split": "train"}
+{"id": "899", "claim": "Oxidative DNA damage inhibits STING signalling.", "split": "train"}
+{"id": "900", "claim": "Oxidative phosphorylation is one of the primary glycometabolic pathways in cells.", "split": "train"}
+{"id": "901", "claim": "PCSK9 inhibitors decrease plasma Lp(a) levels.", "split": "train"}
+{"id": "902", "claim": "PD-1 triggering on monocytes enhances IL-10 production by monocytes.", "split": "train"}
+{"id": "908", "claim": "PGE 2 suppresss intestinal tumor growth by altering the expression of tumor suppressing and DNA repair genes.", "split": "train"}
+{"id": "909", "claim": "PKG-la does not have a large impact on expression of pain hypersensitivity in PGK-la knockout mice.", "split": "train"}
+{"id": "910", "claim": "PKG-la does not have a large impact on expression of spinal long term potentiation in PGK-la knockout mice.", "split": "train"}
+{"id": "912", "claim": "PKG-la plays an essential role in expression of spinal long term potentiation in PGK-la knockout mice.", "split": "train"}
+{"id": "916", "claim": "PRC1-bound plasmids sediment at a slower rate in unbound plasmids than in sucrose gradients.", "split": "train"}
+{"id": "917", "claim": "PTEN is a regulator for the transcriptional activity of SRF", "split": "train"}
+{"id": "919", "claim": "Participants who quit smoking reduce lung cancer risk by approximately 50%.", "split": "train"}
+{"id": "923", "claim": "Patients in stable partnerships have a slower progression from HIV to AIDS.", "split": "train"}
+{"id": "925", "claim": "Patients in stable partnerships progress from HIV to death at the same rate as patients not in partnerships.", "split": "train"}
+{"id": "926", "claim": "Patients with common epithelial cancers  are more likely to have an emergency event as their first hospital admission if they live in resource-deprived areas.", "split": "train"}
+{"id": "927", "claim": "Patients with common epithelial cancers are less likely to have an emergency event as their first hospital admission if they live in resource-deprived areas.", "split": "train"}
+{"id": "928", "claim": "Patients with microcytosis and higher erythrocyte count are more vulnerable to severe malarial anaemia when infected with Plasmodium falciparum.", "split": "train"}
+{"id": "929", "claim": "Patients with microcytosis and higher erythrocyte count were more resistant to severe malarial anaemia when infected with Plasmodium falciparum.", "split": "train"}
+{"id": "930", "claim": "Patients with panic anxiety show decreased CSF levels of hypocretin.", "split": "train"}
+{"id": "933", "claim": "Pediatric SCD patients with vaso-occlusive crisis show increased morphine use after breathing 80 ppm iNO for 4 hours.", "split": "train"}
+{"id": "934", "claim": "Perigenital skin is not the primary site of HIV acquisition.", "split": "train"}
+{"id": "935", "claim": "Peroxynitrite is required for induction of T cell tolerance.", "split": "train"}
+{"id": "938", "claim": "Persister cells provide relapse resistance in cancer patients.", "split": "train"}
+{"id": "939", "claim": "Persistor cells are one reason for incomplete responses to Tyrosine kinase inhibitor (TKI) therapy in cancer patients.", "split": "train"}
+{"id": "940", "claim": "Pharmacist attendance at ward rounds increases adverse events in wards.", "split": "train"}
+{"id": "941", "claim": "Pharmacist attendance at ward rounds reduces adverse events in wards.", "split": "train"}
+{"id": "942", "claim": "Phase information is useful for predicting donor-recipient matches in organ transplantation.", "split": "train"}
+{"id": "944", "claim": "Physical activity does not improve cognitive function in individuals with Alzheimers.", "split": "train"}
+{"id": "945", "claim": "Physical activity level has no association with the difference in maximal oxygen consumption between black and white youth.", "split": "train"}
+{"id": "946", "claim": "Physical activity level is associated with the difference in maximal oxygen consumption between black and white youth.", "split": "train"}
+{"id": "949", "claim": "Physical injury represses transgultaminase activity.", "split": "train"}
+{"id": "951", "claim": "Piezo1 channels are sensors for cell migration in epithelial cells.", "split": "train"}
+{"id": "952", "claim": "Pioglitazone use is not associated with an increased risk of prostate cancer.", "split": "train"}
+{"id": "953", "claim": "Pioglitazone use is significantly associated with an increased risk of pancreatic cancer.", "split": "train"}
+{"id": "954", "claim": "Pioglitazone use is significantly associated with an increased risk of prostate cancer.", "split": "train"}
+{"id": "955", "claim": "Pioneer factor OCT3/4 interacts with major chromatin remodeling factors.", "split": "train"}
+{"id": "959", "claim": "Polymeal nutrition increases cardiovascular mortality.", "split": "train"}
+{"id": "962", "claim": "Post-transcriptional handling of mitochondrial transcripts occurs in mitochondrial RNA granules.", "split": "train"}
+{"id": "963", "claim": "Pre-mRNAs associated with spliceosomal components are less stable than unassociated splicing substrates.", "split": "train"}
+{"id": "964", "claim": "Pre-mRNAs associated with spliceosomal components are more stable than unassociated splicing substrates.", "split": "train"}
+{"id": "965", "claim": "Prescribed exercise training improves quality of life.", "split": "train"}
+{"id": "969", "claim": "PrimPol degrades short DNA replication intermediates on the leading strand during DNA replication.", "split": "train"}
+{"id": "970", "claim": "PrimPol generates short DNA replication intermediates on the leading strand during DNA replication.", "split": "train"}
+{"id": "972", "claim": "Primary cervical cancer screening with HPV detection has lower longitudinal sensitivity than conventional cytology to detect cervical intraepithelial neoplasia grade 2.", "split": "train"}
+{"id": "973", "claim": "Primary cervical cytology screening with HPV detection has higher longitudinal sensitivity to detect severe cervical intraepithelial neoplasia than conventional cytology.", "split": "train"}
+{"id": "976", "claim": "Primary pro-inflammatory cytokines suppress secondary pro- and anti-inflammatory mediators.", "split": "train"}
+{"id": "977", "claim": "Pro-inflammatory cytokines are up regulated during tumor development.", "split": "train"}
+{"id": "978", "claim": "Pro-inflammatory cytokines are up repressed during tumor development.", "split": "train"}
+{"id": "979", "claim": "Progerin induces premature aging in stem cells.", "split": "train"}
+{"id": "980", "claim": "Propriospinal interneurons that play a role in the plastic reorganization of spinal circuits are integral for recovery from spinal cord injury.", "split": "train"}
+{"id": "984", "claim": "Pseudogene PTENP1 encodes a transcript that regulates PTEN expression.", "split": "train"}
+{"id": "988", "claim": "Pseudoknots are not evolutionarily conserved in most eukaryotes.", "split": "train"}
+{"id": "989", "claim": "Pure neural progenitor cell (NPC) populations can only be obtained from cell cultures that undergo passaging, filtration, or other isolation and cell sorting methods.", "split": "train"}
+{"id": "990", "claim": "Pyridostatin decreases telomere fragility in BRCA2-deficient cells.", "split": "train"}
+{"id": "992", "claim": "Pyridostatin deregulates G2/M progression.", "split": "train"}
+{"id": "994", "claim": "Pyridostatin encourages proliferation of homologous recombination - defective cells.", "split": "train"}
+{"id": "996", "claim": "Pyridostatin induces checkpoint activation.", "split": "train"}
+{"id": "997", "claim": "Pyridostatin induces double-strand breaks accumulation.", "split": "train"}
+{"id": "998", "claim": "Pyridostatin prevents double-strand breaks accumulation.", "split": "train"}
+{"id": "999", "claim": "Pyridostatin reduces proliferation of homologous recombination - defective cells.", "split": "train"}
+{"id": "1000", "claim": "Pyridostatin stabilizes the G - quadruplex in the telomeric region.", "split": "train"}
+{"id": "1001", "claim": "R2D2 stops miRNA production by increasing the selectivity of Dcr2 for long dsRNA.", "split": "train"}
+{"id": "1002", "claim": "RA activation of DIF2 and NB4 cells induces hallmarks of transcriptionally active promoters.", "split": "train"}
+{"id": "1003", "claim": "RAD52 is involved in break-induced DNA replication (BIR).", "split": "train"}
+{"id": "1004", "claim": "RANK-RANKL pathway signalling has no known association with development of Aire-expressing medullary thymic epithelial cells.", "split": "train"}
+{"id": "1005", "claim": "RANK-RANKL pathway signalling is linked to development of Aire-expressing medullary thymic epithelial cells.", "split": "train"}
+{"id": "1006", "claim": "RTEL1 interacts with TRF2 through a C4C4 motif", "split": "train"}
+{"id": "1008", "claim": "RUNX is not expressed in skin tissue.", "split": "train"}
+{"id": "1009", "claim": "RUNX1 is downregulated or mutated in TLX1 T-ALL.", "split": "train"}
+{"id": "1011", "claim": "Radioiodine treatment of non-toxic multinodular goitre increases thyroid volume.", "split": "train"}
+{"id": "1015", "claim": "Rapamycin delays aging in fruit flies.", "split": "train"}
+{"id": "1016", "claim": "Rapamycin increases the concentration of triacylglycerols in fruit flies.", "split": "train"}
+{"id": "1018", "claim": "Rapid phosphotransfer rates are correlated with histidine kinase regulator specificity.", "split": "train"}
+{"id": "1023", "claim": "Recognition of start codons depends on the translation initiation factor IF3.", "split": "train"}
+{"id": "1025", "claim": "Reduced levels of lipolysis leads to higher P38 phosphorylation in adipose tissue.", "split": "train"}
+{"id": "1026", "claim": "Reduced phosphorylation of PP2A increases HDAC4 dephosphorylation by enhancing PP2A-HDAC4 interaction.", "split": "train"}
+{"id": "1027", "claim": "Reduced phosphorylation of PP2A suppresses HDAC4 dephosphorylation.", "split": "train"}
+{"id": "1028", "claim": "Reduced responsiveness to interleukin-2 in regulatory T cells is associated with autoimmune diseases such as Type 1 Diabetes.", "split": "train"}
+{"id": "1030", "claim": "Reducing H3k4me3 methylation induces mouse epiblast stem cells to naive pluripotency efficiently.", "split": "train"}
+{"id": "1031", "claim": "Reduction of Rpl38 alters the composition of the Hox gene mRNAs translation in mice without lowering overall protein synthesis.", "split": "train"}
+{"id": "1032", "claim": "Reduction of purity of cytoplasmic membranes isolated from overexpressors is indicated by stronger spots for OmpA in 2D BN-PAGE gels.", "split": "train"}
+{"id": "1033", "claim": "Reduction of purity of cytoplasmic membranes isolated from overexpressors is indicated by stronger spots for OmpF in 2D BN-PAGE gels.", "split": "train"}
+{"id": "1034", "claim": "Removal of H3K9me3 by ectopic expression of other H3K9 demethylases decreases reprogramming efficiency in SCNT experiments.", "split": "train"}
+{"id": "1035", "claim": "Removal of H3K9me3 by ectopic expression of other H3K9 demethylases improves reprogramming efficiency in SCNT experiments.", "split": "train"}
+{"id": "1036", "claim": "Removal of H3K9me3 improves reprogramming efficiency in human somatic cell nuclear transfer experiments.", "split": "train"}
+{"id": "1037", "claim": "Replacement of OCT4 and SOX2 genes with GATA3 has the ability to reprogram human cells.", "split": "train"}
+{"id": "1038", "claim": "Replacement of OCT4 and SOX2 genes with GATA3 is not capable of reprogramming human cells.", "split": "train"}
+{"id": "1040", "claim": "Replacement of histone H2A with H2A.Z accelerates gene activation in yeasts by destabilizing +1 nucleosomes.", "split": "train"}
+{"id": "1042", "claim": "Repressing IL-18 has negative effects on atherosclerotic lesion composition and progression.", "split": "train"}
+{"id": "1043", "claim": "Retinoic acid receptor-related orphan receptor gamma (RORγ) is a therapeutic target for castration-resistant prostate cancer (CRPC)", "split": "train"}
+{"id": "1044", "claim": "Rhythmic expression of Cry1 translates directly into a circadian regulation of cAMP signaling in gluconeogenesis.", "split": "train"}
+{"id": "1045", "claim": "Rhythmic expression of Cry1 translates directly into a circadian regulation of cAMP signaling in hepatic glucose metabolism.", "split": "train"}
+{"id": "1046", "claim": "Ribosomal protein (RP) expression is controlled in part by stress-activated regulators.", "split": "train"}
+{"id": "1047", "claim": "Ribosome-inactivating protein-2 (RIP-2) interacts with the p75 NTR death domain", "split": "train"}
+{"id": "1048", "claim": "Ribosomopathies have a high degree of cell and tissue specific pathology.", "split": "train"}
+{"id": "1050", "claim": "Risedronate increases risk of vertebral and non-vertebral fractures.", "split": "train"}
+{"id": "1052", "claim": "Rising temperatures caused by global warming increases risk of dengue fever transmission.", "split": "train"}
+{"id": "1053", "claim": "Rising temperatures caused by global warming lowers the risk of dengue fever transmission.", "split": "train"}
+{"id": "1054", "claim": "Risk of cardiovascular events can be cut by a third by using antihypertensive drug therapy among hemodialysis patients.", "split": "train"}
+{"id": "1055", "claim": "Risk-adjusted mortality rates are similar in teaching and non-teaching hospitals.", "split": "train"}
+{"id": "1056", "claim": "Rotator cuff exercises are more effective than general exercise therapy in reducing pain and improving function of the shoulder.", "split": "train"}
+{"id": "1058", "claim": "Roughly 55% of women with chronic pelvic pain have no underlying pathology.", "split": "train"}
+{"id": "1065", "claim": "Satellite cell dysfunction is a key factor in sarcopenia development.", "split": "train"}
+{"id": "1067", "claim": "ScPif1p has higher binding ability to G-rich ssDNA than to non-G-rich ssDNA.", "split": "train"}
+{"id": "1068", "claim": "ScPif1p has reduced binding ability to G-rich ssDNA compared to non-G-rich ssDNA.", "split": "train"}
+{"id": "1069", "claim": "Scapular stabilizer exercises are more effective than general exercise therapy in reducing pain and improving function of the shoulder.", "split": "train"}
+{"id": "1070", "claim": "Self-advocacy training is effective at decreasing homelessness.", "split": "train"}
+{"id": "1072", "claim": "Sepsis related mortality has remained stable between 2009-2014.", "split": "train"}
+{"id": "1073", "claim": "Sepsis related mortality has risen from 2009 to 2014.", "split": "train"}
+{"id": "1074", "claim": "Sequence conservation in gene regulatory regions between species is a high-accuracy predictor of conserved functionality.", "split": "train"}
+{"id": "1075", "claim": "Sequence conservation in gene regulatory regions between species is a poor predictor of conserved functionality.", "split": "train"}
+{"id": "1081", "claim": "Side effects associated with antidepressants do not represent a mortality risk to postmenopausal women.", "split": "train"}
+{"id": "1084", "claim": "Side effects associated with antidepressants increases risk of stroke.", "split": "train"}
+{"id": "1085", "claim": "Side effects associated with antidepressants lower risk of myocardial infarction.", "split": "train"}
+{"id": "1087", "claim": "Sildenafil worsens erectile function in men who experience sexual dysfunction as a result of the use of SSRI antidepressants.", "split": "train"}
+{"id": "1090", "claim": "Smc5/6 engagment halts the activation of SUMO E3 ligase Mms21 by ATP-dependent remolding.", "split": "train"}
+{"id": "1091", "claim": "Sn is present on mature DCs during inflammation in vivo.", "split": "train"}
+{"id": "1096", "claim": "Specialized functional cell types can be derived from human pluripotent stem cells.", "split": "train"}
+{"id": "1097", "claim": "Splenomegaly is observed in knockin mouse lacking the SHP-2 MAPK pathway.", "split": "train"}
+{"id": "1098", "claim": "Stacking is more stable when a purine is present in the +5 position (C1698).", "split": "train"}
+{"id": "1101", "claim": "Stiff substrates encourage mesodermal differentiation by degrading beta-catenin in an integrin-dependent manner.", "split": "train"}
+{"id": "1102", "claim": "Stiff substrates inhibit mesodermal differentiation by degrading beta-catenin in an integrin-dependent manner.", "split": "train"}
+{"id": "1103", "claim": "Stroke patients with prior use of direct oral anticoagulants have a higher risk of in-hospital mortality than stroke patients with prior use of warfarin.", "split": "train"}
+{"id": "1105", "claim": "Students who perform poorly in the early years of medical school are at increased risk for professional misconduct later in their careers.", "split": "train"}
+{"id": "1106", "claim": "Students who perform poorly in the early years of medical school are less likely to commit professional misconduct later in their careers.", "split": "train"}
+{"id": "1109", "claim": "Suboptimal nutrition is a leading cause of premature death", "split": "train"}
+{"id": "1111", "claim": "Sudden death can occur in patients with complex ventricular arrhythmias.", "split": "train"}
+{"id": "1112", "claim": "Sudden death can occur in patients with orthostatic hypertension without cardiac conduction abnormalities.", "split": "train"}
+{"id": "1114", "claim": "Surfactin producing cells and exopolymer producing cells cooperate to generate \"Van Gogh\" bundles that have sliding abilities on specialized media.", "split": "train"}
+{"id": "1115", "claim": "Surgical treatment is not superior to non-surgical in treating adults with displaced fractures of the proximal humerus.", "split": "train"}
+{"id": "1118", "claim": "Sweet taste receptors on the tongue are deactivated by between 1 and 10 mM glucose.", "split": "train"}
+{"id": "1119", "claim": "Sympathetic nerve activity is elevated throughout normal pregnancy.", "split": "train"}
+{"id": "1120", "claim": "Sympathetic nerve activity is reduced throughout normal pregnancy.", "split": "train"}
+{"id": "1125", "claim": "Systemic immunosuppressive (IS) therapy does not enhance the chance of cancer mortality in patients with inflammatory eye disease (IED)", "split": "train"}
+{"id": "1126", "claim": "Systemic immunosuppressive (IS) therapy increases the chance of cancer mortality in patients with inflammatory eye disease (IED)", "split": "train"}
+{"id": "1127", "claim": "Systemic lupus erythematosus is a risk factor for cardiovascular disease.", "split": "train"}
+{"id": "1128", "claim": "T cell receptor /CD3 microdomains are required to induce the immunologic synapse.", "split": "train"}
+{"id": "1133", "claim": "TMEM27 is a marker for beta cells.", "split": "train"}
+{"id": "1134", "claim": "TNFAIP3 is a glioblastoma tumor enhancer.", "split": "train"}
+{"id": "1135", "claim": "TNFAIP3 is a glioblastoma tumor suppressor.", "split": "train"}
+{"id": "1136", "claim": "TNFAIP3 is a tumor enhancer in glioblastoma.", "split": "train"}
+{"id": "1138", "claim": "TRAP+ osteoclasts regulate mature osteoblast maintenance.", "split": "train"}
+{"id": "1139", "claim": "Taking 400mg of α-tocopheryl acetate does not prevent prostate cancer.", "split": "train"}
+{"id": "1141", "claim": "Taking 400mg of α-tocopheryl acetate in combination with vitamin C reduces the risk of prostate cancer.", "split": "train"}
+{"id": "1142", "claim": "Taking anti-depresents is associated with a decrease in the Aβ level in the brain of experimental animals.", "split": "train"}
+{"id": "1145", "claim": "Taxation of sugar-sweetened beverages reduced the incidence rate of type II diabetes in India.", "split": "train"}
+{"id": "1148", "claim": "Ten percent (10%) of kidney cancers in the UK are attributable to excess weight.", "split": "train"}
+{"id": "1153", "claim": "The C-type lectin receptor (CLEC-2) rearranges the actin cytoskeleton in dendritic cells to promote efficient motility along stromal surfaces.", "split": "train"}
+{"id": "1156", "claim": "The DESMOND program caused substantial weight loss in most participants.", "split": "train"}
+{"id": "1157", "claim": "The DESMOND program demonstrates no significant impact on biochemical outcomes.", "split": "train"}
+{"id": "1158", "claim": "The DESMOND program demonstrates no significant impact on lifestyles outcomes.", "split": "train"}
+{"id": "1159", "claim": "The DESMOND program demonstrates no significant impact on weight loss.", "split": "train"}
+{"id": "1161", "claim": "The DEXI promoter region is bound by multiple transcription factors in a murine haematopoietic progenitor cell line.", "split": "train"}
+{"id": "1162", "claim": "The DdrB protein from Deinococcus radiodurans functions as a pentamer.", "split": "train"}
+{"id": "1164", "claim": "The G34R/V mutation creates a hypomethylated phenotype at the H3K36 histone.", "split": "train"}
+{"id": "1165", "claim": "The G34R/V mutation does not create a hypomethylated phenotype at the H3K36 histone.", "split": "train"}
+{"id": "1166", "claim": "The H2A-H2B eviction defect is compensated for by other histone chaperone(s).", "split": "train"}
+{"id": "1168", "claim": "The HSV-2 infection is typically asymptomatic.", "split": "train"}
+{"id": "1169", "claim": "The M2-phenotype in brown adipose tissue macrophages increases brown adipose tissue thermogenic activity.", "split": "train"}
+{"id": "1170", "claim": "The NF-κB essential modulator gene induces intestinal inflammation by promoting receptor-interacting protein (RIP) kinase 1 kinase activity-mediated epithelial cell death.", "split": "train"}
+{"id": "1171", "claim": "The NF-κB essential modulator gene prevents intestinal inflammation by inhibiting receptor-interacting protein (RIP) kinase 1 kinase activity-mediated epithelial cell death.", "split": "train"}
+{"id": "1173", "claim": "The PDPN gene deactivates the C-type lectin receptor (CLEC-2).", "split": "train"}
+{"id": "1174", "claim": "The PPR MDA5 has twenty N-terminal CARD domains.", "split": "train"}
+{"id": "1176", "claim": "The PRDM1 gene is a key determinant of primordial germ cells.", "split": "train"}
+{"id": "1177", "claim": "The PRDM1 gene, when combined with the PRDM14 gene, plays an important role during primordial germ cell specification.", "split": "train"}
+{"id": "1178", "claim": "The PRR MDA5 has a C-terminal domain.", "split": "train"}
+{"id": "1181", "claim": "The RANK-RANK-Ligand (RANKL) pathway is involved in the development of Aire-expressing medullary thymic epithelial cells (mTECs).", "split": "train"}
+{"id": "1182", "claim": "The Snf1 complex regulates carbon and energy metabolism in baker's yeast (Saccharomyces cerevisiae).", "split": "train"}
+{"id": "1183", "claim": "The TRaF1/C5 rs10818488 allele polymorphism regulates the neighboring C5 gene.", "split": "train"}
+{"id": "1184", "claim": "The US health care system can save up to $5 billion if 7% of patients waiting for kidney transplants participate in the optimized national kidney paired donation program.", "split": "train"}
+{"id": "1186", "claim": "The World Health Organization's (WHO) data collection process is biased downward by unequal selection of larger outbreaks.", "split": "train"}
+{"id": "1188", "claim": "The ability of activator E2Fs in preventing cell death is limited to terminally differentiated cells.", "split": "train"}
+{"id": "1190", "claim": "The amount of publicly available DNA data doubles every 10 months.", "split": "train"}
+{"id": "1193", "claim": "The appearance of brown-like or beige cells primarily occurs in visceral fat, not subcutaneous fat.", "split": "train"}
+{"id": "1195", "claim": "The artifactual C-terminal helix swapping in the StART domain is observed in the Ups1-Mdm35 heterodimer of the StARkin superfamily.", "split": "train"}
+{"id": "1205", "claim": "The combination of physical examinations with C-reactive protein values do not improve the accuracy of radiographic verified pneumonia predictions.", "split": "train"}
+{"id": "1206", "claim": "The composition of myosin-II isoform switches from the A isoform to the B isoform during hematopoietic differentiation.", "split": "train"}
+{"id": "1208", "claim": "The cytokine receptor which regulates chemotaxis and formation of lymph nodes is involved in production of myeloperoxidase in the left atrium.", "split": "train"}
+{"id": "1209", "claim": "The deamination of cytidine to uridine on the minus strand of viral DNA can inactivate the viral genome by inducing G-to-A mutations.", "split": "train"}
+{"id": "1210", "claim": "The density of cytokine receptor bearing cells affects the distance over which cytokines act.", "split": "train"}
+{"id": "1211", "claim": "The density of cytokine receptor bearing cells has no effect on the distance over which cytokines act.", "split": "train"}
+{"id": "1212", "claim": "The deregulated and prolonged activation of monocytes has deleterious effects in chronic infectious conditions.", "split": "train"}
+{"id": "1214", "claim": "The deregulated and prolonged activation of monocytes improves inflammatory disease outcomes.", "split": "train"}
+{"id": "1215", "claim": "The effect of Lipopolysaccharides on kidney barrier function is dependent on inflammation levels.", "split": "train"}
+{"id": "1218", "claim": "The first MBT repeat of the four malignant brain tumor (4MBT) domain of Drosophila's Sfmbt and of the orthologous mammalian L3MBTL2 is required for the interaction with the spacer region of Drosophila's Pleiohomeotic (Pho) or its human ortholog YY1.", "split": "train"}
+{"id": "1219", "claim": "The gene daf-16, which encodes forkhead Box O (FOXO), is required for all phenotypes associated with reduced insulin/insulin-like growth factor (Igf) signaling.", "split": "train"}
+{"id": "1220", "claim": "The generation of reactive oxygen species by activated oncogenes contributes to the increased genomic instability of leukaemia cells.", "split": "train"}
+{"id": "1223", "claim": "The innate immune response struggles to remove small numbers of parasites.", "split": "train"}
+{"id": "1224", "claim": "The latent infection of myeloid cells with human cytomegalovirus induces a number of changes in gene expression.", "split": "train"}
+{"id": "1227", "claim": "The mean suicide rate in women is higher after miscarriage than live birth.", "split": "train"}
+{"id": "1228", "claim": "The mean suicide rate in women is lower after miscarriage than live birth.", "split": "train"}
+{"id": "1229", "claim": "The microtubule-dependent delivery and secretion of matrix metalloproteases (MMPs) is partially responsible for the disassembly of adhesion sites.", "split": "train"}
+{"id": "1230", "claim": "The minor G allele of FOXO3 downregulates pro-inflammatory cytokines.", "split": "train"}
+{"id": "1231", "claim": "The minor G allele of FOXO3 is related to less severe symptoms of Crohn's Disease.", "split": "train"}
+{"id": "1234", "claim": "The minor G allele of FOXO3 up-regulates IL-10.", "split": "train"}
+{"id": "1235", "claim": "The morphology change from large white adipocytes to small brown adipocytes is a sign of decreased energy expenditure potential in white adipose tissue.", "split": "train"}
+{"id": "1236", "claim": "The morphology change from large white adipocytes to small brown adipocytes is a sign of increased energy expenditure potential in white adipose tissue.", "split": "train"}
+{"id": "1237", "claim": "The most prevalent adverse events to Semaglutide are cardiovascular.", "split": "train"}
+{"id": "1238", "claim": "The most prevalent adverse events to Semaglutide are gastrointestinal.", "split": "train"}
+{"id": "1239", "claim": "The myocardial cell lineage originally develops from cardiac progenitors of exclusively endodermal origin.", "split": "train"}
+{"id": "1244", "claim": "The number of unfertilized oocytes in mated hermaphrodites increases with age.", "split": "train"}
+{"id": "1246", "claim": "The one-child policy has created a hospitable environment for female infants.", "split": "train"}
+{"id": "1247", "claim": "The origin of the CRF01_1b2k protein occurred between 1923 and 1956.", "split": "train"}
+{"id": "1248", "claim": "The peak incidence of fractures occurs during pubertal growth spurt in early adolescents.", "split": "train"}
+{"id": "1249", "claim": "The peak incidence of fractures occurs in toddlers.", "split": "train"}
+{"id": "1253", "claim": "The predominant localization of Linc00173 is in mononuclear macrophage nuclei.", "split": "train"}
+{"id": "1254", "claim": "The proliferative capacity of neural progenitors differs across species.", "split": "train"}
+{"id": "1255", "claim": "The proliferative capacity of progenitors is regulated cell-autonomously.", "split": "train"}
+{"id": "1257", "claim": "The proportion of people with visual difficulty is two times higher in low-income countries than in high-income countries.", "split": "train"}
+{"id": "1258", "claim": "The recruitment of Wdr5 to its target loci depends on Kat8.", "split": "train"}
+{"id": "1260", "claim": "The relationship between a breast cancer patient's capacity to metabolize tamoxifen and treatment outcome is independent of the patient's genetic make-up.", "split": "train"}
+{"id": "1261", "claim": "The removal of reactive oxygen species by activated oncogenes contributes to the increased genomic instability of leukaemia cells.", "split": "train"}
+{"id": "1263", "claim": "The repeat-variable diresidue (RVD) in the loop of Transcription-Activator Like (TAL) effectors specifies the nucleotides-amino acid contact at the target promoter element.", "split": "train"}
+{"id": "1265", "claim": "The risk of breast cancer among parous women decreases with placental weight of pregnancies.", "split": "train"}
+{"id": "1268", "claim": "The risk of cancer rises with level of alcohol consumption.", "split": "train"}
+{"id": "1269", "claim": "The risk of female prisoners harming themselves is ten times that of male prisoners.", "split": "train"}
+{"id": "1275", "claim": "The tip of the inner tube of the toxic type VI secretion system (T6SS) antibacterial effector in Escherichia coli (E. coli) is decorated with VgrG and PAAR proteins.", "split": "train"}
+{"id": "1276", "claim": "The tissue surrounding the granuloma in an immune cell induces an anti-inflammatory immune response.", "split": "train"}
+{"id": "1284", "claim": "Therapeutics receiving accelerated approval encounter a lower frequency of post-marketing safety events", "split": "train"}
+{"id": "1288", "claim": "There is a positive correlation between hip fractures and statin use.", "split": "train"}
+{"id": "1289", "claim": "There is a relation between Erythromycin use and hypertrophic pyloric stenosis.", "split": "train"}
+{"id": "1291", "claim": "There is no association between HNF4A mutations and diabetes risks.", "split": "train"}
+{"id": "1293", "claim": "There is no increased risk of hypospadias with clomiphene.", "split": "train"}
+{"id": "1294", "claim": "There is no known interaction between Pioneer factor OCT3/4 and major chromatin remodeling factors.", "split": "train"}
+{"id": "1295", "claim": "There is no relation between Erythromycin use and hypertrophic pyloric stenosis.", "split": "train"}
+{"id": "1297", "claim": "There was an estimated 30 million cases of pneumonia in young children worldwide in 2010.", "split": "train"}
+{"id": "1300", "claim": "Thiopurine active metabolites can be catabolized through dephosphorylation of thioguanine nucleotides.", "split": "train"}
+{"id": "1302", "claim": "Tirasemtiv has no effect on cardiac muscle.", "split": "train"}
+{"id": "1304", "claim": "Tirasemtiv targets cardiac muscle.", "split": "train"}
+{"id": "1305", "claim": "Tirasemtiv targets fast-twitch muscle.", "split": "train"}
+{"id": "1306", "claim": "Toll-like receptor (TLR) signaling is involved in the pathogenesis of human MDS.", "split": "train"}
+{"id": "1307", "claim": "Tonic signaling from the scFv induces constitutive stimulation.", "split": "train"}
+{"id": "1308", "claim": "Tonic signaling from the scFv is amplified by MyD88/CD40.", "split": "train"}
+{"id": "1309", "claim": "Tonic signaling from the scFv prevents constitutive stimulation.", "split": "train"}
+{"id": "1310", "claim": "Traditional reviews are biased in their interpretations.", "split": "train"}
+{"id": "1311", "claim": "Trans-acting factors, such as lncRNAs, influence mRNA translation.", "split": "train"}
+{"id": "1312", "claim": "Transcription factor EB induces transcription of pro-inflammatory cytokines in macrophages infected with Staphylococcus aureus.", "split": "train"}
+{"id": "1314", "claim": "Transcription rates in S. cerevisiae range between 0.7 and 2 kb/min.", "split": "train"}
+{"id": "1315", "claim": "Transcription rates in S. cerevisiae range between 7 and 12 kb/min.", "split": "train"}
+{"id": "1322", "claim": "Transplanted human glial progenitor cells can mature in their host animal.", "split": "train"}
+{"id": "1323", "claim": "Treatment with a protein named FN impairs regenerative abilities of aged muscles.", "split": "train"}
+{"id": "1324", "claim": "Treatment with a protein named FN restores regenerative abilities of aged muscles.", "split": "train"}
+{"id": "1325", "claim": "Treatment with the EC uptake inhibitor AM404 resulted in a dose-dependent decrease in the expression of immobility.", "split": "train"}
+{"id": "1327", "claim": "Tuberculosis incidence occurs at higher rates in more sparsely populated areas in the UK.", "split": "train"}
+{"id": "1328", "claim": "Tuberculosis-induced granulomas express different immune system protein signatures than the surrounding tissue.", "split": "train"}
+{"id": "1330", "claim": "Tumor development occurs in conjunction with suppression of pro-inflammatory cytokines.", "split": "train"}
+{"id": "1331", "claim": "Tumor development occurs in conjunction with upregulation of pro-inflammatory cytokines.", "split": "train"}
+{"id": "1333", "claim": "Two variants of chromosome 6q21 are associated with radiation therapy-induced second malignancies in pediatric Hodgkin lymphoma patients.", "split": "train"}
+{"id": "1334", "claim": "Type 1 Diabetes is associated with subtle perturbations in T reg development.", "split": "train"}
+{"id": "1340", "claim": "Ultrasound guidance significantly reduces the number of needle insertion attempts necessary for a given procedure.", "split": "train"}
+{"id": "1341", "claim": "Ultrasound guidance significantly reduces the number of traumatic procedures when attempting needle insertion.", "split": "train"}
+{"id": "1342", "claim": "Understanding epigenetic regulation of replication is essential for the reational design of episomally replicating vectors.", "split": "train"}
+{"id": "1345", "claim": "Up-regulation of the p53 pathway and related molecular events speeds cancer progression.", "split": "train"}
+{"id": "1346", "claim": "Upon developing tyrosine-kinase inhibitor resistance, new mutations in epidermal growth factor receptors emerge and cause treatment failure.", "split": "train"}
+{"id": "1347", "claim": "Upon viral challenge, influenza-specific memory CD4+ T cells greatly diminish the early production of inflammatory chemokines in the lung.", "split": "train"}
+{"id": "1348", "claim": "Upon viral challenge, influenza-specific memory CD4+ T cells greatly enhance the early production of inflammatory chemokines in the lung.", "split": "train"}
+{"id": "1349", "claim": "Upregulation of PD1 causes the downmodulation of Satb1.", "split": "train"}
+{"id": "1350", "claim": "Upregulation of PD1 causes the upregulation of Satb1.", "split": "train"}
+{"id": "1351", "claim": "Upregulation of dynein in Drosophila neurons increases the number of microtubule plus-ends growing toward the cell body of each neuron.", "split": "train"}
+{"id": "1353", "claim": "Urbanization is an important risk factor related to the transmission of dengue fever.", "split": "train"}
+{"id": "1355", "claim": "V-9302 inhibits antitumor responses by decreasing cell death and oxidative stress.", "split": "train"}
+{"id": "1356", "claim": "Vaccinating the gastrointestinal tract induces protection of rectal and vaginal mucosa.", "split": "train"}
+{"id": "1360", "claim": "Varenicline monotherapy is more effective after 26 weeks of treatment compared to combination nicotine replacement therapies with varenicline or bupropion.", "split": "train"}
+{"id": "1361", "claim": "Varying expression levels of EBI2 affect the positioning and migration of B cells.", "split": "train"}
+{"id": "1364", "claim": "Venules have less significant tunica adventitia than arterioles.", "split": "train"}
+{"id": "1366", "claim": "VgrG (Tssl) protein punctures membranes by forming a spike at the tip of the tube apparatus.", "split": "train"}
+{"id": "1367", "claim": "Vitamin D deficiency effects birth weight.", "split": "train"}
+{"id": "1371", "claim": "Vitamin D is an important factor in the relationship between calcium and parathyroid hormone.", "split": "train"}
+{"id": "1372", "claim": "Walking in traffic areas in London did not improve lung function in elderly adults.", "split": "train"}
+{"id": "1373", "claim": "Walking in traffic areas in London improves lung function in elderly adults.", "split": "train"}
+{"id": "1374", "claim": "Weighed food records (WFR) result in high completion since they're cheap to run and impose low participant burden.", "split": "train"}
+{"id": "1375", "claim": "Weighed food records (WFR) result in poor completion since they're costly to run and impose high participant burden.", "split": "train"}
+{"id": "1376", "claim": "Whole brain radiotherapy increases the occurrence of new brain metastases.", "split": "train"}
+{"id": "1378", "claim": "Women are more susceptible to death due to pneumonia when compared to men.", "split": "train"}
+{"id": "1380", "claim": "Women with a lower birth weight are more likely to develop breast cancer later in life.", "split": "train"}
+{"id": "1381", "claim": "YAP/TAZ is required in intestinal regeneration in mouse models of ulcerative colitis.", "split": "train"}
+{"id": "1383", "claim": "aPKCz causes tumour suppression by affecting glutamine metabolism.", "split": "train"}
+{"id": "1386", "claim": "cSMAC formation represses weak ligand signalling.", "split": "train"}
+{"id": "1387", "claim": "eRNAs influence is linked to senescence, aging, and carcinogenesis.", "split": "train"}
+{"id": "1390", "claim": "mcm 5 s 2 U is required for proper decoding of NNR codons in eukaryotes.", "split": "train"}
+{"id": "1391", "claim": "miR-142-5P is a known regulator of raised body temperature.", "split": "train"}
+{"id": "1392", "claim": "miR-142-5P is a temperature-sensitive microRNA (miRNA).", "split": "train"}
+{"id": "1393", "claim": "miRNAs enforce homeostasis by suppressing low-level ''leaky'' transcription.", "split": "train"}
+{"id": "1394", "claim": "miRNAs regulate a unique suite of mRNAs to maintain homeostasis in cells.", "split": "train"}
+{"id": "1397", "claim": "p16INK4A degradation is  linked to an abnormal wound response caused by the microinvasive step of advanced Oral Potentially Malignant Lesions (OPMLs).", "split": "train"}
+{"id": "1398", "claim": "p16INK4A degradation is encoded by CDKN2A.", "split": "train"}
+{"id": "1400", "claim": "p75 NTR - associated cell death executor (NADE) interacts with the p75 NTR death domain", "split": "train"}
+{"id": "1401", "claim": "qSOFA scores are associated with length of stay in emergency department patients.", "split": "train"}
+{"id": "1402", "claim": "r-protein chaperones are found in complexes with their r-protein binding partners.", "split": "train"}
+{"id": "1403", "claim": "siRNA knockdown of A20 accelerates tumor progression in an in vivo murine xenograft model.", "split": "train"}
+{"id": "1404", "claim": "siRNA knockdown of A20 slows tumor progression in an in vivo murine xenograft model.", "split": "train"}
+{"id": "1405", "claim": "taa1 tar1 tar2 triple mutants in Arabidopsis do not make root meristem during embryogenesis.", "split": "train"}
+{"id": "1406", "claim": "β-sheet opening occurs during pleurotolysin pore formation.", "split": "train"}
+{"id": "1407", "claim": "β1/Ketel is able to bind microtubules.", "split": "train"}
+{"id": "1", "claim": "0-dimensional biomaterials show inductive properties.", "split": "dev"}
+{"id": "3", "claim": "1,000 genomes project enables mapping of genetic sequence variation consisting of rare variants with larger penetrance effects than common variants.", "split": "dev"}
+{"id": "5", "claim": "1/2000 in UK have abnormal PrP positivity.", "split": "dev"}
+{"id": "13", "claim": "5% of perinatal mortality is due to low birth weight.", "split": "dev"}
+{"id": "36", "claim": "A deficiency of vitamin B12 increases blood levels of homocysteine.", "split": "dev"}
+{"id": "42", "claim": "A high microerythrocyte count raises vulnerability to severe anemia in homozygous alpha (+)- thalassemia trait subjects.", "split": "dev"}
+{"id": "48", "claim": "A total of 1,000 people in the UK are asymptomatic carriers of vCJD infection.", "split": "dev"}
+{"id": "49", "claim": "ADAR1 binds to Dicer to cleave pre-miRNA.", "split": "dev"}
+{"id": "50", "claim": "AIRE is expressed in some skin tumors.", "split": "dev"}
+{"id": "51", "claim": "ALDH1 expression is associated with better breast cancer outcomes.", "split": "dev"}
+{"id": "53", "claim": "ALDH1 expression is associated with poorer prognosis in breast cancer.", "split": "dev"}
+{"id": "54", "claim": "AMP-activated protein kinase (AMPK) activation increases inflammation-related fibrosis in the lungs.", "split": "dev"}
+{"id": "56", "claim": "APOE4 expression in iPSC-derived neurons increases AlphaBeta production and tau phosphorylation causing GABA neuron degeneration.", "split": "dev"}
+{"id": "57", "claim": "APOE4 expression in iPSC-derived neurons increases AlphaBeta production and tau phosphorylation, delaying GABA neuron degeneration.", "split": "dev"}
+{"id": "70", "claim": "Activation of PPM1D suppresses p53 function.", "split": "dev"}
+{"id": "72", "claim": "Activator-inhibitor pairs are provided dorsally by Admpchordin.", "split": "dev"}
+{"id": "75", "claim": "Active H. pylori urease has a polymeric structure that compromises two subunits, UreA and UreB.", "split": "dev"}
+{"id": "94", "claim": "Albendazole is used to treat lymphatic filariasis.", "split": "dev"}
+{"id": "99", "claim": "Alizarin forms hydrogen bonds with residues involved in PGAM1 substrate binding.", "split": "dev"}
+{"id": "100", "claim": "All hematopoietic stem cells segregate their chromosomes randomly.", "split": "dev"}
+{"id": "113", "claim": "Angiotensin converting enzyme inhibitors are associated with increased risk for functional renal insufficiency.", "split": "dev"}
+{"id": "115", "claim": "Anthrax spores can be disposed of easily after they are dispersed.", "split": "dev"}
+{"id": "118", "claim": "Antibiotic induced alterations in the gut microbiome reduce resistance against Clostridium difficile", "split": "dev"}
+{"id": "124", "claim": "Antiretroviral therapy reduces rates of tuberculosis across a broad range of CD4 strata.", "split": "dev"}
+{"id": "127", "claim": "Arginine 90 in p150n is important for interaction with EB1.", "split": "dev"}
+{"id": "128", "claim": "Arterioles have a larger lumen diameter than venules.", "split": "dev"}
+{"id": "129", "claim": "Articles published in open access format are less likely to be cited than traditional journals.", "split": "dev"}
+{"id": "130", "claim": "Articles published in open access format are more likely to be cited than traditional journals.", "split": "dev"}
+{"id": "132", "claim": "Aspirin inhibits the production of PGE2.", "split": "dev"}
+{"id": "133", "claim": "Assembly of invadopodia is triggered by focal generation of phosphatidylinositol-3,4-biphosphate and the activation of the nonreceptor tyrosine kinase Src.", "split": "dev"}
+{"id": "137", "claim": "Asymptomatic visual impairment screening in elderly populations does not lead to improved vision.", "split": "dev"}
+{"id": "141", "claim": "Auditory entrainment is strengthened when people see congruent visual and auditory information.", "split": "dev"}
+{"id": "142", "claim": "Autologous transplantation of mesenchymal stem cells causes a higher rate of opportunistic infections than induction therapy with anti-interleukin-2 receptor antibodies.", "split": "dev"}
+{"id": "143", "claim": "Autologous transplantation of mesenchymal stem cells causes fewer opportunistic infections than induction therapy with anti-interleukin-2 receptor antibodies.", "split": "dev"}
+{"id": "146", "claim": "Autologous transplantation of mesenchymal stem cells has lower rates of rejection than induction therapy with anti-interleukin-2 receptor antibodies.", "split": "dev"}
+{"id": "148", "claim": "Autophagy declines in aged organisms.", "split": "dev"}
+{"id": "163", "claim": "Bariatric surgery has a positive impact on mental health.", "split": "dev"}
+{"id": "171", "claim": "Basophils counteract disease development in patients with systemic lupus erythematosus (SLE).", "split": "dev"}
+{"id": "179", "claim": "Birth-weight is positively associated with breast cancer.", "split": "dev"}
+{"id": "180", "claim": "Blocking the interaction between TDP-43 and respiratory complex I proteins ND3 and ND6 leads to increased TDP-43-induced neuronal loss.", "split": "dev"}
+{"id": "183", "claim": "Bone marrow cells contribute to adult macrophage compartments.", "split": "dev"}
+{"id": "185", "claim": "Breast cancer development is determined exclusively by genetic factors.", "split": "dev"}
+{"id": "198", "claim": "CCL19 is absent within dLNs.", "split": "dev"}
+{"id": "208", "claim": "CHEK2 is not associated with breast cancer.", "split": "dev"}
+{"id": "212", "claim": "CR is associated with higher methylation age.", "split": "dev"}
+{"id": "213", "claim": "CRP is not predictive of postoperative mortality following Coronary Artery Bypass Graft (CABG) surgery.", "split": "dev"}
+{"id": "216", "claim": "CX3CR1 on the Th2 cells impairs T cell survival", "split": "dev"}
+{"id": "217", "claim": "CX3CR1 on the Th2 cells promotes T cell survival", "split": "dev"}
+{"id": "218", "claim": "CX3CR1 on the Th2 cells promotes airway inflammation.", "split": "dev"}
+{"id": "219", "claim": "CX3CR1 on the Th2 cells suppresses airway inflammation.", "split": "dev"}
+{"id": "230", "claim": "Carriers of the alcohol aldehyde dehydrogenase deficiency mutation drink less that non-carries.", "split": "dev"}
+{"id": "232", "claim": "Cataract and trachoma are the primary cause of blindness in Southern Sudan.", "split": "dev"}
+{"id": "233", "claim": "Cell autonomous sex determination in somatic cells does not occur in Galliformes.", "split": "dev"}
+{"id": "236", "claim": "Cell autonomous sex determination in somatic cells occurs in Passeriformes.", "split": "dev"}
+{"id": "237", "claim": "Cells lacking clpC have a defect in sporulation efficiency in Bacillus subtilis.", "split": "dev"}
+{"id": "238", "claim": "Cells undergoing methionine restriction may activate miRNAs.", "split": "dev"}
+{"id": "239", "claim": "Cellular aging closely links to an older appearance.", "split": "dev"}
+{"id": "248", "claim": "Chenodeosycholic acid treatment increases whole-body energy expenditure.", "split": "dev"}
+{"id": "249", "claim": "Chenodeosycholic acid treatment reduces whole-body energy expenditure.", "split": "dev"}
+{"id": "261", "claim": "Chronic aerobic exercise alters endothelial function, improving vasodilating mechanisms mediated by NO.", "split": "dev"}
+{"id": "268", "claim": "Cold exposure increases BAT recruitment.", "split": "dev"}
+{"id": "269", "claim": "Cold exposure reduces BAT recruitment.", "split": "dev"}
+{"id": "274", "claim": "Combination nicotine replacement therapies with varenicline or bupropion lead to significantly higher long-term abstinence rates at 52 weeks than varenicline monotherapy.", "split": "dev"}
+{"id": "275", "claim": "Combining phosphatidylinositide 3-kinase and MEK 1/2 inhibitors is effective at treating KRAS mutant tumors.", "split": "dev"}
+{"id": "279", "claim": "Commelina yellow mottle virus' (ComYMV) genome consists of 7489 baise pairs.", "split": "dev"}
+{"id": "294", "claim": "Crossover hot spots are not found within gene promoters in Saccharomyces cerevisiae.", "split": "dev"}
+{"id": "295", "claim": "Crosstalk between dendritic cells (DCs) and innate lymphoid cells (ILCs) is important in the regulation of intestinal homeostasis.", "split": "dev"}
+{"id": "298", "claim": "Cytochrome c is released from the mitochondrial intermembrane space to cytosol during apoptosis.", "split": "dev"}
+{"id": "300", "claim": "Cytosolic proteins bind to iron-responsive elements on mRNAs coding for DMT1. Cytosolic proteins bind to iron-responsive elements on mRNAs coding for proteins involved in iron uptake.", "split": "dev"}
+{"id": "303", "claim": "DMRT1 is a sex-determining gene that is epigenetically regulated by the MHM region.", "split": "dev"}
+{"id": "312", "claim": "De novo assembly of sequence data has more specific contigs than unassembled sequence data.", "split": "dev"}
+{"id": "314", "claim": "Deamination of cytidine to uridine on the minus strand of viral DNA results in catastrophic G-to-A mutations in the viral genome.", "split": "dev"}
+{"id": "324", "claim": "Deleting Raptor reduces G-CSF levels.", "split": "dev"}
+{"id": "327", "claim": "Deletion of αvβ8 does not result in a spontaneous inflammatory phenotype.", "split": "dev"}
+{"id": "338", "claim": "Dexamethasone decreases risk of postoperative bleeding.", "split": "dev"}
+{"id": "343", "claim": "Diabetic patients with acute coronary syndrome experience increased short-term and long-term risk for bleeding events.", "split": "dev"}
+{"id": "350", "claim": "Discrimination between the initiator and elongation tRNAs depends on the translation initiation factor IF3.", "split": "dev"}
+{"id": "354", "claim": "Downregulation and mislocalization of Scribble prevents cell transformation and mammary tumorigenesis.", "split": "dev"}
+{"id": "362", "claim": "During the primary early antibody response activated B cells migrate toward the inner-and outer paracortical areas where oxysterol accumulation is generated by stromal cells.", "split": "dev"}
+{"id": "380", "claim": "Enhanced early production of inflammatory chemokines improves viral control in the lung.", "split": "dev"}
+{"id": "384", "claim": "Epidemiological disease burden from noncommunicable diseases is more prevalent in low economic settings.", "split": "dev"}
+{"id": "385", "claim": "Epigenetic modulating agents (EMAs) modulate antitumor immune response in a cancer model system.", "split": "dev"}
+{"id": "386", "claim": "Errors in peripheral IV drug administration are most common during bolus administration and multiple-step medicine preparations.", "split": "dev"}
+{"id": "388", "claim": "Ethanol stress decreases the expression of IBP in bacteria.", "split": "dev"}
+{"id": "399", "claim": "Exposure to fine particulate air pollution is relate to anxiety prevalence.", "split": "dev"}
+{"id": "410", "claim": "Febrile seizures increase the threshold for development of epilepsy.", "split": "dev"}
+{"id": "411", "claim": "Febrile seizures reduce the threshold for development of epilepsy.", "split": "dev"}
+{"id": "415", "claim": "Female carriers of the Apolipoprotein E4 (APOE4) allele have increased risk for dementia.", "split": "dev"}
+{"id": "421", "claim": "Flexible molecules experience greater steric hindrance in the tumor microenviroment than rigid molecules.", "split": "dev"}
+{"id": "431", "claim": "FoxO3a activation in neuronal death is mediated by reactive oxygen species (ROS).", "split": "dev"}
+{"id": "436", "claim": "Free histones are degraded by a Rad53-dependent mechanism once DNA has been replicated.", "split": "dev"}
+{"id": "437", "claim": "Functional consequences of genomic alterations due to Myelodysplastic syndrome (MDS) are poorly understood due to the lack of an animal model.", "split": "dev"}
+{"id": "439", "claim": "Fz/PCP-dependent Pk localizes to the anterior membrane of neuroectoderm cells during zebrafish neuralation", "split": "dev"}
+{"id": "440", "claim": "Fz/PCP-dependent Pk localizes to the anterior membrane of notochord cells during zebrafish neuralation.", "split": "dev"}
+{"id": "443", "claim": "GATA-3 is important for hematopoietic stem cell (HSC) function.", "split": "dev"}
+{"id": "452", "claim": "Gene expression does not vary appreciably across genetically identical cells.", "split": "dev"}
+{"id": "475", "claim": "Glycolysis is one of the primary glycometabolic pathways in cells.", "split": "dev"}
+{"id": "478", "claim": "Golli-deficient T-cells prefer to differentiate into an anergic phenotype in the adaptive immune response when there are increased levels of Ca2+ in the cytosol.", "split": "dev"}
+{"id": "491", "claim": "HNF4A mutations can cause diabetes in mutant carriers by the age of 14 years", "split": "dev"}
+{"id": "501", "claim": "Headaches are not correlated with cognitive impairment.", "split": "dev"}
+{"id": "502", "claim": "Healthcare delivery efficiency in crowded delivery centers is impaired by improving structural, logistical, and interpersonal elements.", "split": "dev"}
+{"id": "507", "claim": "Helminths interfere with immune system control of macrophages activated by IL-4 favor Mycobacterium tuberculosis replication.", "split": "dev"}
+{"id": "508", "claim": "Hematopoietic Stem Cell purification reaches purity rate of up to 50%.", "split": "dev"}
+{"id": "513", "claim": "High cardiopulmonary fitness causes increased mortality rate.", "split": "dev"}
+{"id": "514", "claim": "High dietary calcium intakes are unnecessary for prevention of secondary hyperparathyroidism in subjects with 25(OH)D levels above 75 nmol/liter.", "split": "dev"}
+{"id": "516", "claim": "High levels of CRP reduces the risk of exacerbations in chronic obstructive pulmonary disease (COPD).", "split": "dev"}
+{"id": "517", "claim": "High levels of copeptin decrease risk of diabetes.", "split": "dev"}
+{"id": "521", "claim": "High-sensitivity cardiac troponin T (HSCT-T) dosage may not be diagnostic if the onset of symptoms occurs less than 3 hours before acute myocardial injury (AMI).", "split": "dev"}
+{"id": "525", "claim": "Histone demethylase recruitment and a transient decrease in histone methylation is necessary for ligand-dependent induction of transcription by nuclear receptors.", "split": "dev"}
+{"id": "527", "claim": "Homozygous deletion of murine Sbds gene from osterix-expressing mesenchymal stem and progenitor cells (MPCs) prevents oxidative stress.", "split": "dev"}
+{"id": "528", "claim": "Human T-lymphotropic virus type-I-associated myelopathy / tropical spastic paraparesis (HAM/TSP) patients produce Immunoglobulin G (IgG) antibodies which cross-react with an immunodominant epitope in Tax.", "split": "dev"}
+{"id": "532", "claim": "Hyperfibrinogenemia decreases rates of femoropopliteal bypass thrombosis.", "split": "dev"}
+{"id": "533", "claim": "Hyperfibrinogenemia increases rates of femoropopliteal bypass thrombosis.", "split": "dev"}
+{"id": "535", "claim": "Hypertension is frequently observed in type 1 diabetes patients.", "split": "dev"}
+{"id": "536", "claim": "Hypocretin neurones induce panicprone state in rats.", "split": "dev"}
+{"id": "539", "claim": "Hypoglycemia increases the risk of dementia.", "split": "dev"}
+{"id": "540", "claim": "Hypothalamic glutamate neurotransmission is crucial to energy balance.", "split": "dev"}
+{"id": "544", "claim": "IFIT1 restricts viral replication by sequestrating mis-capped viral RNAs.", "split": "dev"}
+{"id": "549", "claim": "IRG1 has antiviral effects against neurotropic viruses.", "split": "dev"}
+{"id": "551", "claim": "ITAM phosphorylation prevents the transfer of the T cell receptor (TCR) signal from the echo-domain to the cytoplasmic tail of the T cell receptor (TCR).", "split": "dev"}
+{"id": "552", "claim": "IgA plasma cells that are specific for transglutaminase 2 accumulate in the duodenal mucosa on commencement of a gluten-free diet.", "split": "dev"}
+{"id": "554", "claim": "Immune complex triggered cell death leads to extracellular release of neutrophil protein HMGB1.", "split": "dev"}
+{"id": "560", "claim": "Immune responses result in the development of inflammatory Th17 cells and anti-inflammatory iTregs.", "split": "dev"}
+{"id": "569", "claim": "In adult tissue, most T cells are memory T cells.", "split": "dev"}
+{"id": "575", "claim": "In domesticated populations of Saccharomyces cerevisiae, whole chromosome aneuploidy is very uncommon.", "split": "dev"}
+{"id": "577", "claim": "In mice, P. chabaudi parasites are able to proliferate faster early in infection when inoculated at lower numbers than when inoculated at high numbers.", "split": "dev"}
+{"id": "578", "claim": "In mouse models, the loss of CSF1R facilitates MOZ-TIF2-induced leuekmogenesis.", "split": "dev"}
+{"id": "587", "claim": "In transgenic mice harboring green florescent protein under the control of the Sox2 promoter, less than ten percent of the cells with green florescent colocalize with cell proliferation markers.", "split": "dev"}
+{"id": "589", "claim": "In young and middle-aged adults, current or remote uses of ADHD medications do not increase the risk of serious cardiovascular events.", "split": "dev"}
+{"id": "593", "claim": "Incidence of heart failure decreased by 10% in women since 1979.", "split": "dev"}
+{"id": "597", "claim": "Incidence rates of cervical cancer have decreased.", "split": "dev"}
+{"id": "598", "claim": "Incidence rates of cervical cancer have increased due to nationwide screening programs based primarily on cytology to detect uterine cervical cancer.", "split": "dev"}
+{"id": "613", "claim": "Increased microtubule acetylation repairs LRRK2 Roc-COR domain mutation induced locomotor deficits.", "split": "dev"}
+{"id": "619", "claim": "Increased vessel density along with a reduction in fibrosis decreases the efficacy of chemotherapy treatments.", "split": "dev"}
+{"id": "623", "claim": "Individuals with low serum vitamin D concentrations have increased risk of multiple sclerosis.", "split": "dev"}
+{"id": "628", "claim": "Infection of human T-cell lymphotropic virus type 1 is most frequent in individuals of African origin.", "split": "dev"}
+{"id": "636", "claim": "Inositol lipid 3-phosphatase PTEN converts Ptdlns(3,4)P 2 into phosphatidylinositol 4-phosphate.", "split": "dev"}
+{"id": "637", "claim": "Input from  mental and physical health care professionals is effective at decreasing homelessness.", "split": "dev"}
+{"id": "641", "claim": "Insomnia can be effectively treated with cognitive behavioral therapy.", "split": "dev"}
+{"id": "644", "claim": "Insulin increases risk of severe kidney failure.", "split": "dev"}
+{"id": "649", "claim": "Integrating classroom-based collaborative learning with Web-based collaborative learning leads to subpar class performance", "split": "dev"}
+{"id": "659", "claim": "Ivermectin is used to treat lymphatic filariasis.", "split": "dev"}
+{"id": "660", "claim": "Ivermectin is used to treat onchocerciasis.", "split": "dev"}
+{"id": "674", "claim": "LDL cholesterol has no involvement in the development of cardiovascular disease.", "split": "dev"}
+{"id": "684", "claim": "Lack of clpC does not affect sporulation efficiency in Bacillus subtilis cells.", "split": "dev"}
+{"id": "690", "claim": "Less than 10% of the gabonese children with Schimmelpenning-Feuerstein-Mims syndrome (SFM) had a plasma lactate of more than 5mmol/L.", "split": "dev"}
+{"id": "691", "claim": "Leukemia associated Rho guanine nucleotide-exchange factor represses RhoA in response to SRC activation.", "split": "dev"}
+{"id": "692", "claim": "Leuko-increased blood increases infectious complications in red blood cell transfusion.", "split": "dev"}
+{"id": "693", "claim": "Leuko-reduced blood reduces infectious complications in red blood cell transfusion.", "split": "dev"}
+{"id": "700", "claim": "Localization of PIN1 in the Arabidopsis embryo does not require VPS9a", "split": "dev"}
+{"id": "702", "claim": "Localization of PIN1 in the roots of Arabidopsis does not require VPS9a", "split": "dev"}
+{"id": "715", "claim": "Low expression of miR7a does represses target genes and exerts a biological function in ovaries.", "split": "dev"}
+{"id": "716", "claim": "Low expression of miR7a exerts a biological function in testis.", "split": "dev"}
+{"id": "718", "claim": "Low nucleosome occupancy correlates with low methylation levels across species.", "split": "dev"}
+{"id": "721", "claim": "Lupus-prone mice infected with curliproducing bacteria have higher autoantibody titers compared to controls.", "split": "dev"}
+{"id": "723", "claim": "Ly49Q directs the organization of neutrophil migration to inflammation sites by regulating membrane raft functions.", "split": "dev"}
+{"id": "727", "claim": "Ly6C hi monocytes have a lower inflammatory capacity compared to their Ly6C lo counterparts.", "split": "dev"}
+{"id": "728", "claim": "Ly6C hi monocytes have a lower inflammatory capacity than Ly6C lo monocytes.", "split": "dev"}
+{"id": "729", "claim": "Lymphadenopathy is observed in knockin mouse lacking the SHP-2 MAPK pathway.", "split": "dev"}
+{"id": "742", "claim": "Macrolides have no protective effect against myocardial infarction.", "split": "dev"}
+{"id": "743", "claim": "Macrolides protect against myocardial infarction.", "split": "dev"}
+{"id": "744", "claim": "Macropinocytosis contributes to a cell's supply of amino acids via the intracellular uptake of protein.", "split": "dev"}
+{"id": "756", "claim": "Many proteins in human cells can be post-translationally modified at lysine residues via acetylation.", "split": "dev"}
+{"id": "759", "claim": "Mathematical models predict that using Artemisinin-based combination therapy over nongametocytocidal drugs have a dramatic impact in reducing malaria transmission.", "split": "dev"}
+{"id": "768", "claim": "Mercaptopurine is anabolized into the inactive methylmercaptopurine by thiopurine methyltrasnferase (TPMT).", "split": "dev"}
+{"id": "770", "claim": "Metastatic colorectal cancer treated with a single agent fluoropyrimidines resulted in reduced efficacy and lower quality of life when compared with oxaliplatin-based chemotherapy in elderly patients.", "split": "dev"}
+{"id": "775", "claim": "Mice defective for deoxyribonucleic acid (DNA) polymerase I (polI) reveal increased sensitivity to ionizing radiation (IR).", "split": "dev"}
+{"id": "781", "claim": "Mice that lack Interferon-γ or its receptor exhibit high resistance to experimental autoimmune myocarditis.", "split": "dev"}
+{"id": "783", "claim": "Mice without IFN-γ or its receptor are resistant to EAM induced with α-MyHC/CFA.", "split": "dev"}
+{"id": "784", "claim": "MicroRNA is involved in the regulation of Neural Stem Cell (NSC) differentiation and proliferation dynamic homeostasis", "split": "dev"}
+{"id": "785", "claim": "Microarray results from culture-amplified mixtures of serotypes correlate poorly with microarray results from uncultured mixtures.", "split": "dev"}
+{"id": "793", "claim": "Mitochondria are uninvolved in apoptosis.", "split": "dev"}
+{"id": "800", "claim": "Modifying the epigenome in the brain affects the normal human aging process by affecting certain genes related to neurogenesis.", "split": "dev"}
+{"id": "805", "claim": "Monoclonal antibody targeting of N-cadherin inhibits metastasis.", "split": "dev"}
+{"id": "808", "claim": "Most termination events in Okazaki fragments are sequence specific.", "split": "dev"}
+{"id": "811", "claim": "Mutant mice lacking SVCT2 have greatly increased ascorbic acid levels in both brain and adrenals.", "split": "dev"}
+{"id": "814", "claim": "Mutations in G-Beta protein GNB2 are present in many cancers, resulting in loss of interaction with G-alpha subunits and concomitant activation of AKT pathway.", "split": "dev"}
+{"id": "820", "claim": "N-terminal cleavage increases success identifying transcription start sites.", "split": "dev"}
+{"id": "821", "claim": "N-terminal cleavage reduces success identifying transcription start sites.", "split": "dev"}
+{"id": "823", "claim": "N348I mutations cause resistance to zidovudine (AZT).", "split": "dev"}
+{"id": "830", "claim": "NF2 (Merlin) causes phosphorylation and subsequent cytoplasmic sequestration of YAP in Drosophila by activating LATS1/2 kinases.", "split": "dev"}
+{"id": "831", "claim": "NF2 (Merlin) prevents phosphorylation and subsequent cytoplasmic sequestration of YAP in Drosophila.", "split": "dev"}
+{"id": "832", "claim": "NFAT4 activation requires IP3R-mediated Ca2+ mobilization.", "split": "dev"}
+{"id": "834", "claim": "NOX2-independent pathways can generate peroxynitrite by reacting with nitrogen intermediates.", "split": "dev"}
+{"id": "837", "claim": "NR5A2 is important in development of endometrial tissues.", "split": "dev"}
+{"id": "839", "claim": "Nanoparticles can be targeted against specific cell types by incorporating aptamers into lipid nanoparticles.", "split": "dev"}
+{"id": "845", "claim": "Neutrophil extracellular traps (NETs) are released by ANCA-stimulated neutrophils.", "split": "dev"}
+{"id": "847", "claim": "New drugs for tuberculosis often do not penetrate the necrotic portion of a tuberculosis lesion in high concentrations.", "split": "dev"}
+{"id": "852", "claim": "Non-invasive ventilation use should be decreased if there is inadequate response to conventional treatment.", "split": "dev"}
+{"id": "859", "claim": "Normal expression of RUNX1 has tumor-promoting effects.", "split": "dev"}
+{"id": "870", "claim": "Obesity decreases life quality.", "split": "dev"}
+{"id": "873", "claim": "Obesity is determined solely by environmental factors.", "split": "dev"}
+{"id": "879", "claim": "Occupancy of ribosomes by IncRNAs do not make functional peptides.", "split": "dev"}
+{"id": "880", "claim": "Occupancy of ribosomes by IncRNAs mirror 5 0-UTRs", "split": "dev"}
+{"id": "882", "claim": "Omnivores produce less trimethylamine N-oxide from dietary I-carnitine than vegetarians.", "split": "dev"}
+{"id": "887", "claim": "Only a minority of cells survive development after differentiation into stress-resistant spores.", "split": "dev"}
+{"id": "903", "claim": "PD-1 triggering on monocytes reduces IL-10 production by monocytes.", "split": "dev"}
+{"id": "904", "claim": "PDPN promotes efficient motility along stromal surfaces by activating the C-type lectin receptor to rearrange the actin cytoskeleton in dendritic cells.", "split": "dev"}
+{"id": "907", "claim": "PGE 2 promotes intestinal tumor growth by altering the expression of tumor suppressing and DNA repair genes.", "split": "dev"}
+{"id": "911", "claim": "PKG-la plays an essential role in expression of pain hypersensitivity in PGK-la knockout mice.", "split": "dev"}
+{"id": "913", "claim": "PPAR-RXRs are inhibited by PPAR ligands.", "split": "dev"}
+{"id": "914", "claim": "PPAR-RXRs can be activated by PPAR ligands.", "split": "dev"}
+{"id": "921", "claim": "Participating in six months of physical activity improves cognitive functioning.", "split": "dev"}
+{"id": "922", "claim": "Patients in stable partnerships have a faster progression from HIV to AIDS.", "split": "dev"}
+{"id": "936", "claim": "Peroxynitrite is required for nitration of TCR/CD8.", "split": "dev"}
+{"id": "956", "claim": "Pleiotropic coupling of GLP-1R to intracellular effectors promotes distinct profiles of cellular signaling.", "split": "dev"}
+{"id": "957", "claim": "Podocytes are motile and migrate in the presence of injury.", "split": "dev"}
+{"id": "960", "claim": "Polymeal nutrition reduces cardiovascular mortality.", "split": "dev"}
+{"id": "967", "claim": "Pretreatment with the Arp2/3 inhibitor CK-666 affects lamelliopodia formation.", "split": "dev"}
+{"id": "971", "claim": "Primary cervical cancer screening with HPV detection has higher longitudinal sensitivity than conventional cytology to detect cervical intraepithelial neoplasia grade 2.", "split": "dev"}
+{"id": "975", "claim": "Primary pro-inflammatory cytokines induce secondary pro- and anti-inflammatory mediators.", "split": "dev"}
+{"id": "982", "claim": "Proteins synthesized at the growth cone are ubiquitinated at a higher rate than proteins from the cell body.", "split": "dev"}
+{"id": "985", "claim": "Pseudogene PTENP1 regulates the expression of PTEN by functioning as an miRNA decoy.", "split": "dev"}
+{"id": "993", "claim": "Pyridostatin destabilizes the G - quadruplex in the telomeric region.", "split": "dev"}
+{"id": "1012", "claim": "Radioiodine treatment of non-toxic multinodular goitre reduces thyroid volume.", "split": "dev"}
+{"id": "1014", "claim": "Rapamycin decreases the concentration of triacylglycerols in fruit flies.", "split": "dev"}
+{"id": "1019", "claim": "Rapid phosphotransfer rates govern fidelity in two component systems", "split": "dev"}
+{"id": "1020", "claim": "Rapid up-regulation and higher basal expression of interferon-induced genes increase survival of granule cell neurons that are infected by West Nile virus.", "split": "dev"}
+{"id": "1021", "claim": "Rapid up-regulation and higher basal expression of interferon-induced genes reduce survival of granule cell neurons that are infected by West Nile virus.", "split": "dev"}
+{"id": "1024", "claim": "Recurrent mutations occur frequently within CTCF anchor sites adjacent to oncogenes.", "split": "dev"}
+{"id": "1029", "claim": "Reduced responsiveness to interleukin-2 in regulatory T cells is associated with greater resistance to autoimmune diseases such as Type 1 Diabetes.", "split": "dev"}
+{"id": "1041", "claim": "Replacement of histone H2A with H2A.Z slows gene activation in yeasts by stabilizing +1 nucleosomes.", "split": "dev"}
+{"id": "1049", "claim": "Ribosomopathies have a low degree of cell and tissue specific pathology.", "split": "dev"}
+{"id": "1062", "claim": "S-nitrosylated GAPDH physiologically transnitrosylates histone deacetylases.", "split": "dev"}
+{"id": "1086", "claim": "Sildenafil improves erectile function in men who experience sexual dysfunction as a result of the use of SSRI antidepressants.", "split": "dev"}
+{"id": "1088", "claim": "Silencing of Bcl2 is important for the maintenance and progression of tumors.", "split": "dev"}
+{"id": "1089", "claim": "Smc5/6 engagment drives the activation of SUMO E3 ligase Mms21 by ATP-dependent remolding.", "split": "dev"}
+{"id": "1099", "claim": "Statins decrease blood cholesterol.", "split": "dev"}
+{"id": "1100", "claim": "Statins increase blood cholesterol.", "split": "dev"}
+{"id": "1104", "claim": "Stroke patients with prior use of direct oral anticoagulants have a lower risk of in-hospital mortality than stroke patients with prior use of warfarin.", "split": "dev"}
+{"id": "1107", "claim": "Subcutaneous fat depots undergo extensive browning processes after cold exposure.", "split": "dev"}
+{"id": "1110", "claim": "Suboptimal nutrition is not predictive of chronic disease", "split": "dev"}
+{"id": "1121", "claim": "Synaptic activity enhances local release of brain derived neurotrophic factor from postsynaptic dendrites.", "split": "dev"}
+{"id": "1130", "claim": "T regulatory cells (tTregs) lacking αvβ8 are more adept at suppressing pathogenic T-cell responses during active inflammation.", "split": "dev"}
+{"id": "1132", "claim": "TCR/CD3 microdomains are a required to induce the immunologic synapse to activate T cells.", "split": "dev"}
+{"id": "1137", "claim": "TNFAIP3 is a tumor suppressor in glioblastoma.", "split": "dev"}
+{"id": "1140", "claim": "Taking 400mg of α-tocopheryl acetate helps to prevent prostate cancer.", "split": "dev"}
+{"id": "1144", "claim": "Taxation of sugar-sweetened beverages had no effect on the incidence rate of type II diabetes in India.", "split": "dev"}
+{"id": "1146", "claim": "Teaching hospitals do not provide better care than non-teaching hospitals.", "split": "dev"}
+{"id": "1150", "claim": "Tetraspanin-3 is a causative factor in the development of acute myelogenous leukemia", "split": "dev"}
+{"id": "1163", "claim": "The DdrB protein from Deinococcus radiodurans is an alternative SSB.", "split": "dev"}
+{"id": "1175", "claim": "The PPR MDA5 has two N-terminal CARD domains.", "split": "dev"}
+{"id": "1179", "claim": "The PRR MDA5 has a central DExD/H RNA helices domain.", "split": "dev"}
+{"id": "1180", "claim": "The PRR MDA5 is a sensor of RNA virus infection.", "split": "dev"}
+{"id": "1185", "claim": "The US health care system can save up to $750 million if 7% of patients waiting for kidney transplants participate in the optimized national kidney paired donation program.", "split": "dev"}
+{"id": "1187", "claim": "The YAP1 and TEAD complex tanslocates into the nucleus where it interacts with transcription factors and DNA-binding proteins that modulate target gene transcription.", "split": "dev"}
+{"id": "1191", "claim": "The amount of publicly available DNA data doubles every 10 years.", "split": "dev"}
+{"id": "1194", "claim": "The arm density of TatAd complexes is due to structural rearrangements within Class1 TatAd complexes such as the 'charge zipper mechanism'.", "split": "dev"}
+{"id": "1196", "claim": "The availability of safe places to study is effective at decreasing homelessness.", "split": "dev"}
+{"id": "1197", "claim": "The availability of safe places to study is not effective at decreasing homelessness.", "split": "dev"}
+{"id": "1199", "claim": "The benefits of colchicine were achieved with effective widespread use of secondary prevention strategies such as high-dose statins.", "split": "dev"}
+{"id": "1200", "claim": "The binding orientation of the ML-SA1 activator at hTRPML2 is different from the binding orientation of the ML-SA1 activator at hTRPML1.", "split": "dev"}
+{"id": "1202", "claim": "The center of the granuloma in an immune cell induces a pro-inflammatory immune response.", "split": "dev"}
+{"id": "1204", "claim": "The combination of H3K4me3 and H3K79me2 is found in quiescent hair follicle stem cells.", "split": "dev"}
+{"id": "1207", "claim": "The composition of myosin-II isoform switches from the polarizable B isoform to the more homogenous A isoform during hematopoietic differentiation.", "split": "dev"}
+{"id": "1213", "claim": "The deregulated and prolonged activation of monocytes has deleterious effects in inflammatory diseases.", "split": "dev"}
+{"id": "1216", "claim": "The extracellular domain of TMEM27 is cleaved in human beta cells.", "split": "dev"}
+{"id": "1221", "claim": "The genomic aberrations found in matasteses are very similar to those found in the primary tumor.", "split": "dev"}
+{"id": "1225", "claim": "The locus rs647161 is associated with colorectal carcinoma.", "split": "dev"}
+{"id": "1226", "claim": "The loss of the TET protein functions may have dire biological consequences, such as myeloid cancers.", "split": "dev"}
+{"id": "1232", "claim": "The minor G allele of FOXO3 is related to more severe symptoms of Crohn's Disease.", "split": "dev"}
+{"id": "1241", "claim": "The myocardial lineage develops from cardiac progenitors of mesodermal origin.", "split": "dev"}
+{"id": "1245", "claim": "The one-child policy has been successful in lowering population growth.", "split": "dev"}
+{"id": "1259", "claim": "The relationship between a breast cancer patient's capacity to metabolize tamoxifen and treatment outcome is dependent on the patient's genetic make-up.", "split": "dev"}
+{"id": "1262", "claim": "The repair of Cas9-induced double strand breaks in human DNA is error-prone.", "split": "dev"}
+{"id": "1266", "claim": "The risk of breast cancer among parous women increases with placental weight of pregnancies, and this association is strongest for premenopausal breast cancer.", "split": "dev"}
+{"id": "1270", "claim": "The risk of male prisoners harming themselves is ten times that of female prisoners.", "split": "dev"}
+{"id": "1271", "claim": "The severity of cardiac involvement in amyloidosis can be described by the degree of transmurality of late gadolinium enhancement in MRI.", "split": "dev"}
+{"id": "1272", "claim": "The single flash-evoked ERG b-wave is generated by activity of ON-bipolar cells.", "split": "dev"}
+{"id": "1273", "claim": "The sliding activity of kinesin-8 protein Kip3 promotes bipolar spindle assembly.", "split": "dev"}
+{"id": "1274", "claim": "The tip of the inner tube of the toxic type VI secretion system (T6SS) antibacterial effector in Escherichia coli (E. coli) carries toxic effector proteins.", "split": "dev"}
+{"id": "1278", "claim": "The treatment of cancer patients with co-IR blockade does not cause any adverse autoimmune events.", "split": "dev"}
+{"id": "1279", "claim": "The treatment of cancer patients with co-IR blockade precipitates adverse autoimmune events.", "split": "dev"}
+{"id": "1280", "claim": "The ureABIEFGH gene cluster encodes urease maturation proteins : UreD/UreH, UreE, UreF, and UreG.", "split": "dev"}
+{"id": "1281", "claim": "The ureABIEFGH gene cluster is induced by nickel (II) ion.", "split": "dev"}
+{"id": "1282", "claim": "Therapeutic use of the drug Dapsone to treat pyoderma gangrenous is based on anecdotal evidence.", "split": "dev"}
+{"id": "1290", "claim": "There is an inverse relationship between hip fractures and statin use.", "split": "dev"}
+{"id": "1292", "claim": "There is no association between HNF4A mutations and diabetes risks.", "split": "dev"}
+{"id": "1298", "claim": "Thigh-length graduated compression stockings (GCS) did not reduce deep vein thrombosis in patients admitted to hospital who are immobile because of acute stroke.", "split": "dev"}
+{"id": "1303", "claim": "Tirasemtiv has no effect on fast-twitch muscle.", "split": "dev"}
+{"id": "1316", "claim": "Transferred UCB T cells acquire a memory-like phenotype in recipients.", "split": "dev"}
+{"id": "1319", "claim": "Transplanted human glial cells can differentiate within the host animal.", "split": "dev"}
+{"id": "1320", "claim": "Transplanted human glial progenitor cells are incapable of forming a neural network with host animals' neurons.", "split": "dev"}
+{"id": "1332", "claim": "Tumor necrosis factor alpha (TNF-α) and interleukin-1 (IL-1) are pro-inflammatory cytokines that inhibit IL-6 and IL-10.", "split": "dev"}
+{"id": "1335", "claim": "UCB T cells maintain high TCR diversity after transplantation.", "split": "dev"}
+{"id": "1336", "claim": "UCB T cells reduce TCR diversity after transplantation.", "split": "dev"}
+{"id": "1337", "claim": "Ubiquitin ligase UBC13 generates a K63-linked polyubiquitin moiety at PCNA K164.", "split": "dev"}
+{"id": "1339", "claim": "Ultrasound guidance significantly raises the number of traumatic procedures when attempting needle insertion.", "split": "dev"}
+{"id": "1344", "claim": "Up-regulation of the p53 pathway and related molecular events casues cancer resistance and results in a significantly shortened lifespan marked by senescent cells and accelerated organismal aging.", "split": "dev"}
+{"id": "1352", "claim": "Upregulation of mosGCTL-1 is induced upon infection with West Nile virus.", "split": "dev"}
+{"id": "1359", "claim": "Varenicline monotherapy is more effective after 12 weeks of treatment compared to combination nicotine replacement therapies with varenicline or bupropion.", "split": "dev"}
+{"id": "1362", "claim": "Venules have a larger lumen diameter than arterioles.", "split": "dev"}
+{"id": "1363", "claim": "Venules have a thinner or absent smooth layer compared to arterioles.", "split": "dev"}
+{"id": "1368", "claim": "Vitamin D deficiency effects the term of delivery.", "split": "dev"}
+{"id": "1370", "claim": "Vitamin D deficiency is unrelated to birth weight.", "split": "dev"}
+{"id": "1379", "claim": "Women with a higher birth weight are more likely to develop breast cancer later in life.", "split": "dev"}
+{"id": "1382", "claim": "aPKCz causes tumour enhancement by affecting glutamine metabolism.", "split": "dev"}
+{"id": "1385", "claim": "cSMAC formation enhances weak ligand signalling.", "split": "dev"}
+{"id": "1389", "claim": "mTORC2 regulates intracellular cysteine levels through xCT inhibition.", "split": "dev"}
+{"id": "1395", "claim": "p16INK4A accumulation is  linked to an abnormal wound response caused by the microinvasive step of advanced Oral Potentially Malignant Lesions (OPMLs).", "split": "dev"}

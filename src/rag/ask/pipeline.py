@@ -307,7 +307,8 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
                        rerank_merge: str = "raw",
                        k: int | None = None,
                        lang_quota: int = 0,
-                       max_other_lang: int = 0) -> RetrievalOutcome:
+                       max_other_lang: int = 0,
+                       disable: Sequence[str] = ()) -> RetrievalOutcome:
     """`retrieve_ranked()` 的带元数据版本：多返回 `degraded`（缺能力 / 某路故障）。
 
     `query_en` 是翻译服务给出的英文 query，**必须转交给编排层**（N47）：
@@ -315,7 +316,12 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
     之前这个参数根本不存在，于是翻译出来的英文只用在提示词语言和响应回显上，
     英文索引实际一直在吃中文原句。
     """
-    result = retriever.retrieve(question, k=pool, query_en=query_en)
+    call_kwargs: dict[str, Any] = {"k": pool, "query_en": query_en}
+    if disable:
+        # 只在真要关某路时才传：空的 `disable` 属于「没这个参数」，传下去会让只认
+        # (k, query_en) 的假 retriever / 老适配层全部 TypeError。
+        call_kwargs["disable"] = tuple(disable)
+    result = retriever.retrieve(question, **call_kwargs)
     degraded = getattr(result, "degraded", None)
     routes = {name: list(route.ids)[:pool] for name, route in result.routes.items()}
     fused = rrf_fuse_routes(routes, rrf_k=RRF_K, top_k=pool)

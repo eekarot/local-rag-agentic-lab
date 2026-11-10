@@ -1,0 +1,138 @@
+基准数据集：SciFact（BEIR 版 scifact，claim → 摘要 检索）
+================================================================================
+
+## 这是什么
+
+**SciFact**（Wadden et al., EMNLP 2020, *Fact or Fiction: Verifying Scientific Claims*，
+AllenAI）。给一句**科学论断（claim）**，从论文摘要库里检索能支持或反驳它的摘要。
+
+BEIR（Thakur et al., NeurIPS 2021）把它收成一个零样本检索集，本目录采用的就是 BEIR 的口径：
+
+| 项 | 数值 | 说明 |
+|---|---|---|
+| 语料 | **5,183** 篇摘要 | 每篇 = title + abstract ↔ 一个 Markdown 文件 |
+| 查询 | **1,109** 条 claim | `claims_train` 809 + `claims_dev` 300 |
+| 可评测集 | **300** 题 / **339** 条判断 | = BEIR 的 `qrels/test.tsv`（dev 切分） |
+| 精度 | 摘要中位 1,331 字符 | 比自建的 k8s 集短，检索粒度≈文档级 |
+
+`claims_test.jsonl`（300 条）**只有 claim、没有任何标注**（官方留作 leaderboard），
+所以这里不把它当评测集 —— 用它会得到「全部 0 命中」的假数字。
+
+> 为什么走原始 release 而不是 BEIR 的 zip：BEIR 的 `scifact.zip` 托管站点本机实测
+> **157 B/s**（2.8 MB 要 5 小时），HuggingFace 不可达；原始 release 的 S3 能下完。
+> 两者口径已对账：`claims_dev` 的 `cited_doc_ids` 并集 = **339 条**，与 BEIR 公布一致。
+
+## 许可证与归属
+
+**这些数据不是本项目的作品。**
+
+    claims 与 evidence 标注  © SciFact authors（AllenAI）  以 CC BY 4.0 授权
+        https://creativecommons.org/licenses/by/4.0/   全文见本目录 LICENSE-CC-BY-4.0
+    corpus 摘要（abstract）  属 Semantic Scholar S2ORC，以 ODC-By 1.0 授权
+        https://opendatacommons.org/licenses/by/1-0/
+    来源：https://github.com/allenai/scifact （许可证原文：仓库根目录 LICENSE.md）
+
+因此本目录**只提交 claim 与 qrels**（CC BY 4.0，允许再分发、含商用，需署名）；
+**摘要正文不入库**（`docs/` 已 gitignore），由 `scripts/fetch_beir_scifact.py` 从上游取回，
+这样就不涉及摘要的再分发。ODC-By 1.0 的全文没有以纯文本形式提供，故只给地址。
+
+> 本目录的 CC BY 4.0 / ODC-By 1.0 与**仓库其余代码/文档的 Apache-2.0 是两套许可证**，
+> 各自管各自的文件。
+
+## 怎么用
+
+```bash
+# 1) 取回并归一（首次约 5–20 分钟，AWS 这条链路实测 12 KB/s；支持断点续传）
+python scripts/fetch_beir_scifact.py
+
+# 2) 校验：manifest 里的 sha256 / 文件数对不上会立刻报出来
+python scripts/fetch_beir_scifact.py --verify
+
+# 3) 建库（独立集合 + 独立 store，别碰正式库与 k8s 基准库）
+RAG_COLLECTION=scifact_v1 python scripts/ingest.py --dir datasets/scifact-v1/docs \
+    --state storage/bench-scifact/state.sqlite3 \
+    --document-db storage/bench-scifact/documents.sqlite3 \
+    --versions storage/bench-scifact/index_versions.sqlite3 \
+    --cache storage/bench-scifact/embeddings.sqlite3
+
+# 4) 评测（BEIR 口径：nDCG@10 / R@10 / MRR@10）
+RAG_COLLECTION=scifact_v1 python scripts/eval_beir.py \
+    --out docs/evidence/beir-scifact-v1-baseline.json
+```
+
+## 我们做了什么转换（**只做格式归一**）
+
+`sources.json` 里有逐项记录与 sha256。转换只有三条：
+
+1. 每篇摘要写成 Markdown：`title` → 一级标题，`abstract` 的句子**按原文顺序拼接**；
+2. `queries.jsonl`：`id` / `claim` / `split` 三列，claim 原文照抄；
+3. `qrels/*.tsv`：从 claim 的 `cited_doc_ids`（缺失时从 `evidence` 里捞）反推**文档级二元判断**，
+   落成 BEIR 的 TSV 形状。
+
+**没有删句、没有改词、没有摘要或改写。**
+
+### 一处刻意保留的不一致
+
+自建 k8s 题集有一条纪律「题目必须改写，不许照抄语料」。**本数据集例外**：
+claim 是官方查询，改写就和 BEIR 的公开数字（BM25 nDCG@10 ≈ 0.665）失去可比性。
+所以这里照抄，并且只在**对外可比**这个目的下使用它；定性归因（谁漏了、卡在哪一段）
+仍以自建 k8s 集为准。
+
+## 复现
+
+```bash
+python scripts/fetch_beir_scifact.py            # 下载 → 解压 → 归一 → 写 sources.json
+python scripts/fetch_beir_scifact.py --verify   # 任何产物被改过都会报错
+```
+
+数据本体不在 git 里：5,183 个小文件约 9 MB，且它是**只读基准**（内容变动 = v2）。
+
+================================================================================
+第一版基线（检索链与 k8s 基准同一套：三路 → RRF → cross-encoder 重排）
+================================================================================
+
+评测集 = BEIR 的 `qrels/test.tsv`（**300 题 / 339 条文档级判断**），`k=10`、`pool=40`、含重排。
+
+| 指标 | 值 |
+|---|---|
+| **nDCG@10**（BEIR 论文口径） | **0.6843** |
+| recall@10 | 0.7906 |
+| hit@10 | 0.8067 |
+| full@10 | 0.7733 |
+| MRR@10 | 0.6563 |
+| 延迟（已热身） | p50 1658.1 ms / p90 1767.2 ms |
+
+对账锚点：BEIR 论文里 **BM25 在这套数据上的 nDCG@10 ≈ 0.665**。
+也就是说这条链只比「纯词面 BM25」高约 **+0.0193** —— SciFact 是词面基线异常强的集合，
+后面的优化要盯住这一点（别把「已经超过 BM25 一点」当成方案站住了）。
+
+复现：
+
+```bash
+RAG_COLLECTION=scifact_v1 python scripts/ingest.py --dir datasets/scifact-v1/docs     --state storage/bench-scifact/state.sqlite3     --document-db storage/bench-scifact/documents.sqlite3     --versions storage/bench-scifact/index_versions.sqlite3     --cache storage/bench-scifact/embeddings.sqlite3
+RAG_COLLECTION=scifact_v1 python scripts/eval_beir.py     --out docs/evidence/beir-scifact-v1-baseline.json
+```
+
+结果落在 `docs/evidence/beir-scifact-v1-baseline.json`（汇总）与 `.rows.jsonl`（逐题）。
+
+消融（同一库、同一题集，只改开关）
+================================================================================
+
+| 配置 | nDCG@10 | R@10 | hit@10 | MRR@10 | p50 |
+|---|---|---|---|---|---|
+| 完整（三路 + RRF + 重排） | **0.6843** | 0.7906 | 0.8067 | 0.6563 | 1658 ms |
+| 关重排 | 0.6720 | 0.7993 | 0.8167 | 0.6404 | **69 ms** |
+| 只 dense（关 lexical_en） | 0.6843 | 0.7906 | 0.8067 | 0.6563 | 1526 ms |
+| 只 BM25（关两路 dense） | 0.6779 | 0.7909 | 0.8100 | 0.6488 | 1466 ms |
+
+三条结论：
+
+1. **BM25 路在这套数据上对 top-10 零贡献** —— 关掉 `lexical_en` 后 300/300 题的检索列表
+   与完整配置**逐位相同**（作为对照，关两路 dense 会让 295/300 题变化，说明开关确实生效）。
+   原因：一篇摘要基本就是一个父块，词面路与稠密路给出的顺序高度重合。
+2. **重排只赚 +0.0123 nDCG@10，却贵 24 倍**（69 ms → 1658 ms）；而且它提升排序
+   （nDCG/MRR）却略降覆盖（R@10 0.7993 → 0.7906）。
+3. 所以在这套数据上，「三路融合」的复杂度没有换来相应收益 —— 优化的第一步应该是
+   **先问增益从哪来**，而不是继续加组件。
+
+逐项证据见 `docs/evidence/beir-scifact-v1-ablation.json`。

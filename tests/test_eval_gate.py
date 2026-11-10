@@ -187,6 +187,22 @@ class CliContractTest(unittest.TestCase):
         self.assertIsNone(args.out, "对比时默认不写输出，免得把基线覆盖掉")
 
 
+class BaselineCoversFingerprintTest(unittest.TestCase):
+    """新增口径键时必须同步更新基线，否则默认路径也会被判 not_comparable。"""
+
+    def test_baseline_json_has_every_comparability_key(self):
+        import json
+        from pathlib import Path
+
+        from scripts.eval_bench import COMPARABILITY_KEYS
+
+        root = Path(__file__).resolve().parents[1]
+        baseline = json.loads((root / "docs" / "baseline-k8s-v1.json").read_text(encoding="utf-8"))
+        missing = [key for key in COMPARABILITY_KEYS if key not in baseline]
+        self.assertEqual(missing, [],
+                         f"基线缺口径键 {missing}：补进 docs/baseline-k8s-v1.json 后再跑门禁")
+
+
 if __name__ == "__main__":
     unittest.main()
 

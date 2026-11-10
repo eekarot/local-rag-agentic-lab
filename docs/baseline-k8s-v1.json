@@ -8,6 +8,7 @@
   "rerank_query_mode": "question",
   "lang_quota": 0,
   "rerank_merge": "raw",
+  "max_other_lang": 0,
   "translate": {
     "total": 81,
     "ok": 0,

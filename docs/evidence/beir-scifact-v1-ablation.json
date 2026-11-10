@@ -1,0 +1,87 @@
+{
+  "note": "SciFact（BEIR scifact dev）上的消融：同一题集 / 同一库 / 同一条链，只改开关",
+  "reference": {
+    "bm25_ndcg10_beir_paper": 0.665,
+    "source": "BEIR（Thakur et al., NeurIPS 2021）论文里的 BM25 基线"
+  },
+  "summary": {
+    "完整（三路+RRF+重排）": {
+      "overall": {
+        "ndcg@10": 0.6843,
+        "recall@10": 0.7906,
+        "hit@10": 0.8067,
+        "full@10": 0.7733,
+        "mrr@10": 0.6563
+      },
+      "latency_ms": {
+        "p50": 1658.1,
+        "p90": 1767.2,
+        "warmup": true
+      },
+      "disable": null,
+      "rerank": true,
+      "file": "beir-scifact-v1-baseline.json"
+    },
+    "关重排": {
+      "overall": {
+        "ndcg@10": 0.672,
+        "recall@10": 0.7993,
+        "hit@10": 0.8167,
+        "full@10": 0.7767,
+        "mrr@10": 0.6404
+      },
+      "latency_ms": {
+        "p50": 69.0,
+        "p90": 91.1,
+        "warmup": true
+      },
+      "disable": [],
+      "rerank": false,
+      "file": "beir-scifact-v1-norerank.json"
+    },
+    "只 dense（关 lexical）": {
+      "overall": {
+        "ndcg@10": 0.6843,
+        "recall@10": 0.7906,
+        "hit@10": 0.8067,
+        "full@10": 0.7733,
+        "mrr@10": 0.6563
+      },
+      "latency_ms": {
+        "p50": 1526.1,
+        "p90": 1625.0,
+        "warmup": true
+      },
+      "disable": [
+        "lexical_en"
+      ],
+      "rerank": true,
+      "file": "beir-scifact-v1-denseonly.json"
+    },
+    "只 BM25（关两路 dense）": {
+      "overall": {
+        "ndcg@10": 0.6779,
+        "recall@10": 0.7909,
+        "hit@10": 0.81,
+        "full@10": 0.7667,
+        "mrr@10": 0.6488
+      },
+      "latency_ms": {
+        "p50": 1465.6,
+        "p90": 1584.3,
+        "warmup": true
+      },
+      "disable": [
+        "dense_zh",
+        "dense_en"
+      ],
+      "rerank": true,
+      "file": "beir-scifact-v1-bm25only.json"
+    }
+  },
+  "findings": {
+    "lexical_route_contributes_nothing": "关掉 lexical_en 后逐题检索列表 300/300 题完全相同 —— 在这套数据上 BM25 路对 top-10 零贡献",
+    "rerank_gain": "重排只带来 nDCG@10 +0.0123（0.6720→0.6843），延迟从 69 ms 涨到 1658 ms（24×）",
+    "dense_is_the_whole_value": "只 dense 与完整配置逐位相同；只 BM25 + 重排是 0.6779"
+  }
+}

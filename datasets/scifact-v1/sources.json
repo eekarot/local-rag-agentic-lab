@@ -1,0 +1,46 @@
+{
+  "dataset": "scifact-v1",
+  "what": "SciFact（BEIR 版 scifact）的 claim→摘要检索基准",
+  "upstream": {
+    "project": "SciFact（Wadden et al., EMNLP 2020）",
+    "repo": "https://github.com/allenai/scifact",
+    "release_url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz"
+  },
+  "license": {
+    "claims_and_evidence": "CC BY 4.0",
+    "corpus_abstracts": "ODC-By 1.0（来自 S2ORC）",
+    "source": "https://github.com/allenai/scifact/blob/master/LICENSE.md"
+  },
+  "counts": {
+    "corpus_docs": 5183,
+    "queries": 1109,
+    "test_queries": 300,
+    "test_judgments": 339,
+    "train_queries": 809
+  },
+  "splits": {
+    "evaluated": "dev（= BEIR 的 qrels/test.tsv）",
+    "train": "claims_train",
+    "note": "claims_test.jsonl 无标注（官方留作 leaderboard），不参与评测；可评测的是 dev"
+  },
+  "transform": "只做格式归一：每篇摘要写成 Markdown（标题→一级标题，摘要句子按原文拼接），不删句、不改词、不做任何摘要或改写；qrels 由 cited_doc_ids 反推为 doc 级二元判断",
+  "files": {
+    "queries.jsonl": {
+      "sha256": "e4010d19d60769a22cdeaebe96014b3775eef9e1f876119224ca646bad9eea8f",
+      "bytes": 149444
+    },
+    "qrels/test.tsv": {
+      "sha256": "59c1b6d55b1ab509c13ea87d119f1a072d682f83afd3ee8b0d5c8ce6e5021d94",
+      "bytes": 5389
+    },
+    "qrels/train.tsv": {
+      "sha256": "e119d4d948be82bedbdbe9c491b8dc885fe421759e02cb8673d1140dc17cdba4",
+      "bytes": 14502
+    },
+    "docs/": {
+      "count": 5183,
+      "bytes": 7814621,
+      "bytes_median": 1433
+    }
+  }
+}
