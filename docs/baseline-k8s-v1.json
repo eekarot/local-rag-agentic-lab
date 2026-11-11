@@ -10,61 +10,61 @@
   "rerank_merge": "raw",
   "max_other_lang": 0,
   "translate": {
-    "total": 81,
-    "ok": 0,
+    "total": 102,
+    "ok": 20,
     "cached": 81,
     "skipped": 0,
-    "passthrough_terms": 0,
+    "passthrough_terms": 1,
     "passthrough_error": 0,
-    "success_rate": 1.0,
+    "success_rate": 0.9902,
     "cache": {
-      "entries": 287,
+      "entries": 307,
       "hits": 81,
-      "misses": 0,
-      "hit_rate": 1.0,
+      "misses": 21,
+      "hit_rate": 0.7941,
       "model": "qwen3.5:9b",
       "version": "v1",
-      "checked_at": "2026-11-09T14:21:19"
+      "checked_at": "2026-11-11T16:31:09"
     }
   },
   "overall": {
-    "n": 144,
-    "positives": 139,
-    "hit@10": 0.8345,
-    "full@10": 0.8273,
-    "recall@10": 0.8297,
-    "mrr": 0.5648
+    "n": 180,
+    "positives": 175,
+    "hit@10": 0.8571,
+    "full@10": 0.8514,
+    "recall@10": 0.8533,
+    "mrr": 0.5316
   },
   "by_evidence_lang": {
     "en": {
-      "n": 76,
-      "positives": 76,
-      "hit@10": 0.8947,
-      "full@10": 0.8816,
-      "recall@10": 0.886,
-      "mrr": 0.574
+      "n": 97,
+      "positives": 97,
+      "hit@10": 0.9175,
+      "full@10": 0.9072,
+      "recall@10": 0.9107,
+      "mrr": 0.5419
     },
     "negative": {
       "n": 5,
       "positives": 0
     },
     "zh-cn": {
-      "n": 63,
-      "positives": 63,
-      "hit@10": 0.7619,
-      "full@10": 0.7619,
-      "recall@10": 0.7619,
-      "mrr": 0.5538
+      "n": 78,
+      "positives": 78,
+      "hit@10": 0.7821,
+      "full@10": 0.7821,
+      "recall@10": 0.7821,
+      "mrr": 0.5187
     }
   },
   "by_type": {
     "cross_lingual": {
-      "n": 31,
-      "positives": 31,
-      "hit@10": 0.6774,
-      "full@10": 0.6774,
-      "recall@10": 0.6774,
-      "mrr": 0.2423
+      "n": 67,
+      "positives": 67,
+      "hit@10": 0.8209,
+      "full@10": 0.8209,
+      "recall@10": 0.8209,
+      "mrr": 0.3287
     },
     "multi_hop": {
       "n": 11,
@@ -100,9 +100,9 @@
     "note": "负样本的正确行为是弃答；它们没有 gold，不进 recall 分母"
   },
   "latency_ms": {
-    "p50": 1564.7,
-    "p90": 1687.9,
+    "p50": 1668.2,
+    "p90": 1935.8,
     "warmup": true
   },
-  "questions_sha256": "71b6b84c7418fc9940374522cdf41b29e911af0d1909e7bfd11216fd1f295f42"
+  "questions_sha256": "79cb096bb6d1c93cae3b5e1f1bc1717ce8df1949a8acd0c9860f42e1a572a68b"
 }

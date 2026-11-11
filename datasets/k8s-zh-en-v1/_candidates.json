@@ -1,542 +1,438 @@
 {
   "dataset": "k8s-zh-en-v1",
-  "count": 168,
+  "count": 102,
   "candidates": [
     {
       "key": "c0001",
-      "text": "This section introduces _dynamic resource allocation (DRA)_ in Kubernetes.",
-      "chunk_id": "chk_3713be45619cad10c258e552002279f5",
+      "text": "拓扑管理器为组件提供了一个称为 **建议提供者（Hint Provider）** 的接口，以发送和接收拓扑信息。",
+      "chunk_id": "chk_230891d63c40afd409718376c9d74a12",
       "chunk_ids": [
-        "chk_3713be45619cad10c258e552002279f5"
+        "chk_230891d63c40afd409718376c9d74a12"
       ],
-      "document_id": "doc_eacff44e1215f8c2d2528b3febca1826",
-      "source_uri": "en/concepts/resource-management/dynamic-resource-allocation/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
+      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
+      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
+      "lang": "zh-cn",
+      "title": "topology-manager",
+      "section_path": "[\"拓扑管理器如何工作 {#how-topology-manager-works}\"]"
     },
     {
       "key": "c0002",
-      "text": "For example, you can create a cost-optimized\n  device class for general-purpose workloads, and a high-performance device\n  class for critical jobs.",
-      "chunk_id": "chk_ba4e8079bf4b5ef16e4f22c5498acbb2",
+      "text": "拓扑管理器从**建议提供者**接收拓扑信息，作为表示可用的 NUMA 节点和首选分配指示的位掩码。",
+      "chunk_id": "chk_230891d63c40afd409718376c9d74a12",
       "chunk_ids": [
-        "chk_ba4e8079bf4b5ef16e4f22c5498acbb2"
+        "chk_230891d63c40afd409718376c9d74a12"
       ],
-      "document_id": "doc_eacff44e1215f8c2d2528b3febca1826",
-      "source_uri": "en/concepts/resource-management/dynamic-resource-allocation/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"Benefits of DRA {#dra-benefits}\"]"
+      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
+      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
+      "lang": "zh-cn",
+      "title": "topology-manager",
+      "section_path": "[\"拓扑管理器如何工作 {#how-topology-manager-works}\"]"
     },
     {
       "key": "c0003",
-      "text": "Instead, the Pod references a\n  resource claim, and the device configuration in that claim applies to the Pod.",
-      "chunk_id": "chk_ba4e8079bf4b5ef16e4f22c5498acbb2",
+      "text": "拓扑管理器策略对所提供的建议执行一组操作，并根据策略对提示进行约减以得到最优解。",
+      "chunk_id": "chk_230891d63c40afd409718376c9d74a12",
       "chunk_ids": [
-        "chk_ba4e8079bf4b5ef16e4f22c5498acbb2"
+        "chk_230891d63c40afd409718376c9d74a12"
       ],
-      "document_id": "doc_eacff44e1215f8c2d2528b3febca1826",
-      "source_uri": "en/concepts/resource-management/dynamic-resource-allocation/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"Benefits of DRA {#dra-benefits}\"]"
+      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
+      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
+      "lang": "zh-cn",
+      "title": "topology-manager",
+      "section_path": "[\"拓扑管理器如何工作 {#how-topology-manager-works}\"]"
     },
     {
       "key": "c0004",
-      "text": "The Kubernetes API server is the main point of entry to a cluster for external parties\n(users and services) interacting with it.",
-      "chunk_id": "chk_c867082b2ab0371decbeec3ae2719dc3",
+      "text": "越来越多的系统利用 CPU 和硬件加速器的组合来支持要求低延迟的任务和高吞吐量的并行计算。",
+      "chunk_id": "chk_fb06bc7f6553fccb83f70088647f9217",
       "chunk_ids": [
-        "chk_c867082b2ab0371decbeec3ae2719dc3"
+        "chk_fb06bc7f6553fccb83f70088647f9217"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
-      "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"api-server-bypass-risks\"]"
+      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
+      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
+      "lang": "zh-cn",
+      "title": "topology-manager",
+      "section_path": "[\"topology-manager\"]"
     },
     {
       "key": "c0005",
-      "text": "As part of this role, the API server has several key built-in security controls, such as\naudit logging and .",
-      "chunk_id": "chk_c867082b2ab0371decbeec3ae2719dc3",
+      "text": "An increasing number of systems leverage a combination of CPUs and hardware accelerators to\nsupport latency-critical execution and high-throughput parallel computation.",
+      "chunk_id": "chk_e56eac1038ddd6674fb71b3733912da7",
       "chunk_ids": [
-        "chk_c867082b2ab0371decbeec3ae2719dc3"
+        "chk_e56eac1038ddd6674fb71b3733912da7"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"api-server-bypass-risks\"]"
+      "title": "topology-manager",
+      "section_path": "[\"topology-manager\"]"
     },
     {
       "key": "c0006",
-      "text": "However, there are ways to modify the configuration\nor content of the cluster that bypass these controls.",
-      "chunk_id": "chk_c867082b2ab0371decbeec3ae2719dc3",
+      "text": "These include\nworkloads in fields such as telecommunications, scientific computing, machine learning, financial\nservices and data analytics.",
+      "chunk_id": "chk_e56eac1038ddd6674fb71b3733912da7",
       "chunk_ids": [
-        "chk_c867082b2ab0371decbeec3ae2719dc3"
+        "chk_e56eac1038ddd6674fb71b3733912da7"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"api-server-bypass-risks\"]"
+      "title": "topology-manager",
+      "section_path": "[\"topology-manager\"]"
     },
     {
       "key": "c0007",
-      "text": "This page describes the ways in which the security controls built into the\nKubernetes API server can be bypassed, so that cluster operators\nand security architects can ensure that these bypasses are appropriately restricted.",
-      "chunk_id": "chk_c867082b2ab0371decbeec3ae2719dc3",
+      "text": "Such hybrid systems comprise a high performance environment.",
+      "chunk_id": "chk_e56eac1038ddd6674fb71b3733912da7",
       "chunk_ids": [
-        "chk_c867082b2ab0371decbeec3ae2719dc3"
+        "chk_e56eac1038ddd6674fb71b3733912da7"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"api-server-bypass-risks\"]"
+      "title": "topology-manager",
+      "section_path": "[\"topology-manager\"]"
     },
     {
       "key": "c0008",
-      "text": "However, these Pods can\ntake other security sensitive actions, such as using `hostPath` mounts from the underlying\nnode.",
-      "chunk_id": "chk_3cb2fc5c991630ec9d299d4cd9cbde3b",
+      "text": "In order to extract the best performance, optimizations related to CPU isolation, memory and\ndevice locality are required.",
+      "chunk_id": "chk_e56eac1038ddd6674fb71b3733912da7",
       "chunk_ids": [
-        "chk_3cb2fc5c991630ec9d299d4cd9cbde3b"
+        "chk_e56eac1038ddd6674fb71b3733912da7"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"Static Pods {#static-pods}\"]"
+      "title": "topology-manager",
+      "section_path": "[\"topology-manager\"]"
     },
     {
       "key": "c0009",
-      "text": "By default, the kubelet creates a \nso that the static Pods are visible in the Kubernetes API.",
-      "chunk_id": "chk_3cb2fc5c991630ec9d299d4cd9cbde3b",
+      "text": "However, in Kubernetes, these optimizations are handled by a\ndisjoint set of components.",
+      "chunk_id": "chk_e56eac1038ddd6674fb71b3733912da7",
       "chunk_ids": [
-        "chk_3cb2fc5c991630ec9d299d4cd9cbde3b"
+        "chk_e56eac1038ddd6674fb71b3733912da7"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"Static Pods {#static-pods}\"]"
+      "title": "topology-manager",
+      "section_path": "[\"topology-manager\"]"
     },
     {
       "key": "c0010",
-      "text": "However, if the attacker uses an invalid\nnamespace name when creating the Pod, it will not be visible in the Kubernetes API and can only\nbe discovered by tooling that has access to the affected host(s).",
-      "chunk_id": "chk_3cb2fc5c991630ec9d299d4cd9cbde3b",
+      "text": "_Topology Manager_ is a kubelet component that aims to coordinate the set of components that are\nresponsible for these optimizations.",
+      "chunk_id": "chk_e56eac1038ddd6674fb71b3733912da7",
       "chunk_ids": [
-        "chk_3cb2fc5c991630ec9d299d4cd9cbde3b"
+        "chk_e56eac1038ddd6674fb71b3733912da7"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"Static Pods {#static-pods}\"]"
+      "title": "topology-manager",
+      "section_path": "[\"topology-manager\"]"
     },
     {
       "key": "c0011",
-      "text": "If a static Pod fails admission control, the kubelet won't register the Pod with the\nAPI server.",
-      "chunk_id": "chk_3cb2fc5c991630ec9d299d4cd9cbde3b",
+      "text": "The Topology Manager has a set of node level policies which are\nexplained below.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_3cb2fc5c991630ec9d299d4cd9cbde3b"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"Static Pods {#static-pods}\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0012",
-      "text": "However, the Pod still runs on the node.",
-      "chunk_id": "chk_3cb2fc5c991630ec9d299d4cd9cbde3b",
+      "text": "The Topology Manager receives topology information from the *Hint Providers* as a bitmask denoting\nNUMA Nodes available and a preferred allocation indication.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_3cb2fc5c991630ec9d299d4cd9cbde3b"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_b6f4a71215b1012a870a34814379d137",
-      "source_uri": "en/concepts/security/api-server-bypass-risks.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "api-server-bypass-risks",
-      "section_path": "[\"Static Pods {#static-pods}\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0013",
-      "text": "This policy is suited for groups that do not require simultaneous startup but logically\nbelong together, or to open the way for group-level constraints that do not imply\n\"all-or-nothing\" placement.",
-      "chunk_id": "chk_9cc8e90303d4a76dfe16c59e998035d1",
+      "text": "The Topology Manager policies perform\na set of operations on the hints provided and converge on the hint determined by the policy to\ngive the optimal result.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_9cc8e90303d4a76dfe16c59e998035d1"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_37db971a8a4f2d3b0e9b405ba242e138",
-      "source_uri": "en/concepts/workloads/workload-api/policies.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "policies",
-      "section_path": "[\"Policy types\", \"Basic policy\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0014",
-      "text": "Every [PodGroup](/docs/concepts/workloads/podgroup-api/) must declare a scheduling policy\nin its `spec.schedulingPolicy` field.",
-      "chunk_id": "chk_e47a19790320b1f7930b65c28a1babe1",
+      "text": "If an undesirable hint is stored, the preferred field for the hint will be\nset to false.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_e47a19790320b1f7930b65c28a1babe1"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_37db971a8a4f2d3b0e9b405ba242e138",
-      "source_uri": "en/concepts/workloads/workload-api/policies.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "policies",
-      "section_path": "[\"policies\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0015",
-      "text": "This policy dictates how the scheduler treats the\ncollection of Pods in the group.",
-      "chunk_id": "chk_e47a19790320b1f7930b65c28a1babe1",
+      "text": "In the current policies preferred is the narrowest preferred mask.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_e47a19790320b1f7930b65c28a1babe1"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_37db971a8a4f2d3b0e9b405ba242e138",
-      "source_uri": "en/concepts/workloads/workload-api/policies.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "policies",
-      "section_path": "[\"policies\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0016",
-      "text": "Kubernetes offers a DNS cluster addon, which most of the supported environments enable by default.",
-      "chunk_id": "chk_f3959d5de9831c1a11f9a498dc52697b",
+      "text": "The selected hint is stored as part of the Topology Manager.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_f3959d5de9831c1a11f9a498dc52697b"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_91385c4fae722b04083d7d8bc7145af7",
-      "source_uri": "en/tasks/access-application-cluster/configure-dns-cluster.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "configure-dns-cluster",
-      "section_path": "[\"configure-dns-cluster\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0017",
-      "text": "In Kubernetes version 1.11 and later, CoreDNS is recommended and is installed by default with kubeadm.",
-      "chunk_id": "chk_f3959d5de9831c1a11f9a498dc52697b",
+      "text": "Depending on the policy configured,\nthe pod can be accepted or rejected from the node based on the selected hint.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_f3959d5de9831c1a11f9a498dc52697b"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_91385c4fae722b04083d7d8bc7145af7",
-      "source_uri": "en/tasks/access-application-cluster/configure-dns-cluster.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "configure-dns-cluster",
-      "section_path": "[\"configure-dns-cluster\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0018",
-      "text": "For more information on how to configure CoreDNS for a Kubernetes cluster, see the [Customizing DNS Service](/docs/tasks/administer-cluster/dns-custom-nameservers/).",
-      "chunk_id": "chk_f3959d5de9831c1a11f9a498dc52697b",
+      "text": "The hint is then stored in the Topology Manager for use by the *Hint Providers* when making the\nresource allocation decisions.",
+      "chunk_id": "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
       "chunk_ids": [
-        "chk_f3959d5de9831c1a11f9a498dc52697b"
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa"
       ],
-      "document_id": "doc_91385c4fae722b04083d7d8bc7145af7",
-      "source_uri": "en/tasks/access-application-cluster/configure-dns-cluster.md",
+      "document_id": "doc_5a87225f145d4bd5937f7aa6cf78e25f",
+      "source_uri": "en/tasks/administer-cluster/topology-manager.md",
       "lang": "en",
-      "title": "configure-dns-cluster",
-      "section_path": "[\"configure-dns-cluster\"]"
+      "title": "topology-manager",
+      "section_path": "[\"How topology manager works\"]"
     },
     {
       "key": "c0019",
-      "text": "This page shows cluster administrators how to harden authorization for\nDynamic Resource Allocation (DRA), with a focus on least-privilege access for\n`ResourceClaim` status updates.",
-      "chunk_id": "chk_a87b33c6253dfc308e2a81ec67b9b1bc",
+      "text": "在启动后，用户和组件都不应以 `system:masters` 身份向 Kubernetes API 进行身份验证。",
+      "chunk_id": "chk_72146ab7860b84cf0c6881dc511e88d4",
       "chunk_ids": [
-        "chk_a87b33c6253dfc308e2a81ec67b9b1bc"
+        "chk_72146ab7860b84cf0c6881dc511e88d4"
       ],
-      "document_id": "doc_9487d4d0b4bf4734c1d49078afbe1524",
-      "source_uri": "en/tasks/administer-cluster/hardening-dra.md",
-      "lang": "en",
-      "title": "hardening-dra",
-      "section_path": "[\"hardening-dra\"]"
+      "document_id": "doc_be24801b07c5f7f6f1a4c16babfcf04d",
+      "source_uri": "zh-cn/concepts/security/security-checklist.md",
+      "lang": "zh-cn",
+      "title": "security-checklist",
+      "section_path": "[\"身份验证和鉴权 {#authentication-authorization}\"]"
     },
     {
       "key": "c0020",
-      "text": "This document describes how to run Kubernetes Node components such as kubelet, CRI, OCI, and CNI\nwithout root privileges, by using a .",
-      "chunk_id": "chk_028f7c30976262c959b6a8c25f8ddb7c",
+      "text": "同样，应避免将任何 kube-controller-manager 以 `system:masters` 运行。",
+      "chunk_id": "chk_72146ab7860b84cf0c6881dc511e88d4",
       "chunk_ids": [
-        "chk_028f7c30976262c959b6a8c25f8ddb7c"
+        "chk_72146ab7860b84cf0c6881dc511e88d4"
       ],
-      "document_id": "doc_3c2f3ea176e4ffba8158a87fef02ea0c",
-      "source_uri": "en/tasks/administer-cluster/kubelet-in-userns.md",
-      "lang": "en",
-      "title": "kubelet-in-userns",
-      "section_path": "[\"kubelet-in-userns\"]"
+      "document_id": "doc_be24801b07c5f7f6f1a4c16babfcf04d",
+      "source_uri": "zh-cn/concepts/security/security-checklist.md",
+      "lang": "zh-cn",
+      "title": "security-checklist",
+      "section_path": "[\"身份验证和鉴权 {#authentication-authorization}\"]"
     },
     {
       "key": "c0021",
-      "text": "This technique is also known as _rootless mode_.",
-      "chunk_id": "chk_028f7c30976262c959b6a8c25f8ddb7c",
+      "text": "事实上，`system:masters` 应该只用作一个例外机制，而不是管理员用户。",
+      "chunk_id": "chk_72146ab7860b84cf0c6881dc511e88d4",
       "chunk_ids": [
-        "chk_028f7c30976262c959b6a8c25f8ddb7c"
+        "chk_72146ab7860b84cf0c6881dc511e88d4"
       ],
-      "document_id": "doc_3c2f3ea176e4ffba8158a87fef02ea0c",
-      "source_uri": "en/tasks/administer-cluster/kubelet-in-userns.md",
-      "lang": "en",
-      "title": "kubelet-in-userns",
-      "section_path": "[\"kubelet-in-userns\"]"
+      "document_id": "doc_be24801b07c5f7f6f1a4c16babfcf04d",
+      "source_uri": "zh-cn/concepts/security/security-checklist.md",
+      "lang": "zh-cn",
+      "title": "security-checklist",
+      "section_path": "[\"身份验证和鉴权 {#authentication-authorization}\"]"
     },
     {
       "key": "c0022",
-      "text": "This document describes how to run Kubernetes Node components (and hence pods) as a non-root user.",
-      "chunk_id": "chk_028f7c30976262c959b6a8c25f8ddb7c",
+      "text": "实现良好的安全态势需要持续的关注和改进，实现安全上有备无患的目标道路漫长，清单可作为征程上的第一步。",
+      "chunk_id": "chk_917248f2d1f279de9cd3c839db0a471b",
       "chunk_ids": [
-        "chk_028f7c30976262c959b6a8c25f8ddb7c"
+        "chk_917248f2d1f279de9cd3c839db0a471b"
       ],
-      "document_id": "doc_3c2f3ea176e4ffba8158a87fef02ea0c",
-      "source_uri": "en/tasks/administer-cluster/kubelet-in-userns.md",
-      "lang": "en",
-      "title": "kubelet-in-userns",
-      "section_path": "[\"kubelet-in-userns\"]"
+      "document_id": "doc_be24801b07c5f7f6f1a4c16babfcf04d",
+      "source_uri": "zh-cn/concepts/security/security-checklist.md",
+      "lang": "zh-cn",
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0023",
-      "text": "If you are just looking for how to run a pod as a non-root user, see [SecurityContext](/docs/tasks/configure-pod-container/security-context/).",
-      "chunk_id": "chk_028f7c30976262c959b6a8c25f8ddb7c",
+      "text": "由于 Kubernetes 的安全性并不是“一刀切”的，因此针对每一类检查清单项目都应该做价值评估。",
+      "chunk_id": "chk_917248f2d1f279de9cd3c839db0a471b",
       "chunk_ids": [
-        "chk_028f7c30976262c959b6a8c25f8ddb7c"
+        "chk_917248f2d1f279de9cd3c839db0a471b"
       ],
-      "document_id": "doc_3c2f3ea176e4ffba8158a87fef02ea0c",
-      "source_uri": "en/tasks/administer-cluster/kubelet-in-userns.md",
-      "lang": "en",
-      "title": "kubelet-in-userns",
-      "section_path": "[\"kubelet-in-userns\"]"
+      "document_id": "doc_be24801b07c5f7f6f1a4c16babfcf04d",
+      "source_uri": "zh-cn/concepts/security/security-checklist.md",
+      "lang": "zh-cn",
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0024",
-      "text": "This list will be extended in future Kubernetes versions when the kubelet\nsupports better isolation mechanisms.",
-      "chunk_id": "chk_1973e59836a5bad59ffb738c7ae349d2",
+      "text": "对 [kubelet](/zh-cn/docs/reference/command-line-tools-reference/kubelet/) API 的访问应该受到限制，\n并且不公开，当没有使用 `--config` 参数来设置配置文件时，默认的身份验证和鉴权设置是过于宽松的。",
+      "chunk_id": "chk_37f150a42d441a1909b8a0602557007d",
       "chunk_ids": [
-        "chk_1973e59836a5bad59ffb738c7ae349d2"
+        "chk_37f150a42d441a1909b8a0602557007d"
       ],
-      "document_id": "doc_e1f95628c0b8aafb53564adb8295a3d2",
-      "source_uri": "en/tasks/administer-cluster/sysctl-cluster.md",
-      "lang": "en",
-      "title": "sysctl-cluster",
-      "section_path": "[\"Safe and Unsafe Sysctls\"]"
+      "document_id": "doc_be24801b07c5f7f6f1a4c16babfcf04d",
+      "source_uri": "zh-cn/concepts/security/security-checklist.md",
+      "lang": "zh-cn",
+      "title": "security-checklist",
+      "section_path": "[\"网络安全 {#network-security}\"]"
     },
     {
       "key": "c0025",
-      "text": "This document describes how to configure and use kernel parameters within a\nKubernetes cluster using the \ninterface.",
-      "chunk_id": "chk_47206a66ea0bafd19b6d9cba1b871b2d",
+      "text": "如果使用云服务供应商托管的 Kubernetes，在没有明确需要的情况下，\n也应该限制或阻止从 Pod 对云元数据 API `169.254.169.254` 的访问，因为这可能泄露信息。",
+      "chunk_id": "chk_37f150a42d441a1909b8a0602557007d",
       "chunk_ids": [
-        "chk_47206a66ea0bafd19b6d9cba1b871b2d"
+        "chk_37f150a42d441a1909b8a0602557007d"
       ],
-      "document_id": "doc_e1f95628c0b8aafb53564adb8295a3d2",
-      "source_uri": "en/tasks/administer-cluster/sysctl-cluster.md",
-      "lang": "en",
-      "title": "sysctl-cluster",
-      "section_path": "[\"sysctl-cluster\"]"
+      "document_id": "doc_be24801b07c5f7f6f1a4c16babfcf04d",
+      "source_uri": "zh-cn/concepts/security/security-checklist.md",
+      "lang": "zh-cn",
+      "title": "security-checklist",
+      "section_path": "[\"网络安全 {#network-security}\"]"
     },
     {
       "key": "c0026",
-      "text": "Starting from Kubernetes version 1.23, the kubelet supports the use of either `/` or `.`\nas separators for sysctl names.",
-      "chunk_id": "chk_47206a66ea0bafd19b6d9cba1b871b2d",
+      "text": "In fact,\n`system:masters` should only be used as a break-glass mechanism, as opposed to\nan admin user.",
+      "chunk_id": "chk_ed45ce414ac4cb9fc56bf3c6e393f84b",
       "chunk_ids": [
-        "chk_47206a66ea0bafd19b6d9cba1b871b2d"
+        "chk_ed45ce414ac4cb9fc56bf3c6e393f84b"
       ],
-      "document_id": "doc_e1f95628c0b8aafb53564adb8295a3d2",
-      "source_uri": "en/tasks/administer-cluster/sysctl-cluster.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "sysctl-cluster",
-      "section_path": "[\"sysctl-cluster\"]"
+      "title": "security-checklist",
+      "section_path": "[\"Authentication & Authorization\"]"
     },
     {
       "key": "c0027",
-      "text": "Starting from Kubernetes version 1.25, setting Sysctls for a Pod supports setting sysctls with slashes.",
-      "chunk_id": "chk_47206a66ea0bafd19b6d9cba1b871b2d",
+      "text": "This checklist aims at providing a basic list of guidance with links to more\ncomprehensive documentation on each topic.",
+      "chunk_id": "chk_2526c51b1cd2ff02b755051cb29aae25",
       "chunk_ids": [
-        "chk_47206a66ea0bafd19b6d9cba1b871b2d"
+        "chk_2526c51b1cd2ff02b755051cb29aae25"
       ],
-      "document_id": "doc_e1f95628c0b8aafb53564adb8295a3d2",
-      "source_uri": "en/tasks/administer-cluster/sysctl-cluster.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "sysctl-cluster",
-      "section_path": "[\"sysctl-cluster\"]"
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0028",
-      "text": "For example, you can represent the same sysctl name as `kernel.shm_rmid_forced` using a\nperiod as the separator, or as `kernel/shm_rmid_forced` using a slash as a separator.",
-      "chunk_id": "chk_47206a66ea0bafd19b6d9cba1b871b2d",
+      "text": "It does not claim to be exhaustive\nand is meant to evolve.",
+      "chunk_id": "chk_2526c51b1cd2ff02b755051cb29aae25",
       "chunk_ids": [
-        "chk_47206a66ea0bafd19b6d9cba1b871b2d"
+        "chk_2526c51b1cd2ff02b755051cb29aae25"
       ],
-      "document_id": "doc_e1f95628c0b8aafb53564adb8295a3d2",
-      "source_uri": "en/tasks/administer-cluster/sysctl-cluster.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "sysctl-cluster",
-      "section_path": "[\"sysctl-cluster\"]"
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0029",
-      "text": "For some steps, you also need to be able to reconfigure the command line\noptions for the kubelets running on your cluster.",
-      "chunk_id": "chk_47206a66ea0bafd19b6d9cba1b871b2d",
+      "text": "Checklists are **not** sufficient for attaining a good security posture on their\nown.",
+      "chunk_id": "chk_2526c51b1cd2ff02b755051cb29aae25",
       "chunk_ids": [
-        "chk_47206a66ea0bafd19b6d9cba1b871b2d"
+        "chk_2526c51b1cd2ff02b755051cb29aae25"
       ],
-      "document_id": "doc_e1f95628c0b8aafb53564adb8295a3d2",
-      "source_uri": "en/tasks/administer-cluster/sysctl-cluster.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "sysctl-cluster",
-      "section_path": "[\"sysctl-cluster\"]"
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0030",
-      "text": "Namespaces can be labeled to enforce the [Pod Security Standards](/docs/concepts/security/pod-security-standards).",
-      "chunk_id": "chk_7af28076c58095b07dc1ce9951476e7e",
+      "text": "A good security posture requires constant attention and improvement, but a\nchecklist can be the first step on the never-ending journey towards security\npreparedness.",
+      "chunk_id": "chk_2526c51b1cd2ff02b755051cb29aae25",
       "chunk_ids": [
-        "chk_7af28076c58095b07dc1ce9951476e7e"
+        "chk_2526c51b1cd2ff02b755051cb29aae25"
       ],
-      "document_id": "doc_983ca142345cbbf57b35a40183708428",
-      "source_uri": "en/tasks/configure-pod-container/enforce-standards-namespace-labels.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "enforce-standards-namespace-labels",
-      "section_path": "[\"enforce-standards-namespace-labels\"]"
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0031",
-      "text": "Pod Security Admission was available by default in Kubernetes v1.23, as\na beta.",
-      "chunk_id": "chk_7af28076c58095b07dc1ce9951476e7e",
+      "text": "Some of the recommendations in this checklist may be too\nrestrictive or too lax for your specific security needs.",
+      "chunk_id": "chk_2526c51b1cd2ff02b755051cb29aae25",
       "chunk_ids": [
-        "chk_7af28076c58095b07dc1ce9951476e7e"
+        "chk_2526c51b1cd2ff02b755051cb29aae25"
       ],
-      "document_id": "doc_983ca142345cbbf57b35a40183708428",
-      "source_uri": "en/tasks/configure-pod-container/enforce-standards-namespace-labels.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "enforce-standards-namespace-labels",
-      "section_path": "[\"enforce-standards-namespace-labels\"]"
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0032",
-      "text": "From version 1.25 onwards, Pod Security Admission is generally\navailable.",
-      "chunk_id": "chk_7af28076c58095b07dc1ce9951476e7e",
+      "text": "Since Kubernetes\nsecurity is not \"one size fits all\", each category of checklist items should be\nevaluated on its merits.",
+      "chunk_id": "chk_2526c51b1cd2ff02b755051cb29aae25",
       "chunk_ids": [
-        "chk_7af28076c58095b07dc1ce9951476e7e"
+        "chk_2526c51b1cd2ff02b755051cb29aae25"
       ],
-      "document_id": "doc_983ca142345cbbf57b35a40183708428",
-      "source_uri": "en/tasks/configure-pod-container/enforce-standards-namespace-labels.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "enforce-standards-namespace-labels",
-      "section_path": "[\"enforce-standards-namespace-labels\"]"
+      "title": "security-checklist",
+      "section_path": "[\"security-checklist\"]"
     },
     {
       "key": "c0033",
-      "text": "This task demonstrates running multiple \nbased on a common template.",
-      "chunk_id": "chk_1eb427560179bf25a46cedb1e942eec0",
+      "text": "If a cloud provider is used for hosting Kubernetes, the access from pods to the cloud\nmetadata API `169.254.169.254` should also be restricted or blocked if not needed\nbecause it may leak information.",
+      "chunk_id": "chk_c6748698f93bfdf47532eeb0b94f6f7a",
       "chunk_ids": [
-        "chk_1eb427560179bf25a46cedb1e942eec0"
+        "chk_c6748698f93bfdf47532eeb0b94f6f7a"
       ],
-      "document_id": "doc_83369b303c01aee2312f5a37300c2061",
-      "source_uri": "en/tasks/job/parallel-processing-expansion.md",
+      "document_id": "doc_4da0299488992871f0f6ca33c3892df1",
+      "source_uri": "en/concepts/security/security-checklist.md",
       "lang": "en",
-      "title": "parallel-processing-expansion",
-      "section_path": "[\"parallel-processing-expansion\"]"
+      "title": "security-checklist",
+      "section_path": "[\"Network security\"]"
     },
     {
       "key": "c0034",
-      "text": "You can use this approach to process batches of work in\nparallel.",
-      "chunk_id": "chk_1eb427560179bf25a46cedb1e942eec0",
-      "chunk_ids": [
-        "chk_1eb427560179bf25a46cedb1e942eec0"
-      ],
-      "document_id": "doc_83369b303c01aee2312f5a37300c2061",
-      "source_uri": "en/tasks/job/parallel-processing-expansion.md",
-      "lang": "en",
-      "title": "parallel-processing-expansion",
-      "section_path": "[\"parallel-processing-expansion\"]"
-    },
-    {
-      "key": "c0035",
-      "text": "For this example there are only three items: _apple_, _banana_, and _cherry_.",
-      "chunk_id": "chk_1eb427560179bf25a46cedb1e942eec0",
-      "chunk_ids": [
-        "chk_1eb427560179bf25a46cedb1e942eec0"
-      ],
-      "document_id": "doc_83369b303c01aee2312f5a37300c2061",
-      "source_uri": "en/tasks/job/parallel-processing-expansion.md",
-      "lang": "en",
-      "title": "parallel-processing-expansion",
-      "section_path": "[\"parallel-processing-expansion\"]"
-    },
-    {
-      "key": "c0036",
-      "text": "The sample Jobs process each item by printing a string then pausing.",
-      "chunk_id": "chk_1eb427560179bf25a46cedb1e942eec0",
-      "chunk_ids": [
-        "chk_1eb427560179bf25a46cedb1e942eec0"
-      ],
-      "document_id": "doc_83369b303c01aee2312f5a37300c2061",
-      "source_uri": "en/tasks/job/parallel-processing-expansion.md",
-      "lang": "en",
-      "title": "parallel-processing-expansion",
-      "section_path": "[\"parallel-processing-expansion\"]"
-    },
-    {
-      "key": "c0037",
-      "text": "See [using Jobs in real workloads](#using-jobs-in-real-workloads) to learn about how\nthis pattern fits more realistic use cases.",
-      "chunk_id": "chk_1eb427560179bf25a46cedb1e942eec0",
-      "chunk_ids": [
-        "chk_1eb427560179bf25a46cedb1e942eec0"
-      ],
-      "document_id": "doc_83369b303c01aee2312f5a37300c2061",
-      "source_uri": "en/tasks/job/parallel-processing-expansion.md",
-      "lang": "en",
-      "title": "parallel-processing-expansion",
-      "section_path": "[\"parallel-processing-expansion\"]"
-    },
-    {
-      "key": "c0038",
-      "text": "You should be familiar with the basic,\nnon-parallel, use of [Job](/docs/concepts/workloads/controllers/job/).",
-      "chunk_id": "chk_1eb427560179bf25a46cedb1e942eec0",
-      "chunk_ids": [
-        "chk_1eb427560179bf25a46cedb1e942eec0"
-      ],
-      "document_id": "doc_83369b303c01aee2312f5a37300c2061",
-      "source_uri": "en/tasks/job/parallel-processing-expansion.md",
-      "lang": "en",
-      "title": "parallel-processing-expansion",
-      "section_path": "[\"parallel-processing-expansion\"]"
-    },
-    {
-      "key": "c0039",
-      "text": "For basic templating you need the command-line utility `sed`.",
-      "chunk_id": "chk_1eb427560179bf25a46cedb1e942eec0",
-      "chunk_ids": [
-        "chk_1eb427560179bf25a46cedb1e942eec0"
-      ],
-      "document_id": "doc_83369b303c01aee2312f5a37300c2061",
-      "source_uri": "en/tasks/job/parallel-processing-expansion.md",
-      "lang": "en",
-      "title": "parallel-processing-expansion",
-      "section_path": "[\"parallel-processing-expansion\"]"
-    },
-    {
-      "key": "c0040",
-      "text": "请注意， 还会在 `/metrics/cadvisor`、\n`/metrics/resource` 和 `/metrics/probes` 端点中公开度量值。",
-      "chunk_id": "chk_1cc24d4bbf7e0f41c8e93d99d80bf8e8",
-      "chunk_ids": [
-        "chk_1cc24d4bbf7e0f41c8e93d99d80bf8e8"
-      ],
-      "document_id": "doc_87f1b582bef8942eb81421c95a55b831",
-      "source_uri": "zh-cn/concepts/cluster-administration/system-metrics.md",
-      "lang": "zh-cn",
-      "title": "system-metrics",
-      "section_path": "[\"Kubernetes 中组件的指标  {#metrics-in-kubernetes}\"]"
-    },
-    {
-      "key": "c0041",
-      "text": "如果你的集群使用了 ，\n则读取指标需要通过基于用户、组或 ServiceAccount 的鉴权，要求具有允许访问\n`/metrics` 的 ClusterRole。",
-      "chunk_id": "chk_1cc24d4bbf7e0f41c8e93d99d80bf8e8",
-      "chunk_ids": [
-        "chk_1cc24d4bbf7e0f41c8e93d99d80bf8e8"
-      ],
-      "document_id": "doc_87f1b582bef8942eb81421c95a55b831",
-      "source_uri": "zh-cn/concepts/cluster-administration/system-metrics.md",
-      "lang": "zh-cn",
-      "title": "system-metrics",
-      "section_path": "[\"Kubernetes 中组件的指标  {#metrics-in-kubernetes}\"]"
-    },
-    {
-      "key": "c0042",
       "text": "诸如 \n等集群组件可以使用这些提示，影响流量的路由方式（优先考虑物理拓扑上更近的端点）。",
       "chunk_id": "chk_d102ba6e2b9c8a0489d08c2cf0f51880",
       "chunk_ids": [
@@ -549,7 +445,7 @@
       "section_path": "[\"动机   {#motivation}\"]"
     },
     {
-      "key": "c0043",
+      "key": "c0035",
       "text": "在 Kubernetes 1.27 之前，此特性称为**拓扑感知提示（Topology Aware Hint）**。",
       "chunk_id": "chk_472be8886ab9ed44a0e06df3664b47f0",
       "chunk_ids": [
@@ -562,1219 +458,59 @@
       "section_path": "[\"topology-aware-routing\"]"
     },
     {
-      "key": "c0044",
-      "text": "临时容器是使用 API 中的一种特殊的 `ephemeralcontainers` 处理器进行创建的，\n而不是直接添加到 `pod.spec` 段，因此无法使用 `kubectl edit` 来添加一个临时容器。",
-      "chunk_id": "chk_9751bcea0a955de4118a273b98faee94",
+      "key": "c0036",
+      "text": "When calculating the endpoints for a , the EndpointSlice controller considers\nthe topology (region and zone) of each endpoint and populates the hints field to\nallocate it to a zone.",
+      "chunk_id": "chk_ed10e07268649af64590de6b8ba79a61",
       "chunk_ids": [
-        "chk_9751bcea0a955de4118a273b98faee94"
+        "chk_ed10e07268649af64590de6b8ba79a61"
       ],
-      "document_id": "doc_9048ba8006a588bd73a36ec18f9b5926",
-      "source_uri": "zh-cn/concepts/workloads/pods/ephemeral-containers.md",
-      "lang": "zh-cn",
-      "title": "ephemeral-containers",
-      "section_path": "[\"了解临时容器   {#understanding-ephemeral-containers}\", \"什么是临时容器？    {#what-is-an-ephemeral-container}\"]"
-    },
-    {
-      "key": "c0045",
-      "text": "临时容器不被[静态 Pod](/zh-cn/docs/tasks/configure-pod-container/static-pod/) 支持。",
-      "chunk_id": "chk_9751bcea0a955de4118a273b98faee94",
-      "chunk_ids": [
-        "chk_9751bcea0a955de4118a273b98faee94"
-      ],
-      "document_id": "doc_9048ba8006a588bd73a36ec18f9b5926",
-      "source_uri": "zh-cn/concepts/workloads/pods/ephemeral-containers.md",
-      "lang": "zh-cn",
-      "title": "ephemeral-containers",
-      "section_path": "[\"了解临时容器   {#understanding-ephemeral-containers}\", \"什么是临时容器？    {#what-is-an-ephemeral-container}\"]"
-    },
-    {
-      "key": "c0046",
-      "text": "这种情况下，`kubectl` 将要求代理服务器（例如 SSH 堡垒机）解析 k8s API 服务器域名，\n  而不是在运行 `kubectl` 的系统上进行解析。",
-      "chunk_id": "chk_c440ba8f2add3a38de8589a3d24d7975",
-      "chunk_ids": [
-        "chk_c440ba8f2add3a38de8589a3d24d7975"
-      ],
-      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
-      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
-      "lang": "zh-cn",
-      "title": "socks5-proxy-access-api",
-      "section_path": "[\"客户端配置\"]"
-    },
-    {
-      "key": "c0047",
-      "text": "相反，它指向的是代理服务器（例如 SSH 堡垒机）上已知的 `localhost`。",
-      "chunk_id": "chk_c440ba8f2add3a38de8589a3d24d7975",
-      "chunk_ids": [
-        "chk_c440ba8f2add3a38de8589a3d24d7975"
-      ],
-      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
-      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
-      "lang": "zh-cn",
-      "title": "socks5-proxy-access-api",
-      "section_path": "[\"客户端配置\"]"
-    },
-    {
-      "key": "c0048",
-      "text": "本文展示了如何使用 SOCKS5 代理访问远程 Kubernetes 集群的 API。",
-      "chunk_id": "chk_5b83276c5689d1cb1c8febba25c1b4ad",
-      "chunk_ids": [
-        "chk_5b83276c5689d1cb1c8febba25c1b4ad"
-      ],
-      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
-      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
-      "lang": "zh-cn",
-      "title": "socks5-proxy-access-api",
-      "section_path": "[\"socks5-proxy-access-api\"]"
-    },
-    {
-      "key": "c0049",
-      "text": "当你要访问的集群不直接在公共 Internet 上公开其 API 时，这很有用。",
-      "chunk_id": "chk_5b83276c5689d1cb1c8febba25c1b4ad",
-      "chunk_ids": [
-        "chk_5b83276c5689d1cb1c8febba25c1b4ad"
-      ],
-      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
-      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
-      "lang": "zh-cn",
-      "title": "socks5-proxy-access-api",
-      "section_path": "[\"socks5-proxy-access-api\"]"
-    },
-    {
-      "key": "c0050",
-      "text": "你需要 SSH 客户端软件（`ssh` 工具），并在远程服务器上运行 SSH 服务。",
-      "chunk_id": "chk_5b83276c5689d1cb1c8febba25c1b4ad",
-      "chunk_ids": [
-        "chk_5b83276c5689d1cb1c8febba25c1b4ad"
-      ],
-      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
-      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
-      "lang": "zh-cn",
-      "title": "socks5-proxy-access-api",
-      "section_path": "[\"socks5-proxy-access-api\"]"
-    },
-    {
-      "key": "c0051",
-      "text": "客户端和 Kubernetes API 之间的 HTTPS 流量将流经 SOCKS5 隧道，该隧道本身通过\n  SSH 进行隧道传输。",
-      "chunk_id": "chk_d2d7d5e1324502bec7334cfc355d5cd4",
-      "chunk_ids": [
-        "chk_d2d7d5e1324502bec7334cfc355d5cd4"
-      ],
-      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
-      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
-      "lang": "zh-cn",
-      "title": "socks5-proxy-access-api",
-      "section_path": "[\"任务上下文  {#task-context}\"]"
-    },
-    {
-      "key": "c0052",
-      "text": "通过代理传递的 <br> HTTPS 流量 .->service1[Kubernetes API];",
-      "chunk_id": "chk_d2d7d5e1324502bec7334cfc355d5cd4",
-      "chunk_ids": [
-        "chk_d2d7d5e1324502bec7334cfc355d5cd4"
-      ],
-      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
-      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
-      "lang": "zh-cn",
-      "title": "socks5-proxy-access-api",
-      "section_path": "[\"任务上下文  {#task-context}\"]"
-    },
-    {
-      "key": "c0053",
-      "text": "Kubernetes 允许你使用公钥基础设施（PKI）对你的集群进行身份认证，这类似于对客户端进行身份认证。",
-      "chunk_id": "chk_b65ec195efdfd5340cc06ba955c4d16c",
-      "chunk_ids": [
-        "chk_b65ec195efdfd5340cc06ba955c4d16c"
-      ],
-      "document_id": "doc_005222a0be686e05a3ee788f52ab667f",
-      "source_uri": "zh-cn/tasks/tls/certificate-issue-client-csr.md",
-      "lang": "zh-cn",
-      "title": "certificate-issue-client-csr",
-      "section_path": "[\"certificate-issue-client-csr\"]"
-    },
-    {
-      "key": "c0054",
-      "text": "在这个过程中，你需要使用\n[CertificateSigningRequest](/zh-cn/docs/reference/access-authn-authz/certificate-signing-requests/)，\n并且你或其他主体必须批准此请求。",
-      "chunk_id": "chk_b65ec195efdfd5340cc06ba955c4d16c",
-      "chunk_ids": [
-        "chk_b65ec195efdfd5340cc06ba955c4d16c"
-      ],
-      "document_id": "doc_005222a0be686e05a3ee788f52ab667f",
-      "source_uri": "zh-cn/tasks/tls/certificate-issue-client-csr.md",
-      "lang": "zh-cn",
-      "title": "certificate-issue-client-csr",
-      "section_path": "[\"certificate-issue-client-csr\"]"
-    },
-    {
-      "key": "c0055",
-      "text": "For those reasons, they should be used only when\nthere are no other options.",
-      "chunk_id": "chk_b6b3ee40ebf6ab1f30764b0606cc9858",
-      "chunk_ids": [
-        "chk_b6b3ee40ebf6ab1f30764b0606cc9858"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"Configuration\"]"
-    },
-    {
-      "key": "c0056",
-      "text": "APIs are typically usable even with hosted Kubernetes services and with managed Kubernetes installations.",
-      "chunk_id": "chk_b6b3ee40ebf6ab1f30764b0606cc9858",
-      "chunk_ids": [
-        "chk_b6b3ee40ebf6ab1f30764b0606cc9858"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"Configuration\"]"
-    },
-    {
-      "key": "c0057",
-      "text": "The built-in policy APIs follow the same conventions as other Kubernetes resources such as Pods.",
-      "chunk_id": "chk_b6b3ee40ebf6ab1f30764b0606cc9858",
-      "chunk_ids": [
-        "chk_b6b3ee40ebf6ab1f30764b0606cc9858"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"Configuration\"]"
-    },
-    {
-      "key": "c0058",
-      "text": "When you use a policy APIs that is [stable](/docs/reference/using-api/#api-versioning), you benefit from a\n[defined support policy](/docs/reference/using-api/deprecation-policy/) like other Kubernetes APIs.",
-      "chunk_id": "chk_b6b3ee40ebf6ab1f30764b0606cc9858",
-      "chunk_ids": [
-        "chk_b6b3ee40ebf6ab1f30764b0606cc9858"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"Configuration\"]"
-    },
-    {
-      "key": "c0059",
-      "text": "For these reasons, policy APIs are recommended over *configuration files* and *command arguments* where suitable.",
-      "chunk_id": "chk_b6b3ee40ebf6ab1f30764b0606cc9858",
-      "chunk_ids": [
-        "chk_b6b3ee40ebf6ab1f30764b0606cc9858",
-        "chk_bd92e8d8e4ac999b0a44972d31ca0ac6"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"Configuration\"]"
-    },
-    {
-      "key": "c0060",
-      "text": "Kubernetes is highly configurable and extensible.",
-      "chunk_id": "chk_d3c9ac2d734fb41d99557b73a8f6d74d",
-      "chunk_ids": [
-        "chk_d3c9ac2d734fb41d99557b73a8f6d74d"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0061",
-      "text": "As a result, there is rarely a need to fork or\nsubmit patches to the Kubernetes project code.",
-      "chunk_id": "chk_d3c9ac2d734fb41d99557b73a8f6d74d",
-      "chunk_ids": [
-        "chk_d3c9ac2d734fb41d99557b73a8f6d74d"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0062",
-      "text": "This guide describes the options for customizing a Kubernetes cluster.",
-      "chunk_id": "chk_d3c9ac2d734fb41d99557b73a8f6d74d",
-      "chunk_ids": [
-        "chk_d3c9ac2d734fb41d99557b73a8f6d74d"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0063",
-      "text": "It is aimed at\n who want to understand\nhow to adapt their Kubernetes cluster to the needs of their work environment.",
-      "chunk_id": "chk_d3c9ac2d734fb41d99557b73a8f6d74d",
-      "chunk_ids": [
-        "chk_d3c9ac2d734fb41d99557b73a8f6d74d"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0064",
-      "text": "Developers who are\nprospective  or\nKubernetes Project  will also\nfind it useful as an introduction to what extension points and patterns exist, and their\ntrade-offs and limitations.",
-      "chunk_id": "chk_d3c9ac2d734fb41d99557b73a8f6d74d",
-      "chunk_ids": [
-        "chk_d3c9ac2d734fb41d99557b73a8f6d74d"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0065",
-      "text": "This document is primarily about _extensions_.",
-      "chunk_id": "chk_d3c9ac2d734fb41d99557b73a8f6d74d",
-      "chunk_ids": [
-        "chk_d3c9ac2d734fb41d99557b73a8f6d74d"
-      ],
-      "document_id": "doc_3b7248636a9dde5791b253cca57ba7b0",
-      "source_uri": "en/concepts/extend-kubernetes/_index.md",
-      "lang": "en",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0066",
-      "text": "You can visualize and manage Kubernetes objects with more tools than kubectl and\nthe dashboard.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0067",
-      "text": "A common set of labels allows tools to work interoperably, describing\nobjects in a common manner that all tools can understand.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0068",
-      "text": "In addition to supporting tooling, the recommended labels describe applications\nin a way that can be queried.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0069",
-      "text": "The metadata is organized around the concept of an _application_.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0070",
-      "text": "Kubernetes is not\na platform as a service (PaaS) and doesn't have or enforce a formal notion of an application.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0071",
-      "text": "Instead, applications are informal and described with metadata.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0072",
-      "text": "The definition of\nwhat an application contains is loose.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0073",
-      "text": "They make it easier to manage applications\nbut aren't required for any core tooling.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0074",
-      "text": "Shared labels and annotations share a common prefix: `app.kubernetes.io`.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0075",
-      "text": "Labels\nwithout a prefix are private to users.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0076",
-      "text": "The shared prefix ensures that shared labels\ndo not interfere with custom user labels.",
-      "chunk_id": "chk_a73100a07c91d345afbf47f5e4a5c24a",
-      "chunk_ids": [
-        "chk_a73100a07c91d345afbf47f5e4a5c24a"
-      ],
-      "document_id": "doc_817c3f407a5b93f042b2847e0892a794",
-      "source_uri": "en/concepts/overview/working-with-objects/common-labels.md",
-      "lang": "en",
-      "title": "common-labels",
-      "section_path": "[\"common-labels\"]"
-    },
-    {
-      "key": "c0077",
-      "text": "<img src=\"/images/kubeadm-stacked-color.png\" align=\"right\" width=\"150px\"></img>\nUsing `kubeadm`, you can create a minimum viable Kubernetes cluster that conforms to best practices.",
-      "chunk_id": "chk_fc5244305b91db93e30cc229167561fc",
-      "chunk_ids": [
-        "chk_fc5244305b91db93e30cc229167561fc"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0078",
-      "text": "In fact, you can use `kubeadm` to set up a cluster that will pass the\n[Kubernetes Conformance tests](/blog/2017/10/software-conformance-certification/).",
-      "chunk_id": "chk_fc5244305b91db93e30cc229167561fc",
-      "chunk_ids": [
-        "chk_fc5244305b91db93e30cc229167561fc"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0079",
-      "text": "You can install and use `kubeadm` on various machines: your laptop, a set\nof cloud servers, a Raspberry Pi, and more.",
-      "chunk_id": "chk_fc5244305b91db93e30cc229167561fc",
-      "chunk_ids": [
-        "chk_fc5244305b91db93e30cc229167561fc"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0080",
-      "text": "Whether you're deploying into the\ncloud or on-premises, you can integrate `kubeadm` into provisioning systems such\nas Ansible or Terraform.",
-      "chunk_id": "chk_fc5244305b91db93e30cc229167561fc",
-      "chunk_ids": [
-        "chk_fc5244305b91db93e30cc229167561fc"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0081",
-      "text": "You can use either a\n  public or a private network.",
-      "chunk_id": "chk_fc5244305b91db93e30cc229167561fc",
-      "chunk_ids": [
-        "chk_fc5244305b91db93e30cc229167561fc",
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0082",
-      "text": "You also need to use a version of `kubeadm` that can deploy the version\nof Kubernetes that you want to use in your new cluster.",
-      "chunk_id": "chk_6aae53fd1301b5da0d4ae69475fbdc58",
-      "chunk_ids": [
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0083",
-      "text": "[Kubernetes' version and version skew support policy](/docs/setup/release/version-skew-policy/#supported-versions)\napplies to `kubeadm` as well as to Kubernetes overall.",
-      "chunk_id": "chk_6aae53fd1301b5da0d4ae69475fbdc58",
-      "chunk_ids": [
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0084",
-      "text": "Check that policy to learn about what versions of Kubernetes and `kubeadm`\nare supported.",
-      "chunk_id": "chk_6aae53fd1301b5da0d4ae69475fbdc58",
-      "chunk_ids": [
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0085",
-      "text": "The `kubeadm` tool's overall feature state is General Availability (GA).",
-      "chunk_id": "chk_6aae53fd1301b5da0d4ae69475fbdc58",
-      "chunk_ids": [
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0086",
-      "text": "Some sub-features are\nstill under active development.",
-      "chunk_id": "chk_6aae53fd1301b5da0d4ae69475fbdc58",
-      "chunk_ids": [
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0087",
-      "text": "The implementation of creating the cluster may change\nslightly as the tool evolves, but the overall implementation should be pretty stable.",
-      "chunk_id": "chk_6aae53fd1301b5da0d4ae69475fbdc58",
-      "chunk_ids": [
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0088",
-      "text": "Any commands under `kubeadm alpha` are, by definition, supported on an alpha level.",
-      "chunk_id": "chk_6aae53fd1301b5da0d4ae69475fbdc58",
-      "chunk_ids": [
-        "chk_6aae53fd1301b5da0d4ae69475fbdc58"
-      ],
-      "document_id": "doc_1440575c34d89b230e77bf8f7fffa032",
-      "source_uri": "en/setup/production-environment/tools/kubeadm/create-cluster-kubeadm.md",
-      "lang": "en",
-      "title": "create-cluster-kubeadm",
-      "section_path": "[\"create-cluster-kubeadm\"]"
-    },
-    {
-      "key": "c0089",
-      "text": "Before you follow steps in this page to deploy, manage, back up or restore etcd,\nyou need to understand the typical expectations for operating an etcd cluster.",
-      "chunk_id": "chk_4e978b2840c90196cd93f3df0e95bfd1",
-      "chunk_ids": [
-        "chk_4e978b2840c90196cd93f3df0e95bfd1"
-      ],
-      "document_id": "doc_4601021d4f73b01d55879bbf5a53e73e",
-      "source_uri": "en/tasks/administer-cluster/configure-upgrade-etcd.md",
-      "lang": "en",
-      "title": "configure-upgrade-etcd",
-      "section_path": "[\"configure-upgrade-etcd\"]"
-    },
-    {
-      "key": "c0090",
-      "text": "Ensure that the leader\n  periodically send heartbeats on time to all followers to keep the cluster\n  stable.",
-      "chunk_id": "chk_4e978b2840c90196cd93f3df0e95bfd1",
-      "chunk_ids": [
-        "chk_4e978b2840c90196cd93f3df0e95bfd1"
-      ],
-      "document_id": "doc_4601021d4f73b01d55879bbf5a53e73e",
-      "source_uri": "en/tasks/administer-cluster/configure-upgrade-etcd.md",
-      "lang": "en",
-      "title": "configure-upgrade-etcd",
-      "section_path": "[\"configure-upgrade-etcd\"]"
-    },
-    {
-      "key": "c0091",
-      "text": "Performance and stability of the cluster is sensitive to network and disk\n  I/O.",
-      "chunk_id": "chk_4e978b2840c90196cd93f3df0e95bfd1",
-      "chunk_ids": [
-        "chk_4e978b2840c90196cd93f3df0e95bfd1"
-      ],
-      "document_id": "doc_4601021d4f73b01d55879bbf5a53e73e",
-      "source_uri": "en/tasks/administer-cluster/configure-upgrade-etcd.md",
-      "lang": "en",
-      "title": "configure-upgrade-etcd",
-      "section_path": "[\"configure-upgrade-etcd\"]"
-    },
-    {
-      "key": "c0092",
-      "text": "Any resource starvation can lead to heartbeat timeout, causing instability\n  of the cluster.",
-      "chunk_id": "chk_4e978b2840c90196cd93f3df0e95bfd1",
-      "chunk_ids": [
-        "chk_4e978b2840c90196cd93f3df0e95bfd1"
-      ],
-      "document_id": "doc_4601021d4f73b01d55879bbf5a53e73e",
-      "source_uri": "en/tasks/administer-cluster/configure-upgrade-etcd.md",
-      "lang": "en",
-      "title": "configure-upgrade-etcd",
-      "section_path": "[\"configure-upgrade-etcd\"]"
-    },
-    {
-      "key": "c0093",
-      "text": "An unstable etcd indicates that no leader is elected.",
-      "chunk_id": "chk_4e978b2840c90196cd93f3df0e95bfd1",
-      "chunk_ids": [
-        "chk_4e978b2840c90196cd93f3df0e95bfd1"
-      ],
-      "document_id": "doc_4601021d4f73b01d55879bbf5a53e73e",
-      "source_uri": "en/tasks/administer-cluster/configure-upgrade-etcd.md",
-      "lang": "en",
-      "title": "configure-upgrade-etcd",
-      "section_path": "[\"configure-upgrade-etcd\"]"
-    },
-    {
-      "key": "c0094",
-      "text": "Under\n  such circumstances, a cluster cannot make any changes to its current state,\n  which implies no new pods can be scheduled.",
-      "chunk_id": "chk_4e978b2840c90196cd93f3df0e95bfd1",
-      "chunk_ids": [
-        "chk_4e978b2840c90196cd93f3df0e95bfd1"
-      ],
-      "document_id": "doc_4601021d4f73b01d55879bbf5a53e73e",
-      "source_uri": "en/tasks/administer-cluster/configure-upgrade-etcd.md",
-      "lang": "en",
-      "title": "configure-upgrade-etcd",
-      "section_path": "[\"configure-upgrade-etcd\"]"
-    },
-    {
-      "key": "c0095",
-      "text": "For Kubernetes, the _Metrics API_ offers a basic set of metrics to support automatic scaling and\nsimilar use cases.",
-      "chunk_id": "chk_e9fd3d343bcff9adb9961de2bb800b3f",
-      "chunk_ids": [
-        "chk_e9fd3d343bcff9adb9961de2bb800b3f"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0096",
-      "text": "This API makes information available about resource usage for node and pod,\nincluding metrics for CPU and memory.",
-      "chunk_id": "chk_e9fd3d343bcff9adb9961de2bb800b3f",
-      "chunk_ids": [
-        "chk_e9fd3d343bcff9adb9961de2bb800b3f"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0097",
-      "text": "If you deploy the Metrics API into your cluster, clients of\nthe Kubernetes API can then query for this information, and you can use Kubernetes' access control\nmechanisms to manage permissions to do so.",
-      "chunk_id": "chk_e9fd3d343bcff9adb9961de2bb800b3f",
-      "chunk_ids": [
-        "chk_e9fd3d343bcff9adb9961de2bb800b3f"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0098",
-      "text": "You can also view the resource metrics using the\n[`kubectl top`](/docs/reference/generated/kubectl/kubectl-commands#top)\ncommand.",
-      "chunk_id": "chk_e9fd3d343bcff9adb9961de2bb800b3f",
-      "chunk_ids": [
-        "chk_e9fd3d343bcff9adb9961de2bb800b3f"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0099",
-      "text": "The Metrics API, and the metrics pipeline that it enables, only offers the minimum\nCPU and memory metrics to enable automatic scaling using HPA and / or VPA.",
-      "chunk_id": "chk_e9fd3d343bcff9adb9961de2bb800b3f",
-      "chunk_ids": [
-        "chk_e9fd3d343bcff9adb9961de2bb800b3f"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0100",
-      "text": "Figure 1 illustrates the architecture of the resource metrics pipeline.",
-      "chunk_id": "chk_31b2550d3fb033f829b71e13ce76a74d",
-      "chunk_ids": [
-        "chk_31b2550d3fb033f829b71e13ce76a74d"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0101",
-      "text": "Resource metrics are accessible using the `/metrics/resource` and `/stats` kubelet\n  API endpoints.",
-      "chunk_id": "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2",
-      "chunk_ids": [
-        "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0102",
-      "text": "The API server serves Metrics API for use by HPA, VPA, and by\n  the `kubectl top` command.",
-      "chunk_id": "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2",
-      "chunk_ids": [
-        "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0103",
-      "text": "Metrics Server is a reference implementation of the Metrics API.",
-      "chunk_id": "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2",
-      "chunk_ids": [
-        "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0104",
-      "text": "To make this work in your cluster, you need an API extension server that\n  provides the Metrics API.",
-      "chunk_id": "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2",
-      "chunk_ids": [
-        "chk_b0ad0cc300cd0213ef8bdc1801e4b4c2"
-      ],
-      "document_id": "doc_2bf5b2a8c55324a8366358227dad6bb4",
-      "source_uri": "en/tasks/debug/debug-cluster/resource-metrics-pipeline.md",
-      "lang": "en",
-      "title": "resource-metrics-pipeline",
-      "section_path": "[\"resource-metrics-pipeline\"]"
-    },
-    {
-      "key": "c0105",
-      "text": "By default, the `hosts` file only includes IPv4 and IPv6 boilerplates like\n`localhost` and its own hostname.",
-      "chunk_id": "chk_e5394f5057b7c9937507258ef4f51053",
-      "chunk_ids": [
-        "chk_e5394f5057b7c9937507258ef4f51053"
-      ],
-      "document_id": "doc_16910c5abfe6af2e54d4c865e75c6e20",
-      "source_uri": "en/tasks/network/customize-hosts-file-for-pods.md",
-      "lang": "en",
-      "title": "customize-hosts-file-for-pods",
-      "section_path": "[\"Default hosts file content\"]"
-    },
-    {
-      "key": "c0106",
-      "text": "Adding entries to a Pod's `/etc/hosts` file provides Pod-level override of hostname resolution when DNS and other options are not applicable.",
-      "chunk_id": "chk_edae5298281b3bd133d36277acaf1ca6",
-      "chunk_ids": [
-        "chk_edae5298281b3bd133d36277acaf1ca6"
-      ],
-      "document_id": "doc_16910c5abfe6af2e54d4c865e75c6e20",
-      "source_uri": "en/tasks/network/customize-hosts-file-for-pods.md",
-      "lang": "en",
-      "title": "customize-hosts-file-for-pods",
-      "section_path": "[\"customize-hosts-file-for-pods\"]"
-    },
-    {
-      "key": "c0107",
-      "text": "You can add these custom entries with the HostAliases field in PodSpec.",
-      "chunk_id": "chk_edae5298281b3bd133d36277acaf1ca6",
-      "chunk_ids": [
-        "chk_edae5298281b3bd133d36277acaf1ca6"
-      ],
-      "document_id": "doc_16910c5abfe6af2e54d4c865e75c6e20",
-      "source_uri": "en/tasks/network/customize-hosts-file-for-pods.md",
-      "lang": "en",
-      "title": "customize-hosts-file-for-pods",
-      "section_path": "[\"customize-hosts-file-for-pods\"]"
-    },
-    {
-      "key": "c0108",
-      "text": "The Kubernetes project recommends modifying DNS configuration using the `hostAliases` field\n(part of the `.spec` for a Pod), and not by using an init container or other means to edit `/etc/hosts`\ndirectly.",
-      "chunk_id": "chk_edae5298281b3bd133d36277acaf1ca6",
-      "chunk_ids": [
-        "chk_edae5298281b3bd133d36277acaf1ca6"
-      ],
-      "document_id": "doc_16910c5abfe6af2e54d4c865e75c6e20",
-      "source_uri": "en/tasks/network/customize-hosts-file-for-pods.md",
-      "lang": "en",
-      "title": "customize-hosts-file-for-pods",
-      "section_path": "[\"customize-hosts-file-for-pods\"]"
-    },
-    {
-      "key": "c0109",
-      "text": "Change made in other ways may be overwritten by the kubelet during Pod creation or restart.",
-      "chunk_id": "chk_edae5298281b3bd133d36277acaf1ca6",
-      "chunk_ids": [
-        "chk_edae5298281b3bd133d36277acaf1ca6"
-      ],
-      "document_id": "doc_16910c5abfe6af2e54d4c865e75c6e20",
-      "source_uri": "en/tasks/network/customize-hosts-file-for-pods.md",
-      "lang": "en",
-      "title": "customize-hosts-file-for-pods",
-      "section_path": "[\"customize-hosts-file-for-pods\"]"
-    },
-    {
-      "key": "c0110",
-      "text": "This page shows how to update a running Deployment to a new version using a\nrolling update.",
-      "chunk_id": "chk_cb1cefdd7f9d5fa12effba1631f64456",
-      "chunk_ids": [
-        "chk_cb1cefdd7f9d5fa12effba1631f64456"
-      ],
-      "document_id": "doc_43415109a9f7b451c1e7e9c1e77854a0",
-      "source_uri": "en/tasks/run-application/update-deployment-rolling.md",
-      "lang": "en",
-      "title": "update-deployment-rolling",
-      "section_path": "[\"update-deployment-rolling\"]"
-    },
-    {
-      "key": "c0111",
-      "text": "A rolling update gradually replaces old Pods with new ones, so\nyour application remains available throughout the process.",
-      "chunk_id": "chk_cb1cefdd7f9d5fa12effba1631f64456",
-      "chunk_ids": [
-        "chk_cb1cefdd7f9d5fa12effba1631f64456"
-      ],
-      "document_id": "doc_43415109a9f7b451c1e7e9c1e77854a0",
-      "source_uri": "en/tasks/run-application/update-deployment-rolling.md",
-      "lang": "en",
-      "title": "update-deployment-rolling",
-      "section_path": "[\"update-deployment-rolling\"]"
-    },
-    {
-      "key": "c0112",
-      "text": "You must use a kubectl version that is within one minor version difference of\nyour cluster.",
-      "chunk_id": "chk_f018952d675979a3a3205e3fdc99b2bb",
-      "chunk_ids": [
-        "chk_f018952d675979a3a3205e3fdc99b2bb"
-      ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
-      "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"install-kubectl-linux\"]"
-    },
-    {
-      "key": "c0113",
-      "text": "For example, a v client can communicate\nwith v, v,\nand v control planes.",
-      "chunk_id": "chk_f018952d675979a3a3205e3fdc99b2bb",
-      "chunk_ids": [
-        "chk_f018952d675979a3a3205e3fdc99b2bb"
-      ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
-      "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"install-kubectl-linux\"]"
-    },
-    {
-      "key": "c0114",
-      "text": "Using the latest compatible version of kubectl helps avoid unforeseen issues.",
-      "chunk_id": "chk_f018952d675979a3a3205e3fdc99b2bb",
-      "chunk_ids": [
-        "chk_f018952d675979a3a3205e3fdc99b2bb"
-      ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
-      "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"install-kubectl-linux\"]"
-    },
-    {
-      "key": "c0115",
-      "text": "This procedure is described in more detail in [Changing The Kubernetes Package Repository](/docs/tasks/administer-cluster/kubeadm/change-package-repository/).",
-      "chunk_id": "chk_788d60a86716bbe7e89dc7a52f112dfb",
-      "chunk_ids": [
-        "chk_788d60a86716bbe7e89dc7a52f112dfb"
-      ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
+      "document_id": "doc_6ba207fc08370868e23ec99d6a9805e0",
+      "source_uri": "en/concepts/services-networking/topology-aware-routing.md",
       "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"Install kubectl on Linux\", \"Install using native package management\"]"
+      "title": "topology-aware-routing",
+      "section_path": "[\"Motivation\"]"
     },
     {
-      "key": "c0116",
-      "text": "If you want to use Kubernetes version\n   different than , replace  with\n   the desired minor version in the command below.",
-      "chunk_id": "chk_788d60a86716bbe7e89dc7a52f112dfb",
+      "key": "c0037",
+      "text": "Cluster components such as  can then consume those hints, and use\nthem to influence how the traffic is routed (favoring topologically closer\nendpoints).",
+      "chunk_id": "chk_ed10e07268649af64590de6b8ba79a61",
       "chunk_ids": [
-        "chk_788d60a86716bbe7e89dc7a52f112dfb"
+        "chk_ed10e07268649af64590de6b8ba79a61"
       ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
+      "document_id": "doc_6ba207fc08370868e23ec99d6a9805e0",
+      "source_uri": "en/concepts/services-networking/topology-aware-routing.md",
       "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"Install kubectl on Linux\", \"Install using native package management\"]"
+      "title": "topology-aware-routing",
+      "section_path": "[\"Motivation\"]"
     },
     {
-      "key": "c0117",
-      "text": "To upgrade kubectl to another minor release, you'll need to bump the version in `/etc/zypp/repos.d/kubernetes.repo`\nbefore running `zypper update`.",
-      "chunk_id": "chk_788d60a86716bbe7e89dc7a52f112dfb",
+      "key": "c0038",
+      "text": "_Topology Aware Routing_ adjusts routing behavior to prefer keeping traffic in\nthe zone it originated from.",
+      "chunk_id": "chk_43623fb3c7b51647914e5a66ef35093c",
       "chunk_ids": [
-        "chk_788d60a86716bbe7e89dc7a52f112dfb"
+        "chk_43623fb3c7b51647914e5a66ef35093c"
       ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
+      "document_id": "doc_6ba207fc08370868e23ec99d6a9805e0",
+      "source_uri": "en/concepts/services-networking/topology-aware-routing.md",
       "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"Install kubectl on Linux\", \"Install using native package management\"]"
+      "title": "topology-aware-routing",
+      "section_path": "[\"topology-aware-routing\"]"
     },
     {
-      "key": "c0118",
-      "text": "This procedure is described in more detail in\n[Changing The Kubernetes Package Repository](/docs/tasks/administer-cluster/kubeadm/change-package-repository/).",
-      "chunk_id": "chk_788d60a86716bbe7e89dc7a52f112dfb",
+      "key": "c0039",
+      "text": "In some cases this can help reduce costs or improve\nnetwork performance.",
+      "chunk_id": "chk_43623fb3c7b51647914e5a66ef35093c",
       "chunk_ids": [
-        "chk_788d60a86716bbe7e89dc7a52f112dfb"
+        "chk_43623fb3c7b51647914e5a66ef35093c"
       ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
+      "document_id": "doc_6ba207fc08370868e23ec99d6a9805e0",
+      "source_uri": "en/concepts/services-networking/topology-aware-routing.md",
       "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"Install kubectl on Linux\", \"Install using native package management\"]"
-    },
-    {
-      "key": "c0119",
-      "text": "Download the same version of the binary and checksum.",
-      "chunk_id": "chk_e5a92706eb3f2b0b32a7cedadf1f34b0",
-      "chunk_ids": [
-        "chk_e5a92706eb3f2b0b32a7cedadf1f34b0",
-        "chk_faa74f262de31db64d19b4f2c7c52dbf"
-      ],
-      "document_id": "doc_835ac2c0d62ff87b90aab45a0a77e4a3",
-      "source_uri": "en/tasks/tools/install-kubectl-linux.md",
-      "lang": "en",
-      "title": "install-kubectl-linux",
-      "section_path": "[\"Install kubectl on Linux\", \"Install kubectl binary with curl on Linux\"]"
-    },
-    {
-      "key": "c0120",
-      "text": "这种安排称为 API 聚合（API Aggregation，AA），允许你通过编写和部署自己的 API 服务器来为自定义资源提供专门的实现。",
-      "chunk_id": "chk_3b87b48c4a9916a344774fc1d5350a04",
-      "chunk_ids": [
-        "chk_3b87b48c4a9916a344774fc1d5350a04"
-      ],
-      "document_id": "doc_f11de5d46079940c89fecbc8651a8a91",
-      "source_uri": "zh-cn/concepts/extend-kubernetes/api-extension/_index.md",
-      "lang": "zh-cn",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0121",
-      "text": "主 API 服务器将你指定的自定义 API 的请求委托给你的 API 服务器，使其可供所有客户端使用。",
-      "chunk_id": "chk_3b87b48c4a9916a344774fc1d5350a04",
-      "chunk_ids": [
-        "chk_3b87b48c4a9916a344774fc1d5350a04"
-      ],
-      "document_id": "doc_f11de5d46079940c89fecbc8651a8a91",
-      "source_uri": "zh-cn/concepts/extend-kubernetes/api-extension/_index.md",
-      "lang": "zh-cn",
-      "title": "_index",
-      "section_path": "[\"_index\"]"
-    },
-    {
-      "key": "c0122",
-      "text": "“字段选择算符（Field selectors）”允许你根据一个或多个资源字段的值筛选\nKubernetes 。",
-      "chunk_id": "chk_86da5fa05218670aa94e6a57868ec267",
-      "chunk_ids": [
-        "chk_86da5fa05218670aa94e6a57868ec267"
-      ],
-      "document_id": "doc_c6d46e9e233d3c2a54ae17e4ecbc9a30",
-      "source_uri": "zh-cn/concepts/overview/working-with-objects/field-selectors.md",
-      "lang": "zh-cn",
-      "title": "field-selectors",
-      "section_path": "[\"field-selectors\"]"
-    },
-    {
-      "key": "c0123",
-      "text": "默认情况下，字段选择算符/过滤器是未被应用的，\n这意味着指定类型的所有资源都会被筛选出来。",
-      "chunk_id": "chk_86da5fa05218670aa94e6a57868ec267",
-      "chunk_ids": [
-        "chk_86da5fa05218670aa94e6a57868ec267"
-      ],
-      "document_id": "doc_c6d46e9e233d3c2a54ae17e4ecbc9a30",
-      "source_uri": "zh-cn/concepts/overview/working-with-objects/field-selectors.md",
-      "lang": "zh-cn",
-      "title": "field-selectors",
-      "section_path": "[\"field-selectors\"]"
-    },
-    {
-      "key": "c0124",
-      "text": "这使得 `kubectl get pods` 和 `kubectl get pods --field-selector \"\"`\n这两个 `kubectl` 查询是等价的。",
-      "chunk_id": "chk_86da5fa05218670aa94e6a57868ec267",
-      "chunk_ids": [
-        "chk_86da5fa05218670aa94e6a57868ec267"
-      ],
-      "document_id": "doc_c6d46e9e233d3c2a54ae17e4ecbc9a30",
-      "source_uri": "zh-cn/concepts/overview/working-with-objects/field-selectors.md",
-      "lang": "zh-cn",
-      "title": "field-selectors",
-      "section_path": "[\"field-selectors\"]"
-    },
-    {
-      "key": "c0125",
-      "text": "本文档描述了 Kubernetes 中 VolumeSnapshotClass 的概念。",
-      "chunk_id": "chk_30b11988c4e394b6adca8bc0046acfd3",
-      "chunk_ids": [
-        "chk_30b11988c4e394b6adca8bc0046acfd3"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"volume-snapshot-classes\"]"
-    },
-    {
-      "key": "c0126",
-      "text": "建议熟悉\n[卷快照（Volume Snapshots）](/zh-cn/docs/concepts/storage/volume-snapshots/)和\n[存储类（Storage Class）](/zh-cn/docs/concepts/storage/storage-classes)。",
-      "chunk_id": "chk_30b11988c4e394b6adca8bc0046acfd3",
-      "chunk_ids": [
-        "chk_30b11988c4e394b6adca8bc0046acfd3"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"volume-snapshot-classes\"]"
-    },
-    {
-      "key": "c0127",
-      "text": "如果存在多个 CSI 驱动程序，可以为每个驱动程序指定一个默认的 VolumeSnapshotClass。",
-      "chunk_id": "chk_eb4a7b9bc66eb66913d978e54a189cc7",
-      "chunk_ids": [
-        "chk_eb4a7b9bc66eb66913d978e54a189cc7"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0128",
-      "text": "当你创建一个 VolumeSnapshot 且未指定 VolumeSnapshotClass 时，\nKubernetes 会自动选择一个默认的 VolumeSnapshotClass，\n该类与 PVC 的 StorageClass 所使用的 CSI 驱动程序匹配。",
-      "chunk_id": "chk_eb4a7b9bc66eb66913d978e54a189cc7",
-      "chunk_ids": [
-        "chk_eb4a7b9bc66eb66913d978e54a189cc7"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0129",
-      "text": "这种行为允许多个默认的 VolumeSnapshotClass 对象在集群中共存，\n只要每个默认类都与唯一的 CSI 驱动程序进行关联。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0130",
-      "text": "请始终确保每个 CSI 驱动程序只有一个默认的 VolumeSnapshotClass。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0131",
-      "text": "如果使用相同的 CSI 驱动程序创建了多个默认的 VolumeSnapshotClass 对象，\n则创建 VolumeSnapshot 时会失败，因为 Kubernetes 无法确定使用哪个类。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0132",
-      "text": "卷快照类有一个驱动程序，用于确定配置 VolumeSnapshot 的 CSI 卷插件。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0133",
-      "text": "卷快照类具有 [deletionPolicy](/zh-cn/docs/concepts/storage/volume-snapshots/#delete) 属性。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0134",
-      "text": "用户可以配置当所绑定的 VolumeSnapshot 对象将被删除时，如何处理 VolumeSnapshotContent 对象。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0135",
-      "text": "如果删除策略是 `Delete`，那么底层的存储快照会和 VolumeSnapshotContent 对象\n一起删除。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
-    },
-    {
-      "key": "c0136",
-      "text": "如果删除策略是 `Retain`，那么底层快照和 VolumeSnapshotContent\n对象都会被保留。",
-      "chunk_id": "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa",
-      "chunk_ids": [
-        "chk_a0e7e5b2c91a9f5a9a7d2a6125099efa"
-      ],
-      "document_id": "doc_fffa9d351dfa9c107edf16d1e6ea2723",
-      "source_uri": "zh-cn/concepts/storage/volume-snapshot-classes.md",
-      "lang": "zh-cn",
-      "title": "volume-snapshot-classes",
-      "section_path": "[\"VolumeSnapshotClass 资源  {#the-volumesnapshortclass-resource}\"]"
+      "title": "topology-aware-routing",
+      "section_path": "[\"topology-aware-routing\"]"
     },
     {
-      "key": "c0137",
+      "key": "c0040",
       "text": "作为[云驱动提取工作](/blog/2019/04/17/the-future-of-cloud-providers-in-kubernetes/)\n的一部分，所有特定于云的控制器都必须移出 `kube-controller-manager`。",
       "chunk_id": "chk_a713573a47434e60cdd1a509d6c21d8a",
       "chunk_ids": [
@@ -1787,7 +523,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0138",
+      "key": "c0041",
       "text": "所有在 `kube-controller-manager` 中运行云控制器的现有集群必须迁移到特定于云厂商的\n`cloud-controller-manager` 中运行这些控制器。",
       "chunk_id": "chk_a713573a47434e60cdd1a509d6c21d8a",
       "chunk_ids": [
@@ -1800,7 +536,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0139",
+      "key": "c0042",
       "text": "领导者迁移（Leader Migration）提供了一种机制，使得 HA 集群可以通过这两个组件之间共享资源锁，\n在升级多副本的控制平面时，安全地将“特定于云”的控制器从 `kube-controller-manager` 迁移到\n`cloud-controller-manager`。",
       "chunk_id": "chk_a713573a47434e60cdd1a509d6c21d8a",
       "chunk_ids": [
@@ -1813,7 +549,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0140",
+      "key": "c0043",
       "text": "对于单节点控制平面，或者在升级过程中可以容忍控制器管理器不可用的情况，则不需要领导者迁移，\n亦可以忽略本指南。",
       "chunk_id": "chk_a713573a47434e60cdd1a509d6c21d8a",
       "chunk_ids": [
@@ -1826,7 +562,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0141",
+      "key": "c0044",
       "text": "领导者迁移可以通过在 `kube-controller-manager` 或 `cloud-controller-manager` 上设置\n`--enable-leader-migration` 来启用。",
       "chunk_id": "chk_a713573a47434e60cdd1a509d6c21d8a",
       "chunk_ids": [
@@ -1839,7 +575,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0142",
+      "key": "c0045",
       "text": "本指南将引导你手动将控制平面从内置的云驱动的 `kube-controller-manager` 升级为\n同时运行 `kube-controller-manager` 和 `cloud-controller-manager`。",
       "chunk_id": "chk_a713573a47434e60cdd1a509d6c21d8a",
       "chunk_ids": [
@@ -1852,7 +588,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0143",
+      "key": "c0046",
       "text": "如果使用某种工具来部署和管理集群，请参阅对应工具和云驱动的文档以获取迁移的具体说明。",
       "chunk_id": "chk_a713573a47434e60cdd1a509d6c21d8a",
       "chunk_ids": [
@@ -1866,7 +602,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0144",
+      "key": "c0047",
       "text": "尽管可以在同一版本内进行迁移，但理想情况下，迁移应作为升级的一部分执行，\n以便可以配置的变更可以与发布版本变化对应起来。",
       "chunk_id": "chk_0f9066aa4196e2d4eea06277447c4d54",
       "chunk_ids": [
@@ -1879,7 +615,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0145",
+      "key": "c0048",
       "text": "例如，如果云厂商构建了一个可与 Kubernetes 1.24\n配合使用的 `cloud-controller-manager`，则 N 可以为 1.23，N+1 可以为 1.24。",
       "chunk_id": "chk_0f9066aa4196e2d4eea06277447c4d54",
       "chunk_ids": [
@@ -1892,7 +628,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0146",
+      "key": "c0049",
       "text": "控制平面节点应运行 `kube-controller-manager` 并启用领导者选举，这也是默认设置。",
       "chunk_id": "chk_0f9066aa4196e2d4eea06277447c4d54",
       "chunk_ids": [
@@ -1905,7 +641,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0147",
+      "key": "c0050",
       "text": "在版本 N 中，树内云驱动必须设置 `--cloud-provider` 标志，而且 `cloud-controller-manager`\n应该尚未部署。",
       "chunk_id": "chk_0f9066aa4196e2d4eea06277447c4d54",
       "chunk_ids": [
@@ -1918,7 +654,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0148",
+      "key": "c0051",
       "text": "树外云驱动必须已经构建了一个实现了领导者迁移的 `cloud-controller-manager`。",
       "chunk_id": "chk_0f9066aa4196e2d4eea06277447c4d54",
       "chunk_ids": [
@@ -1931,7 +667,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0149",
+      "key": "c0052",
       "text": "如果云驱动导入了 v0.21.0 或更高版本的 `k8s.io/cloud-provider` 和 `k8s.io/controller-manager`，\n则可以进行领导者迁移。",
       "chunk_id": "chk_0f9066aa4196e2d4eea06277447c4d54",
       "chunk_ids": [
@@ -1944,7 +680,7 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0150",
+      "key": "c0053",
       "text": "但是，对 v0.22.0 以下的版本，领导者迁移是一项 Alpha 阶段功能，需要在 `cloud-controller-manager`\n中启用特性门控 `ControllerManagerLeaderMigration`。",
       "chunk_id": "chk_0f9066aa4196e2d4eea06277447c4d54",
       "chunk_ids": [
@@ -1957,176 +693,515 @@
       "section_path": "[\"背景\"]"
     },
     {
-      "key": "c0151",
-      "text": "拓扑管理器为组件提供了一个称为 **建议提供者（Hint Provider）** 的接口，以发送和接收拓扑信息。",
-      "chunk_id": "chk_230891d63c40afd409718376c9d74a12",
+      "key": "c0054",
+      "text": "As part of the [cloud provider extraction effort](/blog/2019/04/17/the-future-of-cloud-providers-in-kubernetes/),\nall cloud specific controllers must be moved out of the `kube-controller-manager`.",
+      "chunk_id": "chk_3e03575c50f8107ddb8d806d8ae386b0",
       "chunk_ids": [
-        "chk_230891d63c40afd409718376c9d74a12"
+        "chk_3e03575c50f8107ddb8d806d8ae386b0"
       ],
-      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
-      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
-      "lang": "zh-cn",
-      "title": "topology-manager",
-      "section_path": "[\"拓扑管理器如何工作 {#how-topology-manager-works}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0152",
-      "text": "拓扑管理器从**建议提供者**接收拓扑信息，作为表示可用的 NUMA 节点和首选分配指示的位掩码。",
-      "chunk_id": "chk_230891d63c40afd409718376c9d74a12",
+      "key": "c0055",
+      "text": "All existing clusters that run cloud controllers in the `kube-controller-manager`\nmust migrate to instead run the controllers in a cloud provider specific\n`cloud-controller-manager`.",
+      "chunk_id": "chk_3e03575c50f8107ddb8d806d8ae386b0",
       "chunk_ids": [
-        "chk_230891d63c40afd409718376c9d74a12"
+        "chk_3e03575c50f8107ddb8d806d8ae386b0"
       ],
-      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
-      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
-      "lang": "zh-cn",
-      "title": "topology-manager",
-      "section_path": "[\"拓扑管理器如何工作 {#how-topology-manager-works}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0153",
-      "text": "拓扑管理器策略对所提供的建议执行一组操作，并根据策略对提示进行约减以得到最优解。",
-      "chunk_id": "chk_230891d63c40afd409718376c9d74a12",
+      "key": "c0056",
+      "text": "For a single-node control plane, or if\nunavailability of controller managers can be tolerated during the upgrade, Leader\nMigration is not needed and this guide can be ignored.",
+      "chunk_id": "chk_3e03575c50f8107ddb8d806d8ae386b0",
       "chunk_ids": [
-        "chk_230891d63c40afd409718376c9d74a12"
+        "chk_3e03575c50f8107ddb8d806d8ae386b0"
       ],
-      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
-      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
-      "lang": "zh-cn",
-      "title": "topology-manager",
-      "section_path": "[\"拓扑管理器如何工作 {#how-topology-manager-works}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0154",
-      "text": "越来越多的系统利用 CPU 和硬件加速器的组合来支持要求低延迟的任务和高吞吐量的并行计算。",
-      "chunk_id": "chk_fb06bc7f6553fccb83f70088647f9217",
+      "key": "c0057",
+      "text": "Leader Migration can be enabled by setting `--enable-leader-migration` on\n`kube-controller-manager` or `cloud-controller-manager`.",
+      "chunk_id": "chk_3e03575c50f8107ddb8d806d8ae386b0",
       "chunk_ids": [
-        "chk_fb06bc7f6553fccb83f70088647f9217"
+        "chk_3e03575c50f8107ddb8d806d8ae386b0"
       ],
-      "document_id": "doc_8b3b9ac2b491d44120c10065aec3f9b6",
-      "source_uri": "zh-cn/tasks/administer-cluster/topology-manager.md",
-      "lang": "zh-cn",
-      "title": "topology-manager",
-      "section_path": "[\"topology-manager\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0155",
-      "text": "无论这些统计信息如何到达，kubelet 都会通过 metrics-server Resource Metrics API 公开聚合的\nPod 资源用量统计信息。",
-      "chunk_id": "chk_47323a98c7f322e4b90853a7a293778a",
+      "key": "c0058",
+      "text": "Leader Migration only\napplies during the upgrade and can be safely disabled or left enabled after the\nupgrade is complete.",
+      "chunk_id": "chk_3e03575c50f8107ddb8d806d8ae386b0",
       "chunk_ids": [
-        "chk_47323a98c7f322e4b90853a7a293778a"
+        "chk_3e03575c50f8107ddb8d806d8ae386b0"
       ],
-      "document_id": "doc_2eb4474832829f1ea124eed72e214602",
-      "source_uri": "zh-cn/tasks/debug/debug-cluster/resource-usage-monitoring.md",
-      "lang": "zh-cn",
-      "title": "resource-usage-monitoring",
-      "section_path": "[\"资源度量管道  {#resource-metrics-pipeline}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0156",
-      "text": "该 API 在 kubelet 的经过身份验证和只读的端口上的 `/metrics/resource` 中提供。",
-      "chunk_id": "chk_47323a98c7f322e4b90853a7a293778a",
+      "key": "c0059",
+      "text": "This guide walks you through the manual process of upgrading the control plane from\n`kube-controller-manager` with built-in cloud provider to running both\n`kube-controller-manager` and `cloud-controller-manager`.",
+      "chunk_id": "chk_3e03575c50f8107ddb8d806d8ae386b0",
       "chunk_ids": [
-        "chk_47323a98c7f322e4b90853a7a293778a"
+        "chk_3e03575c50f8107ddb8d806d8ae386b0"
       ],
-      "document_id": "doc_2eb4474832829f1ea124eed72e214602",
-      "source_uri": "zh-cn/tasks/debug/debug-cluster/resource-usage-monitoring.md",
-      "lang": "zh-cn",
-      "title": "resource-usage-monitoring",
-      "section_path": "[\"资源度量管道  {#resource-metrics-pipeline}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0157",
-      "text": "你可以通过检测容器、[Pod](/zh-cn/docs/concepts/workloads/pods)、\n[Service](/zh-cn/docs/concepts/services-networking/service/)\n和整个集群的特征来检查 Kubernetes 集群中应用程序的性能。",
-      "chunk_id": "chk_acf1401725fe4090909f6b377d248b0b",
+      "key": "c0060",
+      "text": "If you use a tool to deploy\nand manage the cluster, please refer to the documentation of the tool and the cloud\nprovider for specific instructions of the migration.",
+      "chunk_id": "chk_3e03575c50f8107ddb8d806d8ae386b0",
       "chunk_ids": [
-        "chk_acf1401725fe4090909f6b377d248b0b"
+        "chk_3e03575c50f8107ddb8d806d8ae386b0",
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
       ],
-      "document_id": "doc_2eb4474832829f1ea124eed72e214602",
-      "source_uri": "zh-cn/tasks/debug/debug-cluster/resource-usage-monitoring.md",
-      "lang": "zh-cn",
-      "title": "resource-usage-monitoring",
-      "section_path": "[\"resource-usage-monitoring\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0158",
-      "text": "在新集群上，\n你可以使用[资源度量](#resource-metrics-pipeline)或[完整度量](#full-metrics-pipeline)管道来收集监视统计信息。",
-      "chunk_id": "chk_acf1401725fe4090909f6b377d248b0b",
+      "key": "c0061",
+      "text": "It is assumed that the control plane is running Kubernetes version N and to be\nupgraded to version N + 1.",
+      "chunk_id": "chk_63a858d048a055aeb8b7a3e036f86a7f",
       "chunk_ids": [
-        "chk_acf1401725fe4090909f6b377d248b0b"
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
       ],
-      "document_id": "doc_2eb4474832829f1ea124eed72e214602",
-      "source_uri": "zh-cn/tasks/debug/debug-cluster/resource-usage-monitoring.md",
-      "lang": "zh-cn",
-      "title": "resource-usage-monitoring",
-      "section_path": "[\"resource-usage-monitoring\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0159",
-      "text": "有关详细信息，请参阅\n     [Job Pod 的终止](/zh-cn/docs/concepts/workloads/controllers/job/#termination-of-job-pods)。",
-      "chunk_id": "chk_33b445f20055c0d5a42ec46d4a615b1f",
+      "key": "c0062",
+      "text": "Although it is possible to migrate within the same\nversion, ideally the migration should be performed as part of an upgrade so that\nchanges of configuration can be aligned to each release.",
+      "chunk_id": "chk_63a858d048a055aeb8b7a3e036f86a7f",
       "chunk_ids": [
-        "chk_33b445f20055c0d5a42ec46d4a615b1f"
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
       ],
-      "document_id": "doc_3e857e26b07a27e9d6ef588949ff0fb7",
-      "source_uri": "zh-cn/tasks/job/pod-failure-policy.md",
-      "lang": "zh-cn",
-      "title": "pod-failure-policy",
-      "section_path": "[\"使用场景   {#usage-scenarios}\", \"使用 Pod 失效策略以避免不必要的 Pod 重试  {#pod-failure-policy-failjob}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0160",
-      "text": "为了比较，如果 Pod 失效策略被禁用，Job 将重试直至达到 `backoffLimit`（6 次失败）。",
-      "chunk_id": "chk_33b445f20055c0d5a42ec46d4a615b1f",
+      "key": "c0063",
+      "text": "The exact versions of N and\nN + 1 depend on each cloud provider.",
+      "chunk_id": "chk_63a858d048a055aeb8b7a3e036f86a7f",
       "chunk_ids": [
-        "chk_33b445f20055c0d5a42ec46d4a615b1f"
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
       ],
-      "document_id": "doc_3e857e26b07a27e9d6ef588949ff0fb7",
-      "source_uri": "zh-cn/tasks/job/pod-failure-policy.md",
-      "lang": "zh-cn",
-      "title": "pod-failure-policy",
-      "section_path": "[\"使用场景   {#usage-scenarios}\", \"使用 Pod 失效策略以避免不必要的 Pod 重试  {#pod-failure-policy-failjob}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0161",
-      "text": "由于重试采用指数退避算法，并且在 `parallelism: 2` 的情况下，\n   故障成对发生，因此每次重试之间的延迟都会增加。",
-      "chunk_id": "chk_33b445f20055c0d5a42ec46d4a615b1f",
+      "key": "c0064",
+      "text": "For example, if a cloud provider builds a\n`cloud-controller-manager` to work with Kubernetes 1.24, then N can be 1.23 and N + 1\ncan be 1.24.",
+      "chunk_id": "chk_63a858d048a055aeb8b7a3e036f86a7f",
       "chunk_ids": [
-        "chk_33b445f20055c0d5a42ec46d4a615b1f"
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
       ],
-      "document_id": "doc_3e857e26b07a27e9d6ef588949ff0fb7",
-      "source_uri": "zh-cn/tasks/job/pod-failure-policy.md",
-      "lang": "zh-cn",
-      "title": "pod-failure-policy",
-      "section_path": "[\"使用场景   {#usage-scenarios}\", \"使用 Pod 失效策略以避免不必要的 Pod 重试  {#pod-failure-policy-failjob}\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0162",
-      "text": "本文向你展示如何结合默认的 [Pod 回退失效策略](/zh-cn/docs/concepts/workloads/controllers/job#pod-backoff-failure-policy)来使用\n[Pod 失效策略](/zh-cn/docs/concepts/workloads/controllers/job#pod-failure-policy)，\n以改善  内处理容器级别或 Pod 级别的失效。",
-      "chunk_id": "chk_d63a7813c2b682a4a11694af356a5e44",
+      "key": "c0065",
+      "text": "The control plane nodes should run `kube-controller-manager` with Leader Election\nenabled, which is the default.",
+      "chunk_id": "chk_63a858d048a055aeb8b7a3e036f86a7f",
       "chunk_ids": [
-        "chk_d63a7813c2b682a4a11694af356a5e44"
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
       ],
-      "document_id": "doc_3e857e26b07a27e9d6ef588949ff0fb7",
-      "source_uri": "zh-cn/tasks/job/pod-failure-policy.md",
-      "lang": "zh-cn",
-      "title": "pod-failure-policy",
-      "section_path": "[\"pod-failure-policy\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0163",
-      "text": "你应该已熟悉了 [Job](/zh-cn/docs/concepts/workloads/controllers/job/) 的基本用法。",
-      "chunk_id": "chk_d63a7813c2b682a4a11694af356a5e44",
+      "key": "c0066",
+      "text": "As of version N, an in-tree cloud provider must be set\nwith `--cloud-provider` flag and `cloud-controller-manager` should not yet be\ndeployed.",
+      "chunk_id": "chk_63a858d048a055aeb8b7a3e036f86a7f",
       "chunk_ids": [
-        "chk_d63a7813c2b682a4a11694af356a5e44"
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
       ],
-      "document_id": "doc_3e857e26b07a27e9d6ef588949ff0fb7",
-      "source_uri": "zh-cn/tasks/job/pod-failure-policy.md",
-      "lang": "zh-cn",
-      "title": "pod-failure-policy",
-      "section_path": "[\"pod-failure-policy\"]"
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
     },
     {
-      "key": "c0164",
+      "key": "c0067",
+      "text": "The out-of-tree cloud provider must have built a `cloud-controller-manager` with\nLeader Migration implementation.",
+      "chunk_id": "chk_63a858d048a055aeb8b7a3e036f86a7f",
+      "chunk_ids": [
+        "chk_63a858d048a055aeb8b7a3e036f86a7f"
+      ],
+      "document_id": "doc_227c78baf84bb66d8d7b2b4d947f7f49",
+      "source_uri": "en/tasks/administer-cluster/controller-manager-leader-migration.md",
+      "lang": "en",
+      "title": "controller-manager-leader-migration",
+      "section_path": "[\"Background\"]"
+    },
+    {
+      "key": "c0068",
+      "text": "如果向已经存在部分已调度 Pod 的 PodGroup 中新增 Pod（例如 Pod 被重新创建时），\n调度器将强制所有新传入的 Pod 落在现有 Pod 当前所在的完全相同的拓扑域中。",
+      "chunk_id": "chk_9085fd84cf3d55344d55666f1291978e",
+      "chunk_ids": [
+        "chk_9085fd84cf3d55344d55666f1291978e"
+      ],
+      "document_id": "doc_6e3eed07ab8ec4088a3b7ece57ff682a",
+      "source_uri": "zh-cn/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "zh-cn",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"拓扑感知调度与 `gang` 调度策略配合使用\"]"
+    },
+    {
+      "key": "c0069",
+      "text": "如果该特定拓扑域没有足够容量来容纳新的 Pod，这些 Pod 将保持 Pending 状态\n——即使这意味着当前已调度的 Pod 数量少于 `minCount`。",
+      "chunk_id": "chk_9085fd84cf3d55344d55666f1291978e",
+      "chunk_ids": [
+        "chk_9085fd84cf3d55344d55666f1291978e"
+      ],
+      "document_id": "doc_6e3eed07ab8ec4088a3b7ece57ff682a",
+      "source_uri": "zh-cn/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "zh-cn",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"拓扑感知调度与 `gang` 调度策略配合使用\"]"
+    },
+    {
+      "key": "c0070",
+      "text": "如果在不触发抢占的情况下无法找到可行的调度方案，\n则 PodGroup 成为不可调度。",
+      "chunk_id": "chk_9085fd84cf3d55344d55666f1291978e",
+      "chunk_ids": [
+        "chk_9085fd84cf3d55344d55666f1291978e"
+      ],
+      "document_id": "doc_6e3eed07ab8ec4088a3b7ece57ff682a",
+      "source_uri": "zh-cn/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "zh-cn",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"拓扑感知调度与 `gang` 调度策略配合使用\"]"
+    },
+    {
+      "key": "c0071",
+      "text": "为同级 `workload-driver` PodGroup 生成的候选放置位置与为 `workload-workers`\n生成的相同，因为这两个组都指定了相同的拓扑键（`topology.example.com/rack`）。",
+      "chunk_id": "chk_b436a1b797ff25bacde6c426f4e11042",
+      "chunk_ids": [
+        "chk_b436a1b797ff25bacde6c426f4e11042"
+      ],
+      "document_id": "doc_6e3eed07ab8ec4088a3b7ece57ff682a",
+      "source_uri": "zh-cn/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "zh-cn",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"多级拓扑感知调度\", \"示例\"]"
+    },
+    {
+      "key": "c0072",
+      "text": "TAS 确保同一个 PodGroup 中的所有 Pod 被一起调度在特定的拓扑域中，\n例如同一个服务器机架或同一个可用区。",
+      "chunk_id": "chk_209e76812af3457c89528a55e1d727ce",
+      "chunk_ids": [
+        "chk_209e76812af3457c89528a55e1d727ce"
+      ],
+      "document_id": "doc_6e3eed07ab8ec4088a3b7ece57ff682a",
+      "source_uri": "zh-cn/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "zh-cn",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"topology-aware-scheduling\"]"
+    },
+    {
+      "key": "c0073",
+      "text": "这减少了 Pod 之间通信的延迟，\n并防止工作负载在集群基础设施中发生碎片化分布。",
+      "chunk_id": "chk_209e76812af3457c89528a55e1d727ce",
+      "chunk_ids": [
+        "chk_209e76812af3457c89528a55e1d727ce"
+      ],
+      "document_id": "doc_6e3eed07ab8ec4088a3b7ece57ff682a",
+      "source_uri": "zh-cn/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "zh-cn",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"topology-aware-scheduling\"]"
+    },
+    {
+      "key": "c0074",
+      "text": "This is the recommended approach for workloads like distributed AI and ML training that strictly\nrequire proximity to minimize inter-pod communication latency.",
+      "chunk_id": "chk_8f95e65fe816f2e7a67d0353e70847e7",
+      "chunk_ids": [
+        "chk_8f95e65fe816f2e7a67d0353e70847e7"
+      ],
+      "document_id": "doc_a186a4ca135474280f037b010e258d35",
+      "source_uri": "en/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "en",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"Topology-aware scheduling with gang scheduling policy\"]"
+    },
+    {
+      "key": "c0075",
+      "text": "If that specific domain lacks sufficient capacity\nfor the new pods, the pods will remain pending - even if it means that less than `minCount` pods\nare scheduled at this point.",
+      "chunk_id": "chk_8f95e65fe816f2e7a67d0353e70847e7",
+      "chunk_ids": [
+        "chk_8f95e65fe816f2e7a67d0353e70847e7"
+      ],
+      "document_id": "doc_a186a4ca135474280f037b010e258d35",
+      "source_uri": "en/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "en",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"Topology-aware scheduling with gang scheduling policy\"]"
+    },
+    {
+      "key": "c0076",
+      "text": "As of v1.36 Topology-Aware Scheduling does not trigger workload or pod preemption.",
+      "chunk_id": "chk_8f95e65fe816f2e7a67d0353e70847e7",
+      "chunk_ids": [
+        "chk_8f95e65fe816f2e7a67d0353e70847e7"
+      ],
+      "document_id": "doc_a186a4ca135474280f037b010e258d35",
+      "source_uri": "en/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "en",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"Topology-aware scheduling with gang scheduling policy\"]"
+    },
+    {
+      "key": "c0077",
+      "text": "If no\nfeasible placement can be found without triggering preemption, the PodGroup becomes unschedulable.",
+      "chunk_id": "chk_8f95e65fe816f2e7a67d0353e70847e7",
+      "chunk_ids": [
+        "chk_8f95e65fe816f2e7a67d0353e70847e7"
+      ],
+      "document_id": "doc_a186a4ca135474280f037b010e258d35",
+      "source_uri": "en/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "en",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"Topology-aware scheduling with gang scheduling policy\"]"
+    },
+    {
+      "key": "c0078",
+      "text": "TAS ensures that all pods within a PodGroup are co-located into a specific topology domain,\nsuch as a single server rack or zone.",
+      "chunk_id": "chk_90b0214c8f3a6962dfc1d3909dbb11c8",
+      "chunk_ids": [
+        "chk_90b0214c8f3a6962dfc1d3909dbb11c8"
+      ],
+      "document_id": "doc_a186a4ca135474280f037b010e258d35",
+      "source_uri": "en/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "en",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"topology-aware-scheduling\"]"
+    },
+    {
+      "key": "c0079",
+      "text": "This minimizes inter-pod communication latency and prevents\nworkload fragmentation across the cluster infrastructure.",
+      "chunk_id": "chk_90b0214c8f3a6962dfc1d3909dbb11c8",
+      "chunk_ids": [
+        "chk_90b0214c8f3a6962dfc1d3909dbb11c8"
+      ],
+      "document_id": "doc_a186a4ca135474280f037b010e258d35",
+      "source_uri": "en/concepts/workloads/workload-api/topology-aware-scheduling.md",
+      "lang": "en",
+      "title": "topology-aware-scheduling",
+      "section_path": "[\"topology-aware-scheduling\"]"
+    },
+    {
+      "key": "c0080",
+      "text": "这种情况下，`kubectl` 将要求代理服务器（例如 SSH 堡垒机）解析 k8s API 服务器域名，\n  而不是在运行 `kubectl` 的系统上进行解析。",
+      "chunk_id": "chk_c440ba8f2add3a38de8589a3d24d7975",
+      "chunk_ids": [
+        "chk_c440ba8f2add3a38de8589a3d24d7975"
+      ],
+      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
+      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "zh-cn",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"客户端配置\"]"
+    },
+    {
+      "key": "c0081",
+      "text": "相反，它指向的是代理服务器（例如 SSH 堡垒机）上已知的 `localhost`。",
+      "chunk_id": "chk_c440ba8f2add3a38de8589a3d24d7975",
+      "chunk_ids": [
+        "chk_c440ba8f2add3a38de8589a3d24d7975"
+      ],
+      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
+      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "zh-cn",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"客户端配置\"]"
+    },
+    {
+      "key": "c0082",
+      "text": "本文展示了如何使用 SOCKS5 代理访问远程 Kubernetes 集群的 API。",
+      "chunk_id": "chk_5b83276c5689d1cb1c8febba25c1b4ad",
+      "chunk_ids": [
+        "chk_5b83276c5689d1cb1c8febba25c1b4ad"
+      ],
+      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
+      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "zh-cn",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"socks5-proxy-access-api\"]"
+    },
+    {
+      "key": "c0083",
+      "text": "当你要访问的集群不直接在公共 Internet 上公开其 API 时，这很有用。",
+      "chunk_id": "chk_5b83276c5689d1cb1c8febba25c1b4ad",
+      "chunk_ids": [
+        "chk_5b83276c5689d1cb1c8febba25c1b4ad"
+      ],
+      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
+      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "zh-cn",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"socks5-proxy-access-api\"]"
+    },
+    {
+      "key": "c0084",
+      "text": "你需要 SSH 客户端软件（`ssh` 工具），并在远程服务器上运行 SSH 服务。",
+      "chunk_id": "chk_5b83276c5689d1cb1c8febba25c1b4ad",
+      "chunk_ids": [
+        "chk_5b83276c5689d1cb1c8febba25c1b4ad"
+      ],
+      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
+      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "zh-cn",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"socks5-proxy-access-api\"]"
+    },
+    {
+      "key": "c0085",
+      "text": "客户端和 Kubernetes API 之间的 HTTPS 流量将流经 SOCKS5 隧道，该隧道本身通过\n  SSH 进行隧道传输。",
+      "chunk_id": "chk_d2d7d5e1324502bec7334cfc355d5cd4",
+      "chunk_ids": [
+        "chk_d2d7d5e1324502bec7334cfc355d5cd4"
+      ],
+      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
+      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "zh-cn",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"任务上下文  {#task-context}\"]"
+    },
+    {
+      "key": "c0086",
+      "text": "通过代理传递的 <br> HTTPS 流量 .->service1[Kubernetes API];",
+      "chunk_id": "chk_d2d7d5e1324502bec7334cfc355d5cd4",
+      "chunk_ids": [
+        "chk_d2d7d5e1324502bec7334cfc355d5cd4"
+      ],
+      "document_id": "doc_3b6202c2464c4862cb6800ff3054a2f7",
+      "source_uri": "zh-cn/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "zh-cn",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"任务上下文  {#task-context}\"]"
+    },
+    {
+      "key": "c0087",
+      "text": "This page shows how to use a SOCKS5 proxy to access the API of a remote Kubernetes cluster.",
+      "chunk_id": "chk_7fb3203e0bd7eccce03477134643b45f",
+      "chunk_ids": [
+        "chk_7fb3203e0bd7eccce03477134643b45f"
+      ],
+      "document_id": "doc_e8efb9ee581f3ed528ad0e504db10e70",
+      "source_uri": "en/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "en",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"socks5-proxy-access-api\"]"
+    },
+    {
+      "key": "c0088",
+      "text": "This is useful when the cluster you want to access does not expose its API directly on the public internet.",
+      "chunk_id": "chk_7fb3203e0bd7eccce03477134643b45f",
+      "chunk_ids": [
+        "chk_7fb3203e0bd7eccce03477134643b45f"
+      ],
+      "document_id": "doc_e8efb9ee581f3ed528ad0e504db10e70",
+      "source_uri": "en/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "en",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"socks5-proxy-access-api\"]"
+    },
+    {
+      "key": "c0089",
+      "text": "You need SSH client software (the `ssh` tool), and an SSH service running on the remote server.",
+      "chunk_id": "chk_7fb3203e0bd7eccce03477134643b45f",
+      "chunk_ids": [
+        "chk_7fb3203e0bd7eccce03477134643b45f"
+      ],
+      "document_id": "doc_e8efb9ee581f3ed528ad0e504db10e70",
+      "source_uri": "en/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "en",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"socks5-proxy-access-api\"]"
+    },
+    {
+      "key": "c0090",
+      "text": "You must be able to log in to the SSH service on the remote server.",
+      "chunk_id": "chk_7fb3203e0bd7eccce03477134643b45f",
+      "chunk_ids": [
+        "chk_7fb3203e0bd7eccce03477134643b45f"
+      ],
+      "document_id": "doc_e8efb9ee581f3ed528ad0e504db10e70",
+      "source_uri": "en/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "en",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"socks5-proxy-access-api\"]"
+    },
+    {
+      "key": "c0091",
+      "text": "The HTTPS traffic between the client and the Kubernetes API will flow over the SOCKS5\n  tunnel, which is itself tunnelled over SSH.",
+      "chunk_id": "chk_e4685745378af77e250a32a0d2d9c604",
+      "chunk_ids": [
+        "chk_e4685745378af77e250a32a0d2d9c604"
+      ],
+      "document_id": "doc_e8efb9ee581f3ed528ad0e504db10e70",
+      "source_uri": "en/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "en",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"Task context\"]"
+    },
+    {
+      "key": "c0092",
+      "text": "Instead, it refers to `localhost` as known on the proxy server (eg the ssh bastion).",
+      "chunk_id": "chk_44ce005e2d9da6d56fbfaeac58a48e1f",
+      "chunk_ids": [
+        "chk_44ce005e2d9da6d56fbfaeac58a48e1f"
+      ],
+      "document_id": "doc_e8efb9ee581f3ed528ad0e504db10e70",
+      "source_uri": "en/tasks/extend-kubernetes/socks5-proxy-access-api.md",
+      "lang": "en",
+      "title": "socks5-proxy-access-api",
+      "section_path": "[\"Client configuration\"]"
+    },
+    {
+      "key": "c0093",
       "text": "公认的 `kubernetes` Service 将 kube-apiserver 的端点暴露给 Pod，\n计算出默认 ServiceCIDR 范围中的第一个 IP 地址，并将该 IP 地址用作其集群 IP 地址。",
       "chunk_id": "chk_e247b6efb3b43e608d8e33179ebfc70e",
       "chunk_ids": [
@@ -2139,7 +1214,7 @@
       "section_path": "[\"扩展 Service IP 范围   {#extend-service-ip-ranges}\"]"
     },
     {
-      "key": "c0165",
+      "key": "c0094",
       "text": "在本例中，默认 Service 使用具有对应 IPAddress 对象的 ClusterIP 10.96.0.1。",
       "chunk_id": "chk_e247b6efb3b43e608d8e33179ebfc70e",
       "chunk_ids": [
@@ -2152,7 +1227,7 @@
       "section_path": "[\"扩展 Service IP 范围   {#extend-service-ip-ranges}\"]"
     },
     {
-      "key": "c0166",
+      "key": "c0095",
       "text": "ServiceCIDR 受到  的保护，\n以避免留下孤立的 Service ClusterIP；",
       "chunk_id": "chk_e247b6efb3b43e608d8e33179ebfc70e",
       "chunk_ids": [
@@ -2165,7 +1240,7 @@
       "section_path": "[\"扩展 Service IP 范围   {#extend-service-ip-ranges}\"]"
     },
     {
-      "key": "c0167",
+      "key": "c0096",
       "text": "只有在存在包含现有 IPAddress 的另一个子网或者没有属于此子网的\nIPAddress 时，才会移除终结器。",
       "chunk_id": "chk_e247b6efb3b43e608d8e33179ebfc70e",
       "chunk_ids": [
@@ -2178,7 +1253,7 @@
       "section_path": "[\"扩展 Service IP 范围   {#extend-service-ip-ranges}\"]"
     },
     {
-      "key": "c0168",
+      "key": "c0097",
       "text": "虽然你可以在更早的版本中使用此特性，但此特性只有从 v1.33 版本开始才进阶至\nGA（正式发布）并获得官方支持。",
       "chunk_id": "chk_03137115b06f5317389cd7cbbecc6d22",
       "chunk_ids": [
@@ -2189,6 +1264,71 @@
       "lang": "zh-cn",
       "title": "extend-service-ip-ranges",
       "section_path": "[\"extend-service-ip-ranges\"]"
+    },
+    {
+      "key": "c0098",
+      "text": "This document shares how to extend the existing Service IP range assigned to a cluster.",
+      "chunk_id": "chk_623a85a6e9c60d9b9c192cafc14b7952",
+      "chunk_ids": [
+        "chk_623a85a6e9c60d9b9c192cafc14b7952"
+      ],
+      "document_id": "doc_1a4f0bff1d1a50d7c81f65df7a60eeab",
+      "source_uri": "en/tasks/network/extend-service-ip-ranges.md",
+      "lang": "en",
+      "title": "extend-service-ip-ranges",
+      "section_path": "[\"extend-service-ip-ranges\"]"
+    },
+    {
+      "key": "c0099",
+      "text": "While you can use this feature with an earlier version, the feature is only GA and officially supported since v1.33.",
+      "chunk_id": "chk_623a85a6e9c60d9b9c192cafc14b7952",
+      "chunk_ids": [
+        "chk_623a85a6e9c60d9b9c192cafc14b7952"
+      ],
+      "document_id": "doc_1a4f0bff1d1a50d7c81f65df7a60eeab",
+      "source_uri": "en/tasks/network/extend-service-ip-ranges.md",
+      "lang": "en",
+      "title": "extend-service-ip-ranges",
+      "section_path": "[\"extend-service-ip-ranges\"]"
+    },
+    {
+      "key": "c0100",
+      "text": "The well-known `kubernetes` Service, that exposes the kube-apiserver endpoint to the Pods, calculates\nthe first IP address from the default ServiceCIDR range and uses that IP address as its\ncluster IP address.",
+      "chunk_id": "chk_e31301f25b24bc18c3948b9981a1e7cc",
+      "chunk_ids": [
+        "chk_e31301f25b24bc18c3948b9981a1e7cc"
+      ],
+      "document_id": "doc_1a4f0bff1d1a50d7c81f65df7a60eeab",
+      "source_uri": "en/tasks/network/extend-service-ip-ranges.md",
+      "lang": "en",
+      "title": "extend-service-ip-ranges",
+      "section_path": "[\"Extend Service IP Ranges\"]"
+    },
+    {
+      "key": "c0101",
+      "text": "The default Service, in this case, uses the ClusterIP 10.96.0.1, that has the corresponding IPAddress object.",
+      "chunk_id": "chk_e31301f25b24bc18c3948b9981a1e7cc",
+      "chunk_ids": [
+        "chk_e31301f25b24bc18c3948b9981a1e7cc"
+      ],
+      "document_id": "doc_1a4f0bff1d1a50d7c81f65df7a60eeab",
+      "source_uri": "en/tasks/network/extend-service-ip-ranges.md",
+      "lang": "en",
+      "title": "extend-service-ip-ranges",
+      "section_path": "[\"Extend Service IP Ranges\"]"
+    },
+    {
+      "key": "c0102",
+      "text": "The ServiceCIDRs are protected with ,\nto avoid leaving Service ClusterIPs orphans; the finalizer is only removed if there is another subnet\nthat contains the existing IPAddresses or there are no IPAddresses belonging to the subnet.",
+      "chunk_id": "chk_e31301f25b24bc18c3948b9981a1e7cc",
+      "chunk_ids": [
+        "chk_e31301f25b24bc18c3948b9981a1e7cc"
+      ],
+      "document_id": "doc_1a4f0bff1d1a50d7c81f65df7a60eeab",
+      "source_uri": "en/tasks/network/extend-service-ip-ranges.md",
+      "lang": "en",
+      "title": "extend-service-ip-ranges",
+      "section_path": "[\"Extend Service IP Ranges\"]"
     }
   ]
 }

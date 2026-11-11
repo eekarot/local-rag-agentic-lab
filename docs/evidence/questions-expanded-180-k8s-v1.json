@@ -1,0 +1,93 @@
+{
+  "note": "扩题 144 → 180：为 C0f/C0g 把跨语言格子撑到 n≥20；同一检索链、同一库、同一参数口径，只换题集",
+  "why": "英→中 原本只有 9 题，±1 题 = 11 个点；C0f 的验收值落在这一格上，无法判定改动是否真有效",
+  "changed": {
+    "questions_total": {
+      "before": 144,
+      "after": 180
+    },
+    "positives": {
+      "before": 139,
+      "after": 175
+    },
+    "questions_sha256": {
+      "before": "71b6b84c7418fc9940374522cdf41b29e911af0d1909e7bfd11216fd1f295f42",
+      "after": "79cb096bb6d1c93cae3b5e1f1bc1717ce8df1949a8acd0c9860f42e1a572a68b"
+    }
+  },
+  "overall": {
+    "before": {
+      "n": 144,
+      "positives": 139,
+      "hit@10": 0.8345,
+      "full@10": 0.8273,
+      "recall@10": 0.8297,
+      "mrr": 0.5648
+    },
+    "after": {
+      "n": 180,
+      "positives": 175,
+      "hit@10": 0.8571,
+      "full@10": 0.8514,
+      "recall@10": 0.8533,
+      "mrr": 0.5316
+    }
+  },
+  "cells": {
+    "before": {
+      "en→en": {
+        "n": 54,
+        "hit@10": 0.963,
+        "mrr": 0.6817
+      },
+      "en→zh-cn": {
+        "n": 9,
+        "hit@10": 0.5556,
+        "mrr": 0.0778
+      },
+      "zh→en": {
+        "n": 22,
+        "hit@10": 0.7273,
+        "mrr": 0.3096
+      },
+      "zh→zh-cn": {
+        "n": 54,
+        "hit@10": 0.7963,
+        "mrr": 0.6332
+      }
+    },
+    "after": {
+      "en→en": {
+        "n": 54,
+        "hit@10": 0.963,
+        "mrr": 0.6817
+      },
+      "en→zh-cn": {
+        "n": 24,
+        "hit@10": 0.75,
+        "mrr": 0.2612
+      },
+      "zh→en": {
+        "n": 43,
+        "hit@10": 0.8605,
+        "mrr": 0.3664
+      },
+      "zh→zh-cn": {
+        "n": 54,
+        "hit@10": 0.7963,
+        "mrr": 0.6332
+      }
+    }
+  },
+  "finding": "英→中 从 0.5556/MRR 0.0778（n=9）变成 0.7500/MRR 0.2612（n=24）；中→英 从 0.7273/0.3096（n=22）变成 0.8605/0.3664（n=43）。稳定结论只剩一条：跨语言短板在排序（MRR 只有同语言的 40%–55%），不在召回",
+  "baseline_fingerprint_unchanged_except_questions": {
+    "k": 10,
+    "pool": 40,
+    "rerank": true,
+    "query_en_mode": "translate",
+    "rerank_query_mode": "question",
+    "lang_quota": 0,
+    "rerank_merge": "raw",
+    "max_other_lang": 0
+  }
+}
