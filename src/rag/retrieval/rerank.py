@@ -255,6 +255,69 @@ def rerank_hits(
     return ordered[:top_n] if top_n else ordered
 
 
+def rerank_tiles(
+    query: str,
+    hits: Sequence[RerankHit],
+    *,
+    encoder,
+    config: RerankConfig | None = None,
+    counter,
+    top_n: int | None = None,
+    stats: Callable[[], dict[str, Any]] | dict | None = None,
+    text_getter: Callable[[RerankHit], str] | None = None,
+) -> list[RerankHit]:
+    """让交叉编码器在**粗粒度分段**里自己挑窗口，再按段内最高分排序（C0f）。
+
+    ？为什么不直接用 `best_window()`：它靠「与 query 的词面重叠」挑，而这套信号会骗人 ——
+    实测 gold 块里「随便哪一段都含答案句」= 1.0，词面挑中的只有 0.79（0.61/0.78 分格看），
+    典型错法是**标题命中了 query 词、正文才是答案**。cross-encoder 看的是「这段像不像在回答这句」，
+    不受词表重叠影响，代价只是多编几段（p50 父块 1.6 段，不是可滑窗口的 24 段）。
+
+    语义与 `rerank_hits` 完全对齐（并列保持原序 / 异常回退并记 `fallbacks` / `enabled=False`
+    时一个编码调用都不发），区别只有两处：
+      * 送进编码器的是每候选的**段**（一次批量拍平，不是逐候选调一次）；
+      * `rerank_score` = 段内最高分，`fields["window"]` = 赢的那一段（诊断要用）。
+    """
+    config = config or RerankConfig()
+    candidates = list(hits)
+    if not config.enabled or not candidates:
+        return candidates[:top_n] if top_n else candidates
+
+    def _bump(name: str) -> None:
+        live = stats() if callable(stats) else stats
+        if isinstance(live, dict):
+            live[name] = live.get(name, 0) + 1
+
+    tiles: list[list[str]] = []
+    for hit in candidates:
+        text = (text_getter(hit) if text_getter else hit.text) or ""
+        tiles.append(tile_windows(text, max_tokens=config.max_length, counter=counter))
+    flat = [tile for item in tiles for tile in item]
+    try:
+        scores = np.asarray(encoder.encode_pairs(query, flat), dtype=np.float32)
+    except Exception:
+        if not config.fallback_on_error:
+            raise
+        _bump("fallbacks")
+        return candidates[:top_n] if top_n else candidates
+
+    if len(scores) != len(flat):
+        if not config.fallback_on_error:
+            raise RerankError(f"编码器返回 {len(scores)} 个分数，窗口 {len(flat)} 段")
+        _bump("fallbacks")
+        return candidates[:top_n] if top_n else candidates
+
+    cursor = 0
+    for hit, item in zip(candidates, tiles):
+        window_scores = scores[cursor:cursor + len(item)]
+        cursor += len(item)
+        best = int(np.argmax(window_scores))
+        hit.rerank_score = float(window_scores[best])
+        hit.fields["window"] = item[best]
+    ordered = sorted(candidates, key=lambda hit: (-hit.rerank_score, hit.rank, hit.chunk_id))
+    return ordered[:top_n] if top_n else ordered
+
+
 def _query_terms(query: str) -> set[str]:
     """查询词集合：英文按词、中文按字 bigram（不引 jieba，避免为了挑窗口拉依赖）。"""
     lowered = (query or "").lower()
@@ -291,32 +354,62 @@ def _hard_split(unit: str, max_tokens: int, counter) -> list[str]:
     return [unit[i:i + step] for i in range(0, len(unit), step)] or [unit]
 
 
-def best_window(text: str, query: str, *, max_tokens: int, counter) -> str:
-    """在父块正文里挑一段「最可能回答 query」的窗口，长度 ≤ max_tokens。
+def tile_windows(text: str, *, max_tokens: int, counter) -> list[str]:
+    """把正文按预算**切完不重叠**（粗粒度分段，C0f）。
 
-    为什么需要它（实测数字，见 `docs/evidence/window-strategy-k8s-v1.json`）：
-    候选父块 p50 = **322 token**，其中 **63% 超过 256**；直接截开头会拿到标题/目录，
-    真正相关的那句常在中间。窗口挑错不是小事：整批换成「块首 256 token」，
-    整体 hit@10 从 0.8345 掉到 0.6978（中→中 −18.5 点）。做法是：
+    与 `window_candidates()` 的分工：那个返回**全部可滑位置**（p50 每块 ~24 个），
+    配「按词面重叠挑」很划算；但让 cross-encoder 逐段打分就是 40×24 次编码
+    （实测一条 query 光编码 31 s，不可交付）。这里只按预算切块，
+    p50 父块 322 token / 256 → 平均 1.6 段，代价与基线同量级。
 
-    1. 按句末标点切积木；
-    2. 逐个积木累计 token，滑出一个一个 ≤ max_tokens 的候选窗口；
-    3. 选与 query 词重叠最多的窗口（并列取靠前的）。
+    切法：按句末标点切积木，攒到超预算就封一段。**不丢字、不重复**（用例锁了 `"".join(tiles) == text`），
+    因为下游要拿段去做语义打分，漏一段等于那一段永远选不到。
 
-    没有任何重叠时退回开头窗口——至少不比 `text[:N]` 更差。
+    预算用**拼接后的真实 token 数**判（不是把每句的 token 相加）：分句各自向下取整，
+    相加会系统性低估（实测 10 × 9 字符句：相低 20、真值 22）。单句本身就超预算时它自成一段，
+    宁可这一格略超也不切字。
     """
     if not text:
-        return ""
+        return [""]
+    tiles: list[str] = []
+    current: list[str] = []
+    for unit in _split_units(text):
+        if current and counter.count("".join(current) + unit) > max_tokens:
+            tiles.append("".join(current))
+            current = []
+        current.append(unit)
+    if current:
+        tiles.append("".join(current))
+    return tiles or [text[: max(4, max_tokens * 2)]]
+
+
+def window_candidates(text: str, *, max_tokens: int, counter) -> list[str]:
+    """把正文切成**全部**候选窗口（按正文先后顺序，每个 ≤ max_tokens）。
+
+    抽出来是给 C0f 用的：挑窗口的策略要能换（词面重叠 / 交叉编码器 / 结构兜底），
+    但「有哪些窗口可选」必须只有一份实现 —— 两份就会出现「测的那套窗口 ≠ 跑的那套」。
+
+    切法：先按句末标点切积木，超长「句」（技术文档里整段没句号很常见）按 token 比例硬切；
+    再逐步扩右端、超预算就抬左端，于是每个 `(start, end)` 都是一个合法窗口。
+    不超预算的文本直接返回原串 —— 切片对它没意义，也不该再判定一次。
+
+    **预算按「逐句 token 相加」估算，不按拼接后的真实 token 数卡死**（踩过，见 C0f）：
+    分句各自向下取整，相加会低估约 10%，所以真窗口可以略超 256 —— 而编码器本来就把超长
+    输入截到 `max_length`，尾部多出来的几个 token 会被丢掉。曾经「修正」成精确卡死，
+    整体 hit@10 从 0.8571 掉到 0.8286（−2.85 点）、MRR 0.5316→0.5116：
+    并列时优先「更长的窗口」，一旦把长窗口全卡掉，赢家就变成更短、上下文更少的那段。
+    """
+    if not text:
+        return []
     if counter.count(text) <= max_tokens:
-        return text
+        return [text]
 
     # 超长「句子」先硬切开：否则它整块超预算会被跳过，里面那句话就永远选不到
     units: list[str] = []
     for unit in _split_units(text) or [text]:
         units.extend(_hard_split(unit, max_tokens, counter))
-    terms = _query_terms(query)
 
-    windows: list[tuple[int, int, str]] = []      # (start, end, text)
+    windows: list[str] = []
     start = 0
     tokens = 0
     for end, unit in enumerate(units):
@@ -326,17 +419,41 @@ def best_window(text: str, query: str, *, max_tokens: int, counter) -> str:
             tokens -= max(1, counter.count(units[start]))
             start += 1
         if tokens <= max_tokens:
-            windows.append((start, end, "".join(units[start:end + 1])))
+            windows.append("".join(units[start:end + 1]))
     if not windows:
-        return units[0][: max(4, max_tokens * 2)]
+        # 单个积木比预算还长且切不动：兜个底，至少给一段（不抛异常、不空手）
+        return [units[0][: max(4, max_tokens * 2)]]
+    return windows
 
+
+def best_window(text: str, query: str, *, max_tokens: int, counter) -> str:
+    """在父块正文里挑一段「最可能回答 query」的窗口，长度 ≤ max_tokens。
+
+    为什么需要它（实测数字，见 `docs/evidence/window-strategy-k8s-v1.json`）：
+    候选父块 p50 = **322 token**，其中 **63% 超过 256**；直接截开头会拿到标题/目录，
+    真正相关的那句常在中间。窗口挑错不是小事：整批换成「块首 256 token」，
+    整体 hit@10 从 0.8345 掉到 0.6978（中→中 −18.5 点）。做法是：
+
+    1. 按句末标点切积木（`window_candidates`）；
+    2. 逐个积木累计 token，滑出一个一个 ≤ max_tokens 的候选窗口；
+    3. 选与 query 词重叠最多的窗口（并列取靠前的）。
+
+    没有任何重叠时退回开头窗口——至少不比 `text[:N]` 更差。
+    （**这个退路本身是 C0f 要治的病**：跨语言时重叠常恒为 0，退路就成了唯一策略；
+    对照实现见 `--window auto`。）
+    """
+    windows = window_candidates(text, max_tokens=max_tokens, counter=counter)
+    if not windows:
+        return ""
+
+    terms = _query_terms(query)
     best = windows[0]
     best_score = -1.0
     for window in windows:
-        lowered = window[2].lower()
+        lowered = window.lower()
         hit = sum(1 for term in terms if term in lowered)
         # 同样重叠数时优先长窗口（信息量大），仍然并列则取靠前的
-        score = hit + len(window[2]) / 1e6
+        score = hit + len(window) / 1e6
         if score > best_score:
             best, best_score = window, score
-    return best[2]
+    return best

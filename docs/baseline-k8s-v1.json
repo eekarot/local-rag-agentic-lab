@@ -9,6 +9,7 @@
   "lang_quota": 0,
   "rerank_merge": "raw",
   "max_other_lang": 0,
+  "window": "overlap",
   "translate": {
     "total": 102,
     "ok": 20,

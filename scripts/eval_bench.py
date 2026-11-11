@@ -161,7 +161,7 @@ def _metric_series(rows: list[dict]) -> dict[str, list[float]]:
 #: 口径指纹：这些参数一换就不是「同一个检索器」了。新增口径时必须同步 `docs/baseline-k8s-v1.json`，
 #: 否则门禁会把默认路径也判成 not_comparable（C0e 就漏过一次 `max_other_lang`）。
 COMPARABILITY_KEYS = ("k", "pool", "rerank", "query_en_mode", "rerank_query_mode",
-                      "lang_quota", "rerank_merge", "max_other_lang")
+                      "lang_quota", "rerank_merge", "max_other_lang", "window")
 
 
 def _comparability_reasons(current: dict, baseline: dict) -> list[str]:
@@ -367,6 +367,7 @@ def evaluate(
     lang_quota: int = 0,
     rerank_merge: str = "raw",
     max_other_lang: int = 0,
+    window: str = "overlap",
 ) -> dict:
     from src.rag.ask.pipeline import retrieve_with_meta
     from src.rag.ingestion.tokenizer import TokenCounter
@@ -395,7 +396,7 @@ def evaluate(
                                      query_en=english, rerank_query=rerank_query,
                                      rerank_merge=rerank_merge,
                                      k=k, lang_quota=lang_quota,
-                                     max_other_lang=max_other_lang)
+                                     max_other_lang=max_other_lang, window=window)
         elapsed_ms = (time.perf_counter() - started) * 1000
         latencies.append(elapsed_ms)
         ranked = [hit.chunk_id for hit in outcome.hits][:k]   # 检索返回的是 parent id（已按配额取够 k 条）
@@ -433,6 +434,7 @@ def evaluate(
         "lang_quota": lang_quota,
         "rerank_merge": rerank_merge,
         "max_other_lang": max_other_lang,
+        "window": window,
         **({"translate": translator.stats()} if translator is not None
            and hasattr(translator, "stats") else {}),
         "overall": summarize(rows, k),
@@ -502,6 +504,9 @@ def build_parser() -> argparse.ArgumentParser:
                         help="C0e-2：by_lang 两组分数的合并口径（raw=直接混排）")
     parser.add_argument("--max-other-lang", type=int, default=0,
                         help="C0h：与提问语言不同的候选最多占几个（0 = 关闭）")
+    parser.add_argument("--window", choices=("overlap", "tiles"), default="overlap",
+                        help="C0f：怎么给重排挑那 256 token —— overlap = 按与 query 的词面重叠挑"
+                             "（默认，基线锚）；tiles = 让交叉编码器在粗分段里自己挑（多编 1.6×）")
     parser.add_argument("--lang-quota", type=int, default=0,
                         help="C0e：最终 top-k 里每种语言至少占几个名额（0 = 关闭）")
     parser.add_argument("--compare-tolerance", type=float, default=None,
@@ -526,7 +531,8 @@ def main(argv: list[str] | None = None) -> int:
                       translator=build_translate_fn() if args.query_en == "translate" else None,
                       rerank_query=args.rerank_query, lang_quota=args.lang_quota,
                       rerank_merge=args.rerank_merge,
-                      max_other_lang=args.max_other_lang)
+                      max_other_lang=args.max_other_lang,
+                      window=args.window)
     result["questions_sha256"] = questions_fingerprint(args.questions)
 
     out_path = None if args.compare and args.out is None else _default_out(args)

@@ -1,0 +1,180 @@
+{
+  "note": "C0f 权威 A/B：`--window tiles`（让交叉编码器在粗分段里挑 256 token）vs 基线 overlap",
+  "path": "两侧都走 scripts/eval_bench.py → retrieve_with_meta（和 /ask 同一条链），只换 window 口径",
+  "why": "N54 量到 gold 块里「随便哪一段都含答案句」= 1.0，而词面重叠挑中的只有 0.79 —— 病在挑错，不在挑不到。tiles 用 cross-encoder 打分代替词面重叠去挑。",
+  "verdict": "未达标，不翻默认：整体 hit +0.57 点 / MRR +1.05 点，但逐题 32 好 35 差 —— 落在噪声内；代价是检索延迟 ×1.84。唯一像样的信号是 英→中 MRR +6.1 点（n=24、7 好 5 差）。",
+  "cells": {
+    "英→英": {
+      "n": 54,
+      "hit@10": {
+        "overlap": 0.963,
+        "tiles": 0.9815,
+        "delta": 0.0185
+      },
+      "mrr": {
+        "overlap": 0.6817,
+        "tiles": 0.6998,
+        "delta": 0.0182
+      },
+      "per_question": {
+        "better": 9,
+        "worse": 7,
+        "same": 38
+      }
+    },
+    "中→中": {
+      "n": 54,
+      "hit@10": {
+        "overlap": 0.7963,
+        "tiles": 0.7778,
+        "delta": -0.0185
+      },
+      "mrr": {
+        "overlap": 0.6332,
+        "tiles": 0.6213,
+        "delta": -0.0118
+      },
+      "per_question": {
+        "better": 8,
+        "worse": 14,
+        "same": 32
+      }
+    },
+    "英→中": {
+      "n": 24,
+      "hit@10": {
+        "overlap": 0.75,
+        "tiles": 0.75,
+        "delta": 0.0
+      },
+      "mrr": {
+        "overlap": 0.2612,
+        "tiles": 0.3223,
+        "delta": 0.061
+      },
+      "per_question": {
+        "better": 7,
+        "worse": 5,
+        "same": 12
+      }
+    },
+    "中→英": {
+      "n": 43,
+      "hit@10": {
+        "overlap": 0.8605,
+        "tiles": 0.8837,
+        "delta": 0.0233
+      },
+      "mrr": {
+        "overlap": 0.3664,
+        "tiles": 0.3672,
+        "delta": 0.0008
+      },
+      "per_question": {
+        "better": 8,
+        "worse": 9,
+        "same": 26
+      }
+    },
+    "整体": {
+      "n": 175,
+      "hit@10": {
+        "overlap": 0.8571,
+        "tiles": 0.8629,
+        "delta": 0.0057
+      },
+      "mrr": {
+        "overlap": 0.5316,
+        "tiles": 0.5421,
+        "delta": 0.0105
+      },
+      "per_question": {
+        "better": 32,
+        "worse": 35,
+        "same": 108
+      }
+    }
+  },
+  "latency_ms": {
+    "overlap_p50": 1665.0,
+    "tiles_p50": 3069.7,
+    "ratio": 1.84
+  },
+  "headline": {
+    "overall": {
+      "n": 180,
+      "positives": 175,
+      "hit@10": 0.8629,
+      "full@10": 0.8571,
+      "recall@10": 0.861,
+      "mrr": 0.5421
+    },
+    "by_evidence_lang": {
+      "en": {
+        "n": 97,
+        "positives": 97,
+        "hit@10": 0.9381,
+        "full@10": 0.9278,
+        "recall@10": 0.9347,
+        "mrr": 0.5524
+      },
+      "negative": {
+        "n": 5,
+        "positives": 0
+      },
+      "zh-cn": {
+        "n": 78,
+        "positives": 78,
+        "hit@10": 0.7692,
+        "full@10": 0.7692,
+        "recall@10": 0.7692,
+        "mrr": 0.5293
+      }
+    }
+  },
+  "falsified_hypothesis": {
+    "claim": "跨语言没有词面重叠 → 退路（块首）成为唯一策略",
+    "measured": "词面重叠为 0 的 gold 块只占 4.5%，英→中 0%（中文正文里到处是英文标识符）",
+    "evidence": "docs/evidence/c0f-window-signal-k8s-v1.json"
+  },
+  "how_to_reproduce": [
+    "python experiments/probe_c0f_window_signal.py   # ① 先量「重叠是不是真的为 0」（4 分钟）",
+    "python experiments/probe_c0f_window_strategy.py # ② 四种挑法端到端粗筛（约 20 分钟）",
+    "python scripts/eval_bench.py --k 10 --pool 40 --query-en translate --window tiles --compare docs/baseline-k8s-v1.json --baseline-rows docs/baseline-k8s-v1.rows.jsonl"
+  ],
+  "a_a_noise": {
+    "runs": [
+      {
+        "run": "baseline-k8s-v1",
+        "window": "overlap",
+        "hit@10": 0.8571,
+        "mrr": 0.5316
+      },
+      {
+        "run": "aa-overlap2（回滚精确预算后）",
+        "window": "overlap",
+        "hit@10": 0.8571,
+        "mrr": 0.5316,
+        "vs_baseline": {
+          "better": 0,
+          "worse": 0,
+          "same": 175
+        }
+      },
+      {
+        "run": "门禁复验（同代码再跑一次）",
+        "window": "overlap",
+        "hit@10": 0.8514,
+        "mrr": 0.5276,
+        "vs_baseline": {
+          "better": 3,
+          "worse": 5,
+          "same": 167
+        }
+      }
+    ],
+    "noise_floor": "同代码重跑会差到 3 好 / 5 差（≈±0.6 点 hit）——近并列的排序会在两次运行间翻转",
+    "implication": "tiles 的 +0.57 点 hit 落在噪声内；必须是 逐题 32 好 / 35 差 才判「没达成」",
+    "not_noise": "「窗口预算精确卡死」掉的 2.85 点 ≈ 噪声底的 5 倍（且探针另一条路径复现同一个 0.8286）"
+  }
+}

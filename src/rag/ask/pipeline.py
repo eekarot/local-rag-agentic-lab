@@ -20,7 +20,7 @@ from ..answer.citations import CitationReport, parse_citations, resolve_sources
 from ..answer.prompt import PromptBundle, build_messages
 from ..context.assembler import AssembledContext, assemble
 from ..retrieval.fusion import RRF_K, rrf_fuse_routes
-from ..retrieval.rerank import RerankHit, best_window, rerank_hits
+from ..retrieval.rerank import RerankHit, best_window, rerank_hits, rerank_tiles
 
 #: 检索每路的深度（也当融合池大小）。三路都取 k，D28 定案的口径。
 DEFAULT_POOL = 20
@@ -147,7 +147,7 @@ def _block_lang(parent: Mapping[str, Any] | None) -> str:
 
 def rerank_by_language(hits: Sequence[RerankHit], parents: Mapping[str, Mapping[str, Any]], *,
                        query_zh: str, query_en: str | None, reranker, counter,
-                       merge: str = "raw") -> list[RerankHit]:
+                       merge: str = "raw", window: str = "overlap") -> list[RerankHit]:
     """按**候选块自己的语言**挑重排 query（C0d）。
 
     C0c 的实测：中→英 的漏检在融合里排 #1/#3/#4/#8/#14，重排后掉到 #16/#17/#31/#13/#14 ——
@@ -164,13 +164,18 @@ def rerank_by_language(hits: Sequence[RerankHit], parents: Mapping[str, Mapping[
 
     for lang, group in grouped.items():
         query = query_zh if lang == "zh" or query_en is None else query_en
-        for hit in group:
-            hit.fields["window"] = best_window(hit.text, query,
-                                              max_tokens=reranker.config.max_length,
-                                              counter=counter)
-        rerank_hits(query, group, encoder=reranker.encoder, config=reranker.config,
-                    top_n=len(group), stats=reranker.stats,
-                    text_getter=lambda hit: hit.fields["window"])
+        if window == "tiles":
+            # 让交叉编码器自己挑段（C0f）；query 仍按块语言选，两组分开打分的语义不变
+            rerank_tiles(query, group, encoder=reranker.encoder, config=reranker.config,
+                         top_n=len(group), stats=reranker.stats, counter=counter)
+        else:
+            for hit in group:
+                hit.fields["window"] = best_window(hit.text, query,
+                                                  max_tokens=reranker.config.max_length,
+                                                  counter=counter)
+            rerank_hits(query, group, encoder=reranker.encoder, config=reranker.config,
+                        top_n=len(group), stats=reranker.stats,
+                        text_getter=lambda hit: hit.fields["window"])
         # 两组分数来自两个不同的 query，必须先各自归一化才能跨组比大小（见 normalize_group_scores）
         normalize_group_scores(group, merge=merge)
         for hit in group:
@@ -299,6 +304,23 @@ def select_with_language_quota(hits: Sequence[RerankHit], parents: Mapping[str, 
     return result[:k]
 
 
+def retrieval_window_mode(env: Mapping[str, str] | None = None) -> str:
+    """读 `RAG_WINDOW_MODE`（C0f）：`overlap`（默认）/ `tiles`。
+
+    为什么要有开关而不是直接换默认：`tiles` 要多编 1.6× 的段（p50 父块 1.6 段），
+    而默认口径是所有既有基线的锚。先让 `eval_bench --compare` 用同一套题裁决，
+    有数之后再谈翻不翻默认（N 系列纪律：不能只凭一个小指标改默认）。
+    未知值直接报错：静默退回 `overlap` 会让「实验跑完了才发现没生效」这种事故重演。
+    """
+    import os
+
+    raw = os.environ.get("RAG_WINDOW_MODE", "overlap") if env is None else env.get("RAG_WINDOW_MODE")
+    mode = str(raw or "overlap").strip().lower()
+    if mode not in ("overlap", "tiles"):
+        raise ValueError(f"未知的 RAG_WINDOW_MODE：{mode}（可选 overlap / tiles）")
+    return mode
+
+
 def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mapping[str, Any]],
                        counter, reranker, pool: int = DEFAULT_POOL,
                        rerank: bool = True,
@@ -308,6 +330,7 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
                        k: int | None = None,
                        lang_quota: int = 0,
                        max_other_lang: int = 0,
+                       window: str | None = None,
                        disable: Sequence[str] = ()) -> RetrievalOutcome:
     """`retrieve_ranked()` 的带元数据版本：多返回 `degraded`（缺能力 / 某路故障）。
 
@@ -316,6 +339,10 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
     之前这个参数根本不存在，于是翻译出来的英文只用在提示词语言和响应回显上，
     英文索引实际一直在吃中文原句。
     """
+    mode = (window or retrieval_window_mode()).strip().lower()
+    if mode not in ("overlap", "tiles"):
+        raise ValueError(f"未知的窗口口径：{window}（可选 overlap / tiles）")
+
     call_kwargs: dict[str, Any] = {"k": pool, "query_en": query_en}
     if disable:
         # 只在真要关某路时才传：空的 `disable` 属于「没这个参数」，传下去会让只认
@@ -343,16 +370,23 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
 
     if rerank_query == "by_lang":
         ranked = rerank_by_language(hits, parents, query_zh=question, query_en=query_en,
-                                    reranker=reranker, counter=counter, merge=rerank_merge)
+                                    reranker=reranker, counter=counter, merge=rerank_merge,
+                                    window=mode)
     elif rerank_query == "question":
-        for item in hits:
-            # 父块 p50 约 700 token，直接截 256 只看得到标题 → 先按 query 挑窗口再重排
-            item.fields["window"] = best_window(item.text, question,
-                                                max_tokens=reranker.config.max_length,
-                                                counter=counter)
-        ranked = rerank_hits(question, hits, encoder=reranker.encoder, config=reranker.config,
-                             top_n=pool, stats=reranker.stats,
-                             text_getter=lambda hit: hit.fields["window"])
+        if mode == "tiles":
+            ranked = rerank_tiles(question, hits, encoder=reranker.encoder,
+                                  config=reranker.config, top_n=pool, stats=reranker.stats,
+                                  counter=counter)
+        else:
+            for item in hits:
+                # 父块 p50 实测 263 token（候选父块 322）、63% 超过 256 →
+                # 直接截 256 只看得到标题，先按 query 挑窗口再重排（N54）
+                item.fields["window"] = best_window(item.text, question,
+                                                    max_tokens=reranker.config.max_length,
+                                                    counter=counter)
+            ranked = rerank_hits(question, hits, encoder=reranker.encoder, config=reranker.config,
+                                 top_n=pool, stats=reranker.stats,
+                                 text_getter=lambda hit: hit.fields["window"])
     else:
         raise ValueError(f"未知的 rerank_query 口径：{rerank_query}（可选 question / by_lang）")
     ranked = ranked[:pool] if pool else ranked

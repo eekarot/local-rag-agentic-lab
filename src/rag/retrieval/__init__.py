@@ -28,6 +28,8 @@ __all__ = [
     "RouteHit",
     "RouteResult",
     "best_window",
+    "rerank_tiles",
+    "tile_windows",
     "collapse_to_parents",
     "rerank_hits",
     "rrf_fuse_routes",
