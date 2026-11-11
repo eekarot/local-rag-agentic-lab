@@ -1,0 +1,752 @@
+{
+  "note": "Docling 2.150.0（独立 venv）与现有 PyMuPDF 解析器的对照；同一批 PDF、同样只跑前几页",
+  "config": {
+    "max_pages": 3,
+    "docling_python": "~/Desktop/project/local-rag-agentic-lab/storage/docling-venv/Scripts/python.exe",
+    "artifacts_path": "~/.cache/docling/models"
+  },
+  "rows": [
+    {
+      "id": "pdf-01",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 15,
+        "chars": 6747,
+        "tables": 0,
+        "labels": {
+          "heading": 7,
+          "paragraph": 8
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 12,
+        "tables": 1,
+        "pictures": 1,
+        "chars": 6644,
+        "labels": {
+          "text": 6,
+          "section_header": 6
+        },
+        "positioned_items": 14,
+        "total_items": 14,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9847339558322217,
+      "latency_baseline_s": 2.857,
+      "latency_docling_s": 32.693,
+      "peak_rss_mb": 1391.3
+    },
+    {
+      "id": "pdf-02",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 15,
+        "chars": 6652,
+        "tables": 0,
+        "labels": {
+          "heading": 7,
+          "paragraph": 8
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 12,
+        "tables": 1,
+        "pictures": 1,
+        "chars": 6527,
+        "labels": {
+          "text": 6,
+          "section_header": 6
+        },
+        "positioned_items": 14,
+        "total_items": 14,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9812086590499098,
+      "latency_baseline_s": 0.183,
+      "latency_docling_s": 31.046,
+      "peak_rss_mb": 1367.4
+    },
+    {
+      "id": "pdf-03",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 17,
+        "chars": 6493,
+        "tables": 0,
+        "labels": {
+          "heading": 7,
+          "paragraph": 10
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 12,
+        "tables": 1,
+        "pictures": 1,
+        "chars": 6355,
+        "labels": {
+          "text": 6,
+          "section_header": 6
+        },
+        "positioned_items": 14,
+        "total_items": 14,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9787463422146927,
+      "latency_baseline_s": 0.186,
+      "latency_docling_s": 28.629,
+      "peak_rss_mb": 1419.2
+    },
+    {
+      "id": "pdf-04",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 16,
+        "chars": 6575,
+        "tables": 0,
+        "labels": {
+          "heading": 7,
+          "paragraph": 9
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 12,
+        "tables": 1,
+        "pictures": 1,
+        "chars": 6430,
+        "labels": {
+          "text": 6,
+          "section_header": 6
+        },
+        "positioned_items": 14,
+        "total_items": 14,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9779467680608365,
+      "latency_baseline_s": 0.188,
+      "latency_docling_s": 29.978,
+      "peak_rss_mb": 1375.2
+    },
+    {
+      "id": "pdf-05",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 22,
+        "chars": 1937,
+        "tables": 0,
+        "labels": {
+          "paragraph": 18,
+          "heading": 4
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 18,
+        "tables": 1,
+        "pictures": 1,
+        "chars": 2000,
+        "labels": {
+          "text": 8,
+          "section_header": 5,
+          "page_footer": 5
+        },
+        "positioned_items": 20,
+        "total_items": 20,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 1.0325245224574084,
+      "latency_baseline_s": 0.012,
+      "latency_docling_s": 22.003,
+      "peak_rss_mb": 1705.3
+    },
+    {
+      "id": "pdf-06",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 75,
+        "chars": 9182,
+        "tables": 0,
+        "labels": {
+          "paragraph": 73,
+          "heading": 2
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 9,
+        "tables": 2,
+        "pictures": 1,
+        "chars": 9172,
+        "labels": {
+          "text": 2,
+          "section_header": 2,
+          "page_footer": 5
+        },
+        "positioned_items": 12,
+        "total_items": 12,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9989109126551949,
+      "latency_baseline_s": 0.175,
+      "latency_docling_s": 27.705,
+      "peak_rss_mb": 1445.3
+    },
+    {
+      "id": "pdf-07",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 8,
+        "chars": 4375,
+        "tables": 0,
+        "labels": {
+          "heading": 5,
+          "paragraph": 3
+        },
+        "pages_with_content": 2,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 7,
+        "tables": 1,
+        "pictures": 1,
+        "chars": 4257,
+        "labels": {
+          "text": 3,
+          "section_header": 3,
+          "page_footer": 1
+        },
+        "positioned_items": 9,
+        "total_items": 9,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 2,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9730285714285715,
+      "latency_baseline_s": 0.175,
+      "latency_docling_s": 30.89,
+      "peak_rss_mb": 1634.2
+    },
+    {
+      "id": "pdf-08",
+      "kind": "en-manual",
+      "status": "docling-failed",
+      "baseline": {
+        "blocks": 23,
+        "chars": 753,
+        "tables": 0,
+        "labels": {
+          "heading": 7,
+          "paragraph": 16
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": null,
+      "char_coverage": 0.0,
+      "latency_baseline_s": 0.338,
+      "latency_docling_s": 24.142,
+      "peak_rss_mb": 2883.9,
+      "error": "退出码 3221225725: Loading weights: 100%|██████████| 770/770 [00:00<00:00, 3591.48it/s] / 2026-11-11 14:33:34,596\tINFO\tdocling.pipeline.base_pipeline: Processing document data-center-best-practices-with-dgx-b300-v1.pdf / 2026-11-11 14:33:43,908\tWARNING\tdocling.models.stages.ocr.rapid_ocr_model: RapidOCR returned empty"
+    },
+    {
+      "id": "pdf-09",
+      "kind": "en-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 6,
+        "chars": 3338,
+        "tables": 0,
+        "labels": {
+          "heading": 4,
+          "paragraph": 2
+        },
+        "pages_with_content": 2,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 7,
+        "tables": 1,
+        "pictures": 1,
+        "chars": 3285,
+        "labels": {
+          "text": 3,
+          "section_header": 3,
+          "page_footer": 1
+        },
+        "positioned_items": 9,
+        "total_items": 9,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 2,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9841222288795686,
+      "latency_baseline_s": 0.188,
+      "latency_docling_s": 28.05,
+      "peak_rss_mb": 1755.7
+    },
+    {
+      "id": "pdf-10",
+      "kind": "en-paper",
+      "status": "ok",
+      "baseline": {
+        "blocks": 61,
+        "chars": 13514,
+        "tables": 0,
+        "labels": {
+          "heading": 6,
+          "paragraph": 55
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 53,
+        "tables": 1,
+        "pictures": 0,
+        "chars": 13289,
+        "labels": {
+          "page_header": 1,
+          "section_header": 9,
+          "text": 27,
+          "list_item": 15,
+          "formula": 1
+        },
+        "positioned_items": 54,
+        "total_items": 54,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9833505993784224,
+      "latency_baseline_s": 0.034,
+      "latency_docling_s": 20.117,
+      "peak_rss_mb": 1400.0
+    },
+    {
+      "id": "pdf-11",
+      "kind": "en-paper",
+      "status": "ok",
+      "baseline": {
+        "blocks": 61,
+        "chars": 13514,
+        "tables": 0,
+        "labels": {
+          "heading": 6,
+          "paragraph": 55
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 53,
+        "tables": 1,
+        "pictures": 0,
+        "chars": 13289,
+        "labels": {
+          "page_header": 1,
+          "section_header": 9,
+          "text": 27,
+          "list_item": 15,
+          "formula": 1
+        },
+        "positioned_items": 54,
+        "total_items": 54,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9833505993784224,
+      "latency_baseline_s": 0.032,
+      "latency_docling_s": 19.234,
+      "peak_rss_mb": 1409.9
+    },
+    {
+      "id": "pdf-12",
+      "kind": "en-paper",
+      "status": "ok",
+      "baseline": {
+        "blocks": 30,
+        "chars": 20137,
+        "tables": 0,
+        "labels": {
+          "heading": 1,
+          "paragraph": 29
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 71,
+        "tables": 0,
+        "pictures": 4,
+        "chars": 20997,
+        "labels": {
+          "page_header": 6,
+          "text": 45,
+          "section_header": 5,
+          "list_item": 4,
+          "footnote": 1,
+          "page_footer": 9,
+          "caption": 1
+        },
+        "positioned_items": 75,
+        "total_items": 75,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 1.0427074539405075,
+      "latency_baseline_s": 0.1,
+      "latency_docling_s": 21.654,
+      "peak_rss_mb": 1759.3
+    },
+    {
+      "id": "pdf-13",
+      "kind": "zh-book",
+      "status": "ok",
+      "baseline": {
+        "blocks": 89,
+        "chars": 6661,
+        "tables": 0,
+        "labels": {
+          "heading": 2,
+          "paragraph": 87
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 9,
+        "tables": 2,
+        "pictures": 1,
+        "chars": 7602,
+        "labels": {
+          "section_header": 3,
+          "text": 2,
+          "page_footer": 3,
+          "page_header": 1
+        },
+        "positioned_items": 12,
+        "total_items": 12,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 1.1412700795676325,
+      "latency_baseline_s": 0.055,
+      "latency_docling_s": 37.581,
+      "peak_rss_mb": 1473.1
+    },
+    {
+      "id": "pdf-14",
+      "kind": "zh-manual",
+      "status": "ok",
+      "baseline": {
+        "blocks": 0,
+        "chars": 0,
+        "tables": 0,
+        "labels": {},
+        "pages_with_content": 0,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 36,
+        "tables": 2,
+        "pictures": 0,
+        "chars": 3683,
+        "labels": {
+          "page_header": 7,
+          "section_header": 7,
+          "text": 22
+        },
+        "positioned_items": 38,
+        "total_items": 38,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": null,
+      "latency_baseline_s": 0.246,
+      "latency_docling_s": 59.276,
+      "peak_rss_mb": 2348.8
+    },
+    {
+      "id": "pdf-15",
+      "kind": "zh-exam",
+      "status": "ok",
+      "baseline": {
+        "blocks": 150,
+        "chars": 2894,
+        "tables": 0,
+        "labels": {
+          "heading": 1,
+          "paragraph": 149
+        },
+        "pages_with_content": 2,
+        "declared_pages": 2
+      },
+      "docling": {
+        "pages": 2,
+        "texts": 106,
+        "tables": 0,
+        "pictures": 7,
+        "chars": 2218,
+        "labels": {
+          "section_header": 4,
+          "list_item": 39,
+          "formula": 14,
+          "text": 47,
+          "page_footer": 2
+        },
+        "positioned_items": 113,
+        "total_items": 113,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 2,
+        "declared_pages": 2
+      },
+      "char_coverage": 0.7664132688320664,
+      "latency_baseline_s": 0.025,
+      "latency_docling_s": 12.795,
+      "peak_rss_mb": 1532.4
+    },
+    {
+      "id": "pdf-16",
+      "kind": "zh-doc",
+      "status": "ok",
+      "baseline": {
+        "blocks": 86,
+        "chars": 1960,
+        "tables": 0,
+        "labels": {
+          "heading": 21,
+          "paragraph": 65
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 63,
+        "tables": 1,
+        "pictures": 0,
+        "chars": 1915,
+        "labels": {
+          "section_header": 12,
+          "text": 24,
+          "list_item": 27
+        },
+        "positioned_items": 64,
+        "total_items": 64,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 0.9770408163265306,
+      "latency_baseline_s": 0.26,
+      "latency_docling_s": 13.013,
+      "peak_rss_mb": 1728.9
+    },
+    {
+      "id": "pdf-17",
+      "kind": "zh-doc",
+      "status": "ok",
+      "baseline": {
+        "blocks": 33,
+        "chars": 2073,
+        "tables": 0,
+        "labels": {
+          "paragraph": 33
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 61,
+        "tables": 0,
+        "pictures": 0,
+        "chars": 2371,
+        "labels": {
+          "section_header": 7,
+          "list_item": 22,
+          "text": 32
+        },
+        "positioned_items": 61,
+        "total_items": 61,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 1.1437530149541726,
+      "latency_baseline_s": 0.006,
+      "latency_docling_s": 10.725,
+      "peak_rss_mb": 1341.9
+    },
+    {
+      "id": "pdf-18",
+      "kind": "zh-doc",
+      "status": "ok",
+      "baseline": {
+        "blocks": 71,
+        "chars": 1082,
+        "tables": 0,
+        "labels": {
+          "heading": 4,
+          "paragraph": 67
+        },
+        "pages_with_content": 1,
+        "declared_pages": 1
+      },
+      "docling": {
+        "pages": 1,
+        "texts": 84,
+        "tables": 0,
+        "pictures": 1,
+        "chars": 1100,
+        "labels": {
+          "text": 83,
+          "page_footer": 1
+        },
+        "positioned_items": 85,
+        "total_items": 85,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 1,
+        "declared_pages": 1
+      },
+      "char_coverage": 1.0166358595194085,
+      "latency_baseline_s": 0.105,
+      "latency_docling_s": 13.759,
+      "peak_rss_mb": 1642.4
+    },
+    {
+      "id": "pdf-19",
+      "kind": "zh-doc",
+      "status": "ok",
+      "baseline": {
+        "blocks": 68,
+        "chars": 2561,
+        "tables": 0,
+        "labels": {
+          "heading": 32,
+          "paragraph": 36
+        },
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 45,
+        "tables": 6,
+        "pictures": 0,
+        "chars": 2592,
+        "labels": {
+          "section_header": 12,
+          "text": 11,
+          "page_footer": 6,
+          "list_item": 15,
+          "footnote": 1
+        },
+        "positioned_items": 51,
+        "total_items": 51,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": 1.012104646622413,
+      "latency_baseline_s": 0.013,
+      "latency_docling_s": 27.263,
+      "peak_rss_mb": 1406.7
+    },
+    {
+      "id": "pdf-20",
+      "kind": "zh-scanned",
+      "status": "ok",
+      "baseline": {
+        "blocks": 0,
+        "chars": 0,
+        "tables": 0,
+        "labels": {},
+        "pages_with_content": 0,
+        "declared_pages": 3
+      },
+      "docling": {
+        "pages": 3,
+        "texts": 45,
+        "tables": 0,
+        "pictures": 0,
+        "chars": 465,
+        "labels": {
+          "page_header": 1,
+          "section_header": 3,
+          "text": 21,
+          "list_item": 5,
+          "checkbox_unselected": 15
+        },
+        "positioned_items": 45,
+        "total_items": 45,
+        "bbox_coverage": 1.0,
+        "pages_with_content": 3,
+        "declared_pages": 3
+      },
+      "char_coverage": null,
+      "latency_baseline_s": 3.68,
+      "latency_docling_s": 59.365,
+      "peak_rss_mb": 3153.8
+    }
+  ],
+  "n_manifest": 20,
+  "n_ok": 19,
+  "n_failed": 1,
+  "char_coverage_mean": 0.9987,
+  "char_coverage_min": 0.7664,
+  "bbox_coverage_mean": 1.0,
+  "bbox_coverage_min": 1.0,
+  "tables_baseline_total": 0,
+  "tables_docling_total": 22,
+  "latency_baseline_p50_ms": 175.0,
+  "latency_docling_p50_ms": 27705.0,
+  "latency_docling_p95_ms": 59276.0,
+  "peak_rss_mb_max": 3153.8,
+  "peak_rss_mb_p50": 1473.1
+}
