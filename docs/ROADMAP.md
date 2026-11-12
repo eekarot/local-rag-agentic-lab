@@ -69,6 +69,7 @@
 | C7 | **E04 日志/评估资产接新 pipeline** | `raglog` 与 L1 评估仍走旧链 | 新链跑一次评估 → 日志字段与旧链可对齐比较 |
 | C8 | **E05 新基线重立 + 回归门禁** | ✅ 已完成（2026-11-06）：基线重立两次（G2 修 overlap 超限 → 0.7737/0.7789/0.7684/0.5456；修 N45 重排空窗口 → **0.8561/0.8632/0.8526/0.6075**），旧基线归档在 `docs/evidence/`；门禁 `--compare` 已上线（容差 = 基线一侧 CI 半宽，不可比退 0） | `python scripts/eval_bench.py --k 10 --compare docs/baseline-k8s-v1.json` → 四条指标全 `ok`、逐题 0/0/95、退出码 **0**；把基线 hit@10 改成 0.99 再跑 → `regression`、退出码 **1**；`--no-rerank` 再比 → `not_comparable`（rerank 不同）、退出码 **0** | ✅ |
 | C9 | **两件真 bug：Store 双写 + `chunk_ids` 装 `parent_id`** ✅ 已完成 | ① 编排层与索引器各写一次 `replace_document`（后者是「删整篇再全量重插」的事务）：883 篇语料白写 ≈5.3 s，且两次写入之间有版本不一致风险而状态表照样 COMPLETED；② `ContextBlock.chunk_ids` 是 `parent_id` 的副本，拿它回查 Qdrant 必然查不到（修前 0/20 可回查，修后 11/20；其余 9 个是词面路独占命中，退回父块 id 并留痕） | `python -m unittest tests.test_chunk_ids_plumbing tests.test_ingest_pipeline` → 期望全绿（8 + 20 例）；`python experiments/probe_n60_chunk_ids.py` → 期望 `chunk_ids 可回查 11/20`、`父块 id 当子块用 0/20`；`python experiments/probe_n60_store_write_cost.py` → 期望 `median_second_write_ms` ≈ 6 ms | 1 |
+| C10 | **`language` 写进子块 + 库存量回填** ✅ 已完成 | ① 行序 bug：`_prepare()` 先建子块后判语言 → 每条 `children.language` 都是 None → payload 里没这一列，那个 payload 索引（N1）建了也永远用不上；② 修法是把 `apply_document_language(parents)` 挪到 `build_children()` 之前（一行位移，**不动 id、不动向量**，所以 `gold_points` 不失效）；③ 存量用 `scripts/backfill_payload_language.py` 回填（只补缺失、不覆盖、不猜，幂等） | `python -m unittest tests.test_ingest_pipeline tests.test_rerank_by_language tests.test_backfill_payload_language` → 期望全绿（22 + 15 + 6 例）；`python scripts/backfill_payload_language.py --collection scifact_v1 --store storage/bench-scifact/documents.sqlite3` → 期望 `已回填 6735`，再跑一次 `无事可做（幂等）`；`python scripts/eval_beir.py --collection scifact_v1 --k 10` → 期望 nDCG@10 仍是 **0.6843**（写 payload 不该动指标） | 1 |
 
 ### S 系列：第二个数据集与解析器旁路（对外可比 / 多格式）
 
@@ -87,7 +88,7 @@
 | # | 项 | 卡在哪 |
 |---|---|---|
 | D1 | **B07 `min_tokens` 200→400 消融** | 需随机后缀 collection + 全量 ingest ~2,000 s + 复跑 D28。**不能凭 chunking 指标改默认参数** |
-| D2 | **N1 `language` 字段缺失** | 索引建了，38,865 点 payload 里没有该字段 → 无法按语言过滤 |
+| D2 | **N1 `language` 字段缺失** —— 写入侧已修（N61），存量回填见 C10 | 根因不是「没建索引」，而是 `Child.language` 恒为 None：先 `build_children()` 后 `apply_document_language()`，抄晚了；`payload_from_child()` 再把 None 字段剔除。修后新入库的文档 payload 自带 `language`（实测 8/8 点 `zh`）；存量：`scifact_v1` 已回填 6,735/6,735，`bench_k8s_v1` **补不了**（它的 Store 由 `build_bench_dataset.py` 建，父块/文档两列都是 NULL） | 2 |
 | D3 | **N9 PDF `source_start/end` 全 NULL** | PDF 无法定位到页/字符偏移 |
 | D4 | **N10 `embedding_model` 空串** | payload 记不下「这份索引是哪个模型建的」 |
 | D5 | **citation_precision 38.46%** | 真实水平。比任何新功能都更影响可用性：引用错比不给引用更糟 |

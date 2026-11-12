@@ -372,13 +372,17 @@ class IngestPipeline:
             title = _guess_title(blocks, path)
             parents = self.builder.build(blocks, document_id=document_id,
                                          document_version=version, title=title)
+            # 语言必须在 `build_children()` **之前**算（N61）：`Child.language` 是建子块那一刻
+            # 从 `parent.language` 抄过来的，抄晚了就永远是 None。后果不是「少个展示字段」——
+            # `payload_from_child()` 会把 None 字段整个剔除，于是 Qdrant payload 里没有
+            # `language`，那个 payload 索引（N1）建了也永远用不上。
+            # 语言在建库时判一次就够（整篇同语言），别留给下游每次现判（N49）。
+            language = apply_document_language(parents)
             children = build_children(parents, counter=self.counter,
                                       embedding_version=self.embedding_version)
             if not children:
                 raise IngestionError("切分后没有任何 child（空文档或解析结果为空）")
             parser_version = getattr(parser, "parser_version", "") or f"{path.suffix.lstrip('.').lower()}_v1"
-            # 语言在建库时判一次就够（整篇同语言），别留给下游每次现判（N49）。
-            language = apply_document_language(parents)
             document = {
                 "document_id": document_id,
                 "source_uri": key,

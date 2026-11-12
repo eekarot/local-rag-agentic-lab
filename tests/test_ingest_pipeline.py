@@ -48,12 +48,16 @@ class FakeIndexer:
         self.indexed: list[str] = []
         self.fail_on = fail_on
         self.store = store
+        #: 最后一次 index_document 收到的 record（原样留一份，供断言 payload 里会有什么）
+        self.parents: list[dict] = []
+        self.children: list[dict] = []
 
     def index_document(self, document, parents, children, *, vectors=None):
         if self.fail_on and self.fail_on in document["source_uri"]:
             raise RuntimeError("Qdrant 写挂了")
         if self.store is not None:
             self.store.replace_document(document, parents, children)
+        self.parents, self.children = list(parents), list(children)
         self.indexed.append(document["source_uri"])
         return {"upserted": len(children), "deleted_stale": 0}
 
@@ -119,6 +123,32 @@ class HappyPathTest(PipelineTestBase):
                          ["doc0.md", "doc1.md", "doc2.md"])
         counts = self.state.stage_counts()
         self.assertEqual(counts[Stage.COMPLETED.value], 3)
+
+    def test_children_carry_the_document_language(self):
+        """子块 record 的 `language` 必须是真语言，不能是 None（N61）。
+
+        现场：`_prepare()` 先 `build_children(parents)`、后 `apply_document_language(parents)`，
+        而 `Child.language` 是 build 那一刻从 `parent.language` 抄来的 —— 于是每条子块
+        都拿到 None。后面 `payload_from_child()` 会把 None 字段整个剔除，结果是
+        **Qdrant payload 里根本没有 `language`**：那个 payload 索引（N1）
+        建了也永远用不上，「只要英文块」这类过滤恒为 0 命中。
+        """
+        self.write("a.md")
+        self.run_pipeline()
+        languages = sorted({str(c.get("language")) for c in self.indexer.children})
+        self.assertEqual(languages, ["zh"],
+                         f"子块 language 实测 {languages}（期望 ['zh']）")
+
+    def test_payload_would_carry_the_language(self):
+        """把 record 交给 Qdrant 的 payload 构造器后，`language` 必须还在（不是被 None 剔除）。"""
+        from src.rag.store.qdrant_store import payload_from_child
+
+        self.write("a.md")
+        self.run_pipeline()
+        for child in self.indexer.children:
+            payload = payload_from_child(child)
+            self.assertIn("language", payload, "payload 缺 language → 该字段的 payload 索引永远用不上")
+            self.assertEqual(payload["language"], "zh")
 
     def test_store_written_exactly_once_per_document(self):
         """一篇文档只许写一次 Document Store（N60）：编排放过一次、索引器又放了一次。

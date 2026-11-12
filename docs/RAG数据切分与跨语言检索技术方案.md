@@ -1,6 +1,6 @@
 # RAG 数据切分与跨语言检索系统技术方案
 
-> **文档版本**：2.52
+> **文档版本**：2.53
 > **日期**：2026-11-04
 > **目标**：形成一套可在 Windows 本地运行、可逐步扩展到百万级 Chunk 的
 > RAG 数据处理与跨语言检索工程。
@@ -2452,6 +2452,8 @@ Chunking 程序、示例输入、JSONL 输出、单元测试和 Chunking 质量�
 
 | **N60** | **两件「字段名看着对、值全错」的 bug**：① **Store 双写** —— `IngestPipeline._prepare()` 与 `Indexer.index_document()` 各写一次 `replace_document`，而它不是一个行更新，是「删掉整篇父/子块再全量重插」的事务；实测第二遍中位 **6.0 ms/篇**，本轮语料 883 篇 ≈ **5.3 s** 纯浪费 —— 但真正要紧的不是这点时间：两次写入之间任一次失败，Store 与 Qdrant 就版本不一致，而状态表照样标 COMPLETED。② **`chunk_ids` 装的是 `parent_id`** —— `assembler.py` 里 `parent_ids` 与 `chunk_ids` 两行紧挨着，把父块 id 抄了两遍；上游 `retrieve_with_meta()` 也写了 `chunk_id=hit.parent_id`，把路由层 `RouteHit.chunk_id` 拿到的真子块 id 丢掉，`answer_query()` 组装上下文时的字面量 dict 第三次把它漏掉。判据落在库里（`parent_id` 与 `chunk_id` 是两个不相交的 id 空间）：拿 `chunk_ids` 去 `children` 表查 —— 修前 **0/20**、修后 **11/20**（其余 9 个是词面路独占命中的父块，词面索引建在父块上本来就没有子块 id，退回父块 id 并在 `stats['chunk_ids_from_parent']` 留痕，不静默） | ① Store 唯一写入点留在索引器 —— 那里的顺序是设计过的（Store 事务成功 → 才动 Qdrant）；② 子块 id 从路由结果按「给该父块贡献最好名次的那一路」捞回，**三个组装入口都要带 `chunk_id`**，漏一处就静默退回；③ 「两行相邻、长得一模一样」是这类 bug 的高发形状：`parent_ids` 与 `chunk_ids` 必须各自有用例，不能靠肉眼；④ 修完要真跑一次端到端（2 篇文档 → Store 写入次数 = 2），替身骗过不算 |
 
+| **N61** | **「一行代码的顺序」让一个 payload 字段永远为空**：`_prepare()` 里 `children = build_children(parents)` 在 `language = apply_document_language(parents)` **之前** —— 而 `Child.language` 是建子块那一刻从 `parent.language` 抄一次的值，于是每条子块都是 `None`；`payload_from_child()` 又把 None 字段整个剔除（避免「写进去却过滤不到」的假字段），结果是 **Qdrant payload 里从来没有 `language`**，而那个字段的 payload 索引早就建好了（N1）：索引在、字段不在，「只要英文块」这类过滤恒为 0 命中且不报错。实测：`bench_k8s_v1` 抽样 300 条带 `language` 的 = **0**；修后新入库一份 3 页 PDF，**8/8 点都带 `zh`** | ① 修法是**一行位移**（先判语言再建子块），不动 id、不动向量 —— 所以 `gold_points` 不失效，不需要重建库；② 两条用例分开守：行为用例（子块 record 与 payload 必须带 language）+ **行序断言**（防止有人「顺手」挪回去，挪回去行为用例也会红，但行序断言能直接指出原因）；③ 存量只能回填，不能靠修复自动变好：`scripts/backfill_payload_language.py`（只补缺失、不覆盖、查不到不猜、幂等）；`scifact_v1` 回填 6,735/6,735，`bench_k8s_v1` **补不了** —— 它的 Store 由 `build_bench_dataset.py` 建，`parents.language` 与 `documents.language` 两列都是 NULL，要么重跑 ingest，要么按正文重判；④ 回填后复核：SciFact nDCG@10 仍 0.6843（payload 不被检索读取，改了就不该动指标） |
+
 > 每条决策末尾的「实施细则」是本清单的执行口径，改动时须同步改这里和对应 D 项。
 
 ### 17.11.1 B01：Embedding 走 Ollama API（不引入 FlagEmbedding）
@@ -3377,6 +3379,8 @@ curl -s localhost:6333/collections/rag_chunks_v1
   2.50                    2026-11-11              扩题 144→180：跨语言格撑到 n≥20，推翻「英→中最差」的小样本结论（N57）
   2.51                    2026-11-12              C0f：窗口改由交叉编码器挑（tiles）未达标不翻默认（N58）+ 窗口预算不许精确卡死（N59）
   2.52                    2026-11-12              去掉 Store 双写 + 修 Context 的 chunk_ids 拿父块 id 顶替（N60）
+  2.53                    2026-11-12              N61：language 必须在 build_children 之前算 + 存量 payload 回填脚本
+
 
 
 

@@ -245,3 +245,18 @@ class IngestWritesLanguageTest(unittest.TestCase):
         source = (ROOT / "src" / "rag" / "ingest" / "pipeline.py").read_text(encoding="utf-8")
         self.assertIn("language = apply_document_language(parents)", source)
         self.assertIn('"language": language', source)
+
+    def test_language_is_computed_before_children_are_built(self):
+        """行序断言：算语言必须在 `build_children()` **之前**（N61）。
+
+        `Child.language` 在建子块那一刻从 `parent.language` 抄一次，之后再改父块不会回头改子块。
+        抄晚了（先建子块、后判语言）时每条子块都拿 None，而 `payload_from_child()` 会把
+        None 字段整个剔除 —— 于是 Qdrant payload 里没有 `language`，那个 payload 索引
+        建了也永远用不上。行为用例在 `tests.test_ingest_pipeline`，这条只锁行序，
+        防止有人「顺手」把它挪回去（挪回去之后行为用例也会红，但这条能直接指出原因）。
+        """
+        source = (ROOT / "src" / "rag" / "ingest" / "pipeline.py").read_text(encoding="utf-8")
+        compute = source.index("language = apply_document_language(parents)")
+        build = source.index("children = build_children(")
+        self.assertLess(compute, build,
+                        "apply_document_language() 在 build_children() 之后 → 子块 language 必然是 None")
