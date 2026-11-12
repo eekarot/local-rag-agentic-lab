@@ -353,10 +353,27 @@ def retrieve_with_meta(question: str, *, retriever, parents: Mapping[str, Mappin
     routes = {name: list(route.ids)[:pool] for name, route in result.routes.items()}
     fused = rrf_fuse_routes(routes, rrf_k=RRF_K, top_k=pool)
 
+    # RRF 只按父块 id 融合，子块 id 到这一层就断了 —— 所以先从路由结果里捞一份
+    # `(路由, 父块 id) → 子块 id`，再用「给这个父块贡献最好名次的那一路」来取（N60）。
+    # 词面路（索引建在父块上）本来就没有子块 id，那种情况退回父块 id，并在组装器里留痕。
+    chunk_of: dict[tuple[str, str], str] = {}
+    for name, route in result.routes.items():
+        for route_hit in getattr(route, "hits", ()) or ():
+            child_id = getattr(route_hit, "chunk_id", None)
+            parent_id = getattr(route_hit, "parent_id", None)
+            if child_id and parent_id:
+                chunk_of[(name, parent_id)] = child_id
+
+    def _child_id(hit) -> str:
+        for name, _rank in sorted(hit.per_route, key=lambda pair: pair[1]):
+            if (name, hit.parent_id) in chunk_of:
+                return chunk_of[(name, hit.parent_id)]
+        return hit.parent_id
+
     hits: list[RerankHit] = []
     for rank, hit in enumerate(fused, start=1):
         text = _parent_text(parents.get(hit.parent_id))
-        item = RerankHit(chunk_id=hit.parent_id, parent_id=hit.parent_id, text=text,
+        item = RerankHit(chunk_id=_child_id(hit), parent_id=hit.parent_id, text=text,
                          score=hit.score, rank=rank)
         hits.append(item)
 
@@ -429,7 +446,9 @@ def answer_query(
 
     started = time.perf_counter()
     assembled: AssembledContext = assemble(
-        [{"parent_id": hit.parent_id, "score": hit.score, "rerank_score": hit.rerank_score}
+        # `chunk_id` 必须带上：组装器要用它填 `ContextBlock.chunk_ids`（N60）
+        [{"parent_id": hit.parent_id, "chunk_id": hit.chunk_id,
+          "score": hit.score, "rerank_score": hit.rerank_score}
          for hit in ranked[:k]],
         parents, counter=counter, budget=budget,
     )
@@ -573,7 +592,9 @@ def answer_query_stream(
 
     started = time.perf_counter()
     assembled: AssembledContext = assemble(
-        [{"parent_id": hit.parent_id, "score": hit.score, "rerank_score": hit.rerank_score}
+        # `chunk_id` 必须带上：组装器要用它填 `ContextBlock.chunk_ids`（N60）
+        [{"parent_id": hit.parent_id, "chunk_id": hit.chunk_id,
+          "score": hit.score, "rerank_score": hit.rerank_score}
          for hit in ranked[:k]],
         parents, counter=counter, budget=budget,
     )

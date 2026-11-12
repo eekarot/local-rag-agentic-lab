@@ -1,0 +1,52 @@
+{
+  "note": "N60：`replace_document` 是「DELETE 该文档全部父/子块 + 整篇 INSERT」的事务，不是行更新",
+  "store": "storage/bench/documents.sqlite3",
+  "corpus": {
+    "documents": 883,
+    "parents": 7108,
+    "children": 9795
+  },
+  "samples": [
+    {
+      "document_id": "doc_002e2c6825f13840651b52bfd2b546a5",
+      "parents": 8,
+      "children": 12,
+      "first_write_ms": 11.4,
+      "second_write_ms": 6.8
+    },
+    {
+      "document_id": "doc_005222a0be686e05a3ee788f52ab667f",
+      "parents": 8,
+      "children": 11,
+      "first_write_ms": 6.4,
+      "second_write_ms": 6.2
+    },
+    {
+      "document_id": "doc_0064ec4b0a54b5ffcaa992eec582a014",
+      "parents": 3,
+      "children": 7,
+      "first_write_ms": 5.7,
+      "second_write_ms": 5.0
+    },
+    {
+      "document_id": "doc_013d88e2c8b960eea19ab2c3cd09b3a9",
+      "parents": 5,
+      "children": 7,
+      "first_write_ms": 6.0,
+      "second_write_ms": 6.0
+    },
+    {
+      "document_id": "doc_018ed16d5ba0a9f99aa2ad63699a6e37",
+      "parents": 7,
+      "children": 7,
+      "first_write_ms": 5.7,
+      "second_write_ms": 5.7
+    }
+  ],
+  "median_second_write_ms": 6.0,
+  "extrapolated_wasted_ms_full_corpus": 5298.0,
+  "finding": "双写让每篇文档的 Store 写入翻倍；按本轮语料 883 篇 × 中位 6 ms ≈ 5.3 s 纯浪费，而且两次写入之间任一次失败会让 Store 与 Qdrant 版本不一致，状态表却照样是 COMPLETED。",
+  "how_to_reproduce": [
+    "python experiments/probe_n60_store_write_cost.py"
+  ]
+}

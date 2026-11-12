@@ -68,6 +68,7 @@
 | C6 | **D39 16GB 内存预算** | reranker 945 MB + 可用 5.9 GB，多进程会 OOM | 明确 `--workers` 上限推导过程，写成表 |
 | C7 | **E04 日志/评估资产接新 pipeline** | `raglog` 与 L1 评估仍走旧链 | 新链跑一次评估 → 日志字段与旧链可对齐比较 |
 | C8 | **E05 新基线重立 + 回归门禁** | ✅ 已完成（2026-11-06）：基线重立两次（G2 修 overlap 超限 → 0.7737/0.7789/0.7684/0.5456；修 N45 重排空窗口 → **0.8561/0.8632/0.8526/0.6075**），旧基线归档在 `docs/evidence/`；门禁 `--compare` 已上线（容差 = 基线一侧 CI 半宽，不可比退 0） | `python scripts/eval_bench.py --k 10 --compare docs/baseline-k8s-v1.json` → 四条指标全 `ok`、逐题 0/0/95、退出码 **0**；把基线 hit@10 改成 0.99 再跑 → `regression`、退出码 **1**；`--no-rerank` 再比 → `not_comparable`（rerank 不同）、退出码 **0** | ✅ |
+| C9 | **两件真 bug：Store 双写 + `chunk_ids` 装 `parent_id`** ✅ 已完成 | ① 编排层与索引器各写一次 `replace_document`（后者是「删整篇再全量重插」的事务）：883 篇语料白写 ≈5.3 s，且两次写入之间有版本不一致风险而状态表照样 COMPLETED；② `ContextBlock.chunk_ids` 是 `parent_id` 的副本，拿它回查 Qdrant 必然查不到（修前 0/20 可回查，修后 11/20；其余 9 个是词面路独占命中，退回父块 id 并留痕） | `python -m unittest tests.test_chunk_ids_plumbing tests.test_ingest_pipeline` → 期望全绿（8 + 20 例）；`python experiments/probe_n60_chunk_ids.py` → 期望 `chunk_ids 可回查 11/20`、`父块 id 当子块用 0/20`；`python experiments/probe_n60_store_write_cost.py` → 期望 `median_second_write_ms` ≈ 6 ms | 1 |
 
 ### S 系列：第二个数据集与解析器旁路（对外可比 / 多格式）
 

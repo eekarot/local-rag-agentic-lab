@@ -393,7 +393,10 @@ class IngestPipeline:
             }
             parent_records = [p.to_record() for p in parents]
             child_records = [c.to_record() for c in children]
-            self.store.replace_document(document, parent_records, child_records)
+            # **这里不写 Document Store**（N60）：唯一写入点在
+            # `Indexer.index_document()` 第一步 —— 那里的顺序是「Store 事务成功 → 才动 Qdrant」。
+            # 这儿再写一遍等于整篇（含全部父/子块）重写两遍；两次写入之间任一次失败，
+            # Store 与 Qdrant 就会版本不一致，而状态表照样标 COMPLETED。
         except Exception as exc:  # noqa: BLE001
             self._fail(key, Stage.CHUNKING, exc, summary)
             raise _DocFailed from exc

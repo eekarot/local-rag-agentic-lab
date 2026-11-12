@@ -509,7 +509,7 @@ POST   /api/v1/ingest-jobs/{job_id}/retry
 第一周只做以下内容，避免一开始同时铺开所有能力：
 
 1. M0-1 源文件删除同步；
-2. M0-2 去掉 Store 双写；
+2. M0-2 去掉 Store 双写（✅ 2026-11-12 已完成，见 N60 / ROADMAP C9）；
 3. M0-3 reconcile `--check`；
 4. 修复 Context 的 `chunk_ids`；
 5. 在线父块快照增加 revision 检测；

@@ -38,13 +38,22 @@ class FakeEmbedder:
 
 
 class FakeIndexer:
-    def __init__(self, fail_on: str | None = None):
+    """替身，但要照真索引器的**写入顺序**来：先落 Document Store，再"动 Qdrant"。
+
+    唯一写入点就在这一层（N60）。替身若只记一行 indexed 而不写 store，
+    「每篇都落 Store」「每篇只写一次」这两条都没法在编排层验证。
+    """
+
+    def __init__(self, fail_on: str | None = None, store=None):
         self.indexed: list[str] = []
         self.fail_on = fail_on
+        self.store = store
 
     def index_document(self, document, parents, children, *, vectors=None):
         if self.fail_on and self.fail_on in document["source_uri"]:
             raise RuntimeError("Qdrant 写挂了")
+        if self.store is not None:
+            self.store.replace_document(document, parents, children)
         self.indexed.append(document["source_uri"])
         return {"upserted": len(children), "deleted_stale": 0}
 
@@ -68,8 +77,8 @@ class PipelineTestBase(unittest.TestCase):
         self.state = IngestState(self.root / "state.sqlite3")
         self.addCleanup(self.state.close)
         self.embedder = FakeEmbedder()
-        self.indexer = FakeIndexer()
         self.store = FakeStore()
+        self.indexer = FakeIndexer(store=self.store)
         self.logs: list[str] = []
 
     def write(self, name: str, paragraphs: int = 3) -> Path:
@@ -110,6 +119,24 @@ class HappyPathTest(PipelineTestBase):
                          ["doc0.md", "doc1.md", "doc2.md"])
         counts = self.state.stage_counts()
         self.assertEqual(counts[Stage.COMPLETED.value], 3)
+
+    def test_store_written_exactly_once_per_document(self):
+        """一篇文档只许写一次 Document Store（N60）：编排放过一次、索引器又放了一次。
+
+        `_prepare()` 里先 `store.replace_document(...)`，`_index()` 又把同一份
+        document/parents/children 交给 `indexer.index_document()`，而索引器内部
+        为了「先落 Store、再动 Qdrant」的原子性也会写一遍 —— 于是每次入库都把
+        整篇文档（含全部父/子块）重写两遍。
+
+        除了白写一遍，它还有一个更隐蔽的后果：两次写入之间任何一次失败，
+        Store 与 Qdrant 就会处在「Store 有、Qdrant 没有」或版本不同的状态，
+        而状态表照样标 COMPLETED。单一写入点必须留在**索引器**里
+        （那里的顺序是设计过的：Store 事务成功后才 upsert）。
+        """
+        self.write("a.md")
+        self.run_pipeline()
+        self.assertEqual(len(self.store.documents), 1,
+                         f"一篇文档写了 {len(self.store.documents)} 次 Store（期望 1 次）")
 
     def test_state_records_versions(self):
         self.write("a.md")

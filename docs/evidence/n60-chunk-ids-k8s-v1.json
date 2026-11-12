@@ -1,0 +1,86 @@
+{
+  "note": "N60：`ContextBlock.chunk_ids` 必须是子块 id（Qdrant 点的 payload.chunk_id），不是父块 id",
+  "collection": "bench_k8s_v1",
+  "store": "storage/bench/documents.sqlite3",
+  "judgement": "拿 id 去 `children` 表查（= Qdrant 点的 id 空间）",
+  "per_question": [
+    {
+      "lang": "zh",
+      "question": "topology manager 是怎么决定要不要重调度的？",
+      "blocks": 9,
+      "chunk_ids": [
+        "chk_dcf6ed35ce17f4a9d5bbd152a4fd74fa",
+        "chk_844a27765e3375a89eb4ea8e99a9b233",
+        "chk_dcdb7d1d4c5b4f78a3dcaa2673610f85",
+        "par_44820e52d77f4be6839309caf20a5cf9",
+        "par_a69e576e8c5932e3d633934ee3c502ab",
+        "chk_9d785f966a579bdefc0a748be626c0de",
+        "par_639bdfa735553ef43e017b3088e7c593",
+        "par_86e9a22ccb27943f02ac165f365125c1",
+        "chk_230891d63c40afd409718376c9d74a12",
+        "par_99573055102242ed90e49c6752f3ab5c"
+      ],
+      "parent_ids": [
+        "par_57efeb37baee9a41c71a95ad8ca4e32e",
+        "par_7743cb3c92eeb3fa1b2c5b2a658ebd54",
+        "par_b1893d75fdc7c557ce6177b7f368b0e9",
+        "par_44820e52d77f4be6839309caf20a5cf9",
+        "par_a69e576e8c5932e3d633934ee3c502ab",
+        "par_bd2897029948129d876e43884bba6285",
+        "par_639bdfa735553ef43e017b3088e7c593",
+        "par_86e9a22ccb27943f02ac165f365125c1",
+        "par_3bbceeecea14984b723c500cb0cab980",
+        "par_99573055102242ed90e49c6752f3ab5c"
+      ],
+      "chunk_ids_resolvable": 5,
+      "chunk_ids_fell_back_to_parent": 5,
+      "chunk_ids_total": 10,
+      "parent_ids_resolvable_as_chunk": 0,
+      "parent_ids_total": 10,
+      "chunk_ids_from_parent_stat": null
+    },
+    {
+      "lang": "en",
+      "question": "How does the topology manager decide whether to reschedule a pod?",
+      "blocks": 6,
+      "chunk_ids": [
+        "chk_0ed97ec5035222343db88d6b3f1465a8",
+        "par_a69e576e8c5932e3d633934ee3c502ab",
+        "chk_843a4bdc033bb532cd3c6157d92c1e66",
+        "par_bd2897029948129d876e43884bba6285",
+        "par_86e9a22ccb27943f02ac165f365125c1",
+        "par_7743cb3c92eeb3fa1b2c5b2a658ebd54",
+        "chk_dcdb7d1d4c5b4f78a3dcaa2673610f85",
+        "chk_8f95e65fe816f2e7a67d0353e70847e7",
+        "chk_369c998967de34d18b8f53efde08758a",
+        "chk_4364c1b3599f900145f10d024de9173a"
+      ],
+      "parent_ids": [
+        "par_0c49ef8dea924c6fd7c0f7fab31f671b",
+        "par_a69e576e8c5932e3d633934ee3c502ab",
+        "par_04149e2a8b05fe02a97fe65b923b89a4",
+        "par_bd2897029948129d876e43884bba6285",
+        "par_86e9a22ccb27943f02ac165f365125c1",
+        "par_7743cb3c92eeb3fa1b2c5b2a658ebd54",
+        "par_b1893d75fdc7c557ce6177b7f368b0e9",
+        "par_6083fe7d4e20e9d0cfa1bd151e27824d",
+        "par_102fff820ef1b0de77719412180a8c63",
+        "par_9f984c04758ab031856caf1f4a798ee7"
+      ],
+      "chunk_ids_resolvable": 6,
+      "chunk_ids_fell_back_to_parent": 4,
+      "chunk_ids_total": 10,
+      "parent_ids_resolvable_as_chunk": 0,
+      "parent_ids_total": 10,
+      "chunk_ids_from_parent_stat": null
+    }
+  ],
+  "totals": {
+    "chunk_ids": 20,
+    "chunk_ids_resolvable": 11,
+    "chunk_ids_fell_back_to_parent": 9,
+    "parent_ids": 20,
+    "parent_ids_resolvable_as_chunk": 0
+  },
+  "finding": "修之前 `chunk_ids = parent_ids`，能回查的比例按构造是 0 —— 引用只能指到「父块」这个 Store 内部 id，下游拿它去 Qdrant 取正文必然取不到。修之后 chunk_ids 是 dense 路真正命中的子块（可回查比例见 totals）；只有「词面路独占命中」的父块仍退回父块 id —— 词面索引建在父块上，本来就没有子块 id，这部分在 `assembled.stats['chunk_ids_from_parent']` 里留痕，不静默。"
+}

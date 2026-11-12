@@ -214,6 +214,7 @@ def _as_hit(hit: Any) -> dict[str, Any]:
         return dict(hit)
     return {
         "parent_id": getattr(hit, "parent_id", None) or getattr(hit, "id", None),
+        "chunk_id": getattr(hit, "chunk_id", None),
         "score": getattr(hit, "score", 0.0),
         "rerank_score": getattr(hit, "rerank_score", None),
     }
@@ -243,6 +244,9 @@ def assemble(
         "merged": 0,
         "truncated": 0,
         "dropped": 0,
+        #: 有多少块是「没有子块 id，只能退回父块 id」的（词面路 / 老调用方）。
+        #: 留痕是为了让「混了多少」可查，而不是静默糊过去。
+        "chunk_ids_from_parent": 0,
     }
 
     # 1) 去重：同父块、同正文都只留第一个（排名更靠前的那个）
@@ -331,13 +335,24 @@ def assemble(
             truncated = True
             stats["truncated"] += 1
         head = group[0]
+        # `chunk_ids` 是「命中的子块 id」，与 `parent_ids` **下标一一对应**（N60）。
+        # 原先是 `[item["parent_id"] for item in group]`，把父块 id 抄了两遍：
+        # 拿它回查 Qdrant（子块点）必然查不到 —— 父块根本不是 Qdrant 里的点。
+        chunk_ids: list[str] = []
+        for item in group:
+            child_id = item["hit"].get("chunk_id")
+            if child_id:
+                chunk_ids.append(str(child_id))
+            else:
+                chunk_ids.append(str(item["parent_id"]))
+                stats["chunk_ids_from_parent"] += 1
         blocks.append(ContextBlock(
             index=len(blocks) + 1,
             document_id=str(head["record"].get("document_id") or ""),
             parent_ids=[item["parent_id"] for item in group],
             parent_indexes=[int(item["record"].get("parent_index")) for item in group
                             if isinstance(item["record"].get("parent_index"), int)],
-            chunk_ids=[item["parent_id"] for item in group],
+            chunk_ids=chunk_ids,
             section_path=_path_list(head["record"].get("section_path")),
             source_uri=str(head["record"].get("source_uri") or ""),
             title=str(head["record"].get("title") or ""),
