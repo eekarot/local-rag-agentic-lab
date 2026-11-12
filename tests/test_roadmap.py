@@ -4,8 +4,10 @@
 但规矩写在文件里不会自动生效——写着写着就会出现「优化一下体验」「完善文档」这种
 谁都能说自己做完的条目。这里把它变成红灯。
 
-查 F 节（工程化与上手门槛）与 G 节（切片护栏与体检）：这两节最容易写成
-「优化一下体验」「把切片做得更好」这种谁都能说自己做完的话。
+查 F 节（工程化与上手门槛）、G 节（切片护栏与体检）与 S 系列（第二个数据集 / 旁路解析器 /
+存量数据卫生）：这几节最容易写成「优化一下体验」「把切片做得更好」这种谁都能说自己做完的话。
+S 系列是后加的（S6/S7 就是「bench 库语言列是空的」「PDF 标题退化成文件名」这种
+一眼看着小、但不写命令就永远判不完的条目），所以一并锁上。
 """
 
 import re
@@ -16,8 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ROADMAP = ROOT / "docs" / "ROADMAP.md"
 
 VAGUE = ("优化一下", "完善一下", "待补充", "TODO", "TBD", "做得更好", "提升体验")
-ITEM = re.compile(r"^\|\s*([FG]\d+)\s*\|")
-GUARDED = ("## F. ", "## G. ")
+ITEM = re.compile(r"^\|\s*([FGS]\d+)\s*\|")
+GUARDED = ("## F. ", "## G. ", "### S 系列")
 
 
 def _section(text: str, heading: str) -> str:
@@ -50,6 +52,17 @@ class RoadmapEngineeringItemsTest(unittest.TestCase):
             expected = line.split("→", 1)[1]
             self.assertGreater(len(expected.strip(" |")), 5,
                                f"{qid}：`→` 后面得有真的期望值，不能空着")
+
+    def test_s_series_items_have_commands_and_tiers(self):
+        """S 系列同样要「命令 + 期望值 + 档位」三件齐（S1–S7）。"""
+        rows = [(m.group(1), line) for line in _section(self.text, "### S 系列").splitlines()
+                if (m := ITEM.match(line))]
+        self.assertGreaterEqual(len(rows), 7, "S 系列条目数掉下来了（应有 S1–S7）")
+        for qid, line in rows:
+            self.assertIn("`", line, f"{qid}：验收里没有一条可复制的命令")
+            self.assertIn("→", line, f"{qid}：没写期望值标记（`→ 期望值`）")
+            tier = line.rstrip().rstrip("|").split("|")[-1].strip()
+            self.assertIn(tier, {"1", "2", "3"}, f"{qid}：档位必须写 1/2/3，实际 {tier!r}")
 
     def test_every_item_has_a_tier(self):
         f_section = _section(self.text, "## F. ")

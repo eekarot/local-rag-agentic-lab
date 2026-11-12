@@ -1,6 +1,6 @@
 # ROADMAP：剩余工作项
 
-> 版本：2026-11-06 · 与 `docs/RAG数据切分与跨语言检索技术方案.md`（v2.37）配套。
+> 版本：2026-11-06 · 与 `docs/RAG数据切分与跨语言检索技术方案.md`（v2.53）配套。
 > 设计文档记「为什么这样做」，本文件记「还剩什么没做、怎么算做完」。
 >
 > **验收一律写成「命令 + 期望值」**，不写「优化一下」「完善一下」这种无法判定的条目。
@@ -8,8 +8,8 @@
 ## 0. 当前位置
 
 ```
-分支 main · 54 个提交 · remote origin（github.com/eekarot/local-rag-agentic-lab）· tag v0.1.0
-默认套件 python -m unittest discover -s tests → 989 用例 OK (skipped=50)，30 s（不联网）
+分支 main · 87 个提交 · remote origin（github.com/eekarot/local-rag-agentic-lab）· tag v0.1.0
+默认套件 python -m unittest discover -s tests → 1238 用例 OK (skipped=50)，30 s（不联网）
 全套 RAG_RUN_SLOW=1 … → 真服务链路手跑（CI 只跑默认套件）
 
 已落地链路：
@@ -73,7 +73,7 @@
 
 ### S 系列：第二个数据集与解析器旁路（对外可比 / 多格式）
 
-自建 k8s 集只能和自己比；S1–S3 是**对外可比**的基准，S4–S5 是**旁路解析器**的准入与成本闸门。
+自建 k8s 集只能和自己比；S1–S3 是**对外可比**的基准，S4–S5 是**旁路解析器**的准入与成本闸门，S6–S7 是**存量数据卫生**（不碰检索算法，但要先证明指标没动）。
 
 | # | 项 | 说明 | 验收（命令 → 期望值） | 档位 |
 |---|---|---|---|---|
@@ -82,6 +82,8 @@
 | S3 | **SciFact 上的窗口/切分口径** | 摘要 p50 = 1,331 字符（≈330 token），本来就贴着 256 token 窗口；k8s 上窗口挑错会掉 13.7 点，这里可能更敏感。但本数据集一篇摘要≈一个父块，**没有子块→父块聚合的稀释**，所以它测不出那条链的问题（那要留在 k8s 集上测） | `RAG_COLLECTION=scifact_v1 python scripts/eval_beir.py --no-rerank --baseline docs/evidence/beir-scifact-v1-baseline.json` → 关重排后 nDCG 下降（当前 0.6720 < 0.6843） | 3 |
 | S4 | **Docling 旁路接入（只补扫描件与表格，默认路径不动）** | 实测（`docs/evidence/parser-docling-probe.json`，20 篇 PDF × 前 3 页）：**收益全在两件我们现在完全没有的能力上** —— 扫描件从基线 **0 字符** → docling **3,683 / 465 字符**；表格从基线 **0 个 table 块** → docling **21 个**。而纯文本 PDF 只是平替（字符覆盖均值 **0.9997**），换它没有收益。门禁必须**按文档类型分档**：纯文本 ≥0.98（16 篇实测 0.973–1.144）、公式/数学类单列（试卷实测 **0.766**）、扫描件只要求「>0 字符 且 无崩溃」（1/19 篇崩在 RapidOCR 栈溢出，`--no-ocr` 可过） | `python experiments/probe_parser_docling.py --manifest storage/docling-probe/manifest.json --max-pages 3` → `n_failed = 0` 且按类型分档后每篇达标（当前 18/19 ok、纯文本覆盖最低 0.973、公式类 0.766）；另需 `python scripts/eval_bench.py --k 10 --pool 40 --query-en translate --compare docs/baseline-k8s-v1.json` → 四条全 `ok`（证明默认路径没被碰） | 2 |
 | S5 | **解析成本闸门：Docling 只能旁路 / 按需，不许全量迁移** | 实测代价：**5.3 s/页**（3 页 27.9 s，其中约 12 s 是进程启动 + 模型加载）、峰值 RSS **p50 1.5 GB / max 3.15 GB**（扫描 82 MB 那篇），对 D39 的 16 GB 预算不友好。折算全量 883 篇：20 页/篇约 **26 小时**、60 页/篇约 **78 小时**（单进程、每次都重新加载模型）。所以它只能挂在 `--parser docling` 后面按需触发，且批量时必须单进程复用模型 | `python experiments/probe_parser_docling.py --manifest storage/docling-probe/manifest.json --max-pages 3` → `latency_docling_p50_ms` 明显低于当前 27,705 ms（批量复用后应降到约 1/4）；`peak_rss_mb_max` 不超过 4,000（当前 3,154）；且 `storage/docling-venv/Scripts/docling.exe <扫描件> --to json --no-ocr` → 退出码 0（当前 pdf-08 不加该开关即崩） | 2 |
+| S6 | **bench 库的语言列是空的**（`build_bench_dataset.py` 走的不是 ingest 路径） | `storage/bench/documents.sqlite3` 里 `documents.language` **883 篇全 NULL**、`parents.language` **7,108 行全 NULL**。现在全靠 `_block_lang()` 每次查询按正文现判兜着（N49 那条注释说的就是它），所以 `backfill_payload_language.py` 对 `bench_k8s_v1` 只能报「跳过 9,795 点」；根因是这份 Store 由 `scripts/build_bench_dataset.py` 直接建，那条路径没调 `apply_document_language()`。写语言列不改 `chunk_id`（`chk_` 只认 `content_hash(content)`）⇒ `gold_points` 不失效，但**会改变重排选哪段 query**（`_block_lang` 从现判变成读库）→ 必须按 N59 的规矩先 `--compare` 再定 | `python -c "import sqlite3;print(sqlite3.connect('storage/bench/documents.sqlite3').execute('SELECT COALESCE(p.language,d.language), COUNT(*) FROM parents p JOIN documents d ON d.document_id=p.document_id GROUP BY 1').fetchall())"` → 期望只剩 `[('zh', n1), ('en', n2)]`、NULL 计 0；`python scripts/backfill_payload_language.py --collection bench_k8s_v1 --dry-run` → 期望「待补 9795」（不再是「跳过 9795」）；`python scripts/eval_bench.py --compare docs/baseline-k8s-v1.json` → 期望四条 `ok`且 hit@10 仍 **0.8571**（若逐题更好/更差超出 A/A 噪声底 3 好 5 差，则这一项本身也不该落地） | 2 |
+| S7 | **`_guess_title()` 只认 h1，PDF 标题退化成文件名** | 实测 `storage/demo-pdf/ch1-excerpt.pdf`（`data/AI-Agents-in-Depth-zh-CN.pdf` 第 15–17 页）：解析出 137 块 `{heading 2, paragraph 135}`，首块是 **h2**，而 `_guess_title()` 只认 `heading_level == 1` ⇒ `title` 落成文件名 `ch1-excerpt`。这个值会进 `payload.title`、`section_path` 根节点、引用展示，看起来就像「这本书叫 ch1-excerpt」。**安全**：子块的向量与 `chunk_id` 都只认 `content`（`embedding_texts` 取 `c['embedding_text'] or c['content']`，Child 没有 `embedding_text` 字段）⇒ 改 title 不动 id、不动向量、不需重算 embedding | `python -m unittest tests.test_ingest_pipeline` → 期望全绿，且其中新增用例「无 h1 时退到**第一个任意级别** heading」存在（实测现在这条命令的输出里没有任何 title 用例）；重跑该 PDF 入库后查 Store：`python -c "import sqlite3;print(sqlite3.connect('storage/demo-pdf/d3.sqlite3').execute('SELECT title FROM documents').fetchall())"` → 期望是正文里的标题文字，不是 `ch1-excerpt`；`python scripts/eval_bench.py --compare docs/baseline-k8s-v1.json` → 期望四条 `ok`（只改展示字段，指标不动） | 3 |
 
 ## D. 已知缺陷 / 明确 blocked
 
@@ -194,7 +196,9 @@
 第三档（一天）：F24 干净克隆进 CI → F25 lint/coverage → F5 锁文件
   理由：先把门槛降低的成果锁住，否则下一个人改回去没人发现
 
-随时可捡：F21 清集合（半小时，顺手把 Qdrant 启动从 2.5 min 拉回几秒）、
+随时可捡：S7 标题兜底（不改 id、不改向量，半天内可验证）、
+          S6 bench 语言列（**先** `--compare` 证明指标没动再落地）、
+          F21 清集合（半小时，顺手把 Qdrant 启动从 2.5 min 拉回几秒）、
           F20 备份脚本、F28 Makefile、F13 截图
 ```
 
