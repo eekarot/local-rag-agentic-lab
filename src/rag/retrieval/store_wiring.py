@@ -20,6 +20,7 @@ from typing import Any, Callable, Sequence
 from .degrade import Breaker, guarded
 from .orchestrator import MultiRouteRetriever
 from .routes import (
+    DEFAULT_ROUTES,
     ROUTE_DENSE_EN,
     ROUTE_DENSE_ZH,
     ROUTE_LEXICAL_EN,
@@ -30,6 +31,44 @@ from .routes import (
 )
 
 STORAGE_DIR = Path(__file__).resolve().parents[3] / "storage"
+
+#: 装配层认识的全部路由名。**顺序**就是候选装配顺序，不表示优先级
+#: （RRF 是求和，与顺序无关；但重排并列时靠融合顺序定先后，所以要稳定）。
+KNOWN_ROUTES = (ROUTE_DENSE_ZH, ROUTE_DENSE_EN, ROUTE_LEXICAL_EN, ROUTE_LEXICAL_ZH)
+
+
+def resolve_route_names(
+    routes: Sequence[str] | None,
+    *,
+    include_zh_lexical: bool = False,
+) -> tuple[str, ...]:
+    """把「要哪几路」解析成确定的元组，**在起 Qdrant 之前**就把坏输入拦住。
+
+    三种用法：
+    - `routes=None` → 默认三路；`include_zh_lexical=True` 再追加第四路（B05 老开关）
+    - `routes=(...)` → 严格按给定顺序装配（消融时控制组与对照组只差这一项）
+    - 空元组 / 重复名 / 不认识的名称 → `ValueError`，报错里带可选路名
+    """
+    if routes is None:
+        names: list[str] = list(DEFAULT_ROUTES)
+        if include_zh_lexical and ROUTE_LEXICAL_ZH not in names:
+            names.append(ROUTE_LEXICAL_ZH)
+    else:
+        names = [str(name).strip() for name in routes]
+        if include_zh_lexical and ROUTE_LEXICAL_ZH not in names:
+            names.append(ROUTE_LEXICAL_ZH)
+
+    if not names:
+        raise ValueError(f"至少要给一路路由；可选 {list(KNOWN_ROUTES)}")
+    unknown = [name for name in names if name not in KNOWN_ROUTES]
+    if unknown:
+        raise ValueError(
+            f"未知路由：{sorted(set(unknown))}；可选 {list(KNOWN_ROUTES)}"
+        )
+    duplicated = sorted({name for name in names if names.count(name) > 1})
+    if duplicated:
+        raise ValueError(f"路由名重复：{duplicated}；每路只能装配一次")
+    return tuple(names)
 
 
 def load_parent_records(store_path: str | Path | None = None) -> list[dict[str, Any]]:
@@ -146,12 +185,16 @@ def build_default_retriever(
     cache_dir: str | Path | None = None,
     pool_factor: int = 4,
     rrf_k: int = 60,
+    routes: Sequence[str] | None = None,
     include_zh_lexical: bool = False,
     warmup_texts: Sequence[str] = (),
     log: Callable[[str], None] = print,
     breaker: Breaker | None = None,
 ) -> MultiRouteRetriever:
     """三路（可选四路）真实装配：`dense_zh` + `dense_en` + `lexical_en`（+ `lexical_zh`）。
+
+    `routes`：显式指定要哪几路（见 `resolve_route_names`）。消融实验的控制组与对照组
+    都写全，只让列表差一项 —— 免得「默认」某天变了，两组一起漂。
 
     `warmup_texts`：一次性批量预编码（走 EmbeddingService 的批量 + SQLite 缓存）。
     不热身的话 `dense_en` 的每条新 query 都是冷调用 ~2 s，会把 P50 完全带偏
@@ -194,24 +237,34 @@ def build_default_retriever(
             log(f"[warmup] 跳过（向量模型不可用：{type(exc).__name__}）"
                 f"｜dense 两路将降级，lexical 仍可用")
 
-    routes = [
-        DenseRoute(name=ROUTE_DENSE_ZH, embedder=embed, searcher=searcher,
-                   pool_factor=pool_factor, input_lang="zh"),
-        DenseRoute(name=ROUTE_DENSE_EN, embedder=embed, searcher=searcher,
-                   pool_factor=pool_factor, input_lang="en"),
-        LexicalRoute(index=build_english_bm25(parents, store_path=store_path,
-                                              cache_dir=cache_dir, log=log),
-                     name=ROUTE_LEXICAL_EN, input_lang="en"),
-    ]
+    wanted = resolve_route_names(routes, include_zh_lexical=include_zh_lexical)
 
-    if include_zh_lexical:
+    # 只装配被点名的那几路：多建一份 jieba 索引要几十秒，不是白送的
+    english_index = None
+    zh_index = zh_records = None
+    if ROUTE_LEXICAL_EN in wanted:
+        english_index = build_english_bm25(parents, store_path=store_path,
+                                           cache_dir=cache_dir, log=log)
+    if ROUTE_LEXICAL_ZH in wanted:
         from ...bm25 import BM25Index, build_bm25
 
         zh_records = [dict(row, chunk_id=row["id"], parent_id=row["id"]) for row in parents]
         zh_index = BM25Index(build_bm25(zh_records))
-        routes.append(JiebaLexicalRoute(index=zh_index, records=zh_records,
-                                        name=ROUTE_LEXICAL_ZH, input_lang="zh"))
 
-    retriever = MultiRouteRetriever(routes, rrf_k=rrf_k)
+    built: list[Any] = []
+    for name in wanted:
+        if name == ROUTE_DENSE_ZH:
+            built.append(DenseRoute(name=name, embedder=embed, searcher=searcher,
+                                    pool_factor=pool_factor, input_lang="zh"))
+        elif name == ROUTE_DENSE_EN:
+            built.append(DenseRoute(name=name, embedder=embed, searcher=searcher,
+                                    pool_factor=pool_factor, input_lang="en"))
+        elif name == ROUTE_LEXICAL_EN:
+            built.append(LexicalRoute(index=english_index, name=name, input_lang="en"))
+        else:
+            built.append(JiebaLexicalRoute(index=zh_index, records=zh_records,
+                                           name=name, input_lang="zh"))
+
+    retriever = MultiRouteRetriever(built, rrf_k=rrf_k)
     retriever.breaker = embed_breaker          # 供 /health、doctor 读当前状态
     return retriever

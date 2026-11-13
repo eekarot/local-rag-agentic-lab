@@ -92,14 +92,15 @@ def summarize(rows: list[dict], k: int) -> dict:
     }
 
 
-def _build_retriever(collection: str, store_path: Path, warmup_texts, log):
-    """单独提出来是为了让用例能打桩验证「集合名真的传下去了」。"""
+def _build_retriever(collection: str, store_path: Path, warmup_texts, log, *, routes=None):
+    """单独提出来是为了让用例能打桩验证「集合名 / 路由集合真的传下去了」。"""
     from src.rag.retrieval.store_wiring import build_default_retriever
 
     return build_default_retriever(
         collection=collection,
         store_path=store_path,
         warmup_texts=warmup_texts,
+        routes=routes,
         log=log,
     )
 
@@ -161,7 +162,21 @@ def _metric_series(rows: list[dict]) -> dict[str, list[float]]:
 #: 口径指纹：这些参数一换就不是「同一个检索器」了。新增口径时必须同步 `docs/baseline-k8s-v1.json`，
 #: 否则门禁会把默认路径也判成 not_comparable（C0e 就漏过一次 `max_other_lang`）。
 COMPARABILITY_KEYS = ("k", "pool", "rerank", "query_en_mode", "rerank_query_mode",
-                      "lang_quota", "rerank_merge", "max_other_lang", "window")
+                      "lang_quota", "rerank_merge", "max_other_lang", "window", "routes")
+
+
+def _routes_of(payload: dict) -> list[str]:
+    """取一次运行的路由集合。**缺键 = 默认三路**：
+
+    `routes` 是后加的口径键，历史证据（含正式基线）都没写，而那些运行确实就是默认三路。
+    按缺省还原它们，既不改历史数字，又能拦住「三路 vs 四路」这种真差异。
+    """
+    from src.rag.retrieval.routes import DEFAULT_ROUTES
+
+    raw = payload.get("routes")
+    if not raw:
+        return list(DEFAULT_ROUTES)
+    return [str(name) for name in raw]
 
 
 def _comparability_reasons(current: dict, baseline: dict) -> list[str]:
@@ -176,6 +191,10 @@ def _comparability_reasons(current: dict, baseline: dict) -> list[str]:
             f"{str(current.get('questions_sha256'))[:12]}…"
         )
     for key in COMPARABILITY_KEYS:
+        if key == "routes":
+            if _routes_of(current) != _routes_of(baseline):
+                reasons.append(f"routes 不同：基线 {_routes_of(baseline)} vs 现在 {_routes_of(current)}")
+            continue
         if current.get(key) != baseline.get(key):
             reasons.append(f"{key} 不同：基线 {baseline.get(key)} vs 现在 {current.get(key)}")
     base_ids = {r["qid"] for r in baseline.get("rows", [])}
@@ -368,6 +387,7 @@ def evaluate(
     rerank_merge: str = "raw",
     max_other_lang: int = 0,
     window: str = "overlap",
+    routes: Sequence[str] | None = None,
 ) -> dict:
     from src.rag.ask.pipeline import retrieve_with_meta
     from src.rag.ingestion.tokenizer import TokenCounter
@@ -384,6 +404,7 @@ def evaluate(
         store,
         [q["question"] for q in questions[:5]] if warmup else (),
         lambda _msg: None,
+        routes=routes,
     )
 
     rows: list[dict] = []
@@ -438,6 +459,9 @@ def evaluate(
         "rerank_merge": rerank_merge,
         "max_other_lang": max_other_lang,
         "window": window,
+        # 路由集合是口径的一部分：写全了，A/B 只剩这一个键不同才叫消融
+        "routes": list(getattr(retriever, "route_names", None) or routes
+                       or _routes_of({})),
         **({"translate": translator.stats()} if translator is not None
            and hasattr(translator, "stats") else {}),
         "overall": summarize(rows, k),
@@ -479,6 +503,21 @@ def _resolve_paths(args):
     return args
 
 
+def _parse_routes(raw: str) -> tuple[str, ...]:
+    """`--routes a,b,c` → 元组。**打错路名在这里就报错**：
+
+    静默少一路等于偷偷换口径，跑完 4 分钟才在报告里发现「融合结果没变」，得不偿失。
+    """
+    import argparse
+
+    from src.rag.retrieval.store_wiring import resolve_route_names
+
+    try:
+        return resolve_route_names(tuple(part.strip() for part in raw.split(",")))
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="eval_bench", description=__doc__.splitlines()[0])
     parser.add_argument("--questions", type=Path, default=QUESTIONS)
@@ -512,6 +551,11 @@ def build_parser() -> argparse.ArgumentParser:
                              "（默认，基线锚）；tiles = 让交叉编码器在粗分段里自己挑（多编 1.6×）")
     parser.add_argument("--lang-quota", type=int, default=0,
                         help="C0e：最终 top-k 里每种语言至少占几个名额（0 = 关闭）")
+    from src.rag.retrieval.routes import DEFAULT_ROUTES
+
+    parser.add_argument("--routes", type=_parse_routes, default=DEFAULT_ROUTES,
+                        help="要装配哪几路（逗号分隔，按给定顺序）："
+                             "dense_zh,dense_en,lexical_en[,lexical_zh]。默认 = 正式基线那三路")
     parser.add_argument("--compare-tolerance", type=float, default=None,
                         help="覆盖容差（默认 = 基线一侧 95%% bootstrap CI 半宽）")
     parser.add_argument("--report", type=Path, default=None, help="把对比表另存为 Markdown")
@@ -535,7 +579,7 @@ def main(argv: list[str] | None = None) -> int:
                       rerank_query=args.rerank_query, lang_quota=args.lang_quota,
                       rerank_merge=args.rerank_merge,
                       max_other_lang=args.max_other_lang,
-                      window=args.window)
+                      window=args.window, routes=args.routes)
     result["questions_sha256"] = questions_fingerprint(args.questions)
 
     out_path = None if args.compare and args.out is None else _default_out(args)

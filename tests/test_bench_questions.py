@@ -202,7 +202,7 @@ class EvalCollectionOptionTest(unittest.TestCase):
         seen = {}
         original = bench._build_retriever
 
-        def fake(collection, store_path, warmup_texts, log):
+        def fake(collection, store_path, warmup_texts, log, **kwargs):
             seen["collection"] = collection
             seen["store"] = store_path
             return object()

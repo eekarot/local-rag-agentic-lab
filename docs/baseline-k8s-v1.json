@@ -10,6 +10,11 @@
   "rerank_merge": "raw",
   "max_other_lang": 0,
   "window": "overlap",
+  "routes": [
+    "dense_zh",
+    "dense_en",
+    "lexical_en"
+  ],
   "translate": {
     "total": 102,
     "ok": 20,

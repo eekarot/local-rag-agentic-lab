@@ -769,7 +769,8 @@ RAG_COLLECTION=bench_k8s_v1 python scripts/ingest.py --dir datasets/k8s-zh-en-v1
     --versions storage/bench/index_versions.sqlite3 --cache storage/bench/embeddings.sqlite3
 
 # 2) 跑评估（写汇总 JSON + 逐题 JSONL）
-python scripts/eval_bench.py --k 10 --out docs/baseline-k8s-v1.json
+#    `--query-en translate` 是生产口径，**不能省**：省了就是 `none`，数字不复现基线
+python scripts/eval_bench.py --k 10 --query-en translate --out docs/baseline-k8s-v1.json
 
 # 3) 改任何参数后，都跟这份基线比，而不是跟记忆比
 python scripts/eval_bench.py --k 10 --no-rerank --out /tmp/ab-norerank.json
@@ -818,6 +819,25 @@ echo $?                                   # 0 = 没掉出容差；1 = 有指标�
 3. **默认不写输出**：带 `--compare` 时不会覆盖 `docs/baseline-k8s-v1.json`；要存就显式 `--out`。
 
 题集指纹（`questions_sha256`）写进基线 JSON —— 不认文件名、不认行数：改一个字、换一题，行数可能一样。
+
+### 换路由组合（消融用）
+
+`--routes` 决定装配哪几路，**默认就是正式基线那三路**，所以它也是口径键：
+
+```bash
+# 控制组和对照组都把路由写全，两组只差列表最后一项
+python scripts/eval_bench.py --k 10 --query-en translate \
+    --routes dense_zh,dense_en,lexical_en --out storage/b05/control.json
+python scripts/eval_bench.py --k 10 --query-en translate \
+    --routes dense_zh,dense_en,lexical_en,lexical_zh --out storage/b05/treat.json
+```
+
+`lexical_zh` 是中文 BM25（jieba 分词、索引建在父块正文上），**不在默认三路里**。
+拿它跟基线比会被判 `not_comparable`（`routes` 不同），这是对的：消融要比的是**同一天重跑的控制组**，
+再用 `experiments/analyze_b05_lexical_zh.py` 算均值 delta + 逐题更好/更差/持平。
+
+> 这里曾有一个真 bug：N60 把 `hit.chunk_id` 改成真子块 id 后，评估器仍用它去和父块金标（`gold_chunks`）比，
+> 180 题全题不命中而套件全绿。现在 `tests/test_eval_bench_scoring.py` 钉住「计分只认父块 id」。
 
 ## 架构总览
 

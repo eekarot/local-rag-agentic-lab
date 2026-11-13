@@ -8,7 +8,7 @@
 ## 0. 当前位置
 
 ```
-分支 main · 88 个提交 · remote origin（github.com/eekarot/local-rag-agentic-lab）· tag v0.1.0
+分支 main · 90 个提交 · remote origin（github.com/eekarot/local-rag-agentic-lab）· tag v0.1.0
 默认套件 python -m unittest discover -s tests → 1246 用例 OK (skipped=50)，30 s（不联网）
 全套 RAG_RUN_SLOW=1 … → 真服务链路手跑（CI 只跑默认套件）
 
@@ -57,6 +57,7 @@
 | C0g | **补 en→zh 翻译** | 现在翻译只做 zh→en（detect() 判 zh 才翻）。英→中 因此既没有同语言 query 可用在窗口选择上，也无法给中文候选一个对齐的打分文本（阶段拆账：英→中 有 22.2% 的重排丢失） | `python -m src.rag.translate.service --stress` 里的双向用例 → 英文问题能拿到中文 query；`python experiments/probe_window_ceiling.py` → 英→中窗口含答案率从 0.43 提升 | 2 |
 | C0h | **限制「对方语言」占比（C0e 的镜像假设）** —— ❌ 实测否掉 | 动机是「同语言题的池子里，异语言块本来被低分压着，by_lang 把它抬起来就会挤走 gold」，所以改成给异语言设上限。实测上限 4 → MRR 0.5144、上限 3 → 0.5103，仍低于 0.5648，且 中→中 的 zh MRR 只有 0.405 ⇒ 受害的是**组内相对顺序**，不是名额 | `python scripts/eval_bench.py --k 10 --query-en translate --rerank-query by_lang --rerank-merge zscore --max-other-lang 4 --rows-out storage/c0e/z_cap4.rows.jsonl` → 整体 MRR ≥ 0.5648（当前 0.5144，未达标） | 3 |
 | C0c | **中→英跨语言仍然最弱** | `中→英` hit@10 **0.6000** / MRR 0.1944（n=10），其余三格 0.75–0.95 | `python scripts/eval_bench.py --k 10 --limit 100` → 四格里的 `中→英` 行；改翻译或 dense_en 后看该行是否上升（题量 10，只认 ≥2 题的移动，别单题下结论） | ⬜ |
+| C0j | **B05：加第四路中文 BM25（jieba）** —— ❌ 实测**未达标，不翻默认** | 三路 `dense_zh/dense_en/lexical_en` 之上再加 `lexical_zh`（jieba 分词 + BM25 over 父块正文）：整体 hit@10 **0.8571 → 0.8800（+2.3 点）**、MRR 0.5316 → 0.5396，但逐题 **10 好 / 10 差 / 155 平**（A/A 噪声底是 3/5），配对 bootstrap CI95 **[−0.0057, +0.0514]（P(≤0)=0.06）**；机理探针指出涨幅**不是补召回**：`gold` 只在第四路里出现的 5 道题（`k8s-c-018/031/032/053`、`k8s-x-027`）**没有一道进 top-10**，变好的 10 道里 **9 道** gold 本来就在 `dense_zh` 的 top-40 —— 是融合层「给中文 query 投两票」把边界候选抬进了重排池。第四路本身很便宜（p50 **8–9 ms**，对比 `dense_zh` 19 ms / `lexical_en` 32 ms），所以留开关不删代码 | `python scripts/eval_bench.py --k 10 --query-en translate --routes dense_zh,dense_en,lexical_en,lexical_zh --out storage/b05/treat.json` → hit@10 **0.8800**；同参数三路 → **0.8571**（与 `docs/baseline-k8s-v1.json` 逐位相同）；`python experiments/analyze_b05_lexical_zh.py` → 打印 `10 好 · 10 差 · 155 平` 与 `CI95 [−0.0057, +0.0514]`；`python -m unittest tests.test_eval_routes_flag tests.test_eval_bench_scoring` → 20 OK | 2 |
 
 | C0i | **扩题 144 → 180：把跨语言格子撑到 n≥20** ✅ | 动机：C0f/C0g 的验收都落在 英→中 上，而它只有 9 题 ——**±1 题就是 11 个点**。本次 +36 题（中→英 22→43、英→中 9→24；其中 8 题用于把 7 个英文证据页补到每页 ≥3 题）。结果直接推翻了旧读法：英→中 **0.5556/0.0778 → 0.7500/0.2612**、中→英 **0.7273/0.3096 → 0.8605/0.3664** | `python -m unittest tests.test_bench_questions` → 31 用例全绿（含 README 数字逐位对齐）；`python scripts/eval_bench.py --k 10 --pool 40 --query-en translate --compare docs/baseline-k8s-v1.json` → 四条全 `ok`、逐题 0/0/175 | 1 |
 | C0f2 | **窗口：只对短名单换口径**（把 ×1.84 压到 ×1.1 量级） | C0f 的 tiles 四格都只有 ±1–2 点、整体落在噪声内，但 英→中 MRR +6.1 点说明「挑错窗口」确实存在。短名单方案：先按 overlap 给 40 个候选排序（40 次编码，≈1.2 s），只对前 10 个用 tiles 重排（+16 次编码，≈0.5 s），其余保持第一阶段分数。**注意**：两阶段分数不同源（单窗口 vs 段内最大），要单独验证排序不被尺度带偏 | `python scripts/eval_bench.py --k 10 --pool 40 --query-en translate --window tiles10 --compare docs/baseline-k8s-v1.json --baseline-rows docs/baseline-k8s-v1.rows.jsonl` → 期望：整体 hit ≥0.8629（不低于全量 tiles）、延迟 p50 ≤2100 ms | 2 |
