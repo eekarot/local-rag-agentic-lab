@@ -10,7 +10,8 @@
 3. 配对 bootstrap 的 95% CI，对照 A/A 噪声底（前轮实测 3 好 / 5 差 / 167 平 ≈ ±0.6 点 hit）
 
 跑法（仓库根目录）：
-    python experiments/analyze_b05_lexical_zh.py
+    python experiments/analyze_b05_lexical_zh.py                        # 默认：四路 vs 三路
+    python experiments/analyze_b05_lexical_zh.py --control a.json --treat b.json --out c.json
 """
 
 from __future__ import annotations
@@ -24,9 +25,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-CONTROL = ROOT / "storage" / "b05" / "b05-control-3routes.json"
-TREAT = ROOT / "storage" / "b05" / "b05-treat-4routes.json"
-OUT = ROOT / "docs" / "evidence" / "b05-lexical-zh-k8s-v1.json"
+DEFAULT_CONTROL = ROOT / "storage" / "b05" / "b05-control-3routes.json"
+DEFAULT_TREAT = ROOT / "storage" / "b05" / "b05-treat-4routes.json"
+DEFAULT_OUT = ROOT / "docs" / "evidence" / "b05-lexical-zh-k8s-v1.json"
 PROBE = ROOT / "docs" / "evidence" / "b05-lexical-zh-routes-k8s-v1.json"
 
 #: 前轮 A/A（同代码重跑两次）实测的噪声底，写死在证据里当判据
@@ -119,10 +120,22 @@ def _mechanism(control: dict[str, dict], treat: dict[str, dict],
     return block
 
 
-def main() -> int:
-    control_payload = json.loads(CONTROL.read_text(encoding="utf-8"))
-    treat_payload = json.loads(TREAT.read_text(encoding="utf-8"))
-    control, treat = load_rows(CONTROL), load_rows(TREAT)
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="B05：控制组 / 对照组逐题对比")
+    parser.add_argument("--control", type=Path, default=DEFAULT_CONTROL)
+    parser.add_argument("--treat", type=Path, default=DEFAULT_TREAT)
+    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    args = parser.parse_args(argv)
+    # 相对路径先 resolve：不然最后一行 `relative_to(ROOT)` 会抛 ValueError，
+    # 而此时文件其实已经写好了（eval_bench 的 `_resolve_paths` 踩过同一个坑）
+    control_path, treat_path, out_path = (args.control.resolve(), args.treat.resolve(),
+                                          args.out.resolve())
+
+    control_payload = json.loads(control_path.read_text(encoding="utf-8"))
+    treat_payload = json.loads(treat_path.read_text(encoding="utf-8"))
+    control, treat = load_rows(control_path), load_rows(treat_path)
 
     qids = [qid for qid in control if qid in treat]
     positives = [qid for qid in qids if control[qid]["gold"]]
@@ -139,7 +152,7 @@ def main() -> int:
                            "treat": treat_payload["overall"]}}
 
     payload = {
-        "note": "B05：给三路（dense_zh / dense_en / lexical_en）再加一路中文 BM25"
+        "note": "B05：routes 消融（控制组见 params.control_routes，对照组见 params.treat_routes）"
                 "（jieba over 父块正文）—— 同一题集 / 同一参数 / 同一重排，只差 --routes",
         "params": {
             "collection": control_payload["collection"],
@@ -199,8 +212,8 @@ def main() -> int:
         "路由级耗时见 probe_b05_route_contribution.py 的 route_latency_ms"
     )
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     overall = payload["overall"]
     print(f"正样本 {overall['positives']} ｜控制组 {control_payload['routes']} → "
@@ -220,7 +233,7 @@ def main() -> int:
         c = cell["per_question"]
         print(f"  [{name}] n={cell['n']} hit {cell['control'].get('hit@10')} → "
               f"{cell['treat'].get('hit@10')}｜{c['better']} 好 {c['worse']} 差 {c['same']} 平")
-    print(f"证据：{OUT.relative_to(ROOT)}")
+    print(f"证据：{out_path.relative_to(ROOT)}")
     return 0
 
 

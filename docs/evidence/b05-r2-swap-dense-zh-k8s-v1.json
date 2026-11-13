@@ -1,0 +1,414 @@
+{
+  "note": "B05：routes 消融（控制组见 params.control_routes，对照组见 params.treat_routes）（jieba over 父块正文）—— 同一题集 / 同一参数 / 同一重排，只差 --routes",
+  "params": {
+    "collection": "bench_k8s_v1",
+    "k": 10,
+    "pool": 40,
+    "rerank": true,
+    "query_en_mode": "translate",
+    "window": "overlap",
+    "questions_sha256": "79cb096bb6d1c93cae3b5e1f1bc1717ce8df1949a8acd0c9860f42e1a572a68b",
+    "control_routes": [
+      "dense_zh",
+      "dense_en",
+      "lexical_en"
+    ],
+    "treat_routes": [
+      "lexical_zh",
+      "dense_en",
+      "lexical_en"
+    ]
+  },
+  "caveat": "两次运行同一天、同一台机器、同一进程参数；控制组已复现正式基线（四条指标逐位相同、逐题 0 好 0 差 175 平）",
+  "aa_noise_floor": {
+    "better": 3,
+    "worse": 5,
+    "same": 167,
+    "hit_delta_points": 0.6
+  },
+  "overall": {
+    "n": 180,
+    "positives": 175,
+    "metrics": {
+      "hit@10": {
+        "control": 0.8571,
+        "treat": 0.8914,
+        "delta": 0.0343
+      },
+      "full@10": {
+        "control": 0.8514,
+        "treat": 0.88,
+        "delta": 0.02859999999999996
+      },
+      "recall@10": {
+        "control": 0.8533,
+        "treat": 0.8848,
+        "delta": 0.031500000000000083
+      },
+      "mrr": {
+        "control": 0.5316,
+        "treat": 0.5478,
+        "delta": 0.016199999999999992
+      }
+    },
+    "per_question": {
+      "n": 175,
+      "better": 20,
+      "worse": 12,
+      "same": 143
+    },
+    "bootstrap_hit": {
+      "mean": 0.0343,
+      "ci95": [
+        0.0,
+        0.0743
+      ],
+      "p_non_positive": 0.047
+    },
+    "negatives": 5
+  },
+  "by_evidence_lang": {
+    "en": {
+      "n": 97,
+      "control": {
+        "positives": 97,
+        "hit@10": 0.9175,
+        "full@10": 0.9072,
+        "recall@10": 0.9107,
+        "mrr": 0.5419
+      },
+      "treat": {
+        "positives": 97,
+        "hit@10": 0.9072,
+        "full@10": 0.8969,
+        "recall@10": 0.9003,
+        "mrr": 0.5386
+      },
+      "per_question": {
+        "n": 97,
+        "better": 6,
+        "worse": 5,
+        "same": 86
+      }
+    },
+    "zh-cn": {
+      "n": 78,
+      "control": {
+        "positives": 78,
+        "hit@10": 0.7821,
+        "full@10": 0.7821,
+        "recall@10": 0.7821,
+        "mrr": 0.5187
+      },
+      "treat": {
+        "positives": 78,
+        "hit@10": 0.8718,
+        "full@10": 0.859,
+        "recall@10": 0.8654,
+        "mrr": 0.5591
+      },
+      "per_question": {
+        "n": 78,
+        "better": 14,
+        "worse": 7,
+        "same": 57
+      }
+    }
+  },
+  "by_type": {
+    "cross_lingual": {
+      "n": 67,
+      "control_hit": 0.8209,
+      "treat_hit": 0.8507,
+      "per_question": {
+        "n": 67,
+        "better": 7,
+        "worse": 6,
+        "same": 54
+      }
+    },
+    "multi_hop": {
+      "n": 11,
+      "control_hit": 0.9091,
+      "treat_hit": 0.9091,
+      "per_question": {
+        "n": 11,
+        "better": 2,
+        "worse": 1,
+        "same": 8
+      }
+    },
+    "numeric": {
+      "n": 12,
+      "control_hit": 1.0,
+      "treat_hit": 1.0,
+      "per_question": {
+        "n": 12,
+        "better": 0,
+        "worse": 0,
+        "same": 12
+      }
+    },
+    "single_hop": {
+      "n": 85,
+      "control_hit": 0.8588,
+      "treat_hit": 0.9059,
+      "per_question": {
+        "n": 85,
+        "better": 11,
+        "worse": 5,
+        "same": 69
+      }
+    }
+  },
+  "latency_ms": {
+    "control": {
+      "p50": 1572.5,
+      "p90": 2044.5,
+      "warmup": true
+    },
+    "treat": {
+      "p50": 1456.1,
+      "p90": 1529.0,
+      "warmup": true
+    },
+    "note": "端到端 p50 受重排与翻译主导，单看它判不出「多一路要多少钱」；路由级耗时见 probe_b05_route_contribution.py 的 route_latency_ms"
+  },
+  "mechanism": {
+    "better_qids": [
+      "k8s-c-001",
+      "k8s-c-010",
+      "k8s-c-018",
+      "k8s-c-019",
+      "k8s-c-028",
+      "k8s-c-031",
+      "k8s-c-045",
+      "k8s-e-002",
+      "k8s-e-034",
+      "k8s-e-035",
+      "k8s-x-001",
+      "k8s-x-013",
+      "k8s-x-014",
+      "k8s-e-054",
+      "k8s-c-048",
+      "k8s-c-058",
+      "k8s-x-028",
+      "k8s-x-030",
+      "k8s-x-031",
+      "k8s-x-066"
+    ],
+    "worse_qids": [
+      "k8s-c-003",
+      "k8s-c-008",
+      "k8s-c-013",
+      "k8s-c-033",
+      "k8s-e-007",
+      "k8s-x-011",
+      "k8s-e-041",
+      "k8s-x-019",
+      "k8s-x-038",
+      "k8s-x-041",
+      "k8s-x-051",
+      "k8s-x-067"
+    ],
+    "better_rank_changes": {
+      "k8s-c-001": [
+        null,
+        2
+      ],
+      "k8s-c-010": [
+        7,
+        6
+      ],
+      "k8s-c-018": [
+        null,
+        1
+      ],
+      "k8s-c-019": [
+        null,
+        1
+      ],
+      "k8s-c-028": [
+        null,
+        5
+      ],
+      "k8s-c-031": [
+        null,
+        2
+      ],
+      "k8s-c-045": [
+        9,
+        6
+      ],
+      "k8s-e-002": [
+        3,
+        2
+      ],
+      "k8s-e-034": [
+        3,
+        2
+      ],
+      "k8s-e-035": [
+        8,
+        6
+      ],
+      "k8s-x-001": [
+        9,
+        8
+      ],
+      "k8s-x-013": [
+        9,
+        8
+      ],
+      "k8s-x-014": [
+        null,
+        10
+      ],
+      "k8s-e-054": [
+        6,
+        5
+      ],
+      "k8s-c-048": [
+        null,
+        1
+      ],
+      "k8s-c-058": [
+        7,
+        5
+      ],
+      "k8s-x-028": [
+        null,
+        8
+      ],
+      "k8s-x-030": [
+        null,
+        10
+      ],
+      "k8s-x-031": [
+        9,
+        7
+      ],
+      "k8s-x-066": [
+        2,
+        1
+      ]
+    },
+    "worse_rank_changes": {
+      "k8s-c-003": [
+        2,
+        4
+      ],
+      "k8s-c-008": [
+        3,
+        5
+      ],
+      "k8s-c-013": [
+        2,
+        null
+      ],
+      "k8s-c-033": [
+        1,
+        2
+      ],
+      "k8s-e-007": [
+        1,
+        null
+      ],
+      "k8s-x-011": [
+        9,
+        10
+      ],
+      "k8s-e-041": [
+        3,
+        5
+      ],
+      "k8s-x-019": [
+        6,
+        7
+      ],
+      "k8s-x-038": [
+        4,
+        5
+      ],
+      "k8s-x-041": [
+        9,
+        null
+      ],
+      "k8s-x-051": [
+        4,
+        5
+      ],
+      "k8s-x-067": [
+        5,
+        6
+      ]
+    },
+    "gold_only_in_lexical_zh_qids": [
+      "k8s-c-018",
+      "k8s-c-031",
+      "k8s-c-032",
+      "k8s-c-053",
+      "k8s-x-027"
+    ],
+    "better_that_are_only_zh": [
+      "k8s-c-018",
+      "k8s-c-031"
+    ],
+    "worse_that_are_only_zh": [],
+    "better_with_gold_already_in_dense_zh": [
+      "k8s-c-001",
+      "k8s-c-010",
+      "k8s-c-019",
+      "k8s-c-028",
+      "k8s-c-045",
+      "k8s-c-058",
+      "k8s-e-002",
+      "k8s-e-034",
+      "k8s-e-035",
+      "k8s-e-054",
+      "k8s-x-001",
+      "k8s-x-013",
+      "k8s-x-014",
+      "k8s-x-030",
+      "k8s-x-031",
+      "k8s-x-066"
+    ],
+    "worse_with_gold_already_in_dense_zh": [
+      "k8s-c-003",
+      "k8s-c-008",
+      "k8s-c-013",
+      "k8s-c-033",
+      "k8s-e-007",
+      "k8s-e-041",
+      "k8s-x-011",
+      "k8s-x-019",
+      "k8s-x-038",
+      "k8s-x-041",
+      "k8s-x-067"
+    ],
+    "route_coverage": {
+      "dense_zh": 157,
+      "dense_en": 155,
+      "lexical_en": 140,
+      "lexical_zh": 127
+    },
+    "route_latency_ms": {
+      "dense_zh": {
+        "p50": 19.28,
+        "p90": 31.06
+      },
+      "dense_en": {
+        "p50": 18.13,
+        "p90": 30.25
+      },
+      "lexical_en": {
+        "p50": 31.89,
+        "p90": 46.65
+      },
+      "lexical_zh": {
+        "p50": 8.21,
+        "p90": 17.42
+      }
+    }
+  }
+}

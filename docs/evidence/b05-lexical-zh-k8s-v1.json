@@ -1,5 +1,5 @@
 {
-  "note": "B05：给三路（dense_zh / dense_en / lexical_en）再加一路中文 BM25（jieba over 父块正文）—— 同一题集 / 同一参数 / 同一重排，只差 --routes",
+  "note": "B05：routes 消融（控制组见 params.control_routes，对照组见 params.treat_routes）（jieba over 父块正文）—— 同一题集 / 同一参数 / 同一重排，只差 --routes",
   "params": {
     "collection": "bench_k8s_v1",
     "k": 10,
