@@ -399,7 +399,10 @@ def evaluate(
                                      max_other_lang=max_other_lang, window=window)
         elapsed_ms = (time.perf_counter() - started) * 1000
         latencies.append(elapsed_ms)
-        ranked = [hit.chunk_id for hit in outcome.hits][:k]   # 检索返回的是 parent id（已按配额取够 k 条）
+        # **计分必须用父块 id**（N62）：`gold_chunks` 是 `par_…`，而 N60 之后
+        # `hit.chunk_id` 已经是真子块 id（`chk_…`，与 `gold_points` 同一套空间）。
+        # 这里曾写 `hit.chunk_id`，于是 180 题全题不命中（hit@10 0.8571 → 0.0000）。
+        ranked = [hit.parent_id for hit in outcome.hits][:k]
         gold = set(question.get("gold_chunks") or [])
         hit_at = [rank for rank, cid in enumerate(ranked, start=1) if cid in gold]
         rows.append({
