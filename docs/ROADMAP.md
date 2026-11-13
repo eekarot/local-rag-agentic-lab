@@ -8,8 +8,8 @@
 ## 0. 当前位置
 
 ```
-分支 main · 87 个提交 · remote origin（github.com/eekarot/local-rag-agentic-lab）· tag v0.1.0
-默认套件 python -m unittest discover -s tests → 1238 用例 OK (skipped=50)，30 s（不联网）
+分支 main · 88 个提交 · remote origin（github.com/eekarot/local-rag-agentic-lab）· tag v0.1.0
+默认套件 python -m unittest discover -s tests → 1246 用例 OK (skipped=50)，30 s（不联网）
 全套 RAG_RUN_SLOW=1 … → 真服务链路手跑（CI 只跑默认套件）
 
 已落地链路：
